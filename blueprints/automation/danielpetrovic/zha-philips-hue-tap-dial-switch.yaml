@@ -160,6 +160,35 @@ blueprint:
                 - domain:
                     - schedule
               multiple: false
+        button_1_lights_brightness:
+          name: Lights - Brightness
+          default: 100
+          description: The default brightness for the lights, this value is only used if not set in the schedule.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_1_lights_color:
+          name: Lights - Color (Kelvin)
+          default: 3333
+          description: The default color temp in Kelvin for the lights, this value is only used if not set in the schedule.
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_1_lights_transition:
+          name: Lights - Transition
+          default: 1
+          description: The default transition for the lights, this value is only used if not set in the schedule.
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
+              mode: slider
     button_1_media:
       name: Button 1 - Settings for Media Mode
       icon: mdi:play-box
@@ -179,7 +208,7 @@ blueprint:
                 - domain:
                     - media_player
               multiple: false
-        button_1_media_volume:
+        button_1_media_start_volume:
           name: Media Player - Start Volume
           default: 35
           description: The default volume for the media player.
@@ -309,6 +338,35 @@ blueprint:
                 - domain:
                     - schedule
               multiple: false
+        button_2_lights_brightness:
+          name: Lights - Brightness
+          default: 100
+          description: The default brightness for the lights, this value is only used if not set in the schedule.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_2_lights_color:
+          name: Lights - Color (Kelvin)
+          default: 3333
+          description: The default color temp in Kelvin for the lights, this value is only used if not set in the schedule.
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_2_lights_transition:
+          name: Lights - Transition
+          default: 1
+          description: The default transition for the lights, this value is only used if not set in the schedule.
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
+              mode: slider
     button_2_media:
       name: Button 2 - Settings for Media Mode
       icon: mdi:play-box
@@ -328,7 +386,7 @@ blueprint:
                 - domain:
                     - media_player
               multiple: false
-        button_2_media_volume:
+        button_2_media_start_volume:
           name: Media Player - Start Volume
           default: 35
           description: The default volume for the media player.
@@ -458,6 +516,35 @@ blueprint:
                 - domain:
                     - schedule
               multiple: false
+        button_3_lights_brightness:
+          name: Lights - Brightness
+          default: 100
+          description: The default brightness for the lights, this value is only used if not set in the schedule.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_3_lights_color:
+          name: Lights - Color (Kelvin)
+          default: 3333
+          description: The default color temp in Kelvin for the lights, this value is only used if not set in the schedule.
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_3_lights_transition:
+          name: Lights - Transition
+          default: 1
+          description: The default transition for the lights, this value is only used if not set in the schedule.
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
+              mode: slider
     button_3_media:
       name: Button 3 - Settings for Media Mode
       icon: mdi:play-box
@@ -477,7 +564,7 @@ blueprint:
                 - domain:
                     - media_player
               multiple: false
-        button_3_media_volume:
+        button_3_media_start_volume:
           name: Media Player - Start Volume
           default: 35
           description: The default volume for the media player.
@@ -607,6 +694,35 @@ blueprint:
                 - domain:
                     - schedule
               multiple: false
+        button_4_lights_brightness:
+          name: Lights - Brightness
+          default: 100
+          description: The default brightness for the lights, this value is only used if not set in the schedule.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_4_lights_color:
+          name: Lights - Color (Kelvin)
+          default: 3333
+          description: The default color temp in Kelvin for the lights, this value is only used if not set in the schedule.
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_4_lights_transition:
+          name: Lights - Transition
+          default: 1
+          description: The default transition for the lights, this value is only used if not set in the schedule.
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
+              mode: slider
     button_4_media:
       name: Button 4 - Settings for Media Mode
       icon: mdi:play-box
@@ -626,7 +742,7 @@ blueprint:
                 - domain:
                     - media_player
               multiple: false
-        button_4_media_volume:
+        button_4_media_start_volume:
           name: Media Player - Start Volume
           default: 35
           description: The default volume for the media player.
@@ -654,23 +770,47 @@ action:
       button_1_mode: !input button_1_mode
       button_1_lights: !input button_1_lights
       button_1_lights_schedule: !input button_1_lights_schedule
+      button_1_lights_brightness_input: !input button_1_lights_brightness
+      button_1_lights_brightness_pct: "{{ state_attr(button_1_lights_schedule, 'brightness_pct') if button_1_lights_schedule is defined and button_1_lights_schedule != [] and state_attr(button_1_lights_schedule, 'brightness_pct') is not none else button_1_lights_brightness_input }}"
+      button_1_lights_color_input: !input button_1_lights_color
+      button_1_lights_color_temp_kelvin: "{{ state_attr(button_1_lights_schedule, 'color_temp_kelvin') if button_1_lights_schedule is defined and button_1_lights_schedule != [] and state_attr(button_1_lights_schedule, 'color_temp_kelvin') is not none else button_1_lights_color_input }}"
+      button_1_lights_transition_input: !input button_1_lights_transition
+      button_1_lights_transition: "{{ state_attr(button_1_lights_schedule, 'transition') if button_1_lights_schedule is defined and button_1_lights_schedule != [] and state_attr(button_1_lights_schedule, 'transition') is not none else button_1_lights_transition_input }}"
       button_1_media: !input button_1_media
-      button_1_media_volume: !input button_1_media_volume
+      button_1_media_start_volume: !input button_1_media_start_volume
       button_2_mode: !input button_2_mode
       button_2_lights: !input button_2_lights
       button_2_lights_schedule: !input button_2_lights_schedule
+      button_2_lights_brightness_input: !input button_2_lights_brightness
+      button_2_lights_brightness_pct: "{{ state_attr(button_2_lights_schedule, 'brightness_pct') if button_2_lights_schedule is defined and button_2_lights_schedule != [] and state_attr(button_2_lights_schedule, 'brightness_pct') is not none else button_2_lights_brightness_input }}"
+      button_2_lights_color_input: !input button_2_lights_color
+      button_2_lights_color_temp_kelvin: "{{ state_attr(button_2_lights_schedule, 'color_temp_kelvin') if button_2_lights_schedule is defined and button_2_lights_schedule != [] and state_attr(button_2_lights_schedule, 'color_temp_kelvin') is not none else button_2_lights_color_input }}"
+      button_2_lights_transition_input: !input button_2_lights_transition
+      button_2_lights_transition: "{{ state_attr(button_2_lights_schedule, 'transition') if button_2_lights_schedule is defined and button_2_lights_schedule != [] and state_attr(button_2_lights_schedule, 'transition') is not none else button_2_lights_transition_input }}"
       button_2_media: !input button_2_media
-      button_2_media_volume: !input button_2_media_volume
+      button_2_media_start_volume: !input button_2_media_start_volume
       button_3_mode: !input button_3_mode
       button_3_lights: !input button_3_lights
       button_3_lights_schedule: !input button_3_lights_schedule
+      button_3_lights_brightness_input: !input button_3_lights_brightness
+      button_3_lights_brightness_pct: "{{ state_attr(button_3_lights_schedule, 'brightness_pct') if button_3_lights_schedule is defined and button_3_lights_schedule != [] and state_attr(button_3_lights_schedule, 'brightness_pct') is not none else button_3_lights_brightness_input }}"
+      button_3_lights_color_input: !input button_3_lights_color
+      button_3_lights_color_temp_kelvin: "{{ state_attr(button_3_lights_schedule, 'color_temp_kelvin') if button_3_lights_schedule is defined and button_3_lights_schedule != [] and state_attr(button_3_lights_schedule, 'color_temp_kelvin') is not none else button_3_lights_color_input }}"
+      button_3_lights_transition_input: !input button_3_lights_transition
+      button_3_lights_transition: "{{ state_attr(button_3_lights_schedule, 'transition') if button_3_lights_schedule is defined and button_3_lights_schedule != [] and state_attr(button_3_lights_schedule, 'transition') is not none else button_3_lights_transition_input }}"
       button_3_media: !input button_3_media
-      button_3_media_volume: !input button_3_media_volume
+      button_3_media_start_volume: !input button_3_media_start_volume
       button_4_mode: !input button_4_mode
       button_4_lights: !input button_4_lights
       button_4_lights_schedule: !input button_4_lights_schedule
+      button_4_lights_brightness_input: !input button_4_lights_brightness
+      button_4_lights_brightness_pct: "{{ state_attr(button_4_lights_schedule, 'brightness_pct') if button_4_lights_schedule is defined and button_4_lights_schedule != [] and state_attr(button_4_lights_schedule, 'brightness_pct') is not none else button_4_lights_brightness_input }}"
+      button_4_lights_color_input: !input button_4_lights_color
+      button_4_lights_color_temp_kelvin: "{{ state_attr(button_4_lights_schedule, 'color_temp_kelvin') if button_4_lights_schedule is defined and button_4_lights_schedule != [] and state_attr(button_4_lights_schedule, 'color_temp_kelvin') is not none else button_4_lights_color_input }}"
+      button_4_lights_transition_input: !input button_4_lights_transition
+      button_4_lights_transition: "{{ state_attr(button_4_lights_schedule, 'transition') if button_4_lights_schedule is defined and button_4_lights_schedule != [] and state_attr(button_4_lights_schedule, 'transition') is not none else button_4_lights_transition_input }}"
       button_4_media: !input button_4_media
-      button_4_media_volume: !input button_4_media_volume
+      button_4_media_start_volume: !input button_4_media_start_volume
       last_pressed: !input last_pressed
       remote: !input remote
   - choose:
@@ -690,108 +830,103 @@ action:
         sequence:
           - choose:
               - conditions: "{{ command == 'button_1_press' }}"
-                alias: button_1_press
+                alias: button_1_press_custom
                 sequence: !input button_1_press
               - conditions: "{{ command == 'button_1_short_release' }}"
-                alias: button_1_short_release
+                alias: button_1_short_release_custom
                 sequence: !input button_1_short_release
               - conditions: "{{ command == 'button_1_hold' }}"
-                alias: button_1_hold
+                alias: button_1_hold_custom
                 sequence: !input button_1_hold
               - conditions: "{{ command == 'button_1_long_release' }}"
-                alias: button_1_long_release
+                alias: button_1_long_release_custom
                 sequence: !input button_1_long_release
               - conditions: "{{ command == 'button_1_double_press' }}"
-                alias: button_1_double
+                alias: button_1_double_custom
                 sequence: !input button_1_double
               - conditions: "{{ command == 'button_1_triple_press' }}"
-                alias: button_1_triple
+                alias: button_1_triple_custom
                 sequence: !input button_1_triple
               - conditions: "{{ command == 'button_1_quadruple_press' }}"
-                alias: button_1_quadruple
+                alias: button_1_quadruple_custom
                 sequence: !input button_1_quadruple
               - conditions: "{{ command == 'button_1_quintuple_press' }}"
-                alias: button_1_quintuple
+                alias: button_1_quintuple_custom
                 sequence: !input button_1_quintuple
               - conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '1' }}"
-                alias: button_1_rotate
+                alias: button_1_rotate_custom
                 sequence:
                   - choose:
                       - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_1_rotate_left
+                        alias: button_1_rotate_left_custom
                         sequence: !input button_1_rotate_left
                       - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_1_rotate_right
+                        alias: button_1_rotate_right_custom
                         sequence: !input button_1_rotate_right
       - conditions: "{{ button_1_mode == 'Lights' }}"
         alias: Button 1 Lights mode
         sequence:
-          - variables:
-              brightness_pct:
-                "{{ state_attr(button_1_lights_schedule, 'brightness_pct')
-                }}"
-              color_temp_kelvin:
-                "{{ state_attr(button_1_lights_schedule, 'color_temp_kelvin')
-                }}"
           - choose:
               - conditions: "{{ command == 'button_1_press' }}"
-                alias: button_1_press
+                alias: button_1_press_lights
                 sequence: []
               - conditions: "{{ command == 'button_1_short_release' }}"
-                alias: button_1_short_release
+                alias: button_1_short_release_lights
                 sequence:
                   action: light.turn_on
                   data:
-                    brightness_pct: "{{ brightness_pct }}"
-                    color_temp_kelvin: "{{ color_temp_kelvin }}"
+                    brightness_pct: "{{ button_1_lights_brightness_pct }}"
+                    color_temp_kelvin: "{{ button_1_lights_color_temp_kelvin }}"
+                    transition: "{{ button_1_lights_transition }}"
                   target:
                     entity_id: !input button_1_lights
               - conditions: "{{ command == 'button_1_hold' }}"
-                alias: button_1_hold
+                alias: button_1_hold_lights
                 sequence: []
               - conditions: "{{ command == 'button_1_long_release' }}"
-                alias: button_1_long_release
+                alias: button_1_long_release_lights
                 sequence:
                   action: light.turn_off
-                  data: {}
+                  data:
+                    transition: "{{ button_1_lights_transition }}"
                   target:
                     entity_id: !input button_1_lights
               - conditions: "{{ command == 'button_1_double_press' }}"
-                alias: button_1_double
+                alias: button_1_double_lights
                 sequence: !input button_1_double
               - conditions: "{{ command == 'button_1_triple_press' }}"
-                alias: button_1_triple
+                alias: button_1_triple_lights
                 sequence: !input button_1_triple
               - conditions: "{{ command == 'button_1_quadruple_press' }}"
-                alias: button_1_quadruple
+                alias: button_1_quadruple_lights
                 sequence: !input button_1_quadruple
               - conditions: "{{ command == 'button_1_quintuple_press' }}"
-                alias: button_1_quintuple
+                alias: button_1_quintuple_lights
                 sequence: !input button_1_quintuple
               - conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '1' }}"
-                alias: button_1_rotate
+                alias: button_1_rotate_lights
                 sequence:
                   - choose:
                       - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_1_rotate_left
+                        alias: button_1_rotate_left_lights
                         sequence:
                           action: light.turn_on
                           data:
                             brightness_step: -{{ step_size }}
-                            transition: 1
+                            transition: "{{ button_1_lights_transition }}"
                           target:
                             entity_id: !input button_1_lights
                       - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_1_rotate_right
+                        alias: button_1_rotate_right_lights
                         sequence:
                           action: light.turn_on
                           data:
                             brightness_step: "{{ step_size }}"
-                            transition: 1
+                            transition: "{{ button_1_lights_transition }}"
                           target:
                             entity_id: !input button_1_lights
       - conditions: "{{ button_1_mode == 'Media' }}"
@@ -799,52 +934,51 @@ action:
         sequence:
           - variables:
               current_volume: "{{ state_attr(button_1_media, 'volume_level') }}"
-              start_volume: "{{ button_1_media_volume }}"
           - choose:
               - conditions: "{{ command == 'button_1_press' }}"
-                alias: button_1_press
+                alias: button_1_press_media
                 sequence: []
               - conditions: "{{ command == 'button_1_short_release' }}"
-                alias: button_1_short_release
+                alias: button_1_short_release_media
                 sequence:
                   - action: media_player.turn_on
                     entity_id: !input button_1_media
                   - action: media_player.volume_set
                     data:
-                      volume_level: "{{( start_volume / 100 )}}"
+                      volume_level: "{{( button_1_media_start_volume / 100 )}}"
                     entity_id: !input button_1_media
               - conditions: "{{ command == 'button_1_hold' }}"
-                alias: button_1_hold
+                alias: button_1_hold_media
                 sequence: []
               - conditions: "{{ command == 'button_1_long_release' }}"
-                alias: button_1_long_release
+                alias: button_1_long_release_media
                 sequence:
                   action: media_player.turn_off
                   entity_id: !input button_1_media
               - conditions: "{{ command == 'button_1_double_press' }}"
-                alias: button_1_double
+                alias: button_1_double_media
                 sequence:
                   action: media_player.media_next_track
                   entity_id: !input button_1_media
               - conditions: "{{ command == 'button_1_triple_press' }}"
-                alias: button_1_triple
+                alias: button_1_triple_media
                 sequence:
                   action: media_player.media_previous_track
                   entity_id: !input button_1_media
               - conditions: "{{ command == 'button_1_quadruple_press' }}"
-                alias: button_1_quadruple
+                alias: button_1_quadruple_media
                 sequence: !input button_1_quadruple
               - conditions: "{{ command == 'button_1_quintuple_press' }}"
-                alias: button_1_quintuple
+                alias: button_1_quintuple_media
                 sequence: !input button_1_quintuple
               - conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '1' }}"
-                alias: button_1_rotate
+                alias: button_1_rotate_media
                 sequence:
                   - choose:
                       - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_1_rotate_left
+                        alias: button_1_rotate_left_media
                         sequence:
                           - action: media_player.volume_set
                             data:
@@ -853,7 +987,7 @@ action:
                                 8) / 100)%} {{ 0.0 if new_volume < 0.0 else new_volume }}"
                             entity_id: !input button_1_media
                       - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_1_rotate_right
+                        alias: button_1_rotate_right_media
                         sequence:
                           - action: media_player.volume_set
                             data:
@@ -905,13 +1039,6 @@ action:
       - conditions: "{{ button_2_mode == 'Lights' }}"
         alias: Button 2 Lights mode
         sequence:
-          - variables:
-              brightness_pct:
-                "{{ state_attr(button_2_lights_schedule, 'brightness_pct')
-                }}"
-              color_temp_kelvin:
-                "{{ state_attr(button_2_lights_schedule, 'color_temp_kelvin')
-                }}"
           - choose:
               - conditions: "{{ command == 'button_2_press' }}"
                 alias: button_2_press
@@ -921,8 +1048,9 @@ action:
                 sequence:
                   action: light.turn_on
                   data:
-                    brightness_pct: "{{ brightness_pct }}"
-                    color_temp_kelvin: "{{ color_temp_kelvin }}"
+                    brightness_pct: "{{ button_2_lights_brightness_pct }}"
+                    color_temp_kelvin: "{{ button_2_lights_color_temp_kelvin }}"
+                    transition: "{{ button_2_lights_transition }}"
                   target:
                     entity_id: !input button_2_lights
               - conditions: "{{ command == 'button_2_hold' }}"
@@ -932,7 +1060,8 @@ action:
                 alias: button_2_long_release
                 sequence:
                   action: light.turn_off
-                  data: {}
+                  data:
+                    transition: "{{ button_2_lights_transition }}"
                   target:
                     entity_id: !input button_2_lights
               - conditions: "{{ command == 'button_2_double_press' }}"
@@ -976,7 +1105,6 @@ action:
         sequence:
           - variables:
               current_volume: "{{ state_attr(button_2_media, 'volume_level') }}"
-              start_volume: "{{ button_2_media_volume }}"
           - choose:
               - conditions: "{{ command == 'button_2_press' }}"
                 alias: button_2_press
@@ -988,7 +1116,7 @@ action:
                     entity_id: !input button_2_media
                   - action: media_player.volume_set
                     data:
-                      volume_level: "{{( start_volume / 100 )}}"
+                      volume_level: "{{( button_2_media_start_volume / 100 )}}"
                     entity_id: !input button_2_media
               - conditions: "{{ command == 'button_2_hold' }}"
                 alias: button_2_hold
@@ -1082,13 +1210,6 @@ action:
       - conditions: "{{ button_3_mode == 'Lights' }}"
         alias: Button 3 Lights mode
         sequence:
-          - variables:
-              brightness_pct:
-                "{{ state_attr(button_3_lights_schedule, 'brightness_pct')
-                }}"
-              color_temp_kelvin:
-                "{{ state_attr(button_3_lights_schedule, 'color_temp_kelvin')
-                }}"
           - choose:
               - conditions: "{{ command == 'button_3_press' }}"
                 alias: button_3_press
@@ -1098,8 +1219,9 @@ action:
                 sequence:
                   action: light.turn_on
                   data:
-                    brightness_pct: "{{ brightness_pct }}"
-                    color_temp_kelvin: "{{ color_temp_kelvin }}"
+                    brightness_pct: "{{ button_3_lights_brightness_pct }}"
+                    color_temp_kelvin: "{{ button_3_lights_color_temp_kelvin }}"
+                    transition: "{{ button_3_lights_transition }}"
                   target:
                     entity_id: !input button_3_lights
               - conditions: "{{ command == 'button_3_hold' }}"
@@ -1109,7 +1231,8 @@ action:
                 alias: button_3_long_release
                 sequence:
                   action: light.turn_off
-                  data: {}
+                  data:
+                    transition: "{{ button_3_lights_transition }}"
                   target:
                     entity_id: !input button_3_lights
               - conditions: "{{ command == 'button_3_double_press' }}"
@@ -1153,7 +1276,6 @@ action:
         sequence:
           - variables:
               current_volume: "{{ state_attr(button_3_media, 'volume_level') }}"
-              start_volume: "{{ button_3_media_volume }}"
           - choose:
               - conditions: "{{ command == 'button_3_press' }}"
                 alias: button_3_press
@@ -1165,7 +1287,7 @@ action:
                     entity_id: !input button_3_media
                   - action: media_player.volume_set
                     data:
-                      volume_level: "{{( start_volume / 100 )}}"
+                      volume_level: "{{( button_3_media_start_volume / 100 )}}"
                     entity_id: !input button_3_media
               - conditions: "{{ command == 'button_3_hold' }}"
                 alias: button_3_hold
@@ -1259,13 +1381,6 @@ action:
       - conditions: "{{ button_4_mode == 'Lights' }}"
         alias: Button 4 Lights mode
         sequence:
-          - variables:
-              brightness_pct:
-                "{{ state_attr(button_4_lights_schedule, 'brightness_pct')
-                }}"
-              color_temp_kelvin:
-                "{{ state_attr(button_4_lights_schedule, 'color_temp_kelvin')
-                }}"
           - choose:
               - conditions: "{{ command == 'button_4_press' }}"
                 alias: button_4_press
@@ -1275,8 +1390,9 @@ action:
                 sequence:
                   action: light.turn_on
                   data:
-                    brightness_pct: "{{ brightness_pct }}"
-                    color_temp_kelvin: "{{ color_temp_kelvin }}"
+                    brightness_pct: "{{ button_4_lights_brightness_pct }}"
+                    color_temp_kelvin: "{{ button_4_lights_color_temp_kelvin }}"
+                    transition: "{{ button_4_lights_transition }}"
                   target:
                     entity_id: !input button_4_lights
               - conditions: "{{ command == 'button_4_hold' }}"
@@ -1286,7 +1402,8 @@ action:
                 alias: button_4_long_release
                 sequence:
                   action: light.turn_off
-                  data: {}
+                  data:
+                    transition: "{{ button_4_lights_transition }}"
                   target:
                     entity_id: !input button_4_lights
               - conditions: "{{ command == 'button_4_double_press' }}"
@@ -1330,7 +1447,6 @@ action:
         sequence:
           - variables:
               current_volume: "{{ state_attr(button_4_media, 'volume_level') }}"
-              start_volume: "{{ button_4_media_volume }}"
           - choose:
               - conditions: "{{ command == 'button_4_press' }}"
                 alias: button_4_press
@@ -1342,7 +1458,7 @@ action:
                     entity_id: !input button_4_media
                   - action: media_player.volume_set
                     data:
-                      volume_level: "{{( start_volume / 100 )}}"
+                      volume_level: "{{( button_4_media_start_volume / 100 )}}"
                     entity_id: !input button_4_media
               - conditions: "{{ command == 'button_4_hold' }}"
                 alias: button_4_hold
