@@ -1,0 +1,300 @@
+lights_bright:
+  name: "Lights Bright"
+  icon: mdi:lightbulb-auto
+  monday:
+    - from: "00:00:00"
+      to: "09:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+    - from: "09:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 90
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 60
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+  tuesday:
+    - from: "00:00:00"
+      to: "09:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+    - from: "09:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 90
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 60
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+  wednesday:
+    - from: "00:00:00"
+      to: "09:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+    - from: "09:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 90
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 60
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+  thursday:
+    - from: "00:00:00"
+      to: "09:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+    - from: "09:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 90
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 60
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+  friday:
+    - from: "00:00:00"
+      to: "09:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+    - from: "09:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 90
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 60
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+  saturday:
+    - from: "00:00:00"
+      to: "10:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+    - from: "10:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 90
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 60
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+  sunday:
+    - from: "00:00:00"
+      to: "10:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+    - from: "10:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 90
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 60
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 30
+        color_temp_kelvin: 3333
+lights_dimmed:
+  name: "Lights Dimmed"
+  icon: mdi:lightbulb-auto-outline
+  monday:
+    - from: "00:00:00"
+      to: "09:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+    - from: "09:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 40
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 20
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+  tuesday:
+    - from: "00:00:00"
+      to: "09:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+    - from: "09:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 40
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 20
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+  wednesday:
+    - from: "00:00:00"
+      to: "09:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+    - from: "09:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 40
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 20
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+  thursday:
+    - from: "00:00:00"
+      to: "09:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+    - from: "09:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 40
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 20
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+  friday:
+    - from: "00:00:00"
+      to: "09:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+    - from: "09:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 40
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 20
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+  saturday:
+    - from: "00:00:00"
+      to: "10:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+    - from: "10:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 40
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 20
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+  sunday:
+    - from: "00:00:00"
+      to: "10:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333
+    - from: "10:00:00"
+      to: "19:00:00"
+      data:
+        brightness_pct: 40
+        color_temp_kelvin: 3333
+    - from: "19:00:00"
+      to: "23:00:00"
+      data:
+        brightness_pct: 20
+        color_temp_kelvin: 3333
+    - from: "23:00:00"
+      to: "24:00:00"
+      data:
+        brightness_pct: 10
+        color_temp_kelvin: 3333

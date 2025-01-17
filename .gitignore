@@ -1,0 +1,17 @@
+/.aspnet
+/.cloud
+/.storage
+/@eaDir
+/addons_config
+/image
+/tts
+home-assistant_v2.db
+home-assistant_v2.db-shm
+home-assistant_v2.db-wal
+home-assistant.log
+home-assistant.log.1
+home-assistant.log.fault
+secrets.yaml
+zigbee.db
+zigbee.db-shm
+zigbee.db-wal
