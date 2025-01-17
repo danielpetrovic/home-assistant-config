@@ -11,3 +11,98 @@ alarm_control_panel:
     armed_night:
       arming_time: 0
       delay_time: 20
+schedule:
+  alarm:
+    name: "Alarm"
+    icon: mdi:alarm-check
+    monday:
+      - from: "00:00:00"
+        to: "07:00:00"
+        data:
+          state: armed_night
+      - from: "07:00:00"
+        to: "23:00:00"
+        data:
+          state: armed_home
+      - from: "23:00:00"
+        to: "24:00:00"
+        data:
+          state: armed_night
+    tuesday:
+      - from: "00:00:00"
+        to: "07:00:00"
+        data:
+          state: armed_night
+      - from: "07:00:00"
+        to: "23:00:00"
+        data:
+          state: armed_home
+      - from: "23:00:00"
+        to: "24:00:00"
+        data:
+          state: armed_night
+    wednesday:
+      - from: "00:00:00"
+        to: "07:00:00"
+        data:
+          state: armed_night
+      - from: "07:00:00"
+        to: "23:00:00"
+        data:
+          state: armed_home
+      - from: "23:00:00"
+        to: "24:00:00"
+        data:
+          state: armed_night
+    thursday:
+      - from: "00:00:00"
+        to: "07:00:00"
+        data:
+          state: armed_night
+      - from: "07:00:00"
+        to: "23:00:00"
+        data:
+          state: armed_home
+      - from: "23:00:00"
+        to: "24:00:00"
+        data:
+          state: armed_night
+    friday:
+      - from: "00:00:00"
+        to: "07:00:00"
+        data:
+          state: armed_night
+      - from: "07:00:00"
+        to: "23:00:00"
+        data:
+          state: armed_home
+      - from: "23:00:00"
+        to: "24:00:00"
+        data:
+          state: armed_night
+    saturday:
+      - from: "00:00:00"
+        to: "07:00:00"
+        data:
+          state: armed_night
+      - from: "07:00:00"
+        to: "23:00:00"
+        data:
+          state: armed_home
+      - from: "23:00:00"
+        to: "24:00:00"
+        data:
+          state: armed_night
+    sunday:
+      - from: "00:00:00"
+        to: "07:00:00"
+        data:
+          state: armed_night
+      - from: "07:00:00"
+        to: "23:00:00"
+        data:
+          state: armed_home
+      - from: "23:00:00"
+        to: "24:00:00"
+        data:
+          state: armed_night
