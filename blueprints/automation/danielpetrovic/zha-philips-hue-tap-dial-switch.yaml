@@ -12,7 +12,7 @@ blueprint:
   domain: automation
   homeassistant:
     min_version: 2024.10.0
-  source_url: https://raw.githubusercontent.com/danielpetrovic/home-assistant-config/refs/heads/main/blueprints/automation/danielpetrovic/zha-philips-hue-tap-dial-switch.yaml
+  source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/zha-philips-hue-tap-dial-switch.yaml
   input:
     remote:
       name: Philips Hue Tap Dial Switch
