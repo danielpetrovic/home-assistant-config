@@ -11,6 +11,49 @@ alarm_control_panel:
     armed_night:
       arming_time: 0
       delay_time: 20
+input_text:
+  alarm_code_main:
+    name: Alarm Code Main
+    icon: mdi:dialpad
+    min: 4
+    max: 8
+    mode: password
+    pattern: "[0-9]"
+  alarm_code_keypad:
+    name: Alarm Code Keypad
+    icon: mdi:dialpad
+    min: 4
+    max: 8
+    mode: password
+    pattern: "[0-9]"
+  alarm_code_user_1:
+    name: Alarm Code User 1
+    icon: mdi:dialpad
+    min: 4
+    max: 8
+    mode: password
+    pattern: "[0-9]"
+  alarm_code_user_2:
+    name: Alarm Code User 2
+    icon: mdi:dialpad
+    min: 4
+    max: 8
+    mode: password
+    pattern: "[0-9]"
+  alarm_code_user_3:
+    name: Alarm Code User 3
+    icon: mdi:dialpad
+    min: 4
+    max: 8
+    mode: password
+    pattern: "[0-9]"
+  alarm_code_custom_1:
+    name: Alarm Code Custom 1
+    icon: mdi:dialpad
+    min: 4
+    max: 8
+    mode: password
+    pattern: "[0-9]"
 schedule:
   alarm:
     name: "Alarm"

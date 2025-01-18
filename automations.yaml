@@ -3964,7 +3964,7 @@
       - action: alarm_control_panel.alarm_arm_away
         alias: Keypad
         data:
-          code: '4827'
+          code: '{{ states(''input_text.alarm_code_keypad'') }}'
         target:
           entity_id:
           - alarm_control_panel.keypad
@@ -4003,7 +4003,7 @@
       - action: alarm_control_panel.alarm_disarm
         alias: Keypad
         data:
-          code: '4827'
+          code: '{{ states(''input_text.alarm_code_keypad'') }}'
         target:
           entity_id:
           - alarm_control_panel.keypad
@@ -4042,7 +4042,7 @@
       - action: alarm_control_panel.alarm_arm_night
         alias: Keypad
         data:
-          code: '4827'
+          code: '{{ states(''input_text.alarm_code_keypad'') }}'
         target:
           entity_id:
           - alarm_control_panel.keypad
@@ -4103,7 +4103,7 @@
       - action: alarm_control_panel.alarm_disarm
         alias: Keypad
         data:
-          code: '4827'
+          code: '{{ states(''input_text.alarm_code_keypad'') }}'
         target:
           entity_id:
           - alarm_control_panel.keypad
