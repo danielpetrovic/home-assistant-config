@@ -2,7 +2,6 @@ input_text:
   badkamer_knop_last_pressed:
     name: Badkamer Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -10,7 +9,6 @@ input_text:
   eettafel_knop_last_pressed:
     name: Eettafel Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -18,7 +16,6 @@ input_text:
   entree_knop_last_pressed:
     name: Entree Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -26,7 +23,6 @@ input_text:
   gameroom_bureau_knop_last_pressed:
     name: Gameroom Bureau Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -34,7 +30,6 @@ input_text:
   gameroom_knop_last_pressed:
     name: Gameroom Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -42,7 +37,6 @@ input_text:
   gang_knop_last_pressed:
     name: Gang Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -50,7 +44,6 @@ input_text:
   kantoor_knop_last_pressed:
     name: Kantoor Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -58,7 +51,6 @@ input_text:
   keuken_knop_last_pressed:
     name: Keuken Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -66,7 +58,6 @@ input_text:
   sauna_knop_last_pressed:
     name: Sauna Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -74,7 +65,6 @@ input_text:
   schuur_knop_last_pressed:
     name: Schuur Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -82,7 +72,6 @@ input_text:
   slaapkamer_alex_knop_last_pressed:
     name: Slaapkamer Alex Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -90,7 +79,6 @@ input_text:
   slaapkamer_deni_knop_last_pressed:
     name: Slaapkamer Deni Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -98,7 +86,6 @@ input_text:
   slaapkamer_knop_last_pressed:
     name: Slaapkamer Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -106,7 +93,6 @@ input_text:
   toilet_knop_last_pressed:
     name: Toilet Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
@@ -114,7 +100,6 @@ input_text:
   woonkamer_knop_last_pressed:
     name: Woonkamer Knop Last Pressed
     icon: mdi:knob
-    initial: "1"
     min: 0
     max: 1
     mode: text
