@@ -1468,13 +1468,14 @@ music_home:
     metadata: {}
     data:
       enqueue: replace_next
+      media_type: playlist
+      radio_mode: false
       media_id:
       - Onmisbare jaren 10-hits
       - Hits uit de jaren 00 essentials
       - Jaren 90 hits essentials
       - Jaren 80 hits essentials
-      media_type: playlist
-      radio_mode: true
+      - Eurovision
     target:
       entity_id: media_player.slaapkamer
   - action: media_player.media_play
