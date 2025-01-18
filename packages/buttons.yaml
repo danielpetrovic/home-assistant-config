@@ -1,0 +1,121 @@
+input_text:
+  badkamer_knop_last_pressed:
+    name: Badkamer Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  eettafel_knop_last_pressed:
+    name: Eettafel Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  entree_knop_last_pressed:
+    name: Entree Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  gameroom_bureau_knop_last_pressed:
+    name: Gameroom Bureau Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  gameroom_knop_last_pressed:
+    name: Gameroom Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  gang_knop_last_pressed:
+    name: Gang Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  kantoor_knop_last_pressed:
+    name: Kantoor Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  keuken_knop_last_pressed:
+    name: Keuken Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  sauna_knop_last_pressed:
+    name: Sauna Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  schuur_knop_last_pressed:
+    name: Schuur Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  slaapkamer_alex_knop_last_pressed:
+    name: Slaapkamer Alex Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  slaapkamer_deni_knop_last_pressed:
+    name: Slaapkamer Deni Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  slaapkamer_knop_last_pressed:
+    name: Slaapkamer Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  toilet_knop_last_pressed:
+    name: Toilet Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  woonkamer_knop_last_pressed:
+    name: Woonkamer Knop Last Pressed
+    icon: mdi:knob
+    initial: "1"
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
