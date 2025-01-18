@@ -4725,3 +4725,32 @@
           - light.eettafel_lamp_onder
           - light.woonkamer_lamp_onder
   mode: restart
+- id: '1737207862136'
+  alias: Alarm - Blueprint
+  description: ''
+  use_blueprint:
+    path: danielpetrovic/zha-alarm-system-with-keypad.yaml
+    input:
+      alarm_control_panel_main: alarm_control_panel.alarm
+      alarm_control_panel_keypad: alarm_control_panel.keypad
+      alarm_code_main: input_text.alarm_code_main
+      alarm_code_keypad: input_text.alarm_code_keypad
+      alarm_sensor_away:
+      - binary_sensor.dakterras_deursensor_contact
+      - binary_sensor.entree_deursensor_contact
+      - binary_sensor.tuin_deursensor_contact
+      - binary_sensor.woonkamer_raamsensor_contact
+      alarm_sensor_night:
+      - binary_sensor.dakterras_deursensor_contact
+      - binary_sensor.entree_deursensor_contact
+      - binary_sensor.tuin_deursensor_contact
+      - binary_sensor.woonkamer_raamsensor_contact
+      alarm_sensor_always:
+      - binary_sensor.entree_brandmelder_smoke
+      - binary_sensor.gameroom_brandmelder_smoke
+      - binary_sensor.gang_brandmelder_smoke
+      - binary_sensor.keuken_vochtmelder_water_leak
+      - binary_sensor.schuur_brandmelder_smoke
+      - binary_sensor.wasruimte_vochtmelder_water_leak
+      alarm_zone: zone.home
+      alarm_person: []
