@@ -1,6 +1,6 @@
 blueprint:
   name: ZHA - Philips Hue Tap Dial Switch (RDM002)
-  author: DanielDeni
+  author: danielpetrovic
   description:
     "# Philips Hue Tap Dial Switch\n\n This blueprint enables comprehensive
     configuration of a Philips Hue Tap Dial Switch. Depending on the mode you select

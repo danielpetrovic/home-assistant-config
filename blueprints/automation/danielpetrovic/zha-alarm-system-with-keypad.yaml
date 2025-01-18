@@ -1,0 +1,517 @@
+blueprint:
+  name: Alarm System with (ZHA) Keypad support
+  author: danielpetrovic
+  description:
+    "# Alarm System with (ZHA) Keypad support\n\n This blueprint enables a custom Alarm system
+    with the possibility to sync states with a second panel like a phsyical keypad connected to ZHA\n "
+  domain: automation
+  source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/zha-alarm-system-with-keypad.yaml
+  input:
+    alarm_control_panel_main:
+      name: Set your Main alarm control panel and Home zone.
+      description: Here you need to set the main alarm control panel. If you don't have a physical or secondary keypad, you can just set this one.
+      icon: mdi:shield
+      collapsed: false
+      input:
+        alarm_control_panel_main:
+          name: Alarm Control Panel (Main)
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - alarm_control_panel
+              multiple: false
+        alarm_code_main:
+          name: Alarm Code Main (Text Helper)
+          description: Create an input text helper within Home Assistant to contain the Alarm Code of the Main .
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_text
+              multiple: false
+        alarm_zone:
+          name: Home Zone
+          default: []
+          description: Set the Zone you want to use as your Home location. This is used to automatically set the Alarm to Away mode when all persons have left the Home.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - zone
+              multiple: false
+    alarm_control_panel_keypad:
+      name: Set your secondary alarm control panel, like a physical keypad.
+      description: Here you need to set the secondary alarm control panel. This can be a physical or virtual keypad.
+      icon: mdi:dialpad
+      collapsed: true
+      input:
+        alarm_control_panel_keypad:
+          name: Alarm Control Panel (Keypad)
+          default: []
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - alarm_control_panel
+              multiple: false
+        alarm_code_keypad:
+          name: Alarm Code Keypad (Text Helper)
+          default: []
+          description: Create an input text helper within Home Assistant to containt the Alarm Code of the Keypad alarm_control_panel.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_text
+              multiple: false
+    alarm_sensor_always:
+      name: Sensors to always check, independent of which mode the alarm is set to.
+      icon: mdi:shield-alert
+      collapsed: true
+      input:
+        alarm_sensor_always:
+          name: Sensors
+          default: []
+          description: Here you can set the Sensors that should always send a notification.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - binary_sensor
+                  device_class:
+                    - carbon_monoxide
+                    - gas
+                    - heat
+                    - moisture
+                    - smoke
+              multiple: true
+    alarm_sensor_away:
+      name: Sensors to check when the alarm is set to Away mode.
+      icon: mdi:shield-lock
+      collapsed: true
+      input:
+        alarm_sensor_away:
+          name: Sensors
+          default: []
+          description: Here you can set the Sensors that should trigger the alarm when it is set to Away mode. If you don't set any sensors here, the alarm will not trigger when set to this mode.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - binary_sensor
+                  device_class:
+                    - door
+                    - motion
+                    - occupancy
+                    - opening
+                    - presence
+                    - window
+              multiple: true
+    alarm_sensor_home:
+      name: Sensors to check when the alarm is set to Home mode.
+      icon: mdi:shield-home
+      collapsed: true
+      input:
+        alarm_sensor_home:
+          name: Sensors
+          default: []
+          description: Here you can set the Sensors that should trigger the alarm when it is set to Home mode. If you don't set any sensors here, the alarm will not trigger when set to this mode.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - binary_sensor
+                  device_class:
+                    - door
+                    - motion
+                    - occupancy
+                    - opening
+                    - presence
+                    - window
+              multiple: true
+    alarm_sensor_night:
+      name: Sensors to check when the alarm is set to Night mode.
+      icon: mdi:shield-moon
+      collapsed: true
+      input:
+        alarm_sensor_night:
+          name: Sensors
+          default: []
+          description: Here you can set the Sensors that should trigger the alarm when it is set to Night mode. If you don't set any sensors here, the alarm will not trigger when set to this mode.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - binary_sensor
+                  device_class:
+                    - door
+                    - motion
+                    - occupancy
+                    - opening
+                    - presence
+                    - window
+              multiple: true
+mode: restart
+max_exceeded: silent
+triggers:
+  - trigger: state
+    entity_id: !input alarm_control_panel_main
+    to: null
+    alias: alarm_mode_changes
+    id: alarm_mode_changes
+  - trigger: state
+    entity_id: !input alarm_sensor_away
+    to: "on"
+    alias: alarm_sensor_away
+    id: alarm_sensor_away
+  - trigger: state
+    entity_id: !input alarm_sensor_always
+    to: "on"
+    alias: alarm_sensor_always
+    id: alarm_sensor_always
+  - trigger: state
+    entity_id:
+      - schedule.alarm
+    attribute: state
+    alias: alarm_schedule
+    id: alarm_schedule
+  - trigger: numeric_state
+    entity_id: !input alarm_zone
+    below: 1
+    alias: geofence_away
+    id: geofence_away
+action:
+  - variables:
+      alarm_control_panel_main: !input alarm_control_panel_main
+      alarm_code_main: !input alarm_code_main
+      alarm_zone: !input alarm_zone
+      alarm_control_panel_keypad: !input alarm_control_panel_keypad
+      alarm_code_keypad: !input alarm_code_keypad
+      alarm_sensor_always: !input alarm_sensor_always
+      alarm_sensor_away: !input alarm_sensor_away
+      alarm_sensor_home: !input alarm_sensor_home
+      alarm_sensor_night: !input alarm_sensor_night
+  - alias: Alarm modes
+    choose:
+      - conditions:
+          - condition: trigger
+            id: alarm_mode_changes
+          - condition: state
+            entity_id: alarm_control_panel.alarm
+            state: armed_away
+        alias: alarm_armed_away
+        sequence:
+          - action: input_boolean.turn_off
+            alias: Set away
+            target:
+              entity_id: input_boolean.home
+          - action: notify.notify
+            alias: Notify
+            data:
+              message: Alarm has been set to Away.
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+                  - action: STOP_SIREN
+                    title: Stop Sirens
+          - action: alarm_control_panel.alarm_arm_away
+            alias: Keypad
+            data:
+              code: "{{ states('input_text.alarm_code_keypad') }}"
+            target:
+              entity_id:
+                - alarm_control_panel.keypad
+          - action: script.music_away
+      - conditions:
+          - condition: trigger
+            id: alarm_mode_changes
+          - condition: state
+            entity_id: alarm_control_panel.alarm
+            state: armed_home
+        alias: alarm_armed_home
+        sequence:
+          - action: input_boolean.turn_on
+            alias: Set home
+            target:
+              entity_id: input_boolean.home
+          - action: notify.notify
+            alias: Notify
+            data:
+              message: Alarm has been set to Home.
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+                  - action: STOP_SIREN
+                    title: Stop Sirens
+          - action: alarm_control_panel.alarm_disarm
+            alias: Keypad
+            data:
+              code: "{{ states('input_text.alarm_code_keypad') }}"
+            target:
+              entity_id:
+                - alarm_control_panel.keypad
+          - action: script.music_home
+      - conditions:
+          - condition: trigger
+            id: alarm_mode_changes
+          - condition: state
+            entity_id: alarm_control_panel.alarm
+            state: armed_night
+        alias: alarm_armed_night
+        sequence:
+          - action: input_boolean.turn_on
+            alias: Set home
+            target:
+              entity_id: input_boolean.home
+          - action: notify.notify
+            alias: Notify
+            data:
+              message: Alarm has been set to Night.
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+                  - action: STOP_SIREN
+                    title: Stop Sirens
+          - action: alarm_control_panel.alarm_arm_night
+            alias: Keypad
+            data:
+              code: "{{ states('input_text.alarm_code_keypad') }}"
+            target:
+              entity_id:
+                - alarm_control_panel.keypad
+          - action: script.music_night
+      - conditions:
+          - condition: trigger
+            id: alarm_mode_changes
+          - condition: state
+            entity_id: alarm_control_panel.alarm
+            state: arming
+        alias: alarm_arming
+        sequence:
+          - action: notify.notify
+            alias: Notify
+            data:
+              message: Alarm is arming, leave the house.
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+                  - action: STOP_SIREN
+                    title: Stop Sirens
+          - action: alarm_control_panel.alarm_trigger
+            alias: Keypad
+            target:
+              entity_id: alarm_control_panel.keypad
+      - conditions:
+          - condition: trigger
+            id: alarm_mode_changes
+          - condition: state
+            entity_id: alarm_control_panel.alarm
+            state: disarmed
+        alias: alarm_disarmed
+        sequence:
+          - action: notify.notify
+            alias: Notify
+            data:
+              message: Alarm has been Disarmed.
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+                  - action: STOP_SIREN
+                    title: Stop Sirens
+          - action: alarm_control_panel.alarm_disarm
+            alias: Keypad
+            data:
+              code: "{{ states('input_text.alarm_code_keypad') }}"
+            target:
+              entity_id:
+                - alarm_control_panel.keypad
+      - conditions:
+          - condition: trigger
+            id: alarm_sensor_away
+          - condition: or
+            conditions:
+              - condition: state
+                entity_id: alarm_control_panel.alarm
+                state: armed_away
+              - condition: state
+                entity_id: alarm_control_panel.alarm
+                state: armed_night
+        alias: alarm_sensor_away
+        sequence:
+          - action: alarm_control_panel.alarm_trigger
+            alias: Trigger Alarm
+            target:
+              entity_id: alarm_control_panel.alarm
+          - action: notify.notify
+            alias: Notify
+            data:
+              message: >-
+                Alert! {{ trigger.to_state.name }} has been opened, disarm the
+                alarm before the siren starts!
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+                  - action: STOP_SIREN
+                    title: Stop Sirens
+                entity_id: camera.entree
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+          - action: alarm_control_panel.alarm_trigger
+            alias: Keypad
+            target:
+              entity_id: alarm_control_panel.keypad
+      - conditions:
+          - condition: trigger
+            id: alarm_mode_changes
+          - condition: state
+            entity_id: alarm_control_panel.alarm
+            state: triggered
+        alias: alarm_triggered
+        sequence:
+          - alias: Notify
+            action: notify.notify
+            data:
+              message: Het alarm gaat af!
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+                  - action: STOP_SIREN
+                    title: Stop Sirens
+                entity_id: camera.entree
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+          - action: alarm_control_panel.alarm_trigger
+            alias: Keypad
+            target:
+              entity_id: alarm_control_panel.keypad
+          - action: script.lights_scene_create
+          - alias: Alarm detected
+            repeat:
+              sequence:
+                - action: script.lights_red
+              while:
+                - condition: state
+                  entity_id: alarm_control_panel.alarm
+                  state: triggered
+          - action: script.lights_scene_restore
+  - alias: Alarm binary
+    choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - alarm_sensor_always
+        alias: alarm_sensor_always
+        sequence:
+          - action: notify.notify
+            alias: Notify
+            data:
+              message: Smoke detected by {{ trigger.to_state.name }}!
+              data:
+                actions:
+                  - action: STOP_SIREN
+                    title: Stop sirens
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+          - action: script.lights_scene_create
+          - alias: Smoke detected
+            repeat:
+              sequence:
+                - action: script.lights_orange
+              while:
+                - condition: state
+                  entity_id: binary_sensor.alarm_smoke
+                  state: "on"
+          - action: script.lights_scene_restore
+  - alias: Alarm schedule
+    choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - alarm_schedule
+          - condition: numeric_state
+            entity_id: zone.home
+            above: 0
+            alias: at home
+          - condition: state
+            entity_id: schedule.alarm
+            attribute: state
+            state: armed_home
+        alias: At home, day
+        sequence:
+          - target:
+              entity_id:
+                - alarm_control_panel.alarm
+            action: alarm_control_panel.alarm_arm_home
+      - conditions:
+          - condition: trigger
+            id:
+              - alarm_schedule
+          - condition: numeric_state
+            entity_id: zone.home
+            above: 0
+            alias: at home
+          - condition: state
+            entity_id: schedule.alarm
+            attribute: state
+            state: armed_night
+        alias: At home, night
+        sequence:
+          - target:
+              entity_id:
+                - alarm_control_panel.alarm
+            action: alarm_control_panel.alarm_arm_night
+      - conditions:
+          - condition: trigger
+            id:
+              - geofence_away
+        alias: Not at home
+        sequence:
+          - action: alarm_control_panel.alarm_arm_away
+            target:
+              entity_id:
+                - alarm_control_panel.alarm
