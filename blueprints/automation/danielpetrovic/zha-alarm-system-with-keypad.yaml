@@ -51,7 +51,7 @@ blueprint:
                     - zone
               multiple: false
         home_state:
-          name: Home Helper
+          name: Home State (Toggle Helper)
           default: []
           description: Create a Toggle helper within Home Assistant to automatically change Home mode depending on state of Alarm away mode.
           selector:
