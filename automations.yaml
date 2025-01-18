@@ -3478,7 +3478,7 @@
       - action: script.tuin_open
         metadata: {}
         data: {}
-      button_3_mode: Media
+      button_3_mode: Lights
       button_3_lights:
       - light.eettafel_lamp_onder
       button_4_mode: Custom
