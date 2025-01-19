@@ -3881,455 +3881,6 @@
       - action: script.schuur_dicht
         metadata: {}
         data: {}
-- id: '1736968878021'
-  alias: Alarm
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - alarm_control_panel.alarm
-    to:
-    alias: alarm_mode_changes
-    id: alarm_mode_changes
-  - trigger: state
-    entity_id:
-    - binary_sensor.dakterras_deursensor_contact
-    - binary_sensor.entree_deursensor_contact
-    - binary_sensor.tuin_deursensor_contact
-    - binary_sensor.woonkamer_raamsensor_contact
-    to: 'on'
-    alias: alarm_entry
-    id: alarm_entry
-  - trigger: state
-    entity_id:
-    - binary_sensor.entree_brandmelder_smoke
-    - binary_sensor.gang_brandmelder_smoke
-    - binary_sensor.gameroom_brandmelder_smoke
-    - binary_sensor.schuur_brandmelder_smoke
-    to: 'on'
-    alias: alarm_smoke
-    id: alarm_smoke
-  - trigger: state
-    entity_id:
-    - binary_sensor.keuken_vochtmelder_water_leak
-    - binary_sensor.wasruimte_vochtmelder_water_leak
-    to: 'on'
-    alias: alarm_moisture
-    id: alarm_moisture
-  - trigger: state
-    entity_id:
-    - schedule.alarm
-    attribute: state
-    alias: alarm_schedule
-    id: alarm_schedule
-  - trigger: numeric_state
-    entity_id:
-    - zone.home
-    below: 1
-    alias: geofence_away
-    id: geofence_away
-  conditions: []
-  actions:
-  - alias: Alarm modes
-    choose:
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: armed_away
-      alias: alarm_armed_away
-      sequence:
-      - action: input_boolean.turn_off
-        alias: Set away
-        data: {}
-        metadata: {}
-        target:
-          entity_id: input_boolean.home
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Alarm has been set to Away.
-          data:
-            actions:
-            - action: DISARM
-              title: Alarm Disarm
-            - action: ARM_HOME
-              title: Alarm Home
-            - action: ARM_NIGHT
-              title: Alarm Night
-            - action: STOP_SIREN
-              title: Stop Sirens
-        metadata: {}
-      - action: alarm_control_panel.alarm_arm_away
-        alias: Keypad
-        data:
-          code: '{{ states(''input_text.alarm_code_keypad'') }}'
-        target:
-          entity_id:
-          - alarm_control_panel.keypad
-      - action: script.music_away
-        data: {}
-        metadata: {}
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: armed_home
-      alias: alarm_armed_home
-      sequence:
-      - action: input_boolean.turn_on
-        alias: Set home
-        data: {}
-        metadata: {}
-        target:
-          entity_id: input_boolean.home
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Alarm has been set to Home.
-          data:
-            actions:
-            - action: DISARM
-              title: Alarm Disarm
-            - action: ARM_HOME
-              title: Alarm Home
-            - action: ARM_NIGHT
-              title: Alarm Night
-            - action: STOP_SIREN
-              title: Stop Sirens
-        metadata: {}
-      - action: alarm_control_panel.alarm_disarm
-        alias: Keypad
-        data:
-          code: '{{ states(''input_text.alarm_code_keypad'') }}'
-        target:
-          entity_id:
-          - alarm_control_panel.keypad
-      - action: script.music_home
-        data: {}
-        metadata: {}
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: armed_night
-      alias: alarm_armed_night
-      sequence:
-      - action: input_boolean.turn_on
-        alias: Set home
-        data: {}
-        metadata: {}
-        target:
-          entity_id: input_boolean.home
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Alarm has been set to Night.
-          data:
-            actions:
-            - action: DISARM
-              title: Alarm Disarm
-            - action: ARM_HOME
-              title: Alarm Home
-            - action: ARM_NIGHT
-              title: Alarm Night
-            - action: STOP_SIREN
-              title: Stop Sirens
-        metadata: {}
-      - action: alarm_control_panel.alarm_arm_night
-        alias: Keypad
-        data:
-          code: '{{ states(''input_text.alarm_code_keypad'') }}'
-        target:
-          entity_id:
-          - alarm_control_panel.keypad
-      - action: script.music_night
-        data: {}
-        metadata: {}
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: arming
-      alias: alarm_arming
-      sequence:
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Alarm is arming, leave the house.
-          data:
-            actions:
-            - action: DISARM
-              title: Alarm Disarm
-            - action: ARM_HOME
-              title: Alarm Home
-            - action: ARM_NIGHT
-              title: Alarm Night
-            - action: STOP_SIREN
-              title: Stop Sirens
-        metadata: {}
-      - action: alarm_control_panel.alarm_trigger
-        alias: Keypad
-        data: {}
-        target:
-          entity_id: alarm_control_panel.keypad
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: disarmed
-      alias: alarm_disarmed
-      sequence:
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Alarm has been Disarmed.
-          data:
-            actions:
-            - action: DISARM
-              title: Alarm Disarm
-            - action: ARM_HOME
-              title: Alarm Home
-            - action: ARM_NIGHT
-              title: Alarm Night
-            - action: STOP_SIREN
-              title: Stop Sirens
-        metadata: {}
-      - action: alarm_control_panel.alarm_disarm
-        alias: Keypad
-        data:
-          code: '{{ states(''input_text.alarm_code_keypad'') }}'
-        target:
-          entity_id:
-          - alarm_control_panel.keypad
-    - conditions:
-      - condition: trigger
-        id: alarm_entry
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: alarm_control_panel.alarm
-          state: armed_away
-        - condition: state
-          entity_id: alarm_control_panel.alarm
-          state: armed_night
-      alias: alarm_entry
-      sequence:
-      - action: alarm_control_panel.alarm_trigger
-        alias: Trigger Alarm
-        data: {}
-        metadata: {}
-        target:
-          entity_id: alarm_control_panel.alarm
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Alert! {{ trigger.to_state.name }} has been opened, disarm the
-            alarm before the siren starts!
-          data:
-            actions:
-            - action: DISARM
-              title: Alarm Disarm
-            - action: ARM_HOME
-              title: Alarm Home
-            - action: ARM_NIGHT
-              title: Alarm Night
-            - action: STOP_SIREN
-              title: Stop Sirens
-            entity_id: camera.entree
-            push:
-              sound:
-                name: default
-                critical: 1
-                volume: 1
-        metadata: {}
-      - action: alarm_control_panel.alarm_trigger
-        alias: Keypad
-        data: {}
-        target:
-          entity_id: alarm_control_panel.keypad
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: triggered
-      alias: alarm_triggered
-      sequence:
-      - alias: Notify
-        action: notify.notify
-        data:
-          message: Het alarm gaat af!
-          data:
-            actions:
-            - action: DISARM
-              title: Alarm Disarm
-            - action: ARM_HOME
-              title: Alarm Home
-            - action: ARM_NIGHT
-              title: Alarm Night
-            - action: STOP_SIREN
-              title: Stop Sirens
-            entity_id: camera.entree
-            push:
-              sound:
-                name: default
-                critical: 1
-                volume: 1
-        metadata: {}
-      - action: alarm_control_panel.alarm_trigger
-        alias: Keypad
-        data: {}
-        target:
-          entity_id: alarm_control_panel.keypad
-      - action: script.lights_scene_create
-        metadata: {}
-        data: {}
-      - alias: Alarm detected
-        repeat:
-          sequence:
-          - action: script.lights_red
-            metadata: {}
-            data: {}
-          while:
-          - condition: state
-            entity_id: alarm_control_panel.alarm
-            state: triggered
-      - action: script.lights_scene_restore
-        metadata: {}
-        data: {}
-  - alias: Alarm binary
-    choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - alarm_smoke
-      alias: alarm_smoke
-      sequence:
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Smoke detected by {{ trigger.to_state.name }}!
-          data:
-            actions:
-            - action: STOP_SIREN
-              title: Stop sirens
-            push:
-              sound:
-                name: default
-                critical: 1
-                volume: 1
-        metadata: {}
-      - action: script.lights_scene_create
-        data: {}
-        metadata: {}
-      - alias: Smoke detected
-        repeat:
-          sequence:
-          - action: script.lights_orange
-            metadata: {}
-            data: {}
-          while:
-          - condition: state
-            entity_id: binary_sensor.alarm_smoke
-            state: 'on'
-      - action: script.lights_scene_restore
-        data: {}
-        metadata: {}
-    - conditions:
-      - condition: trigger
-        id:
-        - alarm_moisture
-      alias: alarm_moisture
-      sequence:
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Water leak detected by {{ trigger.to_state.name }}!
-          data:
-            actions:
-            - action: STOP_SIREN
-              title: Stop sirens
-            push:
-              sound:
-                name: default
-                critical: 1
-                volume: 1
-        metadata: {}
-      - action: script.lights_scene_create
-        data: {}
-        metadata: {}
-      - alias: Moisture detected
-        repeat:
-          sequence:
-          - action: script.lights_blue
-            metadata: {}
-            data: {}
-          while:
-          - condition: state
-            entity_id: binary_sensor.alarm_moisture
-            state: 'on'
-      - action: script.lights_scene_restore
-        data: {}
-        metadata: {}
-  - alias: Alarm schedule
-    choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - alarm_schedule
-      - condition: numeric_state
-        entity_id: zone.home
-        above: 0
-        alias: at home
-      - condition: state
-        entity_id: schedule.alarm
-        attribute: state
-        state: armed_home
-      sequence:
-      - target:
-          entity_id:
-          - alarm_control_panel.alarm
-        data: {}
-        action: alarm_control_panel.alarm_arm_home
-      alias: At home, day
-    - conditions:
-      - condition: trigger
-        id:
-        - alarm_schedule
-      - condition: numeric_state
-        entity_id: zone.home
-        above: 0
-        alias: at home
-      - condition: state
-        entity_id: schedule.alarm
-        attribute: state
-        state: armed_night
-      sequence:
-      - target:
-          entity_id:
-          - alarm_control_panel.alarm
-        data: {}
-        action: alarm_control_panel.alarm_arm_night
-      alias: At home, night
-    - conditions:
-      - condition: trigger
-        id:
-        - geofence_away
-      sequence:
-      - metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - alarm_control_panel.alarm
-        action: alarm_control_panel.alarm_arm_away
-      alias: Not at home
-  mode: restart
 - id: '1737037700345'
   alias: Timed
   description: ''
@@ -4725,33 +4276,723 @@
           - light.eettafel_lamp_onder
           - light.woonkamer_lamp_onder
   mode: restart
-- id: '1737207862136'
-  alias: Alarm - Blueprint
+- id: '1737312433246'
+  alias: Alarm - Geofence
+  description: ''
+  triggers:
+  - alias: alarm_mode_changes
+    trigger: state
+    entity_id:
+    - alarm_control_panel.alarm
+    id: alarm_mode_changes
+  - trigger: state
+    entity_id:
+    - binary_sensor.dakterras_deursensor_contact
+    - binary_sensor.entree_deursensor_contact
+    - binary_sensor.tuin_deursensor_contact
+    - binary_sensor.woonkamer_raamsensor_contact
+    to: 'on'
+    alias: alarm_entry
+    id: alarm_entry
+  - trigger: state
+    entity_id:
+    - binary_sensor.entree_brandmelder_smoke
+    - binary_sensor.gang_brandmelder_smoke
+    - binary_sensor.gameroom_brandmelder_smoke
+    - binary_sensor.schuur_brandmelder_smoke
+    to: 'on'
+    alias: alarm_smoke
+    id: alarm_smoke
+  - trigger: state
+    entity_id:
+    - binary_sensor.keuken_vochtmelder_water_leak
+    - binary_sensor.wasruimte_vochtmelder_water_leak
+    to: 'on'
+    alias: alarm_moisture
+    id: alarm_moisture
+  - trigger: state
+    entity_id:
+    - schedule.alarm
+    attribute: state
+    alias: alarm_schedule
+    id: alarm_schedule
+  - trigger: numeric_state
+    entity_id:
+    - zone.home
+    below: 1
+    alias: geofence_away
+    id: geofence_away
+  conditions: []
+  actions:
+  - alias: Alarm modes
+    choose:
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: armed_away
+      alias: alarm_armed_away
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm has been set to Away.
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: armed_home
+      alias: alarm_armed_home
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm has been set to Home.
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: armed_night
+      alias: alarm_armed_night
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm has been set to Night.
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: arming
+      alias: alarm_arming
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm is arming, leave the house.
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: disarmed
+      alias: alarm_disarmed
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm has been Disarmed.
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_entry
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: alarm_control_panel.alarm
+          state: armed_away
+        - condition: state
+          entity_id: alarm_control_panel.alarm
+          state: armed_night
+      alias: alarm_entry
+      sequence:
+      - action: alarm_control_panel.alarm_trigger
+        alias: Trigger Alarm
+        data: {}
+        metadata: {}
+        target:
+          entity_id: alarm_control_panel.alarm
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alert! {{ trigger.to_state.name }} has been opened, disarm the
+            alarm before the siren starts!
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+            entity_id: camera.entree
+            push:
+              sound:
+                name: default
+                critical: 1
+                volume: 1
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: triggered
+      alias: alarm_triggered
+      sequence:
+      - alias: Notify
+        action: notify.notify
+        data:
+          message: Het alarm gaat af!
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+            entity_id: camera.entree
+            push:
+              sound:
+                name: default
+                critical: 1
+                volume: 1
+        metadata: {}
+  - alias: Alarm binary
+    choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - alarm_smoke
+      alias: alarm_smoke
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Smoke detected by {{ trigger.to_state.name }}!
+          data:
+            actions:
+            - action: STOP_SIREN
+              title: Stop sirens
+            push:
+              sound:
+                name: default
+                critical: 1
+                volume: 1
+        metadata: {}
+      - action: script.lights_scene_create
+        data: {}
+        metadata: {}
+      - alias: Smoke detected
+        repeat:
+          sequence:
+          - action: script.lights_orange
+            metadata: {}
+            data: {}
+          while:
+          - condition: state
+            entity_id: binary_sensor.alarm_smoke
+            state: 'on'
+      - action: script.lights_scene_restore
+        data: {}
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - alarm_moisture
+      alias: alarm_moisture
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Water leak detected by {{ trigger.to_state.name }}!
+          data:
+            actions:
+            - action: STOP_SIREN
+              title: Stop sirens
+            push:
+              sound:
+                name: default
+                critical: 1
+                volume: 1
+        metadata: {}
+      - action: script.lights_scene_create
+        data: {}
+        metadata: {}
+      - alias: Moisture detected
+        repeat:
+          sequence:
+          - action: script.lights_blue
+            metadata: {}
+            data: {}
+          while:
+          - condition: state
+            entity_id: binary_sensor.alarm_moisture
+            state: 'on'
+      - action: script.lights_scene_restore
+        data: {}
+        metadata: {}
+    enabled: false
+  - alias: Alarm schedule
+    choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - alarm_schedule
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
+        alias: at home
+      - condition: state
+        entity_id: schedule.alarm
+        attribute: state
+        state: armed_home
+      sequence:
+      - target:
+          entity_id:
+          - alarm_control_panel.alarm
+        data: {}
+        action: alarm_control_panel.alarm_arm_home
+      alias: At home, day
+    - conditions:
+      - condition: trigger
+        id:
+        - alarm_schedule
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
+        alias: at home
+      - condition: state
+        entity_id: schedule.alarm
+        attribute: state
+        state: armed_night
+      sequence:
+      - target:
+          entity_id:
+          - alarm_control_panel.alarm
+        data: {}
+        action: alarm_control_panel.alarm_arm_night
+      alias: At home, night
+    - conditions:
+      - condition: trigger
+        id:
+        - geofence_away
+      sequence:
+      - metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - alarm_control_panel.alarm
+        action: alarm_control_panel.alarm_arm_away
+      alias: Not at home
+    enabled: false
+  mode: restart
+- id: '1737312483709'
+  alias: Alarm - Notify
+  description: ''
+  triggers:
+  - alias: alarm_mode_changes
+    trigger: state
+    entity_id:
+    - alarm_control_panel.alarm
+    id: alarm_mode_changes
+  - trigger: state
+    entity_id:
+    - binary_sensor.dakterras_deursensor_contact
+    - binary_sensor.entree_deursensor_contact
+    - binary_sensor.tuin_deursensor_contact
+    - binary_sensor.woonkamer_raamsensor_contact
+    to: 'on'
+    alias: alarm_entry
+    id: alarm_entry
+  conditions: []
+  actions:
+  - alias: Alarm Sync
+    choose:
+    - alias: Alarm Main to Alarm Keypad sync
+      conditions:
+      - condition: trigger
+        id: alarm_main
+      - condition: template
+        value_template: '{{ alarm_keypad != '''' }}'
+      sequence:
+      - variables:
+          arm_action: "{% if is_state(alarm_main, 'armed_away') %}\n  alarm_control_panel.alarm_arm_away\n{%
+            elif is_state(alarm_main, 'armed_home') %}\n  alarm_control_panel.alarm_arm_home\n{%
+            elif is_state(alarm_main, 'armed_night') %}\n  alarm_control_panel.alarm_arm_night\n{%
+            elif is_state(alarm_main, 'disarmed') %}\n  alarm_control_panel.alarm_disarm\n{%
+            elif is_state(alarm_main, 'triggered') %}\n  alarm_control_panel.alarm_trigger\n{%
+            elif is_state(alarm_main, 'arming') %}\n  alarm_control_panel.alarm_trigger\n{%
+            endif %}\n"
+      - data:
+          code: '{{ alarm_code_keypad_state }}'
+        target:
+          entity_id: '{{ alarm_keypad }}'
+        action: '{{ arm_action }}'
+  - alias: Alarm modes
+    choose:
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: armed_away
+      alias: alarm_armed_away
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm has been set to Away.
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: armed_home
+      alias: alarm_armed_home
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm has been set to Home.
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: armed_night
+      alias: alarm_armed_night
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: arming
+      alias: alarm_arming
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm is arming, leave the house.
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: disarmed
+      alias: alarm_disarmed
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm has been Disarmed.
+    - conditions:
+      - condition: trigger
+        id: alarm_entry
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: alarm_control_panel.alarm
+          state: armed_away
+      alias: alarm_entry
+      sequence:
+      - action: alarm_control_panel.alarm_trigger
+        alias: Trigger Alarm
+        target:
+          entity_id: alarm_control_panel.alarm
+        data: {}
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alert! {{ trigger.to_state.name }} has been opened, disarm the
+            alarm before the siren starts!
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: triggered
+      alias: alarm_triggered
+      sequence:
+      - alias: Notify
+        action: notify.notify
+        data:
+          message: Het alarm gaat af!
+  mode: restart
+- id: '1737312574921'
+  alias: Alarm
   description: ''
   use_blueprint:
     path: danielpetrovic/zha-alarm-system-with-keypad.yaml
     input:
-      alarm_control_panel_main: alarm_control_panel.alarm
-      alarm_code_main: input_text.alarm_code_main
-      alarm_schedule: schedule.alarm
-      alarm_zone: zone.home
-      alarm_control_panel_keypad: alarm_control_panel.keypad
       alarm_code_keypad: input_text.alarm_code_keypad
-      alarm_sensor_away:
-      - binary_sensor.dakterras_deursensor_contact
-      - binary_sensor.entree_deursensor_contact
-      - binary_sensor.tuin_deursensor_contact
-      - binary_sensor.woonkamer_raamsensor_contact
-      alarm_sensor_night:
-      - binary_sensor.dakterras_deursensor_contact
-      - binary_sensor.entree_deursensor_contact
-      - binary_sensor.tuin_deursensor_contact
-      - binary_sensor.woonkamer_raamsensor_contact
-      alarm_sensor_always:
-      - binary_sensor.entree_brandmelder_smoke
-      - binary_sensor.gameroom_brandmelder_smoke
-      - binary_sensor.gang_brandmelder_smoke
-      - binary_sensor.keuken_vochtmelder_water_leak
-      - binary_sensor.schuur_brandmelder_smoke
-      - binary_sensor.wasruimte_vochtmelder_water_leak
-      alarm_script_away: []
+      alarm_main: alarm_control_panel.alarm
+      alarm_code_user:
+      - input_text.alarm_code_user_1
+      alarm_keypad_device: a435712f3dbc11c7dfa9e34c5b6cbc20
+      alarm_keypad: alarm_control_panel.keypad
+- id: '1737312856566'
+  alias: Alarm - Notify Old
+  description: ''
+  triggers:
+  - alias: alarm_mode_changes
+    trigger: state
+    entity_id:
+    - alarm_control_panel.alarm
+    id: alarm_mode_changes
+  - trigger: state
+    entity_id:
+    - binary_sensor.dakterras_deursensor_contact
+    - binary_sensor.entree_deursensor_contact
+    - binary_sensor.tuin_deursensor_contact
+    - binary_sensor.woonkamer_raamsensor_contact
+    to: 'on'
+    alias: alarm_entry
+    id: alarm_entry
+  conditions: []
+  actions:
+  - alias: Alarm modes
+    choose:
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: armed_away
+      alias: alarm_armed_away
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm has been set to Away.
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: armed_home
+      alias: alarm_armed_home
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm has been set to Home.
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: armed_night
+      alias: alarm_armed_night
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm has been set to Night.
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: arming
+      alias: alarm_arming
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm is arming, leave the house.
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: disarmed
+      alias: alarm_disarmed
+      sequence:
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alarm has been Disarmed.
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_entry
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: alarm_control_panel.alarm
+          state: armed_away
+        - condition: state
+          entity_id: alarm_control_panel.alarm
+          state: armed_night
+      alias: alarm_entry
+      sequence:
+      - action: alarm_control_panel.alarm_trigger
+        alias: Trigger Alarm
+        data: {}
+        metadata: {}
+        target:
+          entity_id: alarm_control_panel.alarm
+      - action: notify.notify
+        alias: Notify
+        data:
+          message: Alert! {{ trigger.to_state.name }} has been opened, disarm the
+            alarm before the siren starts!
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+            entity_id: camera.entree
+            push:
+              sound:
+                name: default
+                critical: 1
+                volume: 1
+        metadata: {}
+    - conditions:
+      - condition: trigger
+        id: alarm_mode_changes
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: triggered
+      alias: alarm_triggered
+      sequence:
+      - alias: Notify
+        action: notify.notify
+        data:
+          message: Het alarm gaat af!
+          data:
+            actions:
+            - action: DISARM
+              title: Alarm Disarm
+            - action: ARM_HOME
+              title: Alarm Home
+            - action: ARM_NIGHT
+              title: Alarm Night
+            - action: STOP_SIREN
+              title: Stop Sirens
+            entity_id: camera.entree
+            push:
+              sound:
+                name: default
+                critical: 1
+                volume: 1
+        metadata: {}
+  mode: restart
