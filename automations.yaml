@@ -4640,142 +4640,6 @@
       alias: Not at home
     enabled: false
   mode: restart
-- id: '1737312483709'
-  alias: Alarm - Notify
-  description: ''
-  triggers:
-  - alias: alarm_mode_changes
-    trigger: state
-    entity_id:
-    - alarm_control_panel.alarm
-    id: alarm_mode_changes
-  - trigger: state
-    entity_id:
-    - binary_sensor.dakterras_deursensor_contact
-    - binary_sensor.entree_deursensor_contact
-    - binary_sensor.tuin_deursensor_contact
-    - binary_sensor.woonkamer_raamsensor_contact
-    to: 'on'
-    alias: alarm_entry
-    id: alarm_entry
-  conditions: []
-  actions:
-  - alias: Alarm Sync
-    choose:
-    - alias: Alarm Main to Alarm Keypad sync
-      conditions:
-      - condition: trigger
-        id: alarm_main
-      - condition: template
-        value_template: '{{ alarm_keypad != '''' }}'
-      sequence:
-      - variables:
-          arm_action: "{% if is_state(alarm_main, 'armed_away') %}\n  alarm_control_panel.alarm_arm_away\n{%
-            elif is_state(alarm_main, 'armed_home') %}\n  alarm_control_panel.alarm_arm_home\n{%
-            elif is_state(alarm_main, 'armed_night') %}\n  alarm_control_panel.alarm_arm_night\n{%
-            elif is_state(alarm_main, 'disarmed') %}\n  alarm_control_panel.alarm_disarm\n{%
-            elif is_state(alarm_main, 'triggered') %}\n  alarm_control_panel.alarm_trigger\n{%
-            elif is_state(alarm_main, 'arming') %}\n  alarm_control_panel.alarm_trigger\n{%
-            endif %}\n"
-      - data:
-          code: '{{ alarm_code_keypad_state }}'
-        target:
-          entity_id: '{{ alarm_keypad }}'
-        action: '{{ arm_action }}'
-  - alias: Alarm modes
-    choose:
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: armed_away
-      alias: alarm_armed_away
-      sequence:
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Alarm has been set to Away.
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: armed_home
-      alias: alarm_armed_home
-      sequence:
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Alarm has been set to Home.
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: armed_night
-      alias: alarm_armed_night
-      sequence:
-      - action: notify.notify
-        alias: Notify
-        data: {}
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: arming
-      alias: alarm_arming
-      sequence:
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Alarm is arming, leave the house.
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: disarmed
-      alias: alarm_disarmed
-      sequence:
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Alarm has been Disarmed.
-    - conditions:
-      - condition: trigger
-        id: alarm_entry
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: alarm_control_panel.alarm
-          state: armed_away
-      alias: alarm_entry
-      sequence:
-      - action: alarm_control_panel.alarm_trigger
-        alias: Trigger Alarm
-        target:
-          entity_id: alarm_control_panel.alarm
-        data: {}
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Alert! {{ trigger.to_state.name }} has been opened, disarm the
-            alarm before the siren starts!
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: triggered
-      alias: alarm_triggered
-      sequence:
-      - alias: Notify
-        action: notify.notify
-        data:
-          message: Het alarm gaat af!
-  mode: restart
 - id: '1737312574921'
   alias: Alarm
   description: ''
@@ -4786,17 +4650,16 @@
       alarm_main: alarm_control_panel.alarm
       alarm_code_user:
       - input_text.alarm_code_user_1
+      - input_text.alarm_code_user_2
+      - input_text.alarm_code_user_3
       alarm_keypad_device: a435712f3dbc11c7dfa9e34c5b6cbc20
       alarm_keypad: alarm_control_panel.keypad
+      notification:
+      - 014d37597b774510e191920a2b931b9b
 - id: '1737312856566'
   alias: Alarm - Notify Old
   description: ''
   triggers:
-  - alias: alarm_mode_changes
-    trigger: state
-    entity_id:
-    - alarm_control_panel.alarm
-    id: alarm_mode_changes
   - trigger: state
     entity_id:
     - binary_sensor.dakterras_deursensor_contact
