@@ -4654,93 +4654,14 @@
       - input_text.alarm_code_user_3
       alarm_keypad_device: a435712f3dbc11c7dfa9e34c5b6cbc20
       alarm_keypad: alarm_control_panel.keypad
-      notification:
-      - 014d37597b774510e191920a2b931b9b
-- id: '1737312856566'
-  alias: Alarm - Notify Old
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.dakterras_deursensor_contact
-    - binary_sensor.entree_deursensor_contact
-    - binary_sensor.tuin_deursensor_contact
-    - binary_sensor.woonkamer_raamsensor_contact
-    to: 'on'
-    alias: alarm_entry
-    id: alarm_entry
-  conditions: []
-  actions:
-  - alias: Alarm modes
-    choose:
-    - conditions:
-      - condition: trigger
-        id: alarm_entry
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: alarm_control_panel.alarm
-          state: armed_away
-        - condition: state
-          entity_id: alarm_control_panel.alarm
-          state: armed_night
-      alias: alarm_entry
-      sequence:
-      - action: alarm_control_panel.alarm_trigger
-        alias: Trigger Alarm
-        data: {}
-        metadata: {}
-        target:
-          entity_id: alarm_control_panel.alarm
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Alert! {{ trigger.to_state.name }} has been opened, disarm the
-            alarm before the siren starts!
-          data:
-            actions:
-            - action: DISARM
-              title: Alarm Disarm
-            - action: ARM_HOME
-              title: Alarm Home
-            - action: ARM_NIGHT
-              title: Alarm Night
-            - action: STOP_SIREN
-              title: Stop Sirens
-            entity_id: camera.entree
-            push:
-              sound:
-                name: default
-                critical: 1
-                volume: 1
-        metadata: {}
-    - conditions:
-      - condition: trigger
-        id: alarm_mode_changes
-      - condition: state
-        entity_id: alarm_control_panel.alarm
-        state: triggered
-      alias: alarm_triggered
-      sequence:
-      - alias: Notify
-        action: notify.notify
-        data:
-          message: Het alarm gaat af!
-          data:
-            actions:
-            - action: DISARM
-              title: Alarm Disarm
-            - action: ARM_HOME
-              title: Alarm Home
-            - action: ARM_NIGHT
-              title: Alarm Night
-            - action: STOP_SIREN
-              title: Stop Sirens
-            entity_id: camera.entree
-            push:
-              sound:
-                name: default
-                critical: 1
-                volume: 1
-        metadata: {}
-  mode: restart
+      alarm_sensor_away:
+      - binary_sensor.dakterras_deursensor_contact
+      - binary_sensor.entree_deursensor_contact
+      - binary_sensor.tuin_deursensor_contact
+      - binary_sensor.woonkamer_raamsensor_contact
+      alarm_sensor_home: []
+      alarm_sensor_night:
+      - binary_sensor.dakterras_deursensor_contact
+      - binary_sensor.entree_deursensor_contact
+      - binary_sensor.tuin_deursensor_contact
+      - binary_sensor.woonkamer_raamsensor_contact
