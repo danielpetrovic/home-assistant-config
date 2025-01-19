@@ -60,6 +60,53 @@ blueprint:
                 - domain:
                     - input_text
               multiple: false
+    alarm_notifications:
+      name: Set the notifications you want to send when the modes change, defaults are present.
+      icon: mdi:bell-ring
+      collapsed: true
+      input:
+        armed_away:
+          name: Armed Away Mode
+          default: The alarm is now in Away mode.
+          description: Here you can set the notification to be sent when the alarm is set to Away.
+          selector:
+            text:
+        armed_home:
+          name: Armed Home Mode
+          default: The alarm is now in Home mode.
+          description: Here you can set the notification to be sent when the alarm is set to Home.
+          selector:
+            text:
+        armed_night:
+          name: Armed Night Mode
+          default: The alarm is now in Night mode.
+          description: Here you can set the notification to be sent when the alarm is set to Night.
+          selector:
+            text:
+        arming:
+          name: Arming
+          default: The alarm is being set. Please exit the house promptly!
+          description: Here you can set the notification to be sent when the alarm is set to Night.
+          selector:
+            text:
+        pending:
+          name: Pending
+          default: Check {{ trigger.to_state.name }}! Please disarm the alarm to prevent it from activating!
+          description: Here you can set the notification to be sent when the alarm is set to Night.
+          selector:
+            text:
+        triggered:
+          name: Triggered
+          default: Check {{ trigger.to_state.name }}! The alarm has been activated! Immediate action is required!
+          description: Here you can set the notification to be sent when the alarm is set to Night.
+          selector:
+            text:
+        disarmed:
+          name: Disarmed
+          default: The alarm is now disarmed.
+          description: Here you can set the notification to be sent when the alarm is set to Night.
+          selector:
+            text:
     alarm_mode_away:
       name: Settings for when the alarm is set to Away mode.
       icon: mdi:shield-lock
@@ -103,6 +150,13 @@ variables:
   alarm_code_keypad_state: "{{ states(alarm_code_keypad) }}"
   alarm_code_user: !input alarm_code_user
   alarm_code_user_state: "{{ alarm_code_user | map('states') | list }}"
+  armed_away: !input armed_away
+  armed_home: !input armed_home
+  armed_night: !input armed_night
+  arming: !input arming
+  pending: !input pending
+  triggered: !input triggered
+  disarmed: !input disarmed
 
 triggers:
   - trigger: state
@@ -139,9 +193,11 @@ actions:
                   alarm_control_panel.alarm_arm_night
                 {% elif is_state(alarm_main, 'disarmed') %}
                   alarm_control_panel.alarm_disarm
-                {% elif is_state(alarm_main, 'triggered') %}
-                  alarm_control_panel.alarm_trigger
                 {% elif is_state(alarm_main, 'arming') %}
+                  alarm_control_panel.alarm_trigger
+                {% elif is_state(alarm_main, 'pending') %}
+                  alarm_control_panel.alarm_trigger
+                {% elif is_state(alarm_main, 'triggered') %}
                   alarm_control_panel.alarm_trigger
                 {% endif %}
           - action: "{{ arm_action }}"
@@ -149,6 +205,61 @@ actions:
               code: "{{ alarm_code_keypad_state }}"
             target:
               entity_id: "{{ alarm_keypad }}"
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: alarm_control_panel.alarm
+                    state: triggered
+                sequence:
+                  - action: notify.notify
+                    alias: Notify Triggered
+                    data:
+                      message: "{{ triggered }}"
+                      data:
+                        actions:
+                          - action: DISARM
+                            title: Alarm Disarm
+                          - action: ARM_HOME
+                            title: Alarm Home
+                          - action: ARM_NIGHT
+                            title: Alarm Night
+              - conditions:
+                  - condition: state
+                    entity_id: alarm_control_panel.alarm
+                    state: pending
+                sequence:
+                  - action: notify.notify
+                    alias: Notify Pending
+                    data:
+                      message: "{{ pending }}"
+                      data:
+                        actions:
+                          - action: DISARM
+                            title: Alarm Disarm
+                          - action: ARM_HOME
+                            title: Alarm Home
+                          - action: ARM_NIGHT
+                            title: Alarm Night
+            default:
+              - action: notify.notify
+                alias: Notify
+                data:
+                  message: |
+                    {% set state_name = {
+                      'armed_away': armed_away,
+                      'armed_home': armed_home,
+                      'armed_night': armed_night,
+                      'disarmed': 'The alarm is now disarmed.',
+                      'arming': arming,
+                    }[trigger.to_state.state] %} {{ state_name }}
+                  data:
+                    actions:
+                      - action: DISARM
+                        title: Alarm Disarm
+                      - action: ARM_HOME
+                        title: Alarm Home
+                      - action: ARM_NIGHT
+                        title: Alarm Night
       - alias: Alarm Keypad to Alarm Main sync
         conditions:
           - condition: trigger
