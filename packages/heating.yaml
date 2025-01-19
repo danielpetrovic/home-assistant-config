@@ -7,7 +7,7 @@ climate:
     min_temp: 16
     max_temp: 22
     ac_mode: false
-    precision: 0.5
+    target_temp_step: 0.5
     cold_tolerance: 0.3
     hot_tolerance: 0
     min_cycle_duration:
@@ -24,7 +24,7 @@ climate:
     min_temp: 16
     max_temp: 22
     ac_mode: false
-    precision: 0.5
+    target_temp_step: 0.5
     cold_tolerance: 0.3
     hot_tolerance: 0
     min_cycle_duration:
@@ -41,7 +41,7 @@ climate:
     min_temp: 16
     max_temp: 22
     ac_mode: false
-    precision: 0.5
+    target_temp_step: 0.5
     cold_tolerance: 0.3
     hot_tolerance: 0
     min_cycle_duration:
@@ -58,7 +58,7 @@ climate:
     min_temp: 16
     max_temp: 22
     ac_mode: false
-    precision: 0.5
+    target_temp_step: 0.5
     cold_tolerance: 0.3
     hot_tolerance: 0
     min_cycle_duration:
@@ -75,7 +75,7 @@ climate:
     min_temp: 16
     max_temp: 22
     ac_mode: false
-    precision: 0.5
+    target_temp_step: 0.5
     cold_tolerance: 0.3
     hot_tolerance: 0
     min_cycle_duration:
@@ -92,7 +92,7 @@ climate:
     min_temp: 16
     max_temp: 22
     ac_mode: false
-    precision: 0.5
+    target_temp_step: 0.5
     cold_tolerance: 0.3
     hot_tolerance: 0
     min_cycle_duration:
