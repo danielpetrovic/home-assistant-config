@@ -68,43 +68,43 @@ blueprint:
         armed_away:
           name: Armed Away Mode
           default: The alarm is now in Away mode.
-          description: Here you can set the notification to be sent when the alarm is set to Away.
+          description: Here you can set the notification to be sent when the alarm is set to Away mode.
           selector:
             text:
         armed_home:
           name: Armed Home Mode
           default: The alarm is now in Home mode.
-          description: Here you can set the notification to be sent when the alarm is set to Home.
+          description: Here you can set the notification to be sent when the alarm is set to Home mode.
           selector:
             text:
         armed_night:
           name: Armed Night Mode
           default: The alarm is now in Night mode.
-          description: Here you can set the notification to be sent when the alarm is set to Night.
+          description: Here you can set the notification to be sent when the alarm is set to Night mode.
           selector:
             text:
         arming:
           name: Arming
           default: The alarm is being set. Please exit the house promptly!
-          description: Here you can set the notification to be sent when the alarm is set to Night.
+          description: Here you can set the notification to be sent when the alarm is Arming.
           selector:
             text:
         pending:
           name: Pending
           default: Check {{ trigger.to_state.name }}! Please disarm the alarm to prevent it from activating!
-          description: Here you can set the notification to be sent when the alarm is set to Night.
+          description: Here you can set the notification to be sent when the alarm is Pending. This is the state which is entered before triggering the alarm, if you have set a delay_time for the Alarm.
           selector:
             text:
         triggered:
           name: Triggered
           default: Check {{ trigger.to_state.name }}! The alarm has been activated! Immediate action is required!
-          description: Here you can set the notification to be sent when the alarm is set to Night.
+          description: Here you can set the notification to be sent when the alarm is Triggered.
           selector:
             text:
         disarmed:
           name: Disarmed
           default: The alarm is now disarmed.
-          description: Here you can set the notification to be sent when the alarm is set to Night.
+          description: Here you can set the notification to be sent when the alarm is Disarmed.
           selector:
             text:
     alarm_mode_away:
@@ -176,7 +176,7 @@ conditions: []
 actions:
   - alias: Alarm Sync
     choose:
-      - alias: Alarm Main to Alarm Keypad sync
+      - alias: Alarm Main to Alarm Keypad sync + Notifications
         conditions:
           - condition: trigger
             id: alarm_main
