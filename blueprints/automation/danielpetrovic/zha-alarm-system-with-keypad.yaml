@@ -139,6 +139,70 @@ blueprint:
                 - domain:
                     - script
               multiple: true
+    alarm_mode_home:
+      name: Settings for when the alarm is set to Home mode.
+      icon: mdi:shield-home
+      collapsed: true
+      input:
+        alarm_sensor_home:
+          name: Sensors
+          default: []
+          description: Here you can set the Sensors that should trigger the alarm when it is set to Home mode. If you don't set any sensors here, the alarm will not trigger when set to this mode.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - binary_sensor
+                  device_class:
+                    - door
+                    - motion
+                    - occupancy
+                    - opening
+                    - presence
+                    - window
+              multiple: true
+        alarm_script_home:
+          name: Scripts
+          default: []
+          description: Scripts to run when alarm changes to this mode.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - script
+              multiple: true
+    alarm_mode_night:
+      name: Settings for when the alarm is set to Night mode.
+      icon: mdi:shield-moon
+      collapsed: true
+      input:
+        alarm_sensor_night:
+          name: Sensors
+          default: []
+          description: Here you can set the Sensors that should trigger the alarm when it is set to Night mode. If you don't set any sensors here, the alarm will not trigger when set to this mode.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - binary_sensor
+                  device_class:
+                    - door
+                    - motion
+                    - occupancy
+                    - opening
+                    - presence
+                    - window
+              multiple: true
+        alarm_script_night:
+          name: Scripts
+          default: []
+          description: Scripts to run when alarm changes to this mode.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - script
+              multiple: true
 
 mode: restart
 max_exceeded: silent
@@ -170,6 +234,21 @@ triggers:
       command: arm
     alias: alarm_keypad
     id: alarm_keypad
+  - trigger: state
+    entity_id: !input alarm_sensor_away
+    to: "on"
+    alias: alarm_sensor_away
+    id: alarm_sensor_away
+  - trigger: state
+    entity_id: !input alarm_sensor_home
+    to: "on"
+    alias: alarm_sensor_home
+    id: alarm_sensor_home
+  - trigger: state
+    entity_id: !input alarm_sensor_night
+    to: "on"
+    alias: alarm_sensor_night
+    id: alarm_sensor_night
 
 conditions: []
 
@@ -211,7 +290,7 @@ actions:
                     entity_id: alarm_control_panel.alarm
                     state: triggered
                 sequence:
-                  - action: notify.notify
+                  - action: notify.mobile_app_deni_macbook
                     alias: Notify Triggered
                     data:
                       message: "{{ triggered }}"
@@ -228,7 +307,7 @@ actions:
                     entity_id: alarm_control_panel.alarm
                     state: pending
                 sequence:
-                  - action: notify.notify
+                  - action: notify.mobile_app_deni_macbook
                     alias: Notify Pending
                     data:
                       message: "{{ pending }}"
@@ -241,7 +320,7 @@ actions:
                           - action: ARM_NIGHT
                             title: Alarm Night
             default:
-              - action: notify.notify
+              - action: notify.mobile_app_deni_macbook
                 alias: Notify
                 data:
                   message: |
@@ -249,7 +328,7 @@ actions:
                       'armed_away': armed_away,
                       'armed_home': armed_home,
                       'armed_night': armed_night,
-                      'disarmed': 'The alarm is now disarmed.',
+                      'disarmed': disarmed,
                       'arming': arming,
                     }[trigger.to_state.state] %} {{ state_name }}
                   data:
@@ -286,3 +365,107 @@ actions:
               code: "{{ alarm_code_user_state }}"
             target:
               entity_id: "{{ alarm_main }}"
+  - alias: Alarm triggers
+    choose:
+      - alias: alarm_sensor_away
+        conditions:
+          - condition: trigger
+            id: alarm_sensor_away
+          - condition: state
+            entity_id: !input alarm_main
+            state: armed_away
+        sequence:
+          - alias: Trigger alarm
+            action: alarm_control_panel.alarm_trigger
+            target:
+              entity_id: !input alarm_main
+          - alias: Notify
+            action: notify.notify
+            data:
+              message: >-
+                Check {{ trigger.to_state.name }}! Please disarm the alarm to
+                prevent it from activating!
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+                entity_id: []
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+                    ttl: 0
+                    priority: high
+      - alias: alarm_sensor_home
+        conditions:
+          - condition: trigger
+            id: alarm_sensor_home
+          - condition: state
+            entity_id: !input alarm_main
+            state: armed_home
+        sequence:
+          - alias: Trigger alarm
+            action: alarm_control_panel.alarm_trigger
+            target:
+              entity_id: !input alarm_main
+          - alias: Notify
+            action: notify.notify
+            data:
+              message: >-
+                Check {{ trigger.to_state.name }}! Please disarm the alarm to
+                prevent it from activating!
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+                entity_id: []
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+                    ttl: 0
+                    priority: high
+      - alias: alarm_sensor_night
+        conditions:
+          - condition: trigger
+            id: alarm_sensor_night
+          - condition: state
+            entity_id: !input alarm_main
+            state: armed_night
+        sequence:
+          - alias: Trigger alarm
+            action: alarm_control_panel.alarm_trigger
+            target:
+              entity_id: !input alarm_main
+          - alias: Notify
+            action: notify.notify
+            data:
+              message: >-
+                Check {{ trigger.to_state.name }}! Please disarm the alarm to
+                prevent it from activating!
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+                entity_id: []
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+                    ttl: 0
+                    priority: high
