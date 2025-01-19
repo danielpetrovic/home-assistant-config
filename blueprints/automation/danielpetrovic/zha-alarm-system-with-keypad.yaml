@@ -318,7 +318,7 @@ actions:
                     entity_id: alarm_control_panel.alarm
                     state: triggered
                 sequence:
-                  - action: notify.mobile_app_deni_macbook
+                  - action: notify.notify
                     alias: Notify Triggered
                     data:
                       message: "{{ alarm_notifications_triggered }}"
@@ -335,7 +335,7 @@ actions:
                     entity_id: alarm_control_panel.alarm
                     state: pending
                 sequence:
-                  - action: notify.mobile_app_deni_macbook
+                  - action: notify.notify
                     alias: Notify Pending
                     data:
                       message: "{{ alarm_notifications_pending }}"
@@ -348,7 +348,7 @@ actions:
                           - action: ARM_NIGHT
                             title: Alarm Night
             default:
-              - action: notify.mobile_app_deni_macbook
+              - action: notify.notify
                 alias: Notify
                 data:
                   message: |
