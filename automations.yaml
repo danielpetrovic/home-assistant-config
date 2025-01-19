@@ -4665,3 +4665,5 @@
       - binary_sensor.entree_deursensor_contact
       - binary_sensor.tuin_deursensor_contact
       - binary_sensor.woonkamer_raamsensor_contact
+      alarm_camera_away: camera.entree
+      alarm_camera_night: camera.entree
