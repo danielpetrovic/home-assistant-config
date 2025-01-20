@@ -4654,7 +4654,6 @@
       alarm_keypad_device: a435712f3dbc11c7dfa9e34c5b6cbc20
       alarm_keypad: alarm_control_panel.keypad
       alarm_code_keypad: input_text.alarm_code_keypad
-      alarm_sensor_home: []
       alarm_sensor_away:
       - binary_sensor.dakterras_deursensor_contact
       - binary_sensor.entree_deursensor_contact
