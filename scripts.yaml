@@ -1518,12 +1518,6 @@ backup_full:
   - action: hassio.backup_full
     data:
       compressed: true
-      location: /backup
-      name: Full backup {{ state_attr('update.home_assistant_core_update','installed_version')
-        }}
-  - action: hassio.backup_full
-    data:
-      compressed: true
       location: backup
       name: Full backup {{ state_attr('update.home_assistant_core_update','installed_version')
         }}
