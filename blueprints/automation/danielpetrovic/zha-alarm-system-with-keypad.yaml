@@ -129,7 +129,7 @@ blueprint:
                     - presence
                     - window
               multiple: true
-        alarm_script_away:
+        alarm_scripts_away:
           name: Scripts
           default: []
           description: Scripts to run when alarm changes to this mode.
@@ -171,7 +171,7 @@ blueprint:
                     - presence
                     - window
               multiple: true
-        alarm_script_home:
+        alarm_scripts_home:
           name: Scripts
           default: []
           description: Scripts to run when alarm changes to this mode.
@@ -213,7 +213,7 @@ blueprint:
                     - presence
                     - window
               multiple: true
-        alarm_script_night:
+        alarm_scripts_night:
           name: Scripts
           default: []
           description: Scripts to run when alarm changes to this mode.
@@ -233,12 +233,27 @@ blueprint:
                 - domain:
                     - camera
               multiple: false
+    alarm_mode_disarmed:
+      name: Settings for when the alarm is Disarmed
+      icon: mdi:shield-off
+      collapsed: true
+      input:
+        alarm_scripts_disarmed:
+          name: Scripts
+          default: []
+          description: Scripts to run when alarm changes to this mode.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - script
+              multiple: true
     alarm_mode_triggered:
       name: Settings for when the alarm is Triggered
       icon: mdi:shield-alert
       collapsed: true
       input:
-        alarm_script_triggered:
+        alarm_scripts_triggered:
           name: Scripts
           default: []
           description: Scripts to run when alarm changes to this mode.
@@ -276,6 +291,11 @@ variables:
   alarm_notifications_pending: !input alarm_notifications_pending
   alarm_notifications_triggered: !input alarm_notifications_triggered
   alarm_notifications_disarmed: !input alarm_notifications_disarmed
+  alarm_scripts_away: !input alarm_scripts_away
+  alarm_scripts_home: !input alarm_scripts_home
+  alarm_scripts_night: !input alarm_scripts_night
+  alarm_scripts_disarmed: !input alarm_scripts_disarmed
+  alarm_scripts_triggered: !input alarm_scripts_triggered
 
 triggers:
   - trigger: state
@@ -310,7 +330,7 @@ conditions: []
 actions:
   - alias: Alarm Sync
     choose:
-      - alias: Alarm Main to Alarm Keypad sync + Notifications
+      - alias: Alarm Main to Alarm Keypad sync + Scripts + Notifications
         conditions:
           - condition: trigger
             id: alarm_main
@@ -331,6 +351,18 @@ actions:
                   alarm_control_panel.alarm_trigger
                 {% elif is_state(alarm_main, 'triggered') %}
                   alarm_control_panel.alarm_trigger
+                {% endif %}
+              script_actions: |
+                {% if is_state(alarm_main, 'armed_away') %}
+                  {{ alarm_scripts_away }}
+                {% elif is_state(alarm_main, 'armed_home') %}
+                  {{ alarm_scripts_home }}
+                {% elif is_state(alarm_main, 'armed_night') %}
+                  {{ alarm_scripts_night }}
+                {% elif is_state(alarm_main, 'disarmed') %}
+                  {{ alarm_scripts_disarmed }}
+                {% elif is_state(alarm_main, 'triggered') %}
+                  {{ alarm_scripts_triggered }}
                 {% endif %}
           - action: "{{ arm_action }}"
             data:
@@ -364,8 +396,8 @@ actions:
                             ttl: 0
                             priority: high
             default:
-              - action: notify.notify
-                alias: Notify
+              - alias: Notify
+                action: notify.notify
                 data:
                   message: |
                     {% set state_name = {
@@ -383,6 +415,13 @@ actions:
                         title: Alarm Home
                       - action: ARM_NIGHT
                         title: Alarm Night
+          - alias: Run scripts
+            repeat:
+              for_each: "{{ script_actions }}"
+              sequence:
+                - action: script.turn_on
+                  target:
+                    entity_id: "{{ repeat.item }}"
       - alias: Alarm Keypad to Alarm Main sync
         conditions:
           - condition: trigger
