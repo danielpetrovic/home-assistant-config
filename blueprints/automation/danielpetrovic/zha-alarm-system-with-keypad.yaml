@@ -91,13 +91,13 @@ blueprint:
             text:
         alarm_notifications_pending:
           name: Pending
-          default: Check {{ trigger.to_state.name }}! Please disarm the alarm to prevent it from activating!
+          default: Triggered! Please disarm the alarm to prevent it from activating!
           description: Here you can set the notification to be sent when the alarm is Pending. This is the state which is entered before triggering the alarm, if you have set a delay_time for the Alarm.
           selector:
             text:
         alarm_notifications_triggered:
           name: Triggered
-          default: Check {{ trigger.to_state.name }}! The alarm has been activated! Immediate action is required!
+          default: Triggered! The alarm has been activated! Immediate action is required!
           description: Here you can set the notification to be sent when the alarm is Triggered.
           selector:
             text:
@@ -311,7 +311,7 @@ actions:
             data:
               code: "{{ alarm_code_keypad_state }}"
             target:
-              entity_id: "{{ alarm_keypad }}"
+              entity_id: !input alarm_keypad
           - choose:
               - conditions:
                   - condition: state
@@ -321,7 +321,7 @@ actions:
                   - action: notify.notify
                     alias: Notify Triggered
                     data:
-                      message: "{{ alarm_notifications_triggered }}"
+                      message: "{{ trigger.to_state.name }} {{ alarm_notifications_triggered }}"
                       data:
                         actions:
                           - action: DISARM
@@ -338,7 +338,7 @@ actions:
                   - action: notify.notify
                     alias: Notify Pending
                     data:
-                      message: "{{ alarm_notifications_pending }}"
+                      message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
                       data:
                         actions:
                           - action: DISARM
@@ -390,7 +390,7 @@ actions:
             data:
               code: "{{ alarm_code_user_state }}"
             target:
-              entity_id: "{{ alarm_main }}"
+              entity_id: !input alarm_main
   - alias: Alarm triggers
     choose:
       - alias: alarm_sensor_away
