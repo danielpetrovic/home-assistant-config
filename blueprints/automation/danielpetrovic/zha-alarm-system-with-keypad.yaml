@@ -91,13 +91,13 @@ blueprint:
             text:
         alarm_notifications_pending:
           name: Pending
-          default: Triggered! Please disarm the alarm to prevent it from activating!
+          default: triggered the alarm! Please disarm the alarm to prevent it from activating!
           description: Here you can set the notification to be sent when the alarm is Pending. This is the state which is entered before triggering the alarm, if you have set a delay_time for the Alarm.
           selector:
             text:
         alarm_notifications_triggered:
           name: Triggered
-          default: Triggered! The alarm has been activated! Immediate action is required!
+          default: triggered the alarm! The alarm has been activated!
           description: Here you can set the notification to be sent when the alarm is Triggered.
           selector:
             text:
@@ -233,6 +233,31 @@ blueprint:
                 - domain:
                     - camera
               multiple: false
+    alarm_mode_triggered:
+      name: Settings for when the alarm is Triggered
+      icon: mdi:shield-alert
+      collapsed: true
+      input:
+        alarm_script_triggered:
+          name: Scripts
+          default: []
+          description: Scripts to run when alarm changes to this mode.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - script
+              multiple: true
+        alarm_camera_triggered:
+          name: Camera
+          default: []
+          description: Camera to show in notification when it is triggered in this mode.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - camera
+              multiple: false
 
 mode: restart
 max_exceeded: silent
@@ -330,23 +355,14 @@ actions:
                             title: Alarm Home
                           - action: ARM_NIGHT
                             title: Alarm Night
-              - conditions:
-                  - condition: state
-                    entity_id: alarm_control_panel.alarm
-                    state: pending
-                sequence:
-                  - action: notify.notify
-                    alias: Notify Pending
-                    data:
-                      message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
-                      data:
-                        actions:
-                          - action: DISARM
-                            title: Alarm Disarm
-                          - action: ARM_HOME
-                            title: Alarm Home
-                          - action: ARM_NIGHT
-                            title: Alarm Night
+                        entity_id: !input alarm_camera_triggered
+                        push:
+                          sound:
+                            name: default
+                            critical: 1
+                            volume: 1
+                            ttl: 0
+                            priority: high
             default:
               - action: notify.notify
                 alias: Notify
@@ -408,9 +424,7 @@ actions:
           - alias: Notify
             action: notify.notify
             data:
-              message: >-
-                Check {{ trigger.to_state.name }}! Please disarm the alarm to
-                prevent it from activating!
+              message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
               data:
                 actions:
                   - action: DISARM
@@ -442,9 +456,7 @@ actions:
           - alias: Notify
             action: notify.notify
             data:
-              message: >-
-                Check {{ trigger.to_state.name }}! Please disarm the alarm to
-                prevent it from activating!
+              message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
               data:
                 actions:
                   - action: DISARM
@@ -453,7 +465,7 @@ actions:
                     title: Alarm Home
                   - action: ARM_NIGHT
                     title: Alarm Night
-                entity_id: !input alarm_camera_night
+                entity_id: !input alarm_camera_home
                 push:
                   sound:
                     name: default
@@ -476,9 +488,7 @@ actions:
           - alias: Notify
             action: notify.notify
             data:
-              message: >-
-                Check {{ trigger.to_state.name }}! Please disarm the alarm to
-                prevent it from activating!
+              message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
               data:
                 actions:
                   - action: DISARM
