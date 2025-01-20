@@ -4640,13 +4640,12 @@
       alias: Not at home
     enabled: false
   mode: restart
-- id: '1737312574921'
+- id: '1737375691040'
   alias: Alarm
   description: ''
   use_blueprint:
     path: danielpetrovic/zha-alarm-system-with-keypad.yaml
     input:
-      alarm_code_keypad: input_text.alarm_code_keypad
       alarm_main: alarm_control_panel.alarm
       alarm_code_user:
       - input_text.alarm_code_user_1
@@ -4654,16 +4653,4 @@
       - input_text.alarm_code_user_3
       alarm_keypad_device: a435712f3dbc11c7dfa9e34c5b6cbc20
       alarm_keypad: alarm_control_panel.keypad
-      alarm_sensor_away:
-      - binary_sensor.dakterras_deursensor_contact
-      - binary_sensor.entree_deursensor_contact
-      - binary_sensor.tuin_deursensor_contact
-      - binary_sensor.woonkamer_raamsensor_contact
-      alarm_sensor_home: []
-      alarm_sensor_night:
-      - binary_sensor.dakterras_deursensor_contact
-      - binary_sensor.entree_deursensor_contact
-      - binary_sensor.tuin_deursensor_contact
-      - binary_sensor.woonkamer_raamsensor_contact
-      alarm_camera_away: camera.entree
-      alarm_camera_night: camera.entree
+      alarm_code_keypad: input_text.alarm_code_keypad
