@@ -6,7 +6,7 @@ blueprint:
     You can set multiple codes for multiple users, including hexadicimals for RFID tags. The logic to check if a code is present is inside this blueprint so your alarm panel doesn't need to support multiple codes.\n\n
     You can change the notifications that are sent when the Alarm Control Panel changes states, defaults are set.\n
     You can set to show a (live) camerafeed from any of your cameras inside the notification of the state change.\n
-    You can change what scripts are run per Alarm state change. They will be run after eachother, so put them in the right order in your selection.\n"
+    You can change what scripts are run per Alarm state change. They will run at the same time, so the order doesn't matter.\n"
   domain: automation
   source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/zha-alarm-system-with-keypad.yaml
   input:
@@ -132,7 +132,7 @@ blueprint:
         alarm_scripts_away:
           name: Scripts
           default: []
-          description: Scripts to run when alarm changes to this mode.
+          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
           selector:
             entity:
               filter:
@@ -174,7 +174,7 @@ blueprint:
         alarm_scripts_home:
           name: Scripts
           default: []
-          description: Scripts to run when alarm changes to this mode. They will be run after eachother, so put them in the right order in your selection.
+          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
           selector:
             entity:
               filter:
@@ -216,7 +216,7 @@ blueprint:
         alarm_scripts_night:
           name: Scripts
           default: []
-          description: Scripts to run when alarm changes to this mode. They will be run after eachother, so put them in the right order in your selection.
+          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
           selector:
             entity:
               filter:
@@ -241,7 +241,7 @@ blueprint:
         alarm_scripts_disarmed:
           name: Scripts
           default: []
-          description: Scripts to run when alarm changes to this mode. They will be run after eachother, so put them in the right order in your selection.
+          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
           selector:
             entity:
               filter:
@@ -256,7 +256,7 @@ blueprint:
         alarm_scripts_triggered:
           name: Scripts
           default: []
-          description: Scripts to run when alarm changes to this mode. They will be run after eachother, so put them in the right order in your selection.
+          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
           selector:
             entity:
               filter:
