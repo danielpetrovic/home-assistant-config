@@ -330,7 +330,7 @@ conditions: []
 actions:
   - alias: Alarm Sync
     choose:
-      - alias: Alarm Main to Alarm Keypad sync + Scripts + Notifications
+      - alias: Alarm Main to Alarm Keypad sync
         conditions:
           - condition: trigger
             id: alarm_main
@@ -352,81 +352,15 @@ actions:
                 {% elif is_state(alarm_main, 'triggered') %}
                   alarm_control_panel.alarm_trigger
                 {% endif %}
-              script_actions: |
-                {% if is_state(alarm_main, 'armed_away') %}
-                  {{ alarm_scripts_away }}
-                {% elif is_state(alarm_main, 'armed_home') %}
-                  {{ alarm_scripts_home }}
-                {% elif is_state(alarm_main, 'armed_night') %}
-                  {{ alarm_scripts_night }}
-                {% elif is_state(alarm_main, 'disarmed') %}
-                  {{ alarm_scripts_disarmed }}
-                {% elif is_state(alarm_main, 'triggered') %}
-                  {{ alarm_scripts_triggered }}
-                {% endif %}
           - action: "{{ arm_action }}"
             data:
               code: "{{ alarm_code_keypad_state }}"
             target:
               entity_id: !input alarm_keypad
-          - choose:
-              - conditions:
-                  - condition: state
-                    entity_id: alarm_control_panel.alarm
-                    state: triggered
-                sequence:
-                  - action: notify.notify
-                    alias: Notify Triggered
-                    data:
-                      message: "{{ trigger.to_state.name }} {{ alarm_notifications_triggered }}"
-                      data:
-                        actions:
-                          - action: DISARM
-                            title: Alarm Disarm
-                          - action: ARM_HOME
-                            title: Alarm Home
-                          - action: ARM_NIGHT
-                            title: Alarm Night
-                        entity_id: !input alarm_camera_triggered
-                        push:
-                          sound:
-                            name: default
-                            critical: 1
-                            volume: 1
-                            ttl: 0
-                            priority: high
-            default:
-              - alias: Notify
-                action: notify.notify
-                data:
-                  message: |
-                    {% set state_name = {
-                      'armed_away': alarm_notifications_armed_away,
-                      'armed_home': alarm_notifications_armed_home,
-                      'armed_night': alarm_notifications_armed_night,
-                      'disarmed': alarm_notifications_disarmed,
-                      'arming': alarm_notifications_arming,
-                    }[trigger.to_state.state] %} {{ state_name }}
-                  data:
-                    actions:
-                      - action: DISARM
-                        title: Alarm Disarm
-                      - action: ARM_HOME
-                        title: Alarm Home
-                      - action: ARM_NIGHT
-                        title: Alarm Night
-          - alias: Run scripts
-            repeat:
-              for_each: "{{ script_actions }}"
-              sequence:
-                - action: script.turn_on
-                  target:
-                    entity_id: "{{ repeat.item }}"
       - alias: Alarm Keypad to Alarm Main sync
         conditions:
           - condition: trigger
-            id:
-              - alarm_keypad
+            id: alarm_keypad
           - condition: template
             value_template: "{{ trigger.event.data.args.code in alarm_code_user_state }}"
         sequence:
@@ -446,7 +380,194 @@ actions:
               code: "{{ alarm_code_user_state }}"
             target:
               entity_id: !input alarm_main
-  - alias: Alarm triggers
+  - alias: Alarm Scripts
+    choose:
+      - alias: Away
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: armed_away
+        sequence:
+          - action: script.turn_on
+            target:
+              entity_id: "{{ alarm_scripts_away }}"
+      - alias: Home
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: armed_home
+        sequence:
+          - action: script.turn_on
+            target:
+              entity_id: "{{ alarm_scripts_home }}"
+      - alias: Night
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: armed_night
+        sequence:
+          - action: script.turn_on
+            target:
+              entity_id: "{{ alarm_scripts_night }}"
+      - alias: Disarmed
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: disarmed
+        sequence:
+          - action: script.turn_on
+            target:
+              entity_id: "{{ alarm_scripts_disarmed }}"
+      - alias: Triggered
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: triggered
+        sequence:
+          - action: script.turn_on
+            target:
+              entity_id: "{{ alarm_scripts_triggered }}"
+  - alias: Alarm Notifications
+    choose:
+      - alias: Away
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: armed_away
+        sequence:
+          - alias: Notify
+            action: notify.notify
+            data:
+              message: "{{ alarm_notifications_armed_away }}"
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+      - alias: Home
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: armed_home
+        sequence:
+          - alias: Notify
+            action: notify.notify
+            data:
+              message: "{{ alarm_notifications_armed_home }}"
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+      - alias: Night
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: armed_night
+        sequence:
+          - alias: Notify
+            action: notify.notify
+            data:
+              message: "{{ alarm_notifications_armed_night }}"
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+      - alias: Disarmed
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: disarmed
+        sequence:
+          - alias: Notify
+            action: notify.notify
+            data:
+              message: "{{ alarm_notifications_disarmed }}"
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+      - alias: Triggered
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: triggered
+        sequence:
+          - alias: Notify
+            action: notify.notify
+            data:
+              message: "{{ trigger.to_state.name }} {{ alarm_notifications_armed_away }}"
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+                entity_id: []
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+                    ttl: 0
+                    priority: high
+      - alias: Arming
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: arming
+        sequence:
+          - alias: Notify
+            action: notify.notify
+            data:
+              message: "{{ alarm_notifications_arming }}"
+              data:
+                actions:
+                  - action: DISARM
+                    title: Alarm Disarm
+                  - action: ARM_HOME
+                    title: Alarm Home
+                  - action: ARM_NIGHT
+                    title: Alarm Night
+  - alias: Alarm Triggers
     choose:
       - alias: alarm_sensor_away
         conditions:
