@@ -455,10 +455,13 @@ actions:
                 actions:
                   - action: DISARM
                     title: Alarm Disarm
+                    icon: "sfsymbols:bell.slash"
                   - action: ARM_HOME
                     title: Alarm Home
+                    icon: "sfsymbols:bell.fill"
                   - action: ARM_NIGHT
                     title: Alarm Night
+                    icon: "sfsymbols:bell"
       - alias: Home
         conditions:
           - condition: trigger
@@ -475,10 +478,13 @@ actions:
                 actions:
                   - action: DISARM
                     title: Alarm Disarm
+                    icon: "sfsymbols:bell.slash"
                   - action: ARM_HOME
                     title: Alarm Home
+                    icon: "sfsymbols:bell.fill"
                   - action: ARM_NIGHT
                     title: Alarm Night
+                    icon: "sfsymbols:bell"
       - alias: Night
         conditions:
           - condition: trigger
@@ -495,10 +501,13 @@ actions:
                 actions:
                   - action: DISARM
                     title: Alarm Disarm
+                    icon: "sfsymbols:bell.slash"
                   - action: ARM_HOME
                     title: Alarm Home
+                    icon: "sfsymbols:bell.fill"
                   - action: ARM_NIGHT
                     title: Alarm Night
+                    icon: "sfsymbols:bell"
       - alias: Disarmed
         conditions:
           - condition: trigger
@@ -515,10 +524,13 @@ actions:
                 actions:
                   - action: DISARM
                     title: Alarm Disarm
+                    icon: "sfsymbols:bell.slash"
                   - action: ARM_HOME
                     title: Alarm Home
+                    icon: "sfsymbols:bell.fill"
                   - action: ARM_NIGHT
                     title: Alarm Night
+                    icon: "sfsymbols:bell"
       - alias: Triggered
         conditions:
           - condition: trigger
@@ -535,11 +547,14 @@ actions:
                 actions:
                   - action: DISARM
                     title: Alarm Disarm
+                    icon: "sfsymbols:bell.slash"
                   - action: ARM_HOME
                     title: Alarm Home
+                    icon: "sfsymbols:bell.fill"
                   - action: ARM_NIGHT
                     title: Alarm Night
-                entity_id: []
+                    icon: "sfsymbols:bell"
+                entity_id: !input alarm_camera_triggered
                 push:
                   sound:
                     name: default
