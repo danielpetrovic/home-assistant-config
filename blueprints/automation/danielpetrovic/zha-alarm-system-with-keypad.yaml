@@ -578,10 +578,13 @@ actions:
                 actions:
                   - action: DISARM
                     title: Alarm Disarm
+                    icon: "sfsymbols:bell.slash"
                   - action: ARM_HOME
                     title: Alarm Home
+                    icon: "sfsymbols:bell.fill"
                   - action: ARM_NIGHT
                     title: Alarm Night
+                    icon: "sfsymbols:bell"
   - alias: Alarm Triggers
     choose:
       - alias: alarm_sensor_away
@@ -604,10 +607,13 @@ actions:
                 actions:
                   - action: DISARM
                     title: Alarm Disarm
+                    icon: "sfsymbols:bell.slash"
                   - action: ARM_HOME
                     title: Alarm Home
+                    icon: "sfsymbols:bell.fill"
                   - action: ARM_NIGHT
                     title: Alarm Night
+                    icon: "sfsymbols:bell"
                 entity_id: !input alarm_camera_away
                 push:
                   sound:
@@ -636,10 +642,13 @@ actions:
                 actions:
                   - action: DISARM
                     title: Alarm Disarm
+                    icon: "sfsymbols:bell.slash"
                   - action: ARM_HOME
                     title: Alarm Home
+                    icon: "sfsymbols:bell.fill"
                   - action: ARM_NIGHT
                     title: Alarm Night
+                    icon: "sfsymbols:bell"
                 entity_id: !input alarm_camera_home
                 push:
                   sound:
@@ -668,10 +677,13 @@ actions:
                 actions:
                   - action: DISARM
                     title: Alarm Disarm
+                    icon: "sfsymbols:bell.slash"
                   - action: ARM_HOME
                     title: Alarm Home
+                    icon: "sfsymbols:bell.fill"
                   - action: ARM_NIGHT
                     title: Alarm Night
+                    icon: "sfsymbols:bell"
                 entity_id: !input alarm_camera_night
                 push:
                   sound:
