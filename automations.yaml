@@ -2123,7 +2123,7 @@
 - id: '1718220491385'
   alias: Alarm - Actions
   description: ''
-  trigger:
+  triggers:
   - trigger: event
     event_type: ios.notification_action_fired
     event_data:
@@ -2160,20 +2160,8 @@
       actionName: DISARM
     id: disarm
     alias: disarm
-  - trigger: event
-    event_type: ios.notification_action_fired
-    event_data:
-      actionName: STOP_SIREN
-    id: stop_siren notification
-    alias: stop_siren notification
-  - trigger: event
-    event_type: ios.action_fired
-    event_data:
-      actionName: STOP_SIREN
-    id: stop_siren
-    alias: stop_siren
-  condition: []
-  action:
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: trigger
@@ -2208,23 +2196,6 @@
         data: {}
         target:
           entity_id: alarm_control_panel.alarm
-    - conditions:
-      - condition: trigger
-        id:
-        - stop_siren notification
-        - stop_siren
-      sequence:
-      - action: switch.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - switch.entree_sirene_alarm_state
-          - switch.entree_brandmelder_alarm_smoke
-          - switch.gang_brandmelder_alarm_smoke
-          - switch.gameroom_brandmelder_alarm_smoke
-          - switch.schuur_brandmelder_alarm
-        alias: 'Sirens: stop'
   mode: single
 - id: '1726665266579'
   alias: Sun luminosity
