@@ -3819,14 +3819,18 @@
     at: '18:30:00'
     alias: '18:30'
     id: '18:30'
+  - trigger: time
+    at: '23:00:00'
+    alias: '23:00'
+    id: '23:00'
   conditions: []
   actions:
   - choose:
-    - conditions:
+    - alias: 00:00
+      conditions:
       - condition: trigger
         id:
         - 00:00
-      alias: 00:00
       sequence:
       - action: light.turn_off
         data:
@@ -3849,11 +3853,16 @@
       - action: script.backup_full
         data: {}
         metadata: {}
-    - conditions:
+      - action: alarm_control_panel.alarm_arm_night
+        metadata: {}
+        data: {}
+        target:
+          entity_id: alarm_control_panel.alarm
+    - alias: 01:00
+      conditions:
       - condition: trigger
         id:
         - 01:00
-      alias: 01:00
       sequence:
       - action: light.turn_off
         data:
@@ -3874,11 +3883,11 @@
           - tuin
           - wasruimte
           - woonkamer
-    - conditions:
+    - alias: 06:00
+      conditions:
       - condition: trigger
         id:
         - 06:00
-      alias: 06:00
       sequence:
       - action: input_boolean.turn_on
         data: {}
@@ -3933,7 +3942,8 @@
         metadata: {}
         target:
           entity_id: media_player.slaapkamer
-    - conditions:
+    - alias: 08:00, weekday
+      conditions:
       - condition: trigger
         id:
         - 08:00
@@ -3944,7 +3954,6 @@
         - wed
         - thu
         - fri
-      alias: 08:00, weekday
       sequence:
       - action: light.turn_on
         metadata: {}
@@ -3961,7 +3970,19 @@
         target:
           entity_id:
           - input_boolean.slaapkamer_open
-    - conditions:
+      - if:
+        - condition: numeric_state
+          entity_id: zone.home
+          above: 0
+        then:
+        - action: alarm_control_panel.alarm_arm_home
+          metadata: {}
+          data: {}
+          target:
+            entity_id: alarm_control_panel.alarm
+        alias: Arm alarm if home
+    - alias: 09:00, weekday
+      conditions:
       - condition: trigger
         id:
         - 09:00
@@ -3972,7 +3993,6 @@
         - wed
         - thu
         - fri
-      alias: 09:00, weekday
       sequence:
       - action: light.turn_on
         data:
@@ -3989,7 +4009,44 @@
           - input_boolean.slaapkamer_open
         data: {}
         action: input_boolean.turn_on
-    - conditions:
+    - alias: 09:00, weekend
+      conditions:
+      - condition: trigger
+        id:
+        - 09:00
+      - condition: time
+        weekday:
+        - sat
+        - sun
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 30
+          color_temp_kelvin: 3333
+          transition: 300
+        target:
+          entity_id:
+          - light.slaapkamer_alex_lamp_bed
+          - light.slaapkamer_deni_lamp_bed
+      - action: input_boolean.turn_on
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.slaapkamer_open
+      - if:
+        - condition: numeric_state
+          entity_id: zone.home
+          above: 0
+        then:
+        - action: alarm_control_panel.alarm_arm_home
+          metadata: {}
+          data: {}
+          target:
+            entity_id: alarm_control_panel.alarm
+        alias: Arm alarm if home
+    - alias: 10:00, weekday
+      conditions:
       - condition: trigger
         id:
         - '10:00'
@@ -4000,7 +4057,6 @@
         - wed
         - thu
         - fri
-      alias: 10:00, weekday
       sequence:
       - action: input_boolean.turn_on
         data: {}
@@ -4015,11 +4071,11 @@
         metadata: {}
         target:
           area_id: slaapkamer
-    - conditions:
+    - alias: '11:00'
+      conditions:
       - condition: trigger
         id:
         - '11:00'
-      alias: '11:00'
       sequence:
       - action: input_boolean.turn_on
         data: {}
@@ -4034,11 +4090,11 @@
         metadata: {}
         target:
           area_id: slaapkamer
-    - conditions:
+    - alias: '17:30'
+      conditions:
       - condition: trigger
         id:
         - '17:30'
-      alias: '17:30'
       sequence:
       - action: light.turn_on
         data:
@@ -4082,11 +4138,11 @@
         metadata: {}
         target:
           entity_id: media_player.slaapkamer
-    - conditions:
+    - alias: '18:00'
+      conditions:
       - condition: trigger
         id:
         - '18:00'
-      alias: '18:00'
       sequence:
       - action: light.turn_on
         data:
@@ -4145,11 +4201,11 @@
         target:
           entity_id:
           - input_boolean.sauna_dicht
-    - conditions:
+    - alias: '18:30'
+      conditions:
       - condition: trigger
         id:
         - '18:30'
-      alias: '18:30'
       sequence:
       - action: light.turn_on
         data:
@@ -4169,169 +4225,23 @@
           entity_id:
           - light.eettafel_lamp_onder
           - light.woonkamer_lamp_onder
-  mode: restart
-- id: '1737312433246'
-  alias: Alarm - Geofence
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.entree_brandmelder_smoke
-    - binary_sensor.gang_brandmelder_smoke
-    - binary_sensor.gameroom_brandmelder_smoke
-    - binary_sensor.schuur_brandmelder_smoke
-    to: 'on'
-    alias: alarm_smoke
-    id: alarm_smoke
-  - trigger: state
-    entity_id:
-    - binary_sensor.keuken_vochtmelder_water_leak
-    - binary_sensor.wasruimte_vochtmelder_water_leak
-    to: 'on'
-    alias: alarm_moisture
-    id: alarm_moisture
-  - trigger: state
-    entity_id:
-    - schedule.alarm
-    attribute: state
-    alias: alarm_schedule
-    id: alarm_schedule
-  - trigger: numeric_state
-    entity_id:
-    - zone.home
-    below: 1
-    alias: geofence_away
-    id: geofence_away
-  conditions: []
-  actions:
-  - alias: Alarm binary
-    choose:
-    - conditions:
+    - alias: '23:00'
+      conditions:
       - condition: trigger
         id:
-        - alarm_smoke
-      alias: alarm_smoke
+        - '23:00'
       sequence:
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Smoke detected by {{ trigger.to_state.name }}!
-          data:
-            actions:
-            - action: STOP_SIREN
-              title: Stop sirens
-            push:
-              sound:
-                name: default
-                critical: 1
-                volume: 1
-        metadata: {}
-      - action: script.lights_scene_create
-        data: {}
-        metadata: {}
-      - alias: Smoke detected
-        repeat:
-          sequence:
-          - action: script.lights_orange
-            metadata: {}
-            data: {}
-          while:
-          - condition: state
-            entity_id: binary_sensor.alarm_smoke
-            state: 'on'
-      - action: script.lights_scene_restore
-        data: {}
-        metadata: {}
-    - conditions:
-      - condition: trigger
-        id:
-        - alarm_moisture
-      alias: alarm_moisture
-      sequence:
-      - action: notify.notify
-        alias: Notify
-        data:
-          message: Water leak detected by {{ trigger.to_state.name }}!
-          data:
-            actions:
-            - action: STOP_SIREN
-              title: Stop sirens
-            push:
-              sound:
-                name: default
-                critical: 1
-                volume: 1
-        metadata: {}
-      - action: script.lights_scene_create
-        data: {}
-        metadata: {}
-      - alias: Moisture detected
-        repeat:
-          sequence:
-          - action: script.lights_blue
-            metadata: {}
-            data: {}
-          while:
-          - condition: state
-            entity_id: binary_sensor.alarm_moisture
-            state: 'on'
-      - action: script.lights_scene_restore
-        data: {}
-        metadata: {}
-    enabled: false
-  - alias: Alarm schedule
-    choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - alarm_schedule
-      - condition: numeric_state
-        entity_id: zone.home
-        above: 0
-        alias: at home
-      - condition: state
-        entity_id: schedule.alarm
-        attribute: state
-        state: armed_home
-      sequence:
-      - target:
-          entity_id:
-          - alarm_control_panel.alarm
-        data: {}
-        action: alarm_control_panel.alarm_arm_home
-      alias: At home, day
-    - conditions:
-      - condition: trigger
-        id:
-        - alarm_schedule
-      - condition: numeric_state
-        entity_id: zone.home
-        above: 0
-        alias: at home
-      - condition: state
-        entity_id: schedule.alarm
-        attribute: state
-        state: armed_night
-      sequence:
-      - target:
-          entity_id:
-          - alarm_control_panel.alarm
-        data: {}
-        action: alarm_control_panel.alarm_arm_night
-      alias: At home, night
-    - conditions:
-      - condition: trigger
-        id:
-        - geofence_away
-      sequence:
-      - metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - alarm_control_panel.alarm
-        action: alarm_control_panel.alarm_arm_away
-      alias: Not at home
-    enabled: false
+      - alias: Arm alarm if home
+        if:
+        - condition: numeric_state
+          entity_id: zone.home
+          above: 0
+        then:
+        - action: alarm_control_panel.alarm_arm_night
+          metadata: {}
+          data: {}
+          target:
+            entity_id: alarm_control_panel.alarm
   mode: restart
 - id: '1737375691040'
   alias: Alarm
