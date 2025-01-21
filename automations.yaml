@@ -4465,3 +4465,9 @@
       - binary_sensor.woonkamer_raamsensor_contact
       alarm_camera_night: camera.entree
       alarm_camera_away: camera.entree
+      alarm_scripts_away:
+      - script.music_away
+      alarm_scripts_home:
+      - script.music_home
+      alarm_scripts_night:
+      - script.music_night
