@@ -324,6 +324,24 @@ triggers:
     to: "on"
     alias: alarm_sensor_night
     id: alarm_sensor_night
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: "arm_home"
+    alias: action_arm_home
+    id: action_arm_home
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: "arm_night"
+    alias: action_arm_night
+    id: action_arm_night
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: "disarm"
+    alias: action_disarm
+    id: action_disarm
 
 conditions: []
 
@@ -453,13 +471,13 @@ actions:
               message: "{{ alarm_notifications_armed_away }}"
               data:
                 actions:
-                  - action: DISARM
+                  - action: disarm
                     title: Alarm Disarm
                     icon: "sfsymbols:bell.slash"
-                  - action: ARM_HOME
+                  - action: arm_home
                     title: Alarm Home
                     icon: "sfsymbols:bell.fill"
-                  - action: ARM_NIGHT
+                  - action: arm_night
                     title: Alarm Night
                     icon: "sfsymbols:bell"
       - alias: Home
@@ -476,13 +494,13 @@ actions:
               message: "{{ alarm_notifications_armed_home }}"
               data:
                 actions:
-                  - action: DISARM
+                  - action: disarm
                     title: Alarm Disarm
                     icon: "sfsymbols:bell.slash"
-                  - action: ARM_HOME
+                  - action: arm_home
                     title: Alarm Home
                     icon: "sfsymbols:bell.fill"
-                  - action: ARM_NIGHT
+                  - action: arm_night
                     title: Alarm Night
                     icon: "sfsymbols:bell"
       - alias: Night
@@ -499,13 +517,13 @@ actions:
               message: "{{ alarm_notifications_armed_night }}"
               data:
                 actions:
-                  - action: DISARM
+                  - action: disarm
                     title: Alarm Disarm
                     icon: "sfsymbols:bell.slash"
-                  - action: ARM_HOME
+                  - action: arm_home
                     title: Alarm Home
                     icon: "sfsymbols:bell.fill"
-                  - action: ARM_NIGHT
+                  - action: arm_night
                     title: Alarm Night
                     icon: "sfsymbols:bell"
       - alias: Disarmed
@@ -522,13 +540,13 @@ actions:
               message: "{{ alarm_notifications_disarmed }}"
               data:
                 actions:
-                  - action: DISARM
+                  - action: disarm
                     title: Alarm Disarm
                     icon: "sfsymbols:bell.slash"
-                  - action: ARM_HOME
+                  - action: arm_home
                     title: Alarm Home
                     icon: "sfsymbols:bell.fill"
-                  - action: ARM_NIGHT
+                  - action: arm_night
                     title: Alarm Night
                     icon: "sfsymbols:bell"
       - alias: Triggered
@@ -545,13 +563,13 @@ actions:
               message: "{{ trigger.to_state.name }} {{ alarm_notifications_armed_away }}"
               data:
                 actions:
-                  - action: DISARM
+                  - action: disarm
                     title: Alarm Disarm
                     icon: "sfsymbols:bell.slash"
-                  - action: ARM_HOME
+                  - action: arm_home
                     title: Alarm Home
                     icon: "sfsymbols:bell.fill"
-                  - action: ARM_NIGHT
+                  - action: arm_night
                     title: Alarm Night
                     icon: "sfsymbols:bell"
                 entity_id: !input alarm_camera_triggered
@@ -576,13 +594,13 @@ actions:
               message: "{{ alarm_notifications_arming }}"
               data:
                 actions:
-                  - action: DISARM
+                  - action: disarm
                     title: Alarm Disarm
                     icon: "sfsymbols:bell.slash"
-                  - action: ARM_HOME
+                  - action: arm_home
                     title: Alarm Home
                     icon: "sfsymbols:bell.fill"
-                  - action: ARM_NIGHT
+                  - action: arm_night
                     title: Alarm Night
                     icon: "sfsymbols:bell"
   - alias: Alarm Triggers
@@ -605,13 +623,13 @@ actions:
               message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
               data:
                 actions:
-                  - action: DISARM
+                  - action: disarm
                     title: Alarm Disarm
                     icon: "sfsymbols:bell.slash"
-                  - action: ARM_HOME
+                  - action: arm_home
                     title: Alarm Home
                     icon: "sfsymbols:bell.fill"
-                  - action: ARM_NIGHT
+                  - action: arm_night
                     title: Alarm Night
                     icon: "sfsymbols:bell"
                 entity_id: !input alarm_camera_away
@@ -640,13 +658,13 @@ actions:
               message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
               data:
                 actions:
-                  - action: DISARM
+                  - action: disarm
                     title: Alarm Disarm
                     icon: "sfsymbols:bell.slash"
-                  - action: ARM_HOME
+                  - action: arm_home
                     title: Alarm Home
                     icon: "sfsymbols:bell.fill"
-                  - action: ARM_NIGHT
+                  - action: arm_night
                     title: Alarm Night
                     icon: "sfsymbols:bell"
                 entity_id: !input alarm_camera_home
@@ -675,13 +693,13 @@ actions:
               message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
               data:
                 actions:
-                  - action: DISARM
+                  - action: disarm
                     title: Alarm Disarm
                     icon: "sfsymbols:bell.slash"
-                  - action: ARM_HOME
+                  - action: arm_home
                     title: Alarm Home
                     icon: "sfsymbols:bell.fill"
-                  - action: ARM_NIGHT
+                  - action: arm_night
                     title: Alarm Night
                     icon: "sfsymbols:bell"
                 entity_id: !input alarm_camera_night
@@ -692,3 +710,29 @@ actions:
                     volume: 1
                     ttl: 0
                     priority: high
+  - alias: Notification Actions
+    choose:
+      - alias: action_arm_home
+        conditions:
+          - condition: trigger
+            id: action_arm_home
+        sequence:
+          - action: alarm_control_panel.alarm_arm_home
+            target:
+              entity_id: !input alarm_main
+      - alias: action_arm_night
+        conditions:
+          - condition: trigger
+            id: action_arm_night
+        sequence:
+          - action: alarm_control_panel.alarm_arm_night
+            target:
+              entity_id: !input alarm_main
+      - alias: action_disarm
+        conditions:
+          - condition: trigger
+            id: action_disarm
+        sequence:
+          - action: alarm_control_panel.alarm_disarm
+            target:
+              entity_id: !input alarm_main
