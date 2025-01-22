@@ -779,15 +779,13 @@
       - condition: trigger
         id:
         - Schuur Dicht
-      - condition: state
-        entity_id: binary_sensor.tuin_deursensor_contact
-        state: 'off'
       sequence:
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 30
-          milliseconds: 0
+      - wait_for_trigger:
+        - trigger: state
+          entity_id:
+          - binary_sensor.tuin_deursensor_contact
+          to: 'off'
+          from: 'on'
       - target:
           entity_id: scene.tuin_before
         data: {}
@@ -899,23 +897,9 @@
   actions:
   - parallel:
     - action: script.voordeur_bel_announce
-      metadata: {}
-      data: {}
+    - action: script.voordeur_bel_lights
     - action: script.voordeur_bel_notify
-      metadata: {}
-      data: {}
     - action: script.voordeur_bel_woonkamer_tv
-      metadata: {}
-      data: {}
-  - action: script.lights_scene_create
-    metadata: {}
-    data: {}
-  - action: script.lights_green
-    metadata: {}
-    data: {}
-  - action: script.lights_scene_restore
-    metadata: {}
-    data: {}
   mode: restart
 - id: '1706028727906'
   alias: Keukenkast Deur
@@ -3520,6 +3504,10 @@
       - action: script.gang_dicht
         metadata: {}
         data: {}
+      button_3_mode: Lights
+      button_3_lights:
+      - light.gameroom_lampen
+      button_3_lights_schedule: schedule.lights_bright
 - id: '1736812390460'
   alias: Kantoor Knop
   description: ''
@@ -4275,3 +4263,28 @@
       - script.music_home
       alarm_scripts_night:
       - script.music_night
+- id: '1737540185932'
+  alias: Media
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.kantoor
+    to:
+    alias: media player idle
+    id: media player idle
+  conditions: []
+  actions:
+  - alias: Media Player
+    choose:
+    - conditions:
+      - condition: trigger
+        id: media player idle
+      sequence:
+      - action: media_player.join
+        data:
+          group_members:
+          - media_player.kantoor
+        target:
+          entity_id: media_player.slaapkamer
+  mode: single
