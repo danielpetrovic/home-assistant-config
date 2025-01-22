@@ -1282,14 +1282,19 @@
     - binary_sensor.deni_macbook_audio_input_in_use
     to: 'off'
     id: mic not in use
+  - trigger: state
+    entity_id:
+    - media_player.kantoor
+    to: idle
+    alias: media player idle
+    id: media player idle
   conditions: []
   actions:
-  - alias: Volume
-    choose:
-    - conditions:
+  - choose:
+    - alias: lights on
+      conditions:
       - condition: trigger
-        id:
-        - lights on
+        id: lights on
       sequence:
       - data:
           volume_level: 0.35
@@ -1297,34 +1302,30 @@
           entity_id:
           - media_player.kantoor
         action: media_player.volume_set
-      alias: lights on
-    - conditions:
+    - alias: lights off
+      conditions:
       - condition: trigger
-        id:
-        - lights off
+        id: lights off
       sequence:
       - data:
           volume_level: 0.25
         target:
           entity_id: media_player.kantoor
         action: media_player.volume_set
-      alias: lights off
-  - alias: Volume
-    choose:
-    - conditions:
+    - alias: mic in use
+      conditions:
       - condition: trigger
-        id:
-        - mic in use
+        id: mic in use
       sequence:
       - data:
           volume_level: 0.1
         target:
           entity_id: media_player.kantoor
         action: media_player.volume_set
-    - conditions:
+    - alias: mic not in use
+      conditions:
       - condition: trigger
-        id:
-        - mic not in use
+        id: mic not in use
       - condition: state
         entity_id: light.kantoor_lampen
         state: 'on'
@@ -1334,6 +1335,17 @@
         target:
           entity_id: media_player.kantoor
         action: media_player.volume_set
+    - alias: media player idle
+      conditions:
+      - condition: trigger
+        id: media player idle
+      sequence:
+      - action: media_player.join
+        data:
+          group_members:
+          - media_player.kantoor
+        target:
+          entity_id: media_player.slaapkamer
   mode: restart
 - id: '1706169648965'
   alias: Woonkamer Media
@@ -4263,28 +4275,3 @@
       - script.music_home
       alarm_scripts_night:
       - script.music_night
-- id: '1737540185932'
-  alias: Media
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - media_player.kantoor
-    to:
-    alias: media player idle
-    id: media player idle
-  conditions: []
-  actions:
-  - alias: Media Player
-    choose:
-    - conditions:
-      - condition: trigger
-        id: media player idle
-      sequence:
-      - action: media_player.join
-        data:
-          group_members:
-          - media_player.kantoor
-        target:
-          entity_id: media_player.slaapkamer
-  mode: single
