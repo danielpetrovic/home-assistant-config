@@ -753,71 +753,79 @@ blueprint:
               step: 5.0
               unit_of_measurement: "%"
               mode: slider
+
 mode: restart
 max_exceeded: silent
-trigger:
+
+variables:
+  remote: !input remote
+  command: "{{ trigger.event.data.command }}"
+  args: "{{ trigger.event.data.args }}"
+  params: "{{ trigger.event.data.params }}"
+  step_mode: "{{ trigger.event.data.params.step_mode | default('0') }}"
+  step_size: "{{ trigger.event.data.params.step_size | default('0') }}"
+  last_pressed: !input last_pressed
+  button_1_mode: !input button_1_mode
+  button_1_lights: !input button_1_lights
+  button_1_lights_schedule: !input button_1_lights_schedule
+  button_1_lights_brightness_input: !input button_1_lights_brightness
+  button_1_lights_brightness_pct: "{{ state_attr(button_1_lights_schedule, 'brightness_pct') if button_1_lights_schedule is defined and button_1_lights_schedule != [] and state_attr(button_1_lights_schedule, 'brightness_pct') is not none else button_1_lights_brightness_input }}"
+  button_1_lights_color_input: !input button_1_lights_color
+  button_1_lights_color_temp_kelvin: "{{ state_attr(button_1_lights_schedule, 'color_temp_kelvin') if button_1_lights_schedule is defined and button_1_lights_schedule != [] and state_attr(button_1_lights_schedule, 'color_temp_kelvin') is not none else button_1_lights_color_input }}"
+  button_1_lights_transition_input: !input button_1_lights_transition
+  button_1_lights_transition: "{{ state_attr(button_1_lights_schedule, 'transition') if button_1_lights_schedule is defined and button_1_lights_schedule != [] and state_attr(button_1_lights_schedule, 'transition') is not none else button_1_lights_transition_input }}"
+  button_1_media: !input button_1_media
+  button_1_media_start_volume: !input button_1_media_start_volume
+  button_2_mode: !input button_2_mode
+  button_2_lights: !input button_2_lights
+  button_2_lights_schedule: !input button_2_lights_schedule
+  button_2_lights_brightness_input: !input button_2_lights_brightness
+  button_2_lights_brightness_pct: "{{ state_attr(button_2_lights_schedule, 'brightness_pct') if button_2_lights_schedule is defined and button_2_lights_schedule != [] and state_attr(button_2_lights_schedule, 'brightness_pct') is not none else button_2_lights_brightness_input }}"
+  button_2_lights_color_input: !input button_2_lights_color
+  button_2_lights_color_temp_kelvin: "{{ state_attr(button_2_lights_schedule, 'color_temp_kelvin') if button_2_lights_schedule is defined and button_2_lights_schedule != [] and state_attr(button_2_lights_schedule, 'color_temp_kelvin') is not none else button_2_lights_color_input }}"
+  button_2_lights_transition_input: !input button_2_lights_transition
+  button_2_lights_transition: "{{ state_attr(button_2_lights_schedule, 'transition') if button_2_lights_schedule is defined and button_2_lights_schedule != [] and state_attr(button_2_lights_schedule, 'transition') is not none else button_2_lights_transition_input }}"
+  button_2_media: !input button_2_media
+  button_2_media_start_volume: !input button_2_media_start_volume
+  button_3_mode: !input button_3_mode
+  button_3_lights: !input button_3_lights
+  button_3_lights_schedule: !input button_3_lights_schedule
+  button_3_lights_brightness_input: !input button_3_lights_brightness
+  button_3_lights_brightness_pct: "{{ state_attr(button_3_lights_schedule, 'brightness_pct') if button_3_lights_schedule is defined and button_3_lights_schedule != [] and state_attr(button_3_lights_schedule, 'brightness_pct') is not none else button_3_lights_brightness_input }}"
+  button_3_lights_color_input: !input button_3_lights_color
+  button_3_lights_color_temp_kelvin: "{{ state_attr(button_3_lights_schedule, 'color_temp_kelvin') if button_3_lights_schedule is defined and button_3_lights_schedule != [] and state_attr(button_3_lights_schedule, 'color_temp_kelvin') is not none else button_3_lights_color_input }}"
+  button_3_lights_transition_input: !input button_3_lights_transition
+  button_3_lights_transition: "{{ state_attr(button_3_lights_schedule, 'transition') if button_3_lights_schedule is defined and button_3_lights_schedule != [] and state_attr(button_3_lights_schedule, 'transition') is not none else button_3_lights_transition_input }}"
+  button_3_media: !input button_3_media
+  button_3_media_start_volume: !input button_3_media_start_volume
+  button_4_mode: !input button_4_mode
+  button_4_lights: !input button_4_lights
+  button_4_lights_schedule: !input button_4_lights_schedule
+  button_4_lights_brightness_input: !input button_4_lights_brightness
+  button_4_lights_brightness_pct: "{{ state_attr(button_4_lights_schedule, 'brightness_pct') if button_4_lights_schedule is defined and button_4_lights_schedule != [] and state_attr(button_4_lights_schedule, 'brightness_pct') is not none else button_4_lights_brightness_input }}"
+  button_4_lights_color_input: !input button_4_lights_color
+  button_4_lights_color_temp_kelvin: "{{ state_attr(button_4_lights_schedule, 'color_temp_kelvin') if button_4_lights_schedule is defined and button_4_lights_schedule != [] and state_attr(button_4_lights_schedule, 'color_temp_kelvin') is not none else button_4_lights_color_input }}"
+  button_4_lights_transition_input: !input button_4_lights_transition
+  button_4_lights_transition: "{{ state_attr(button_4_lights_schedule, 'transition') if button_4_lights_schedule is defined and button_4_lights_schedule != [] and state_attr(button_4_lights_schedule, 'transition') is not none else button_4_lights_transition_input }}"
+  button_4_media: !input button_4_media
+  button_4_media_start_volume: !input button_4_media_start_volume
+
+triggers:
   - trigger: event
     event_type: zha_event
     event_data:
       device_id: !input remote
-action:
-  - variables:
-      command: "{{ trigger.event.data.command }}"
-      args: "{{ trigger.event.data.args }}"
-      params: "{{ trigger.event.data.params }}"
-      step_mode: "{{ trigger.event.data.params.step_mode | default('0') }}"
-      step_size: "{{ trigger.event.data.params.step_size | default('0') }}"
-      button_1_mode: !input button_1_mode
-      button_1_lights: !input button_1_lights
-      button_1_lights_schedule: !input button_1_lights_schedule
-      button_1_lights_brightness_input: !input button_1_lights_brightness
-      button_1_lights_brightness_pct: "{{ state_attr(button_1_lights_schedule, 'brightness_pct') if button_1_lights_schedule is defined and button_1_lights_schedule != [] and state_attr(button_1_lights_schedule, 'brightness_pct') is not none else button_1_lights_brightness_input }}"
-      button_1_lights_color_input: !input button_1_lights_color
-      button_1_lights_color_temp_kelvin: "{{ state_attr(button_1_lights_schedule, 'color_temp_kelvin') if button_1_lights_schedule is defined and button_1_lights_schedule != [] and state_attr(button_1_lights_schedule, 'color_temp_kelvin') is not none else button_1_lights_color_input }}"
-      button_1_lights_transition_input: !input button_1_lights_transition
-      button_1_lights_transition: "{{ state_attr(button_1_lights_schedule, 'transition') if button_1_lights_schedule is defined and button_1_lights_schedule != [] and state_attr(button_1_lights_schedule, 'transition') is not none else button_1_lights_transition_input }}"
-      button_1_media: !input button_1_media
-      button_1_media_start_volume: !input button_1_media_start_volume
-      button_2_mode: !input button_2_mode
-      button_2_lights: !input button_2_lights
-      button_2_lights_schedule: !input button_2_lights_schedule
-      button_2_lights_brightness_input: !input button_2_lights_brightness
-      button_2_lights_brightness_pct: "{{ state_attr(button_2_lights_schedule, 'brightness_pct') if button_2_lights_schedule is defined and button_2_lights_schedule != [] and state_attr(button_2_lights_schedule, 'brightness_pct') is not none else button_2_lights_brightness_input }}"
-      button_2_lights_color_input: !input button_2_lights_color
-      button_2_lights_color_temp_kelvin: "{{ state_attr(button_2_lights_schedule, 'color_temp_kelvin') if button_2_lights_schedule is defined and button_2_lights_schedule != [] and state_attr(button_2_lights_schedule, 'color_temp_kelvin') is not none else button_2_lights_color_input }}"
-      button_2_lights_transition_input: !input button_2_lights_transition
-      button_2_lights_transition: "{{ state_attr(button_2_lights_schedule, 'transition') if button_2_lights_schedule is defined and button_2_lights_schedule != [] and state_attr(button_2_lights_schedule, 'transition') is not none else button_2_lights_transition_input }}"
-      button_2_media: !input button_2_media
-      button_2_media_start_volume: !input button_2_media_start_volume
-      button_3_mode: !input button_3_mode
-      button_3_lights: !input button_3_lights
-      button_3_lights_schedule: !input button_3_lights_schedule
-      button_3_lights_brightness_input: !input button_3_lights_brightness
-      button_3_lights_brightness_pct: "{{ state_attr(button_3_lights_schedule, 'brightness_pct') if button_3_lights_schedule is defined and button_3_lights_schedule != [] and state_attr(button_3_lights_schedule, 'brightness_pct') is not none else button_3_lights_brightness_input }}"
-      button_3_lights_color_input: !input button_3_lights_color
-      button_3_lights_color_temp_kelvin: "{{ state_attr(button_3_lights_schedule, 'color_temp_kelvin') if button_3_lights_schedule is defined and button_3_lights_schedule != [] and state_attr(button_3_lights_schedule, 'color_temp_kelvin') is not none else button_3_lights_color_input }}"
-      button_3_lights_transition_input: !input button_3_lights_transition
-      button_3_lights_transition: "{{ state_attr(button_3_lights_schedule, 'transition') if button_3_lights_schedule is defined and button_3_lights_schedule != [] and state_attr(button_3_lights_schedule, 'transition') is not none else button_3_lights_transition_input }}"
-      button_3_media: !input button_3_media
-      button_3_media_start_volume: !input button_3_media_start_volume
-      button_4_mode: !input button_4_mode
-      button_4_lights: !input button_4_lights
-      button_4_lights_schedule: !input button_4_lights_schedule
-      button_4_lights_brightness_input: !input button_4_lights_brightness
-      button_4_lights_brightness_pct: "{{ state_attr(button_4_lights_schedule, 'brightness_pct') if button_4_lights_schedule is defined and button_4_lights_schedule != [] and state_attr(button_4_lights_schedule, 'brightness_pct') is not none else button_4_lights_brightness_input }}"
-      button_4_lights_color_input: !input button_4_lights_color
-      button_4_lights_color_temp_kelvin: "{{ state_attr(button_4_lights_schedule, 'color_temp_kelvin') if button_4_lights_schedule is defined and button_4_lights_schedule != [] and state_attr(button_4_lights_schedule, 'color_temp_kelvin') is not none else button_4_lights_color_input }}"
-      button_4_lights_transition_input: !input button_4_lights_transition
-      button_4_lights_transition: "{{ state_attr(button_4_lights_schedule, 'transition') if button_4_lights_schedule is defined and button_4_lights_schedule != [] and state_attr(button_4_lights_schedule, 'transition') is not none else button_4_lights_transition_input }}"
-      button_4_media: !input button_4_media
-      button_4_media_start_volume: !input button_4_media_start_volume
-      last_pressed: !input last_pressed
-      remote: !input remote
+    alias: remote
+    id: remote
+
+actions:
   - choose:
-      - conditions:
+      - alias: input_text.set_value
+        conditions:
+          - condition: trigger
+            id: remote
           - condition: template
             value_template: "{{ command | regex_search('button_[1-4]') }}"
-        alias: input_text.set_value
         sequence:
           - action: input_text.set_value
             data:
@@ -825,55 +833,63 @@ action:
             target:
               entity_id: "{{ last_pressed }}"
   - choose:
-      - conditions: "{{ button_1_mode == 'Custom' }}"
-        alias: Button 1 Custom mode
+      - alias: Button 1 Custom mode
+        conditions:
+          - condition: trigger
+            id: remote
+          - condition: template
+            value_template: "{{ button_1_mode == 'Custom' }}"
         sequence:
           - choose:
-              - conditions: "{{ command == 'button_1_press' }}"
-                alias: button_1_press_custom
+              - alias: button_1_press_custom
+                conditions: "{{ command == 'button_1_press' }}"
                 sequence: !input button_1_press
-              - conditions: "{{ command == 'button_1_short_release' }}"
-                alias: button_1_short_release_custom
+              - alias: button_1_short_release_custom
+                conditions: "{{ command == 'button_1_short_release' }}"
                 sequence: !input button_1_short_release
-              - conditions: "{{ command == 'button_1_hold' }}"
-                alias: button_1_hold_custom
+              - alias: button_1_hold_custom
+                conditions: "{{ command == 'button_1_hold' }}"
                 sequence: !input button_1_hold
-              - conditions: "{{ command == 'button_1_long_release' }}"
-                alias: button_1_long_release_custom
+              - alias: button_1_long_release_custom
+                conditions: "{{ command == 'button_1_long_release' }}"
                 sequence: !input button_1_long_release
-              - conditions: "{{ command == 'button_1_double_press' }}"
-                alias: button_1_double_custom
+              - alias: button_1_double_custom
+                conditions: "{{ command == 'button_1_double_press' }}"
                 sequence: !input button_1_double
-              - conditions: "{{ command == 'button_1_triple_press' }}"
-                alias: button_1_triple_custom
+              - alias: button_1_triple_custom
+                conditions: "{{ command == 'button_1_triple_press' }}"
                 sequence: !input button_1_triple
-              - conditions: "{{ command == 'button_1_quadruple_press' }}"
-                alias: button_1_quadruple_custom
+              - alias: button_1_quadruple_custom
+                conditions: "{{ command == 'button_1_quadruple_press' }}"
                 sequence: !input button_1_quadruple
-              - conditions: "{{ command == 'button_1_quintuple_press' }}"
-                alias: button_1_quintuple_custom
+              - alias: button_1_quintuple_custom
+                conditions: "{{ command == 'button_1_quintuple_press' }}"
                 sequence: !input button_1_quintuple
-              - conditions:
+              - alias: button_1_rotate_custom
+                conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '1' }}"
-                alias: button_1_rotate_custom
                 sequence:
                   - choose:
-                      - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_1_rotate_left_custom
+                      - alias: button_1_rotate_left_custom
+                        conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
                         sequence: !input button_1_rotate_left
-                      - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_1_rotate_right_custom
+                      - alias: button_1_rotate_right_custom
+                        conditions: "{{ step_mode == 'StepMode.Up' }}"
                         sequence: !input button_1_rotate_right
-      - conditions: "{{ button_1_mode == 'Lights' }}"
-        alias: Button 1 Lights mode
+      - alias: Button 1 Lights mode
+        conditions:
+          - condition: trigger
+            id: remote
+          - condition: template
+            value_template: "{{ button_1_mode == 'Lights' }}"
         sequence:
           - choose:
-              - conditions: "{{ command == 'button_1_press' }}"
-                alias: button_1_press_lights
+              - alias: button_1_press_lights
+                conditions: "{{ command == 'button_1_press' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_1_short_release' }}"
-                alias: button_1_short_release_lights
+              - alias: button_1_short_release_lights
+                conditions: "{{ command == 'button_1_short_release' }}"
                 sequence:
                   action: light.turn_on
                   data:
@@ -882,37 +898,37 @@ action:
                     transition: "{{ button_1_lights_transition }}"
                   target:
                     entity_id: !input button_1_lights
-              - conditions: "{{ command == 'button_1_hold' }}"
-                alias: button_1_hold_lights
+              - alias: button_1_hold_lights
+                conditions: "{{ command == 'button_1_hold' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_1_long_release' }}"
-                alias: button_1_long_release_lights
+              - alias: button_1_long_release_lights
+                conditions: "{{ command == 'button_1_long_release' }}"
                 sequence:
                   action: light.turn_off
                   data:
                     transition: "{{ button_1_lights_transition }}"
                   target:
                     entity_id: !input button_1_lights
-              - conditions: "{{ command == 'button_1_double_press' }}"
-                alias: button_1_double_lights
+              - alias: button_1_double_lights
+                conditions: "{{ command == 'button_1_double_press' }}"
                 sequence: !input button_1_double
-              - conditions: "{{ command == 'button_1_triple_press' }}"
-                alias: button_1_triple_lights
+              - alias: button_1_triple_lights
+                conditions: "{{ command == 'button_1_triple_press' }}"
                 sequence: !input button_1_triple
-              - conditions: "{{ command == 'button_1_quadruple_press' }}"
-                alias: button_1_quadruple_lights
+              - alias: button_1_quadruple_lights
+                conditions: "{{ command == 'button_1_quadruple_press' }}"
                 sequence: !input button_1_quadruple
-              - conditions: "{{ command == 'button_1_quintuple_press' }}"
-                alias: button_1_quintuple_lights
+              - alias: button_1_quintuple_lights
+                conditions: "{{ command == 'button_1_quintuple_press' }}"
                 sequence: !input button_1_quintuple
-              - conditions:
+              - alias: button_1_rotate_lights
+                conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '1' }}"
-                alias: button_1_rotate_lights
                 sequence:
                   - choose:
-                      - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_1_rotate_left_lights
+                      - alias: button_1_rotate_left_lights
+                        conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
                         sequence:
                           action: light.turn_on
                           data:
@@ -920,8 +936,8 @@ action:
                             transition: "{{ button_1_lights_transition }}"
                           target:
                             entity_id: !input button_1_lights
-                      - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_1_rotate_right_lights
+                      - alias: button_1_rotate_right_lights
+                        conditions: "{{ step_mode == 'StepMode.Up' }}"
                         sequence:
                           action: light.turn_on
                           data:
@@ -929,17 +945,21 @@ action:
                             transition: "{{ button_1_lights_transition }}"
                           target:
                             entity_id: !input button_1_lights
-      - conditions: "{{ button_1_mode == 'Media' }}"
-        alias: Button 1 Media mode
+      - alias: Button 1 Media mode
+        conditions:
+          - condition: trigger
+            id: remote
+          - condition: template
+            value_template: "{{ button_1_mode == 'Media' }}"
         sequence:
           - variables:
               current_volume: "{{ state_attr(button_1_media, 'volume_level') }}"
           - choose:
-              - conditions: "{{ command == 'button_1_press' }}"
-                alias: button_1_press_media
+              - alias: button_1_press_media
+                conditions: "{{ command == 'button_1_press' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_1_short_release' }}"
-                alias: button_1_short_release_media
+              - alias: button_1_short_release_media
+                conditions: "{{ command == 'button_1_short_release' }}"
                 sequence:
                   - action: media_player.turn_on
                     entity_id: !input button_1_media
@@ -947,38 +967,38 @@ action:
                     data:
                       volume_level: "{{( button_1_media_start_volume / 100 )}}"
                     entity_id: !input button_1_media
-              - conditions: "{{ command == 'button_1_hold' }}"
-                alias: button_1_hold_media
+              - alias: button_1_hold_media
+                conditions: "{{ command == 'button_1_hold' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_1_long_release' }}"
-                alias: button_1_long_release_media
+              - alias: button_1_long_release_media
+                conditions: "{{ command == 'button_1_long_release' }}"
                 sequence:
                   action: media_player.turn_off
                   entity_id: !input button_1_media
-              - conditions: "{{ command == 'button_1_double_press' }}"
-                alias: button_1_double_media
+              - alias: button_1_double_media
+                conditions: "{{ command == 'button_1_double_press' }}"
                 sequence:
                   action: media_player.media_next_track
                   entity_id: !input button_1_media
-              - conditions: "{{ command == 'button_1_triple_press' }}"
-                alias: button_1_triple_media
+              - alias: button_1_triple_media
+                conditions: "{{ command == 'button_1_triple_press' }}"
                 sequence:
                   action: media_player.media_previous_track
                   entity_id: !input button_1_media
-              - conditions: "{{ command == 'button_1_quadruple_press' }}"
-                alias: button_1_quadruple_media
+              - alias: button_1_quadruple_media
+                conditions: "{{ command == 'button_1_quadruple_press' }}"
                 sequence: !input button_1_quadruple
-              - conditions: "{{ command == 'button_1_quintuple_press' }}"
-                alias: button_1_quintuple_media
+              - alias: button_1_quintuple_media
+                conditions: "{{ command == 'button_1_quintuple_press' }}"
                 sequence: !input button_1_quintuple
-              - conditions:
+              - alias: button_1_rotate_media
+                conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '1' }}"
-                alias: button_1_rotate_media
                 sequence:
                   - choose:
-                      - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_1_rotate_left_media
+                      - alias: button_1_rotate_left_media
+                        conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
                         sequence:
                           - action: media_player.volume_set
                             data:
@@ -986,8 +1006,8 @@ action:
                                 "{% set new_volume = current_volume - ( (step_size /
                                 8) / 100)%} {{ 0.0 if new_volume < 0.0 else new_volume }}"
                             entity_id: !input button_1_media
-                      - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_1_rotate_right_media
+                      - alias: button_1_rotate_right_media
+                        conditions: "{{ step_mode == 'StepMode.Up' }}"
                         sequence:
                           - action: media_player.volume_set
                             data:
@@ -996,55 +1016,63 @@ action:
                                 8) / 100)%} {{ 1.0 if new_volume > 1.0 else new_volume }}"
                             entity_id: !input button_1_media
   - choose:
-      - conditions: "{{ button_2_mode == 'Custom' }}"
-        alias: Button 2 Custom mode
+      - alias: Button 2 Custom mode
+        conditions:
+          - condition: trigger
+            id: remote
+          - condition: template
+            value_template: "{{ button_2_mode == 'Custom' }}"
         sequence:
           - choose:
-              - conditions: "{{ command == 'button_2_press' }}"
-                alias: button_2_press
+              - alias: button_2_press
+                conditions: "{{ command == 'button_2_press' }}"
                 sequence: !input button_2_press
-              - conditions: "{{ command == 'button_2_short_release' }}"
-                alias: button_2_short_release
+              - alias: button_2_short_release
+                conditions: "{{ command == 'button_2_short_release' }}"
                 sequence: !input button_2_short_release
-              - conditions: "{{ command == 'button_2_hold' }}"
-                alias: button_2_hold
+              - alias: button_2_hold
+                conditions: "{{ command == 'button_2_hold' }}"
                 sequence: !input button_2_hold
-              - conditions: "{{ command == 'button_2_long_release' }}"
-                alias: button_2_long_release
+              - alias: button_2_long_release
+                conditions: "{{ command == 'button_2_long_release' }}"
                 sequence: !input button_2_long_release
-              - conditions: "{{ command == 'button_2_double_press' }}"
-                alias: button_2_double
+              - alias: button_2_double
+                conditions: "{{ command == 'button_2_double_press' }}"
                 sequence: !input button_2_double
-              - conditions: "{{ command == 'button_2_triple_press' }}"
-                alias: button_2_triple
+              - alias: button_2_triple
+                conditions: "{{ command == 'button_2_triple_press' }}"
                 sequence: !input button_2_triple
-              - conditions: "{{ command == 'button_2_quadruple_press' }}"
-                alias: button_2_quadruple
+              - alias: button_2_quadruple
+                conditions: "{{ command == 'button_2_quadruple_press' }}"
                 sequence: !input button_2_quadruple
-              - conditions: "{{ command == 'button_2_quintuple_press' }}"
-                alias: button_2_quintuple
+              - alias: button_2_quintuple
+                conditions: "{{ command == 'button_2_quintuple_press' }}"
                 sequence: !input button_2_quintuple
-              - conditions:
+              - alias: button_2_rotate
+                conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '2' }}"
-                alias: button_2_rotate
                 sequence:
                   - choose:
-                      - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_2_rotate_left
+                      - alias: button_2_rotate_left
+                        conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
                         sequence: !input button_2_rotate_left
-                      - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_2_rotate_right
+                      - alias: button_2_rotate_right
+                        conditions: "{{ step_mode == 'StepMode.Up' }}"
                         sequence: !input button_2_rotate_right
-      - conditions: "{{ button_2_mode == 'Lights' }}"
-        alias: Button 2 Lights mode
+      - alias: Button 2 Lights mode
+        conditions:
+          - condition: trigger
+            id: remote
+          - condition: template
+            value_template: "{{ button_2_mode == 'Lights' }}"
         sequence:
           - choose:
-              - conditions: "{{ command == 'button_2_press' }}"
-                alias: button_2_press
+              - alias: button_2_press
+                conditions: "{{ command == 'button_2_press' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_2_short_release' }}"
-                alias: button_2_short_release
+              - alias: button_2_short_release
+                conditions: "{{ command == 'button_2_short_release' }}"
                 sequence:
                   action: light.turn_on
                   data:
@@ -1053,37 +1081,37 @@ action:
                     transition: "{{ button_2_lights_transition }}"
                   target:
                     entity_id: !input button_2_lights
-              - conditions: "{{ command == 'button_2_hold' }}"
-                alias: button_2_hold
+              - alias: button_2_hold
+                conditions: "{{ command == 'button_2_hold' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_2_long_release' }}"
-                alias: button_2_long_release
+              - alias: button_2_long_release
+                conditions: "{{ command == 'button_2_long_release' }}"
                 sequence:
                   action: light.turn_off
                   data:
                     transition: "{{ button_2_lights_transition }}"
                   target:
                     entity_id: !input button_2_lights
-              - conditions: "{{ command == 'button_2_double_press' }}"
-                alias: button_2_double
+              - alias: button_2_double
+                conditions: "{{ command == 'button_2_double_press' }}"
                 sequence: !input button_2_double
-              - conditions: "{{ command == 'button_2_triple_press' }}"
-                alias: button_2_triple
+              - alias: button_2_triple
+                conditions: "{{ command == 'button_2_triple_press' }}"
                 sequence: !input button_2_triple
-              - conditions: "{{ command == 'button_2_quadruple_press' }}"
-                alias: button_2_quadruple
+              - alias: button_2_quadruple
+                conditions: "{{ command == 'button_2_quadruple_press' }}"
                 sequence: !input button_2_quadruple
-              - conditions: "{{ command == 'button_2_quintuple_press' }}"
-                alias: button_2_quintuple
+              - alias: button_2_quintuple
+                conditions: "{{ command == 'button_2_quintuple_press' }}"
                 sequence: !input button_2_quintuple
-              - conditions:
+              - alias: button_2_rotate
+                conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '2' }}"
-                alias: button_2_rotate
                 sequence:
                   - choose:
-                      - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_2_rotate_left
+                      - alias: button_2_rotate_left
+                        conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
                         sequence:
                           action: light.turn_on
                           data:
@@ -1091,8 +1119,8 @@ action:
                             transition: 2
                           target:
                             entity_id: !input button_2_lights
-                      - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_2_rotate_right
+                      - alias: button_2_rotate_right
+                        conditions: "{{ step_mode == 'StepMode.Up' }}"
                         sequence:
                           action: light.turn_on
                           data:
@@ -1100,17 +1128,21 @@ action:
                             transition: 2
                           target:
                             entity_id: !input button_2_lights
-      - conditions: "{{ button_2_mode == 'Media' }}"
-        alias: Button 2 Media mode
+      - alias: Button 2 Media mode
+        conditions:
+          - condition: trigger
+            id: remote
+          - condition: template
+            value_template: "{{ button_2_mode == 'Media' }}"
         sequence:
           - variables:
               current_volume: "{{ state_attr(button_2_media, 'volume_level') }}"
           - choose:
-              - conditions: "{{ command == 'button_2_press' }}"
-                alias: button_2_press
+              - alias: button_2_press
+                conditions: "{{ command == 'button_2_press' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_2_short_release' }}"
-                alias: button_2_short_release
+              - alias: button_2_short_release
+                conditions: "{{ command == 'button_2_short_release' }}"
                 sequence:
                   - action: media_player.turn_on
                     entity_id: !input button_2_media
@@ -1118,38 +1150,38 @@ action:
                     data:
                       volume_level: "{{( button_2_media_start_volume / 100 )}}"
                     entity_id: !input button_2_media
-              - conditions: "{{ command == 'button_2_hold' }}"
-                alias: button_2_hold
+              - alias: button_2_hold
+                conditions: "{{ command == 'button_2_hold' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_2_long_release' }}"
-                alias: button_2_long_release
+              - alias: button_2_long_release
+                conditions: "{{ command == 'button_2_long_release' }}"
                 sequence:
                   action: media_player.turn_off
                   entity_id: !input button_2_media
-              - conditions: "{{ command == 'button_2_double_press' }}"
-                alias: button_2_double
+              - alias: button_2_double
+                conditions: "{{ command == 'button_2_double_press' }}"
                 sequence:
                   action: media_player.media_next_track
                   entity_id: !input button_2_media
-              - conditions: "{{ command == 'button_2_triple_press' }}"
-                alias: button_2_triple
+              - alias: button_2_triple
+                conditions: "{{ command == 'button_2_triple_press' }}"
                 sequence:
                   action: media_player.media_previous_track
                   entity_id: !input button_2_media
-              - conditions: "{{ command == 'button_2_quadruple_press' }}"
-                alias: button_2_quadruple
+              - alias: button_2_quadruple
+                conditions: "{{ command == 'button_2_quadruple_press' }}"
                 sequence: !input button_2_quadruple
-              - conditions: "{{ command == 'button_2_quintuple_press' }}"
-                alias: button_2_quintuple
+              - alias: button_2_quintuple
+                conditions: "{{ command == 'button_2_quintuple_press' }}"
                 sequence: !input button_2_quintuple
-              - conditions:
+              - alias: button_2_rotate
+                conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '2' }}"
-                alias: button_2_rotate
                 sequence:
                   - choose:
-                      - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_2_rotate_left
+                      - alias: button_2_rotate_left
+                        conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
                         sequence:
                           - action: media_player.volume_set
                             data:
@@ -1157,8 +1189,8 @@ action:
                                 "{% set new_volume = current_volume - ( (step_size /
                                 8) / 100)%} {{ 0.0 if new_volume < 0.0 else new_volume }}"
                             entity_id: !input button_2_media
-                      - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_2_rotate_right
+                      - alias: button_2_rotate_right
+                        conditions: "{{ step_mode == 'StepMode.Up' }}"
                         sequence:
                           - action: media_player.volume_set
                             data:
@@ -1167,55 +1199,63 @@ action:
                                 8) / 100)%} {{ 1.0 if new_volume > 1.0 else new_volume }}"
                             entity_id: !input button_2_media
   - choose:
-      - conditions: "{{ button_3_mode == 'Custom' }}"
-        alias: Button 3 Custom mode
+      - alias: Button 3 Custom mode
+        conditions:
+          - condition: trigger
+            id: remote
+          - condition: template
+            value_template: "{{ button_3_mode == 'Custom' }}"
         sequence:
           - choose:
-              - conditions: "{{ command == 'button_3_press' }}"
-                alias: button_3_press
+              - alias: button_3_press
+                conditions: "{{ command == 'button_3_press' }}"
                 sequence: !input button_3_press
-              - conditions: "{{ command == 'button_3_short_release' }}"
-                alias: button_3_short_release
+              - alias: button_3_short_release
+                conditions: "{{ command == 'button_3_short_release' }}"
                 sequence: !input button_3_short_release
-              - conditions: "{{ command == 'button_3_hold' }}"
-                alias: button_3_hold
+              - alias: button_3_hold
+                conditions: "{{ command == 'button_3_hold' }}"
                 sequence: !input button_3_hold
-              - conditions: "{{ command == 'button_3_long_release' }}"
-                alias: button_3_long_release
+              - alias: button_3_long_release
+                conditions: "{{ command == 'button_3_long_release' }}"
                 sequence: !input button_3_long_release
-              - conditions: "{{ command == 'button_3_double_press' }}"
-                alias: button_3_double
+              - alias: button_3_double
+                conditions: "{{ command == 'button_3_double_press' }}"
                 sequence: !input button_3_double
-              - conditions: "{{ command == 'button_3_triple_press' }}"
-                alias: button_3_triple
+              - alias: button_3_triple
+                conditions: "{{ command == 'button_3_triple_press' }}"
                 sequence: !input button_3_triple
-              - conditions: "{{ command == 'button_3_quadruple_press' }}"
-                alias: button_3_quadruple
+              - alias: button_3_quadruple
+                conditions: "{{ command == 'button_3_quadruple_press' }}"
                 sequence: !input button_3_quadruple
-              - conditions: "{{ command == 'button_3_quintuple_press' }}"
-                alias: button_3_quintuple
+              - alias: button_3_quintuple
+                conditions: "{{ command == 'button_3_quintuple_press' }}"
                 sequence: !input button_3_quintuple
-              - conditions:
+              - alias: button_3_rotate
+                conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '3' }}"
-                alias: button_3_rotate
                 sequence:
                   - choose:
-                      - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_3_rotate_left
+                      - alias: button_3_rotate_left
+                        conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
                         sequence: !input button_3_rotate_left
-                      - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_3_rotate_right
+                      - alias: button_3_rotate_right
+                        conditions: "{{ step_mode == 'StepMode.Up' }}"
                         sequence: !input button_3_rotate_right
-      - conditions: "{{ button_3_mode == 'Lights' }}"
-        alias: Button 3 Lights mode
+      - alias: Button 3 Lights mode
+        conditions:
+          - condition: trigger
+            id: remote
+          - condition: template
+            value_template: "{{ button_3_mode == 'Lights' }}"
         sequence:
           - choose:
-              - conditions: "{{ command == 'button_3_press' }}"
-                alias: button_3_press
+              - alias: button_3_press
+                conditions: "{{ command == 'button_3_press' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_3_short_release' }}"
-                alias: button_3_short_release
+              - alias: button_3_short_release
+                conditions: "{{ command == 'button_3_short_release' }}"
                 sequence:
                   action: light.turn_on
                   data:
@@ -1224,37 +1264,37 @@ action:
                     transition: "{{ button_3_lights_transition }}"
                   target:
                     entity_id: !input button_3_lights
-              - conditions: "{{ command == 'button_3_hold' }}"
-                alias: button_3_hold
+              - alias: button_3_hold
+                conditions: "{{ command == 'button_3_hold' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_3_long_release' }}"
-                alias: button_3_long_release
+              - alias: button_3_long_release
+                conditions: "{{ command == 'button_3_long_release' }}"
                 sequence:
                   action: light.turn_off
                   data:
                     transition: "{{ button_3_lights_transition }}"
                   target:
                     entity_id: !input button_3_lights
-              - conditions: "{{ command == 'button_3_double_press' }}"
-                alias: button_3_double
+              - alias: button_3_double
+                conditions: "{{ command == 'button_3_double_press' }}"
                 sequence: !input button_3_double
-              - conditions: "{{ command == 'button_3_triple_press' }}"
-                alias: button_3_triple
+              - alias: button_3_triple
+                conditions: "{{ command == 'button_3_triple_press' }}"
                 sequence: !input button_3_triple
-              - conditions: "{{ command == 'button_3_quadruple_press' }}"
-                alias: button_3_quadruple
+              - alias: button_3_quadruple
+                conditions: "{{ command == 'button_3_quadruple_press' }}"
                 sequence: !input button_3_quadruple
-              - conditions: "{{ command == 'button_3_quintuple_press' }}"
-                alias: button_3_quintuple
+              - alias: button_3_quintuple
+                conditions: "{{ command == 'button_3_quintuple_press' }}"
                 sequence: !input button_3_quintuple
-              - conditions:
+              - alias: button_3_rotate
+                conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '3' }}"
-                alias: button_3_rotate
                 sequence:
                   - choose:
-                      - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_3_rotate_left
+                      - alias: button_3_rotate_left
+                        conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
                         sequence:
                           action: light.turn_on
                           data:
@@ -1262,8 +1302,8 @@ action:
                             transition: 3
                           target:
                             entity_id: !input button_3_lights
-                      - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_3_rotate_right
+                      - alias: button_3_rotate_right
+                        conditions: "{{ step_mode == 'StepMode.Up' }}"
                         sequence:
                           action: light.turn_on
                           data:
@@ -1271,17 +1311,21 @@ action:
                             transition: 3
                           target:
                             entity_id: !input button_3_lights
-      - conditions: "{{ button_3_mode == 'Media' }}"
-        alias: Button 3 Media mode
+      - alias: Button 3 Media mode
+        conditions:
+          - condition: trigger
+            id: remote
+          - condition: template
+            value_template: "{{ button_3_mode == 'Media' }}"
         sequence:
           - variables:
               current_volume: "{{ state_attr(button_3_media, 'volume_level') }}"
           - choose:
-              - conditions: "{{ command == 'button_3_press' }}"
-                alias: button_3_press
+              - alias: button_3_press
+                conditions: "{{ command == 'button_3_press' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_3_short_release' }}"
-                alias: button_3_short_release
+              - alias: button_3_short_release
+                conditions: "{{ command == 'button_3_short_release' }}"
                 sequence:
                   - action: media_player.turn_on
                     entity_id: !input button_3_media
@@ -1289,38 +1333,38 @@ action:
                     data:
                       volume_level: "{{( button_3_media_start_volume / 100 )}}"
                     entity_id: !input button_3_media
-              - conditions: "{{ command == 'button_3_hold' }}"
-                alias: button_3_hold
+              - alias: button_3_hold
+                conditions: "{{ command == 'button_3_hold' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_3_long_release' }}"
-                alias: button_3_long_release
+              - alias: button_3_long_release
+                conditions: "{{ command == 'button_3_long_release' }}"
                 sequence:
                   action: media_player.turn_off
                   entity_id: !input button_3_media
-              - conditions: "{{ command == 'button_3_double_press' }}"
-                alias: button_3_double
+              - alias: button_3_double
+                conditions: "{{ command == 'button_3_double_press' }}"
                 sequence:
                   action: media_player.media_next_track
                   entity_id: !input button_3_media
-              - conditions: "{{ command == 'button_3_triple_press' }}"
-                alias: button_3_triple
+              - alias: button_3_triple
+                conditions: "{{ command == 'button_3_triple_press' }}"
                 sequence:
                   action: media_player.media_previous_track
                   entity_id: !input button_3_media
-              - conditions: "{{ command == 'button_3_quadruple_press' }}"
-                alias: button_3_quadruple
+              - alias: button_3_quadruple
+                conditions: "{{ command == 'button_3_quadruple_press' }}"
                 sequence: !input button_3_quadruple
-              - conditions: "{{ command == 'button_3_quintuple_press' }}"
-                alias: button_3_quintuple
+              - alias: button_3_quintuple
+                conditions: "{{ command == 'button_3_quintuple_press' }}"
                 sequence: !input button_3_quintuple
-              - conditions:
+              - alias: button_3_rotate
+                conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '3' }}"
-                alias: button_3_rotate
                 sequence:
                   - choose:
-                      - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_3_rotate_left
+                      - alias: button_3_rotate_left
+                        conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
                         sequence:
                           - action: media_player.volume_set
                             data:
@@ -1328,8 +1372,8 @@ action:
                                 "{% set new_volume = current_volume - ( (step_size /
                                 8) / 100)%} {{ 0.0 if new_volume < 0.0 else new_volume }}"
                             entity_id: !input button_3_media
-                      - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_3_rotate_right
+                      - alias: button_3_rotate_right
+                        conditions: "{{ step_mode == 'StepMode.Up' }}"
                         sequence:
                           - action: media_player.volume_set
                             data:
@@ -1338,55 +1382,63 @@ action:
                                 8) / 100)%} {{ 1.0 if new_volume > 1.0 else new_volume }}"
                             entity_id: !input button_3_media
   - choose:
-      - conditions: "{{ button_4_mode == 'Custom' }}"
-        alias: Button 4 Custom mode
+      - alias: Button 4 Custom mode
+        conditions:
+          - condition: trigger
+            id: remote
+          - condition: template
+            value_template: "{{ button_4_mode == 'Custom' }}"
         sequence:
           - choose:
-              - conditions: "{{ command == 'button_4_press' }}"
-                alias: button_4_press
+              - alias: button_4_press
+                conditions: "{{ command == 'button_4_press' }}"
                 sequence: !input button_4_press
-              - conditions: "{{ command == 'button_4_short_release' }}"
-                alias: button_4_short_release
+              - alias: button_4_short_release
+                conditions: "{{ command == 'button_4_short_release' }}"
                 sequence: !input button_4_short_release
-              - conditions: "{{ command == 'button_4_hold' }}"
-                alias: button_4_hold
+              - alias: button_4_hold
+                conditions: "{{ command == 'button_4_hold' }}"
                 sequence: !input button_4_hold
-              - conditions: "{{ command == 'button_4_long_release' }}"
-                alias: button_4_long_release
+              - alias: button_4_long_release
+                conditions: "{{ command == 'button_4_long_release' }}"
                 sequence: !input button_4_long_release
-              - conditions: "{{ command == 'button_4_double_press' }}"
-                alias: button_4_double
+              - alias: button_4_double
+                conditions: "{{ command == 'button_4_double_press' }}"
                 sequence: !input button_4_double
-              - conditions: "{{ command == 'button_4_triple_press' }}"
-                alias: button_4_triple
+              - alias: button_4_triple
+                conditions: "{{ command == 'button_4_triple_press' }}"
                 sequence: !input button_4_triple
-              - conditions: "{{ command == 'button_4_quadruple_press' }}"
-                alias: button_4_quadruple
+              - alias: button_4_quadruple
+                conditions: "{{ command == 'button_4_quadruple_press' }}"
                 sequence: !input button_4_quadruple
-              - conditions: "{{ command == 'button_4_quintuple_press' }}"
-                alias: button_4_quintuple
+              - alias: button_4_quintuple
+                conditions: "{{ command == 'button_4_quintuple_press' }}"
                 sequence: !input button_4_quintuple
-              - conditions:
+              - alias: button_4_rotate
+                conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '4' }}"
-                alias: button_4_rotate
                 sequence:
                   - choose:
-                      - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_4_rotate_left
+                      - alias: button_4_rotate_left
+                        conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
                         sequence: !input button_4_rotate_left
-                      - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_4_rotate_right
+                      - alias: button_4_rotate_right
+                        conditions: "{{ step_mode == 'StepMode.Up' }}"
                         sequence: !input button_4_rotate_right
-      - conditions: "{{ button_4_mode == 'Lights' }}"
-        alias: Button 4 Lights mode
+      - alias: Button 4 Lights mode
+        conditions:
+          - condition: trigger
+            id: remote
+          - condition: template
+            value_template: "{{ button_4_mode == 'Lights' }}"
         sequence:
           - choose:
-              - conditions: "{{ command == 'button_4_press' }}"
-                alias: button_4_press
+              - alias: button_4_press
+                conditions: "{{ command == 'button_4_press' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_4_short_release' }}"
-                alias: button_4_short_release
+              - alias: button_4_short_release
+                conditions: "{{ command == 'button_4_short_release' }}"
                 sequence:
                   action: light.turn_on
                   data:
@@ -1395,37 +1447,37 @@ action:
                     transition: "{{ button_4_lights_transition }}"
                   target:
                     entity_id: !input button_4_lights
-              - conditions: "{{ command == 'button_4_hold' }}"
-                alias: button_4_hold
+              - alias: button_4_hold
+                conditions: "{{ command == 'button_4_hold' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_4_long_release' }}"
-                alias: button_4_long_release
+              - alias: button_4_long_release
+                conditions: "{{ command == 'button_4_long_release' }}"
                 sequence:
                   action: light.turn_off
                   data:
                     transition: "{{ button_4_lights_transition }}"
                   target:
                     entity_id: !input button_4_lights
-              - conditions: "{{ command == 'button_4_double_press' }}"
-                alias: button_4_double
+              - alias: button_4_double
+                conditions: "{{ command == 'button_4_double_press' }}"
                 sequence: !input button_4_double
-              - conditions: "{{ command == 'button_4_triple_press' }}"
-                alias: button_4_triple
+              - alias: button_4_triple
+                conditions: "{{ command == 'button_4_triple_press' }}"
                 sequence: !input button_4_triple
-              - conditions: "{{ command == 'button_4_quadruple_press' }}"
-                alias: button_4_quadruple
+              - alias: button_4_quadruple
+                conditions: "{{ command == 'button_4_quadruple_press' }}"
                 sequence: !input button_4_quadruple
-              - conditions: "{{ command == 'button_4_quintuple_press' }}"
-                alias: button_4_quintuple
+              - alias: button_4_quintuple
+                conditions: "{{ command == 'button_4_quintuple_press' }}"
                 sequence: !input button_4_quintuple
-              - conditions:
+              - alias: button_4_rotate
+                conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '4' }}"
-                alias: button_4_rotate
                 sequence:
                   - choose:
-                      - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_4_rotate_left
+                      - alias: button_4_rotate_left
+                        conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
                         sequence:
                           action: light.turn_on
                           data:
@@ -1433,8 +1485,8 @@ action:
                             transition: 4
                           target:
                             entity_id: !input button_4_lights
-                      - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_4_rotate_right
+                      - alias: button_4_rotate_right
+                        conditions: "{{ step_mode == 'StepMode.Up' }}"
                         sequence:
                           action: light.turn_on
                           data:
@@ -1442,17 +1494,21 @@ action:
                             transition: 4
                           target:
                             entity_id: !input button_4_lights
-      - conditions: "{{ button_4_mode == 'Media' }}"
-        alias: Button 4 Media mode
+      - alias: Button 4 Media mode
+        conditions:
+          - condition: trigger
+            id: remote
+          - condition: template
+            value_template: "{{ button_4_mode == 'Media' }}"
         sequence:
           - variables:
               current_volume: "{{ state_attr(button_4_media, 'volume_level') }}"
           - choose:
-              - conditions: "{{ command == 'button_4_press' }}"
-                alias: button_4_press
+              - alias: button_4_press
+                conditions: "{{ command == 'button_4_press' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_4_short_release' }}"
-                alias: button_4_short_release
+              - alias: button_4_short_release
+                conditions: "{{ command == 'button_4_short_release' }}"
                 sequence:
                   - action: media_player.turn_on
                     entity_id: !input button_4_media
@@ -1460,38 +1516,38 @@ action:
                     data:
                       volume_level: "{{( button_4_media_start_volume / 100 )}}"
                     entity_id: !input button_4_media
-              - conditions: "{{ command == 'button_4_hold' }}"
-                alias: button_4_hold
+              - alias: button_4_hold
+                conditions: "{{ command == 'button_4_hold' }}"
                 sequence: []
-              - conditions: "{{ command == 'button_4_long_release' }}"
-                alias: button_4_long_release
+              - alias: button_4_long_release
+                conditions: "{{ command == 'button_4_long_release' }}"
                 sequence:
                   action: media_player.turn_off
                   entity_id: !input button_4_media
-              - conditions: "{{ command == 'button_4_double_press' }}"
-                alias: button_4_double
+              - alias: button_4_double
+                conditions: "{{ command == 'button_4_double_press' }}"
                 sequence:
                   action: media_player.media_next_track
                   entity_id: !input button_4_media
-              - conditions: "{{ command == 'button_4_triple_press' }}"
-                alias: button_4_triple
+              - alias: button_4_triple
+                conditions: "{{ command == 'button_4_triple_press' }}"
                 sequence:
                   action: media_player.media_previous_track
                   entity_id: !input button_4_media
-              - conditions: "{{ command == 'button_4_quadruple_press' }}"
-                alias: button_4_quadruple
+              - alias: button_4_quadruple
+                conditions: "{{ command == 'button_4_quadruple_press' }}"
                 sequence: !input button_4_quadruple
-              - conditions: "{{ command == 'button_4_quintuple_press' }}"
-                alias: button_4_quintuple
+              - alias: button_4_quintuple
+                conditions: "{{ command == 'button_4_quintuple_press' }}"
                 sequence: !input button_4_quintuple
-              - conditions:
+              - alias: button_4_rotate
+                conditions:
                   "{{ command == 'step_with_on_off' and states(last_pressed) ==
                   '4' }}"
-                alias: button_4_rotate
                 sequence:
                   - choose:
-                      - conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
-                        alias: button_4_rotate_left
+                      - alias: button_4_rotate_left
+                        conditions: "{{ step_mode == 'StepMode.Down' and step_size != 255 }}"
                         sequence:
                           - action: media_player.volume_set
                             data:
@@ -1499,8 +1555,8 @@ action:
                                 "{% set new_volume = current_volume - ( (step_size /
                                 8) / 100)%} {{ 0.0 if new_volume < 0.0 else new_volume }}"
                             entity_id: !input button_4_media
-                      - conditions: "{{ step_mode == 'StepMode.Up' }}"
-                        alias: button_4_rotate_right
+                      - alias: button_4_rotate_right
+                        conditions: "{{ step_mode == 'StepMode.Up' }}"
                         sequence:
                           - action: media_player.volume_set
                             data:

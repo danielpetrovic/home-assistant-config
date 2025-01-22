@@ -1664,3 +1664,90 @@ lights_scene_restore:
   alias: Lights Scene restore
   description: ''
   icon: mdi:alarm-light
+voordeur_bel_lights:
+  alias: Voordeur Bel - Lights
+  description: ''
+  icon: mdi:alarm-light
+  sequence:
+  - action: scene.create
+    alias: Scene, create
+    data:
+      scene_id: alarm_before
+      snapshot_entities:
+      - light.badkamer_lamp
+      - light.eettafel_lamp_onder
+      - light.gameroom_lamp_onder
+      - light.gameroom_lamp_links
+      - light.gameroom_lamp_rechts
+      - light.gang_lamp
+      - light.kantoor_lamp
+      - light.schuur_lamp_werkbank
+      - light.slaapkamer_alex_lamp
+      - light.slaapkamer_deni_lamp
+      - light.toilet_lamp
+      - light.woonkamer_lamp_onder
+  - action: light.turn_on
+    alias: Lights green, flash long
+    data:
+      brightness_pct: 100
+      color_name: green
+      flash: long
+    target:
+      entity_id:
+      - light.badkamer_lamp
+      - light.eettafel_lamp_onder
+      - light.gameroom_lamp_onder
+      - light.gameroom_lamp_links
+      - light.gameroom_lamp_rechts
+      - light.gang_lamp
+      - light.kantoor_lamp
+      - light.schuur_lamp_werkbank
+      - light.slaapkamer_alex_lamp
+      - light.slaapkamer_deni_lamp
+      - light.toilet_lamp
+      - light.woonkamer_lamp_onder
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 15
+      milliseconds: 0
+  - action: light.turn_on
+    alias: Lights on, white
+    data:
+      brightness_pct: 50
+      color_temp_kelvin: 3333
+      transition: 1
+    target:
+      entity_id:
+      - light.badkamer_lamp
+      - light.eettafel_lamp_onder
+      - light.gameroom_lamp_onder
+      - light.gameroom_lamp_links
+      - light.gameroom_lamp_rechts
+      - light.gang_lamp
+      - light.kantoor_lamp
+      - light.schuur_lamp_werkbank
+      - light.slaapkamer_alex_lamp
+      - light.slaapkamer_deni_lamp
+      - light.toilet_lamp
+      - light.woonkamer_lamp_onder
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - action: scene.turn_on
+    alias: Scene, restore
+    data:
+      transition: 1
+    target:
+      entity_id: scene.alarm_before
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - action: scene.delete
+    alias: Scene, remove
+    target:
+      entity_id: scene.alarm_before
