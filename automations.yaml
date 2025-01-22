@@ -30,6 +30,13 @@
     below: 7.5
     id: shower off
     trigger: numeric_state
+  - alias: media player idle
+    trigger: state
+    entity_id:
+    - media_player.badkamer
+    from: 'off'
+    to: idle
+    id: media player idle
   conditions: []
   actions:
   - choose:
@@ -85,7 +92,18 @@
           entity_id: media_player.badkamer
         action: media_player.volume_set
       alias: shower off - volume down
-  mode: restart
+    - alias: media player idle
+      conditions:
+      - condition: trigger
+        id: media player idle
+      sequence:
+      - action: media_player.join
+        data:
+          group_members:
+          - media_player.badkamer
+        target:
+          entity_id: media_player.slaapkamer
+  mode: parallel
 - id: '1692631831619'
   alias: Ventilatie
   description: ''
@@ -1167,21 +1185,29 @@
   description: ''
   triggers:
   - alias: lights on
+    trigger: state
     entity_id:
     - light.sauna_lamp
     to: 'on'
     id: lights on
-    trigger: state
   - alias: lights off
+    trigger: state
     entity_id:
     - light.sauna_lamp
     to: 'off'
     id: lights off
+  - alias: media player idle
     trigger: state
+    entity_id:
+    - media_player.sauna
+    from: 'off'
+    to: idle
+    id: media player idle
   conditions: []
   actions:
   - choose:
-    - conditions:
+    - alias: lights on
+      conditions:
       - condition: trigger
         id:
         - lights on
@@ -1192,8 +1218,8 @@
           entity_id:
           - media_player.sauna
         action: media_player.volume_set
-      alias: lights on
-    - conditions:
+    - alias: lights off
+      conditions:
       - condition: trigger
         id:
         - lights off
@@ -1204,8 +1230,18 @@
           entity_id:
           - media_player.sauna
         action: media_player.volume_set
-      alias: lights off
-  mode: restart
+    - alias: media player idle
+      conditions:
+      - condition: trigger
+        id: media player idle
+      sequence:
+      - action: media_player.join
+        data:
+          group_members:
+          - media_player.sauna
+        target:
+          entity_id: media_player.slaapkamer
+  mode: parallel
 - id: '1706168546378'
   alias: Gang Beweging
   description: ''
@@ -1259,17 +1295,17 @@
   description: ''
   triggers:
   - alias: lights on
+    trigger: state
     entity_id:
     - light.kantoor_lampen
     to: 'on'
     id: lights on
-    trigger: state
   - alias: lights off
+    trigger: state
     entity_id:
     - light.kantoor_lampen
     to: 'off'
     id: lights off
-    trigger: state
   - alias: mic in use
     trigger: state
     entity_id:
@@ -1282,11 +1318,12 @@
     - binary_sensor.deni_macbook_audio_input_in_use
     to: 'off'
     id: mic not in use
-  - trigger: state
+  - alias: media player idle
+    trigger: state
     entity_id:
     - media_player.kantoor
+    from: 'off'
     to: idle
-    alias: media player idle
     id: media player idle
   conditions: []
   actions:
@@ -1346,7 +1383,7 @@
           - media_player.kantoor
         target:
           entity_id: media_player.slaapkamer
-  mode: restart
+  mode: parallel
 - id: '1706169648965'
   alias: Woonkamer Media
   description: ''
@@ -1803,7 +1840,7 @@
         target:
           entity_id: media_player.slaapkamer
         action: media_player.volume_set
-  mode: restart
+  mode: parallel
 - id: '1706694278160'
   alias: Verwarmingspomp 0
   description: ''
@@ -4275,3 +4312,29 @@
       - script.music_home
       alarm_scripts_night:
       - script.music_night
+- id: '1737573245494'
+  alias: Keuken Media
+  description: ''
+  triggers:
+  - alias: media player idle
+    trigger: state
+    entity_id:
+    - media_player.keuken
+    from: 'off'
+    to: idle
+    id: media player idle
+  conditions: []
+  actions:
+  - choose:
+    - alias: media player idle
+      conditions:
+      - condition: trigger
+        id: media player idle
+      sequence:
+      - action: media_player.join
+        data:
+          group_members:
+          - media_player.keuken
+        target:
+          entity_id: media_player.slaapkamer
+  mode: parallel
