@@ -274,7 +274,7 @@ blueprint:
                     - camera
               multiple: false
 
-mode: restart
+mode: queued
 max_exceeded: silent
 
 variables:
