@@ -274,7 +274,7 @@ blueprint:
                     - camera
               multiple: false
 
-mode: queued
+mode: parallel
 max_exceeded: silent
 
 variables:
