@@ -2412,27 +2412,11 @@
   - trigger: state
     entity_id:
     - binary_sensor.alex_in_bed
-    to: 'on'
-    alias: Alex in bed
-    id: Alex in bed
-  - trigger: state
-    entity_id:
-    - binary_sensor.alex_in_bed
-    to: 'off'
-    alias: Alex not in bed
-    id: Alex not in bed
+    to:
   - trigger: state
     entity_id:
     - binary_sensor.deni_in_bed
-    to: 'on'
-    id: Deni in bed
-    alias: Deni in bed
-  - trigger: state
-    entity_id:
-    - binary_sensor.deni_in_bed
-    to: 'off'
-    id: Deni not in bed
-    alias: Deni not in bed
+    to:
   conditions: []
   actions:
   - choose:
@@ -2509,10 +2493,12 @@
         data:
           transition: 9
         target:
-          area_id:
-          - entree
-          - gang
-          - slaapkamer
+          entity_id:
+          - light.slaapkamer_lamp
+          - light.slaapkamer_alex_lamp_bed
+          - light.slaapkamer_deni_lamp_bed
+          - light.entree_lampen
+          - light.gang_lampen
       - action: automation.turn_off
         data:
           stop_actions: true
