@@ -11,32 +11,36 @@ blueprint:
   source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/zha-alarm-system-with-keypad.yaml
   input:
     alarm_main:
-      name: Alarm Control Panel (Main)
-      description: Here you need to set the primary Alarm control panel. I've set it up with a Manual Alarm Panel, see instructions below how to create through YAML. Don't select a ZHA keypad here, as it doesn't support all states.
-      selector:
-        entity:
-          filter:
-            - domain:
-                - alarm_control_panel
-          multiple: false
-    alarm_code_user:
-      name: Alarm Code User (Text Helper)
-      description: Create a Text helper within Home Assistant to contain the Alarm Code per user. You can set as many as you want, just make sure each code has it's own helper. The format supported is 1-16 digits including Hexadecimals for RFID tags.
-      selector:
-        entity:
-          filter:
-            - domain:
-                - input_text
-          multiple: true
+      name: Set your Primary Alarm Control Panel.
+      icon: mdi:dialpad
+      collapsed: true
+      input:
+        alarm_main:
+          name: Alarm Control Panel (Main)
+          description: Here you need to set the primary Alarm control panel. I've set it up with a Manual Alarm Panel, see instructions below how to create through YAML. Don't select a ZHA keypad here, as it doesn't support all states.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - alarm_control_panel
+              multiple: false
+        alarm_code_user:
+          name: Alarm Code User (Text Helper)
+          description: Create a Text helper within Home Assistant to contain the Alarm Code per user. You can set as many as you want, just make sure each code has it's own helper. The format supported is 1-16 digits including Hexadecimals for RFID tags.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_text
+              multiple: true
     alarm_keypad:
       name: Set your secondary Alarm Control Panel, like a physical keypad.
-      description: Here you need to set the secondary alarm control panel. This can be a physical or virtual keypad, I'm using it with the frient Intelligent Keypad connected to ZHA.
       icon: mdi:dialpad
       collapsed: true
       input:
         alarm_keypad_device:
           name: Alarm Control Panel (Keypad)
-          description: Set the ZHA Keypad Device to be able to receive the key commands from the device.
+          description: I'm using it with the frient Intelligent Keypad connected to ZHA. Set the ZHA Keypad Device to be able to receive the key commands from the device.
           selector:
             device:
               filter:
@@ -61,61 +65,19 @@ blueprint:
                     - input_text
               multiple: false
     alarm_notifications:
-      name: Set the notifications you want to send when the modes change, defaults are present.
+      name: Here you can set which devices should receive the notifications.
       icon: mdi:bell-ring
       collapsed: true
       input:
         alarm_notifications_target:
           name: Notification Targets
           default: []
-          description: Here you can set which devices should receive the notifications. If not selected, it will not send notifcations at all.
+          description: If not selected, it will not send notifcations at all.
           selector:
             device:
               filter:
                 - integration: mobile_app
               multiple: true
-        alarm_notifications_armed_away:
-          name: Armed Away Mode
-          default: The alarm is now in Away mode.
-          description: Here you can set the notification to be sent when the alarm is set to Away mode.
-          selector:
-            text:
-        alarm_notifications_armed_home:
-          name: Armed Home Mode
-          default: The alarm is now in Home mode.
-          description: Here you can set the notification to be sent when the alarm is set to Home mode.
-          selector:
-            text:
-        alarm_notifications_armed_night:
-          name: Armed Night Mode
-          default: The alarm is now in Night mode.
-          description: Here you can set the notification to be sent when the alarm is set to Night mode.
-          selector:
-            text:
-        alarm_notifications_arming:
-          name: Arming
-          default: The alarm is being set. Please exit the house promptly!
-          description: Here you can set the notification to be sent when the alarm is Arming.
-          selector:
-            text:
-        alarm_notifications_pending:
-          name: Pending
-          default: triggered the alarm! Please disarm the alarm to prevent it from activating!
-          description: Here you can set the notification to be sent when the alarm is Pending. It starts with the name of the entity that caused the state change, this cannot be changed. This is the state which is entered before triggering the alarm, if you have set a delay_time for the Alarm, otherwise it will directly go to triggered.
-          selector:
-            text:
-        alarm_notifications_triggered:
-          name: Triggered
-          default: triggered the alarm! The alarm has been activated!
-          description: Here you can set the notification to be sent when the alarm is Triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
-          selector:
-            text:
-        alarm_notifications_disarmed:
-          name: Disarmed
-          default: The alarm is now disarmed.
-          description: Here you can set the notification to be sent when the alarm is Disarmed.
-          selector:
-            text:
     alarm_mode_away:
       name: Settings for when the alarm is set to Away mode.
       icon: mdi:shield-lock
@@ -138,6 +100,12 @@ blueprint:
                     - presence
                     - window
               multiple: true
+        alarm_notifications_armed_away:
+          name: Notification
+          default: The alarm is now in Away mode.
+          description: Here you can set the notification to be sent when the alarm is set to this mode.
+          selector:
+            text:
         alarm_scripts_away:
           name: Scripts
           default: []
@@ -180,6 +148,12 @@ blueprint:
                     - presence
                     - window
               multiple: true
+        alarm_notifications_armed_home:
+          name: Notification
+          default: The alarm is now in Home mode.
+          description: Here you can set the notification to be sent when the alarm is set to this mode.
+          selector:
+            text:
         alarm_scripts_home:
           name: Scripts
           default: []
@@ -222,6 +196,12 @@ blueprint:
                     - presence
                     - window
               multiple: true
+        alarm_notifications_armed_night:
+          name: Notification
+          default: The alarm is now in Night mode.
+          description: Here you can set the notification to be sent when the alarm is set to this mode.
+          selector:
+            text:
         alarm_scripts_night:
           name: Scripts
           default: []
@@ -242,11 +222,59 @@ blueprint:
                 - domain:
                     - camera
               multiple: false
+    alarm_mode_arming:
+      name: Settings for when the alarm is Arming
+      icon: mdi:shield-half-full
+      collapsed: true
+      input:
+        alarm_notifications_arming:
+          name: Notification
+          default: The alarm is being set. Please exit the house promptly!
+          description: Here you can set the notification to be sent when the alarm is Arming.
+          selector:
+            text:
+        alarm_scripts_arming:
+          name: Scripts
+          default: []
+          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - script
+              multiple: true
+    alarm_mode_pending:
+      name: Settings for when the alarm is Pending
+      icon: mdi:shield-outline
+      collapsed: true
+      input:
+        alarm_notifications_pending:
+          name: Notification
+          default: triggered the alarm! Please disarm the alarm to prevent it from activating!
+          description: Here you can set the notification to be sent when the alarm is Pending. It starts with the name of the entity that caused the state change, this cannot be changed. This is the state which is entered before triggering the alarm, if you have set a delay_time for the Alarm, otherwise it will directly go to triggered.
+          selector:
+            text:
+        alarm_scripts_pending:
+          name: Scripts
+          default: []
+          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - script
+              multiple: true
     alarm_mode_disarmed:
       name: Settings for when the alarm is Disarmed
       icon: mdi:shield-off
       collapsed: true
       input:
+        alarm_notifications_disarmed:
+          name: Notification
+          default: The alarm is now disarmed.
+          description: Here you can set the notification to be sent when the alarm is Disarmed.
+          selector:
+            text:
         alarm_scripts_disarmed:
           name: Scripts
           default: []
@@ -262,6 +290,12 @@ blueprint:
       icon: mdi:shield-alert
       collapsed: true
       input:
+        alarm_notifications_triggered:
+          name: Notification
+          default: triggered the alarm! The alarm has been activated!
+          description: Here you can set the notification to be sent when the alarm is Triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
+          selector:
+            text:
         alarm_scripts_triggered:
           name: Scripts
           default: []
@@ -276,6 +310,185 @@ blueprint:
           name: Camera
           default: []
           description: Camera to show in notification when it is triggered in this mode. If not set it will just show the notification with the actions.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - camera
+              multiple: false
+    alarm_mode_always:
+      name: Settings for actions not tied to the alarm status.
+      icon: mdi:shield
+      collapsed: true
+      input:
+        alarm_sensor_always:
+          name: Sensors
+          default: []
+          description: Here you can set the Sensors that should trigger a normal notification. It doesn't trigger the alarm.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - binary_sensor
+                  device_class:
+                    - door
+                    - motion
+                    - occupancy
+                    - opening
+                    - presence
+                    - window
+              multiple: true
+        alarm_notifications_always:
+          name: Notification
+          default: triggered!
+          description: Here you can set the notification to be sent when the above sensors are triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
+          selector:
+            text:
+        alarm_scripts_always:
+          name: Scripts
+          default: []
+          description: Scripts to run when the above sensors are triggered. They will run at the same time, so the order doesn't matter.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - script
+              multiple: true
+        alarm_camera_always:
+          name: Camera
+          default: []
+          description: Camera to show in notification when the above sensors are triggered. If not set it will just show the notification with the actions.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - camera
+              multiple: false
+    alarm_mode_fire:
+      name: Settings for Fire, Smoke and Heat detections.
+      icon: mdi:fire-alert
+      collapsed: true
+      input:
+        alarm_sensor_fire:
+          name: Sensors
+          default: []
+          description: Here you can set the Sensors that should trigger an alert. It doesn't trigger the alarm.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - binary_sensor
+                  device_class:
+                    - heat
+                    - smoke
+              multiple: true
+        alarm_notifications_fire:
+          name: Notification
+          default: detected a fire!
+          description: Here you can set the notification to be sent when the above sensors are triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
+          selector:
+            text:
+        alarm_scripts_fire:
+          name: Scripts
+          default: []
+          description: Scripts to run when the above sensors are triggered. They will run at the same time, so the order doesn't matter.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - script
+              multiple: true
+        alarm_camera_fire:
+          name: Camera
+          default: []
+          description: Camera to show in notification when the above sensors are triggered. If not set it will just show the notification with the actions.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - camera
+              multiple: false
+    alarm_mode_gas:
+      name: Settings for Carbon Monoxide and Gas detections.
+      icon: mdi:smoke-detector-alert
+      collapsed: true
+      input:
+        alarm_sensor_gas:
+          name: Sensors
+          default: []
+          description: Here you can set the Sensors that should trigger an alert. It doesn't trigger the alarm.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - binary_sensor
+                  device_class:
+                    - carbon_monoxide
+                    - gas
+              multiple: true
+        alarm_notifications_gas:
+          name: Notification
+          default: detected gas!
+          description: Here you can set the notification to be sent when the above sensors are triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
+          selector:
+            text:
+        alarm_scripts_gas:
+          name: Scripts
+          default: []
+          description: Scripts to run when the above sensors are triggered. They will run at the same time, so the order doesn't matter.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - script
+              multiple: true
+        alarm_camera_gas:
+          name: Camera
+          default: []
+          description: Camera to show in notification when the above sensors are triggered. If not set it will just show the notification with the actions.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - camera
+              multiple: false
+    alarm_mode_moisture:
+      name: Settings for Moisture detections.
+      icon: mdi:water-alert
+      collapsed: true
+      input:
+        alarm_sensor_moisture:
+          name: Sensors
+          default: []
+          description: Here you can set the Sensors that should trigger an alert. It doesn't trigger the alarm.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - binary_sensor
+                  device_class:
+                    - moisture
+              multiple: true
+        alarm_notifications_moisture:
+          name: Notification
+          default: detected moisture!
+          description: Here you can set the notification to be sent when the above sensors are triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
+          selector:
+            text:
+        alarm_scripts_moisture:
+          name: Scripts
+          default: []
+          description: Scripts to run when the above sensors are triggered. They will run at the same time, so the order doesn't matter.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - script
+              multiple: true
+        alarm_camera_moisture:
+          name: Camera
+          default: []
+          description: Camera to show in notification when the above sensors are triggered. If not set it will just show the notification with the actions.
           selector:
             entity:
               filter:
@@ -301,11 +514,22 @@ variables:
   alarm_notifications_pending: !input alarm_notifications_pending
   alarm_notifications_triggered: !input alarm_notifications_triggered
   alarm_notifications_disarmed: !input alarm_notifications_disarmed
+  alarm_notifications_always: !input alarm_notifications_always
+  alarm_notifications_fire: !input alarm_notifications_fire
+  alarm_notifications_gas: !input alarm_notifications_gas
+  alarm_notifications_moisture: !input alarm_notifications_moisture
+  alarm_sensor_fire: !input alarm_sensor_fire
+  alarm_sensor_gas: !input alarm_sensor_gas
+  alarm_sensor_moisture: !input alarm_sensor_moisture
   alarm_scripts_away: !input alarm_scripts_away
   alarm_scripts_home: !input alarm_scripts_home
   alarm_scripts_night: !input alarm_scripts_night
   alarm_scripts_disarmed: !input alarm_scripts_disarmed
   alarm_scripts_triggered: !input alarm_scripts_triggered
+  alarm_scripts_always: !input alarm_scripts_always
+  alarm_scripts_fire: !input alarm_scripts_fire
+  alarm_scripts_gas: !input alarm_scripts_gas
+  alarm_scripts_moisture: !input alarm_scripts_moisture
 
 triggers:
   - trigger: state
@@ -334,6 +558,29 @@ triggers:
     to: "on"
     alias: alarm_sensor_night
     id: alarm_sensor_night
+  - trigger: state
+    entity_id: !input alarm_sensor_always
+    to: "on"
+    alias: alarm_sensor_always
+    id: alarm_sensor_always
+  - trigger: state
+    entity_id: !input alarm_sensor_fire
+    to: "on"
+    alias: alarm_sensor_fire
+    id: alarm_sensor_fire
+    for: "00:00:02"
+  - trigger: state
+    entity_id: !input alarm_sensor_gas
+    to: "on"
+    alias: alarm_sensor_gas
+    id: alarm_sensor_gas
+    for: "00:00:02"
+  - trigger: state
+    entity_id: !input alarm_sensor_moisture
+    to: "on"
+    alias: alarm_sensor_moisture
+    id: alarm_sensor_moisture
+    for: "00:00:02"
   - trigger: event
     event_type: mobile_app_notification_action
     event_data:
@@ -410,7 +657,7 @@ actions:
               entity_id: !input alarm_main
   - alias: Alarm Scripts
     choose:
-      - alias: Away
+      - alias: armed_away
         conditions:
           - condition: trigger
             id: alarm_main
@@ -421,7 +668,7 @@ actions:
           - action: script.turn_on
             target:
               entity_id: "{{ alarm_scripts_away }}"
-      - alias: Home
+      - alias: armed_home
         conditions:
           - condition: trigger
             id: alarm_main
@@ -432,7 +679,7 @@ actions:
           - action: script.turn_on
             target:
               entity_id: "{{ alarm_scripts_home }}"
-      - alias: Night
+      - alias: armed_night
         conditions:
           - condition: trigger
             id: alarm_main
@@ -443,7 +690,29 @@ actions:
           - action: script.turn_on
             target:
               entity_id: "{{ alarm_scripts_night }}"
-      - alias: Disarmed
+      - alias: arming
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: arming
+        sequence:
+          - action: script.turn_on
+            target:
+              entity_id: "{{ alarm_scripts_arming }}"
+      - alias: pending
+        conditions:
+          - condition: trigger
+            id: alarm_main
+          - condition: state
+            entity_id: !input alarm_main
+            state: pending
+        sequence:
+          - action: script.turn_on
+            target:
+              entity_id: "{{ alarm_scripts_pending }}"
+      - alias: disarmed
         conditions:
           - condition: trigger
             id: alarm_main
@@ -454,7 +723,7 @@ actions:
           - action: script.turn_on
             target:
               entity_id: "{{ alarm_scripts_disarmed }}"
-      - alias: Triggered
+      - alias: triggered
         conditions:
           - condition: trigger
             id: alarm_main
@@ -467,7 +736,7 @@ actions:
               entity_id: "{{ alarm_scripts_triggered }}"
   - alias: Alarm Notifications
     choose:
-      - alias: Away
+      - alias: armed_away
         conditions:
           - condition: trigger
             id: alarm_main
@@ -493,7 +762,7 @@ actions:
                         - action: arm_night
                           title: Alarm Night
                           icon: "sfsymbols:bell"
-      - alias: Home
+      - alias: armed_home
         conditions:
           - condition: trigger
             id: alarm_main
@@ -519,7 +788,7 @@ actions:
                         - action: arm_night
                           title: Alarm Night
                           icon: "sfsymbols:bell"
-      - alias: Night
+      - alias: armed_night
         conditions:
           - condition: trigger
             id: alarm_main
@@ -545,7 +814,7 @@ actions:
                         - action: arm_night
                           title: Alarm Night
                           icon: "sfsymbols:bell"
-      - alias: Disarmed
+      - alias: disarmed
         conditions:
           - condition: trigger
             id: alarm_main
@@ -728,6 +997,159 @@ actions:
                 - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                   data:
                     message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
+                      entity_id: !input alarm_camera_night
+                      push:
+                        sound:
+                          name: default
+                          critical: 1
+                          volume: 1
+                          ttl: 0
+                          priority: high
+  - alias: Sensor Scripts
+    choose:
+      - alias: alarm_scripts_always
+        conditions:
+          - condition: trigger
+            id: alarm_sensor_always
+        sequence:
+          - action: script.turn_on
+            target:
+              entity_id: "{{ alarm_scripts_always }}"
+      - alias: alarm_scripts_fire
+        conditions:
+          - condition: trigger
+            id: alarm_sensor_fire
+        sequence:
+          - action: script.turn_on
+            target:
+              entity_id: "{{ alarm_scripts_fire }}"
+      - alias: alarm_scripts_gas
+        conditions:
+          - condition: trigger
+            id: alarm_sensor_gas
+        sequence:
+          - action: script.turn_on
+            target:
+              entity_id: "{{ alarm_scripts_gas }}"
+      - alias: alarm_scripts_moisture
+        conditions:
+          - condition: trigger
+            id: alarm_sensor_moisture
+        sequence:
+          - action: script.turn_on
+            target:
+              entity_id: "{{ alarm_scripts_moisture }}"
+  - alias: Sensor Notifications
+    choose:
+      - alias: alarm_sensor_always
+        conditions:
+          - condition: trigger
+            id: alarm_sensor_always
+        sequence:
+          - alias: Notify
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ trigger.to_state.name }} {{ alarm_notifications_always }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
+                      entity_id: !input alarm_camera_away
+      - alias: alarm_sensor_fire
+        conditions:
+          - condition: trigger
+            id: alarm_sensor_fire
+        sequence:
+          - alias: Notify
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ trigger.to_state.name }} {{ alarm_notifications_fire }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
+                      entity_id: !input alarm_camera_home
+                      push:
+                        sound:
+                          name: default
+                          critical: 1
+                          volume: 1
+                          ttl: 0
+                          priority: high
+      - alias: alarm_sensor_gas
+        conditions:
+          - condition: trigger
+            id: alarm_sensor_gas
+        sequence:
+          - alias: Notify
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ trigger.to_state.name }} {{ alarm_notifications_gas }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
+                      entity_id: !input alarm_camera_night
+                      push:
+                        sound:
+                          name: default
+                          critical: 1
+                          volume: 1
+                          ttl: 0
+                          priority: high
+      - alias: alarm_sensor_moisture
+        conditions:
+          - condition: trigger
+            id: alarm_sensor_moisture
+        sequence:
+          - alias: Notify
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ trigger.to_state.name }} {{ alarm_notifications_moisture }}"
                     data:
                       actions:
                         - action: disarm
