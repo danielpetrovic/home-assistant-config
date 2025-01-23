@@ -4303,6 +4303,14 @@
       - 83e80af529f72cfac5e1a29223dc5797
       - b8070d7cda3c7d8c76aa095da0944f2b
       - 014d37597b774510e191920a2b931b9b
+      alarm_sensor_fire:
+      - binary_sensor.entree_brandmelder_smoke
+      - binary_sensor.gameroom_brandmelder_smoke
+      - binary_sensor.gang_brandmelder_smoke
+      - binary_sensor.schuur_brandmelder_smoke
+      alarm_sensor_moisture:
+      - binary_sensor.keuken_vochtmelder_water_leak
+      - binary_sensor.wasruimte_vochtmelder_water_leak
 - id: '1737573245494'
   alias: Keuken Media
   description: ''
