@@ -12,7 +12,6 @@ voordeur_bel_woonkamer_tv:
     data:
       command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
         http://192.168.16.50:11984/api/stream.mp4?src=camera.voordeur
-    enabled: true
   description: ''
   icon: mdi:doorbell-video
 voordeur_bel_announce:
