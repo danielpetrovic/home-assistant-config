@@ -4298,6 +4298,11 @@
       - script.music_home
       alarm_scripts_night:
       - script.music_night
+      alarm_notifications_target:
+      - e5f5b46d90aa27e95bc1427c31404082
+      - 83e80af529f72cfac5e1a29223dc5797
+      - b8070d7cda3c7d8c76aa095da0944f2b
+      - 014d37597b774510e191920a2b931b9b
 - id: '1737573245494'
   alias: Keuken Media
   description: ''
