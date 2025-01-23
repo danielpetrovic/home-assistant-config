@@ -65,6 +65,15 @@ blueprint:
       icon: mdi:bell-ring
       collapsed: true
       input:
+        alarm_notifications_target:
+          name: Notification Targets
+          default: []
+          description: Here you can set which devices should receive the notifications. If not selected, it will not send notifcations at all.
+          selector:
+            device:
+              filter:
+                - integration: mobile_app
+              multiple: true
         alarm_notifications_armed_away:
           name: Armed Away Mode
           default: The alarm is now in Away mode.
@@ -284,6 +293,7 @@ variables:
   alarm_code_keypad_state: "{{ states(alarm_code_keypad) }}"
   alarm_code_user: !input alarm_code_user
   alarm_code_user_state: "{{ alarm_code_user | map('states') | list }}"
+  alarm_notifications_target: !input alarm_notifications_target
   alarm_notifications_armed_away: !input alarm_notifications_armed_away
   alarm_notifications_armed_home: !input alarm_notifications_armed_home
   alarm_notifications_armed_night: !input alarm_notifications_armed_night
@@ -466,20 +476,23 @@ actions:
             state: armed_away
         sequence:
           - alias: Notify
-            action: notify.notify
-            data:
-              message: "{{ alarm_notifications_armed_away }}"
-              data:
-                actions:
-                  - action: disarm
-                    title: Alarm Disarm
-                    icon: "sfsymbols:bell.slash"
-                  - action: arm_home
-                    title: Alarm Home
-                    icon: "sfsymbols:bell.fill"
-                  - action: arm_night
-                    title: Alarm Night
-                    icon: "sfsymbols:bell"
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ alarm_notifications_armed_away }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
       - alias: Home
         conditions:
           - condition: trigger
@@ -489,20 +502,23 @@ actions:
             state: armed_home
         sequence:
           - alias: Notify
-            action: notify.notify
-            data:
-              message: "{{ alarm_notifications_armed_home }}"
-              data:
-                actions:
-                  - action: disarm
-                    title: Alarm Disarm
-                    icon: "sfsymbols:bell.slash"
-                  - action: arm_home
-                    title: Alarm Home
-                    icon: "sfsymbols:bell.fill"
-                  - action: arm_night
-                    title: Alarm Night
-                    icon: "sfsymbols:bell"
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ alarm_notifications_armed_home }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
       - alias: Night
         conditions:
           - condition: trigger
@@ -512,20 +528,23 @@ actions:
             state: armed_night
         sequence:
           - alias: Notify
-            action: notify.notify
-            data:
-              message: "{{ alarm_notifications_armed_night }}"
-              data:
-                actions:
-                  - action: disarm
-                    title: Alarm Disarm
-                    icon: "sfsymbols:bell.slash"
-                  - action: arm_home
-                    title: Alarm Home
-                    icon: "sfsymbols:bell.fill"
-                  - action: arm_night
-                    title: Alarm Night
-                    icon: "sfsymbols:bell"
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ alarm_notifications_armed_night }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
       - alias: Disarmed
         conditions:
           - condition: trigger
@@ -535,20 +554,23 @@ actions:
             state: disarmed
         sequence:
           - alias: Notify
-            action: notify.notify
-            data:
-              message: "{{ alarm_notifications_disarmed }}"
-              data:
-                actions:
-                  - action: disarm
-                    title: Alarm Disarm
-                    icon: "sfsymbols:bell.slash"
-                  - action: arm_home
-                    title: Alarm Home
-                    icon: "sfsymbols:bell.fill"
-                  - action: arm_night
-                    title: Alarm Night
-                    icon: "sfsymbols:bell"
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ alarm_notifications_disarmed }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
       - alias: Triggered
         conditions:
           - condition: trigger
@@ -558,28 +580,31 @@ actions:
             state: triggered
         sequence:
           - alias: Notify
-            action: notify.notify
-            data:
-              message: "{{ trigger.to_state.name }} {{ alarm_notifications_armed_away }}"
-              data:
-                actions:
-                  - action: disarm
-                    title: Alarm Disarm
-                    icon: "sfsymbols:bell.slash"
-                  - action: arm_home
-                    title: Alarm Home
-                    icon: "sfsymbols:bell.fill"
-                  - action: arm_night
-                    title: Alarm Night
-                    icon: "sfsymbols:bell"
-                entity_id: !input alarm_camera_triggered
-                push:
-                  sound:
-                    name: default
-                    critical: 1
-                    volume: 1
-                    ttl: 0
-                    priority: high
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ trigger.to_state.name }} {{ alarm_notifications_armed_away }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
+                      entity_id: !input alarm_camera_triggered
+                      push:
+                        sound:
+                          name: default
+                          critical: 1
+                          volume: 1
+                          ttl: 0
+                          priority: high
       - alias: Arming
         conditions:
           - condition: trigger
@@ -589,20 +614,23 @@ actions:
             state: arming
         sequence:
           - alias: Notify
-            action: notify.notify
-            data:
-              message: "{{ alarm_notifications_arming }}"
-              data:
-                actions:
-                  - action: disarm
-                    title: Alarm Disarm
-                    icon: "sfsymbols:bell.slash"
-                  - action: arm_home
-                    title: Alarm Home
-                    icon: "sfsymbols:bell.fill"
-                  - action: arm_night
-                    title: Alarm Night
-                    icon: "sfsymbols:bell"
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ alarm_notifications_arming }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
   - alias: Alarm Triggers
     choose:
       - alias: alarm_sensor_away
@@ -618,28 +646,31 @@ actions:
             target:
               entity_id: !input alarm_main
           - alias: Notify
-            action: notify.notify
-            data:
-              message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
-              data:
-                actions:
-                  - action: disarm
-                    title: Alarm Disarm
-                    icon: "sfsymbols:bell.slash"
-                  - action: arm_home
-                    title: Alarm Home
-                    icon: "sfsymbols:bell.fill"
-                  - action: arm_night
-                    title: Alarm Night
-                    icon: "sfsymbols:bell"
-                entity_id: !input alarm_camera_away
-                push:
-                  sound:
-                    name: default
-                    critical: 1
-                    volume: 1
-                    ttl: 0
-                    priority: high
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
+                      entity_id: !input alarm_camera_away
+                      push:
+                        sound:
+                          name: default
+                          critical: 1
+                          volume: 1
+                          ttl: 0
+                          priority: high
       - alias: alarm_sensor_home
         conditions:
           - condition: trigger
@@ -653,28 +684,31 @@ actions:
             target:
               entity_id: !input alarm_main
           - alias: Notify
-            action: notify.notify
-            data:
-              message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
-              data:
-                actions:
-                  - action: disarm
-                    title: Alarm Disarm
-                    icon: "sfsymbols:bell.slash"
-                  - action: arm_home
-                    title: Alarm Home
-                    icon: "sfsymbols:bell.fill"
-                  - action: arm_night
-                    title: Alarm Night
-                    icon: "sfsymbols:bell"
-                entity_id: !input alarm_camera_home
-                push:
-                  sound:
-                    name: default
-                    critical: 1
-                    volume: 1
-                    ttl: 0
-                    priority: high
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
+                      entity_id: !input alarm_camera_home
+                      push:
+                        sound:
+                          name: default
+                          critical: 1
+                          volume: 1
+                          ttl: 0
+                          priority: high
       - alias: alarm_sensor_night
         conditions:
           - condition: trigger
@@ -688,28 +722,31 @@ actions:
             target:
               entity_id: !input alarm_main
           - alias: Notify
-            action: notify.notify
-            data:
-              message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
-              data:
-                actions:
-                  - action: disarm
-                    title: Alarm Disarm
-                    icon: "sfsymbols:bell.slash"
-                  - action: arm_home
-                    title: Alarm Home
-                    icon: "sfsymbols:bell.fill"
-                  - action: arm_night
-                    title: Alarm Night
-                    icon: "sfsymbols:bell"
-                entity_id: !input alarm_camera_night
-                push:
-                  sound:
-                    name: default
-                    critical: 1
-                    volume: 1
-                    ttl: 0
-                    priority: high
+            repeat:
+              for_each: !input alarm_notifications_target
+              sequence:
+                - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
+                    data:
+                      actions:
+                        - action: disarm
+                          title: Alarm Disarm
+                          icon: "sfsymbols:bell.slash"
+                        - action: arm_home
+                          title: Alarm Home
+                          icon: "sfsymbols:bell.fill"
+                        - action: arm_night
+                          title: Alarm Night
+                          icon: "sfsymbols:bell"
+                      entity_id: !input alarm_camera_night
+                      push:
+                        sound:
+                          name: default
+                          critical: 1
+                          volume: 1
+                          ttl: 0
+                          priority: high
   - alias: Notification Actions
     choose:
       - alias: action_arm_home
