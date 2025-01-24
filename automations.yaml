@@ -3467,6 +3467,12 @@
       - action: script.gameroom_dicht
         metadata: {}
         data: {}
+      button_1_double:
+      - action: switch.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.gameroom_bureau
 - id: '1736812276991'
   alias: Gameroom Knop
   description: ''
@@ -3574,6 +3580,12 @@
       - action: script.kantoor_dicht
         metadata: {}
         data: {}
+      button_1_double:
+      - action: switch.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.kantoor_bureau
 - id: '1736812457946'
   alias: Keuken Knop
   description: ''
@@ -3678,7 +3690,6 @@
       button_1_mode: Lights
       button_1_lights:
       - light.slaapkamer_lamp
-      button_1_lights_schedule: schedule.lights_dimmed
       button_2_mode: Lights
       button_2_lights:
       - light.slaapkamer_alex_lamp
@@ -3691,7 +3702,8 @@
       button_4_mode: Lights
       button_4_lights:
       - light.slaapkamer_deni_lamp
-      button_4_lights_schedule: schedule.lights_dimmed
+      button_1_lights_brightness: 5
+      button_4_lights_brightness: 5
 - id: '1736812877909'
   alias: Slaapkamer Deni Knop
   description: ''
@@ -3707,7 +3719,7 @@
       button_2_mode: Lights
       button_2_lights:
       - light.slaapkamer_alex_lamp
-      button_2_lights_schedule: schedule.lights_dimmed
+      button_2_lights_brightness: 5
       button_3_mode: Lights
       button_3_lights:
       - light.slaapkamer_alex_lamp_bed
@@ -3716,7 +3728,7 @@
       button_4_mode: Lights
       button_4_lights:
       - light.slaapkamer_deni_lamp
-      button_4_lights_schedule: schedule.lights_dimmed
+      button_4_lights_brightness: 5
 - id: '1736812931327'
   alias: Toilet Knop
   description: ''

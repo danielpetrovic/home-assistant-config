@@ -11,7 +11,14 @@ voordeur_bel_woonkamer_tv:
       entity_id: media_player.woonkamer_tv_adb
     data:
       command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
+        rtsp://192.168.16.1:7447/XzuE8SiJlRorIkMe
+  - action: androidtv.adb_command
+    target:
+      entity_id: media_player.woonkamer_tv_adb
+    data:
+      command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
         http://192.168.16.50:11984/api/stream.mp4?src=camera.voordeur
+    enabled: false
   description: ''
   icon: mdi:doorbell-video
 voordeur_bel_announce:
