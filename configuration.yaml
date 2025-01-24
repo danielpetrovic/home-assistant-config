@@ -10,9 +10,6 @@ script: !include scripts.yaml
 scene: !include scenes.yaml
 schedule: !include schedules.yaml
 
-go2rtc:
-  debug_ui: true
-
 homeassistant:
   packages: !include_dir_named packages
 
