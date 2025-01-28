@@ -1451,20 +1451,6 @@ music_night:
       - media_player.badkamer
       - media_player.keuken
       - media_player.sauna
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 10
-  - action: media_player.join
-    data:
-      group_members:
-      - media_player.badkamer
-      - media_player.keuken
-      - media_player.sauna
-    metadata: {}
-    target:
-      entity_id:
-      - media_player.slaapkamer
   alias: Music Night
   description: ''
   icon: mdi:music-note-outline
@@ -1503,19 +1489,6 @@ music_home:
       - media_player.badkamer
       - media_player.keuken
       - media_player.sauna
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 10
-  - action: media_player.join
-    data:
-      group_members:
-      - media_player.badkamer
-      - media_player.keuken
-      - media_player.sauna
-    metadata: {}
-    target:
-      entity_id: media_player.slaapkamer
   alias: Music Home
   description: ''
   icon: mdi:music-note
