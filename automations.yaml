@@ -36,6 +36,7 @@
     - media_player.badkamer
     to: idle
     id: media player idle
+    from: 'off'
   conditions: []
   actions:
   - choose:
@@ -101,7 +102,7 @@
           group_members:
           - media_player.badkamer
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.group
   mode: parallel
 - id: '1692631831619'
   alias: Ventilatie
@@ -1164,34 +1165,56 @@
   alias: Slaapkamer Deur
   description: ''
   triggers:
-  - entity_id:
+  - alias: door open
+    entity_id:
     - binary_sensor.slaapkamer_deursensor_contact
     to: 'on'
     id: door open
-    alias: door open
     trigger: state
+    from: 'off'
   conditions: []
   actions:
-  - action: light.toggle
-    data:
-      brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
-        }}'
-      color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
-        }}'
-    metadata: {}
-    target:
-      entity_id: light.slaapkamer_lamp
-  - action: light.toggle
-    data:
-      brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-        }}'
-      color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-        }}'
-    metadata: {}
-    target:
-      entity_id:
-      - light.slaapkamer_alex_lamp_bed
-      - light.slaapkamer_deni_lamp_bed
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: light.slaapkamer_lampen
+        state: 'off'
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
+            }}'
+        metadata: {}
+        target:
+          entity_id: light.slaapkamer_lamp
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+            }}'
+        metadata: {}
+        target:
+          entity_id:
+          - light.slaapkamer_alex_lamp_bed
+          - light.slaapkamer_deni_lamp_bed
+      alias: Slaapkamer Lights off
+    - conditions:
+      - condition: state
+        entity_id: light.slaapkamer_lampen
+        state: 'on'
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - light.slaapkamer_lamp
+          - light.slaapkamer_alex_lamp_bed
+          - light.slaapkamer_deni_lamp_bed
+      alias: Slaapkamer Lights on
   mode: restart
 - id: '1706166729686'
   alias: Sauna Media
@@ -1253,7 +1276,7 @@
           group_members:
           - media_player.sauna
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.group
   mode: parallel
 - id: '1706168546378'
   alias: Gang Beweging
@@ -1395,7 +1418,7 @@
           group_members:
           - media_player.kantoor
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.group
   mode: parallel
 - id: '1706169648965'
   alias: Woonkamer Media
@@ -3449,26 +3472,35 @@
       button_1_lights:
       - light.gameroom_lampen
       button_1_lights_schedule: schedule.lights_bright
-      button_1_double:
-      - action: switch.toggle
-        target:
-          entity_id: switch.gameroom_bureau
       button_2_short_release:
       - action: script.dakterras_winter
+        data: {}
       - action: script.gameroom_winter
+        data: {}
       button_2_long_release:
       - action: script.dakterras_open
+        data: {}
       - action: script.gameroom_open
+        data: {}
       button_3_mode: Lights
       button_3_lights:
       - light.gameroom_bureau_lampen
       button_3_lights_schedule: schedule.lights_bright
+      button_3_double:
+      - action: switch.toggle
+        target:
+          entity_id: switch.gameroom_bureau
+        data: {}
       button_4_short_release:
       - action: script.dakterras_zomer
+        data: {}
       - action: script.gameroom_zomer
+        data: {}
       button_4_long_release:
       - action: script.dakterras_dicht
+        data: {}
       - action: script.gameroom_dicht
+        data: {}
 - id: '1736812276991'
   alias: Gameroom Knop
   description: ''
@@ -3928,14 +3960,6 @@
           - input_boolean.gameroom_zomer
           - input_boolean.kantoor_zomer
           - input_boolean.sauna_zomer
-      - action: media_player.turn_off
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - media_player.badkamer
-          - media_player.keuken
-          - media_player.sauna
       - action: unifi.reconnect_client
         data:
           device_id: abe09598513da597d3761e6c08780ae3
@@ -3944,14 +3968,11 @@
           hours: 0
           minutes: 0
           seconds: 10
-      - action: media_player.turn_on
-        data: {}
+      - action: media_player.media_next_track
         metadata: {}
+        data: {}
         target:
-          entity_id:
-          - media_player.badkamer
-          - media_player.keuken
-          - media_player.sauna
+          entity_id: media_player.badkamer
     - alias: 08:00, weekday
       conditions:
       - condition: trigger
@@ -4115,14 +4136,6 @@
           transition: 900
         target:
           entity_id: light.keuken_lampen
-      - action: media_player.turn_off
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - media_player.badkamer
-          - media_player.keuken
-          - media_player.sauna
       - action: unifi.reconnect_client
         data:
           device_id: abe09598513da597d3761e6c08780ae3
@@ -4131,14 +4144,12 @@
           hours: 0
           minutes: 0
           seconds: 10
-      - action: media_player.turn_on
-        data: {}
+      - action: media_player.media_next_track
         metadata: {}
+        data: {}
         target:
           entity_id:
           - media_player.badkamer
-          - media_player.keuken
-          - media_player.sauna
     - alias: '18:00'
       conditions:
       - condition: trigger
@@ -4313,7 +4324,7 @@
           group_members:
           - media_player.keuken
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.group
   mode: parallel
 - id: '1737806490128'
   alias: Gameroom Media
@@ -4339,5 +4350,5 @@
           group_members:
           - media_player.gameroom
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.group
   mode: parallel
