@@ -28,7 +28,7 @@ voordeur_bel_announce:
     metadata: {}
     data:
       cache: true
-      media_player_entity_id: media_player.slaapkamer
+      media_player_entity_id: media_player.group
       message: Iemand heeft aangebeld.
     target:
       entity_id:
@@ -1370,50 +1370,19 @@ woonkamer_zomer:
   icon: mdi:window-shutter-settings
 music_away:
   sequence:
-  - action: media_player.media_stop
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - media_player.badkamer
-      - media_player.gameroom
-      - media_player.kantoor
-      - media_player.keuken
-      - media_player.sauna
-      - media_player.slaapkamer
-  - action: media_player.clear_playlist
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - media_player.badkamer
-      - media_player.gameroom
-      - media_player.kantoor
-      - media_player.keuken
-      - media_player.sauna
-      - media_player.slaapkamer
-  - action: media_player.unjoin
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - media_player.badkamer
-      - media_player.gameroom
-      - media_player.kantoor
-      - media_player.keuken
-      - media_player.sauna
-      - media_player.slaapkamer
   - action: media_player.turn_off
     data: {}
     metadata: {}
     target:
       entity_id:
+      - media_player.group
       - media_player.badkamer
       - media_player.gameroom
       - media_player.kantoor
       - media_player.keuken
       - media_player.sauna
       - media_player.slaapkamer
+      - media_player.woonkamer
   alias: Music Away
   description: ''
   icon: mdi:music-note-off-outline
@@ -1430,27 +1399,29 @@ music_night:
     metadata: {}
     target:
       entity_id:
-      - media_player.slaapkamer
-  - action: media_player.media_play
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - media_player.slaapkamer
+      - media_player.group
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.slaapkamer
-  - action: media_player.turn_on
+      entity_id: media_player.group
+  - action: media_player.media_play
     metadata: {}
     data: {}
     target:
-      entity_id:
+      entity_id: media_player.group
+  - action: media_player.join
+    metadata: {}
+    data:
+      group_members:
       - media_player.badkamer
       - media_player.keuken
       - media_player.sauna
+      - media_player.slaapkamer
+    target:
+      entity_id: media_player.group
+    enabled: false
   alias: Music Night
   description: ''
   icon: mdi:music-note-outline
@@ -1469,26 +1440,29 @@ music_home:
       - Jaren 80 hits essentials
       - Eurovision
     target:
-      entity_id: media_player.slaapkamer
-  - action: media_player.media_play
-    data: {}
-    metadata: {}
-    target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.group
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.slaapkamer
-  - action: media_player.turn_on
+      entity_id: media_player.group
+  - action: media_player.media_play
     metadata: {}
     data: {}
     target:
-      entity_id:
+      entity_id: media_player.group
+  - action: media_player.join
+    metadata: {}
+    data:
+      group_members:
       - media_player.badkamer
       - media_player.keuken
       - media_player.sauna
+      - media_player.slaapkamer
+    target:
+      entity_id: media_player.group
+    enabled: false
   alias: Music Home
   description: ''
   icon: mdi:music-note
