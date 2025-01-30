@@ -1522,6 +1522,19 @@
       - condition: state
         entity_id: remote.woonkamer_tv
         attribute: current_activity
+        state: com.spauldhaliwal.dispatch
+      sequence:
+      - alias: Keuken volume omhoog
+        data:
+          volume_level: 0.35
+        target:
+          entity_id: media_player.keuken
+        action: media_player.volume_set
+      alias: Launcher Dispatch
+    - conditions:
+      - condition: state
+        entity_id: remote.woonkamer_tv
+        attribute: current_activity
         state: com.google.android.apps.tv.launcherx
       sequence:
       - alias: Keuken volume omhoog
@@ -1531,19 +1544,6 @@
           entity_id: media_player.keuken
         action: media_player.volume_set
       alias: Launcher Google
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.spocky.projengmenu
-      sequence:
-      - alias: Keuken volume omhoog
-        data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      alias: Launcher Projectivy
     - conditions:
       - condition: state
         entity_id: remote.woonkamer_tv
@@ -1652,6 +1652,19 @@
             - media_player.woonkamer_songpal
           action: media_player.volume_set
       alias: Plex
+    - conditions:
+      - condition: state
+        entity_id: remote.woonkamer_tv
+        attribute: current_activity
+        state: com.neilturner.aerialviews
+      sequence:
+      - alias: Keuken volume omhoog
+        data:
+          volume_level: 0.35
+        target:
+          entity_id: media_player.keuken
+        action: media_player.volume_set
+      alias: Screen Saver Aerial Views
     - conditions:
       - condition: state
         entity_id: remote.woonkamer_tv

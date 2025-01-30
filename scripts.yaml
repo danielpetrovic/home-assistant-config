@@ -1370,19 +1370,21 @@ woonkamer_zomer:
   icon: mdi:window-shutter-settings
 music_away:
   sequence:
-  - action: media_player.turn_off
-    data: {}
+  - action: media_player.clear_playlist
     metadata: {}
+    data: {}
     target:
-      entity_id:
-      - media_player.group
-      - media_player.badkamer
-      - media_player.gameroom
-      - media_player.kantoor
-      - media_player.keuken
-      - media_player.sauna
-      - media_player.slaapkamer
-      - media_player.woonkamer
+      entity_id: media_player.group
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 3
+      milliseconds: 0
+  - action: media_player.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.group
   alias: Music Away
   description: ''
   icon: mdi:music-note-off-outline
@@ -1411,17 +1413,6 @@ music_night:
     data: {}
     target:
       entity_id: media_player.group
-  - action: media_player.join
-    metadata: {}
-    data:
-      group_members:
-      - media_player.badkamer
-      - media_player.keuken
-      - media_player.sauna
-      - media_player.slaapkamer
-    target:
-      entity_id: media_player.group
-    enabled: false
   alias: Music Night
   description: ''
   icon: mdi:music-note-outline
@@ -1452,17 +1443,6 @@ music_home:
     data: {}
     target:
       entity_id: media_player.group
-  - action: media_player.join
-    metadata: {}
-    data:
-      group_members:
-      - media_player.badkamer
-      - media_player.keuken
-      - media_player.sauna
-      - media_player.slaapkamer
-    target:
-      entity_id: media_player.group
-    enabled: false
   alias: Music Home
   description: ''
   icon: mdi:music-note
