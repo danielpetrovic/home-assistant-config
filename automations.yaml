@@ -1303,13 +1303,13 @@
         - motion detected
       sequence:
       - action: light.turn_on
-        metadata: {}
         data:
           brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
             }}'
           color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
             }}'
           transition: 9
+        metadata: {}
         target:
           entity_id: light.gang_lampen
       alias: motion detected
@@ -1319,9 +1319,9 @@
         - motion clear
       sequence:
       - action: light.turn_off
-        metadata: {}
         data:
           transition: 9
+        metadata: {}
         target:
           entity_id: light.gang_lampen
       alias: motion clear
@@ -2479,14 +2479,27 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: 5
-          color_temp_kelvin: 3333
+          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
+            }}'
           transition: 9
+        metadata: {}
+        target:
+          entity_id:
+          - light.slaapkamer_lamp
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+            }}'
+          transition: 9
+        metadata: {}
         target:
           entity_id:
           - light.slaapkamer_alex_lamp_bed
           - light.slaapkamer_deni_lamp_bed
-          - light.slaapkamer_lamp
       - action: automation.turn_on
         metadata: {}
         target:
@@ -2495,66 +2508,7 @@
           - automation.gang_beweging
           - automation.slaapkamer_deur
         data: {}
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.alex_in_bed
-        state: 'off'
-      - condition: state
-        entity_id: binary_sensor.deni_in_bed
-        state: 'on'
-      sequence:
-      - action: light.turn_on
-        data:
-          brightness_pct: 5
-          color_temp_kelvin: 3333
-          transition: 9
-        target:
-          entity_id:
-          - light.slaapkamer_alex_lamp_bed
-          - light.slaapkamer_deni_lamp_bed
-      - action: automation.turn_on
-        metadata: {}
-        target:
-          entity_id:
-          - automation.entree_beweging
-          - automation.gang_beweging
-        data: {}
-      - action: automation.turn_off
-        data:
-          stop_actions: true
-        metadata: {}
-        target:
-          entity_id: automation.slaapkamer_deur
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.alex_in_bed
-        state: 'on'
-      - condition: state
-        entity_id: binary_sensor.deni_in_bed
-        state: 'off'
-      sequence:
-      - action: light.turn_on
-        data:
-          brightness_pct: 5
-          color_temp_kelvin: 3333
-          transition: 9
-        target:
-          entity_id:
-          - light.slaapkamer_alex_lamp_bed
-          - light.slaapkamer_deni_lamp_bed
-      - action: automation.turn_on
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - automation.entree_beweging
-          - automation.gang_beweging
-      - action: automation.turn_off
-        data:
-          stop_actions: true
-        metadata: {}
-        target:
-          entity_id: automation.slaapkamer_deur
+      alias: A not in bed, D not in bed
     - conditions:
       - condition: state
         entity_id: binary_sensor.alex_in_bed
@@ -2564,9 +2518,9 @@
         state: 'on'
       sequence:
       - action: light.turn_off
-        metadata: {}
         data:
           transition: 9
+        metadata: {}
         target:
           entity_id:
           - light.slaapkamer_lamp
@@ -2576,13 +2530,66 @@
           - light.gang_lampen
       - action: automation.turn_off
         data:
-          stop_actions: true
+          stop_actions: false
         metadata: {}
         target:
           entity_id:
           - automation.entree_beweging
           - automation.gang_beweging
           - automation.slaapkamer_deur
+      alias: A in bed, D in bed
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.alex_in_bed
+            state: 'on'
+          - condition: not
+            conditions:
+            - condition: state
+              entity_id: binary_sensor.deni_in_bed
+              state: 'on'
+          alias: A in bed, D not in bed
+        - alias: A not in bed, D in bed
+          condition: or
+          conditions:
+          - condition: not
+            conditions:
+            - condition: state
+              entity_id: binary_sensor.alex_in_bed
+              state: 'on'
+          - condition: state
+            entity_id: binary_sensor.deni_in_bed
+            state: 'on'
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
+            }}'
+          transition: 9
+        metadata: {}
+        target:
+          entity_id:
+          - light.slaapkamer_alex_lamp_bed
+          - light.slaapkamer_deni_lamp_bed
+      - action: automation.turn_on
+        metadata: {}
+        target:
+          entity_id:
+          - automation.entree_beweging
+          - automation.gang_beweging
+        data: {}
+      - action: automation.turn_off
+        data:
+          stop_actions: false
+        metadata: {}
+        target:
+          entity_id: automation.slaapkamer_deur
+      alias: A or D in bed
   mode: queued
   max: 10
 - id: '1734894658746'
