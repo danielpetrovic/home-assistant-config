@@ -3435,11 +3435,9 @@
     input:
       remote: 7a931cc8e9ae92f48baf40fea7947d6f
       last_pressed: input_text.eettafel_knop_last_pressed
-      button_1_mode: Lights
-      button_1_lights:
-      - light.eettafel_lamp_boven
-      button_1_lights_schedule: schedule.lights_bright
-      button_2_mode: Custom
+      button_1_light:
+        entity_id: light.eettafel_lamp_boven
+      button_1_light_schedule: schedule.lights_bright
       button_2_short_release:
       - action: script.tuin_winter
         metadata: {}
@@ -3448,10 +3446,9 @@
       - action: script.tuin_open
         metadata: {}
         data: {}
-      button_3_mode: Lights
-      button_3_lights:
-      - light.eettafel_lamp_onder
-      button_4_mode: Custom
+      button_3_light:
+        entity_id: light.eettafel_lamp_onder
+      button_3_light_schedule: schedule.lights_dimmed
       button_4_short_release:
       - action: script.tuin_zomer
         metadata: {}
@@ -3460,8 +3457,6 @@
       - action: script.tuin_dicht
         metadata: {}
         data: {}
-      button_3_lights_schedule: schedule.lights_dimmed
-      button_3_media: media_player.keuken
 - id: '1736812069874'
   alias: Entree Knop
   description: ''
