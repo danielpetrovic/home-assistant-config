@@ -1,14 +1,10 @@
 blueprint:
   name: ZHA - Philips Hue Tap Dial Switch (RDM002)
   author: danielpetrovic
-  description:
-    "# ZHA - Philips Hue Tap Dial Switch (RDM002)\n\n This blueprint enables comprehensive
-    configuration of a Philips Hue Tap Dial Switch. Depending on the mode you select
-    per button press type it will do different things.\n The dial can be used with each button,
-    simply press the button you want to use and turn the dial to control it for that
-    specific setting.\n When you select Light or Media mode, certain actions for
-    that button are will be set and the Custom settings will always run for these
-    actions"
+  description: "# ZHA - Philips Hue Tap Dial Switch (RDM002)\n\n
+    This blueprint enables comprehensive configuration of a Philips Hue Tap Dial Switch.\n
+    You can select different presets for the Light and Media mode and control different things at the same time.\n
+    The dial can be used with each button, simply press the button you want to use and turn the dial to control it for that specific setting.\n"
   domain: automation
   homeassistant:
     min_version: 2024.10.0
