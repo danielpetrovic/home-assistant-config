@@ -1,7 +1,7 @@
 blueprint:
-  name: Alarm System with ZHA Keypad support
+  name: ZHA - Alarm System with Keypad support (KEPZB-110)
   author: danielpetrovic
-  description: "# Alarm System with ZHA Keypad support\n\n
+  description: "# ZHA - Alarm System with Keypad support (KEPZB-110)\n\n
     This blueprint enables a custom Alarm system without the needs of any custom_component. It can sync the states with a phsyical keypad connected to ZHA.\n\n
     You can set multiple codes for multiple users, including hexadicimals for RFID tags. The logic to check if a code is present is inside this blueprint so your alarm panel doesn't need to support multiple codes.\n\n
     You can change the notifications that are sent when the Alarm Control Panel changes states, defaults are set.\n
