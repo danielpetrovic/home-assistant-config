@@ -748,56 +748,6 @@
       - action: script.schuur_dicht
         metadata: {}
         data: {}
-    - conditions:
-      - condition: trigger
-        id:
-        - Schuur Looppad Open
-      sequence:
-      - action: script.schuur_looppad_open
-        metadata: {}
-        data: {}
-    - conditions:
-      - condition: trigger
-        id:
-        - Schuur Open
-      sequence:
-      - action: script.schuur_open
-        metadata: {}
-        data: {}
-    - conditions:
-      - condition: trigger
-        id:
-        - Schuur Tuin Open
-      sequence:
-      - action: script.schuur_tuin_open
-        metadata: {}
-        data: {}
-  - alias: Covers - Tuin
-    choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - Schuur Open
-        - Schuur Looppad Open
-        - Schuur Tuin Open
-      sequence:
-      - data:
-          scene_id: tuin_before
-          snapshot_entities:
-          - input_boolean.tuin_dicht
-          - input_boolean.tuin_open
-          - input_boolean.tuin_winter
-          - input_boolean.tuin_zomer
-        action: scene.create
-      - target:
-          entity_id: input_boolean.tuin_open
-        data: {}
-        action: input_boolean.turn_on
-    - conditions:
-      - condition: trigger
-        id:
-        - Schuur Dicht
-      sequence:
       - if:
         - condition: state
           entity_id: binary_sensor.tuin_deursensor_contact
@@ -818,6 +768,11 @@
           data: {}
           action: scene.delete
         else:
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 15
+            milliseconds: 0
         - target:
             entity_id: scene.tuin_before
           data: {}
@@ -826,7 +781,83 @@
             entity_id: scene.tuin_before
           data: {}
           action: scene.delete
-  mode: parallel
+    - conditions:
+      - condition: trigger
+        id:
+        - Schuur Looppad Open
+      sequence:
+      - action: script.schuur_looppad_open
+        metadata: {}
+        data: {}
+      - alias: If temporary scene does not exist
+        if:
+        - condition: template
+          value_template: '{{ states(''scene.tuin_before'') == ''unknown'' }}'
+        then:
+        - data:
+            scene_id: tuin_before
+            snapshot_entities:
+            - input_boolean.tuin_dicht
+            - input_boolean.tuin_open
+            - input_boolean.tuin_winter
+            - input_boolean.tuin_zomer
+          action: scene.create
+        - target:
+            entity_id: input_boolean.tuin_open
+          data: {}
+          action: input_boolean.turn_on
+    - conditions:
+      - condition: trigger
+        id:
+        - Schuur Open
+      sequence:
+      - action: script.schuur_open
+        metadata: {}
+        data: {}
+      - alias: If temporary scene does not exist
+        if:
+        - condition: template
+          value_template: '{{ states(''scene.tuin_before'') == ''unknown'' }}'
+        then:
+        - data:
+            scene_id: tuin_before
+            snapshot_entities:
+            - input_boolean.tuin_dicht
+            - input_boolean.tuin_open
+            - input_boolean.tuin_winter
+            - input_boolean.tuin_zomer
+          action: scene.create
+        - target:
+            entity_id: input_boolean.tuin_open
+          data: {}
+          action: input_boolean.turn_on
+    - conditions:
+      - condition: trigger
+        id:
+        - Schuur Tuin Open
+      sequence:
+      - action: script.schuur_tuin_open
+        metadata: {}
+        data: {}
+      - alias: If temporary scene does not exist
+        if:
+        - condition: template
+          value_template: '{{ states(''scene.tuin_before'') == ''unknown'' }}'
+        then:
+        - data:
+            scene_id: tuin_before
+            snapshot_entities:
+            - input_boolean.tuin_dicht
+            - input_boolean.tuin_open
+            - input_boolean.tuin_winter
+            - input_boolean.tuin_zomer
+          action: scene.create
+        - target:
+            entity_id: input_boolean.tuin_open
+          data: {}
+          action: input_boolean.turn_on
+  mode: queued
+  max: 10
 - id: '1705485099900'
   alias: Slaapkamer Raambekleding
   description: ''
@@ -3895,9 +3926,6 @@
           - tuin
           - wasruimte
           - woonkamer
-      - action: script.backup_full
-        data: {}
-        metadata: {}
     - alias: 01:00
       conditions:
       - condition: trigger
@@ -4014,21 +4042,32 @@
         - thu
         - fri
       sequence:
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
-            }}'
-          transition: 60
-        metadata: {}
-        target:
-          entity_id: light.slaapkamer_lamp
       - target:
           entity_id:
           - input_boolean.slaapkamer_open
         data: {}
         action: input_boolean.turn_on
+      - if:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.alex_in_bed
+            state: 'on'
+          - condition: state
+            entity_id: binary_sensor.deni_in_bed
+            state: 'on'
+        then:
+        - action: light.turn_on
+          data:
+            brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
+              }}'
+            color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
+              }}'
+            transition: 60
+          metadata: {}
+          target:
+            entity_id: light.slaapkamer_lamp
+        alias: A or D in bed
     - alias: 09:00, weekend
       conditions:
       - condition: trigger
@@ -4091,6 +4130,42 @@
         metadata: {}
         target:
           area_id: slaapkamer
+    - alias: 10:00, weekend
+      conditions:
+      - condition: trigger
+        id:
+        - '10:00'
+      - condition: time
+        weekday:
+        - sat
+        - sun
+      sequence:
+      - action: input_boolean.turn_on
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.slaapkamer_open
+      - if:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.alex_in_bed
+            state: 'on'
+          - condition: state
+            entity_id: binary_sensor.deni_in_bed
+            state: 'on'
+        then:
+        - action: light.turn_on
+          data:
+            brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
+              }}'
+            color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
+              }}'
+            transition: 60
+          metadata: {}
+          target:
+            entity_id: light.slaapkamer_lamp
+        alias: A or D in bed
     - alias: '11:00'
       conditions:
       - condition: trigger
