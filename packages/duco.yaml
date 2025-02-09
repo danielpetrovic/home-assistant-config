@@ -1,15 +1,72 @@
-input_select:
-  ducobox_mode:
-    name: DucoBox stand
-    icon: mdi:target
-    options:
-      - "AUTO"
-      - "CNT1"
-      - "CNT2"
-      - "CNT3"
-      - "MAN1"
-      - "MAN2"
-      - "MAN3"
+fan:
+  - platform: template
+    fans:
+      ducobox:
+        unique_id: "ducobox"
+        friendly_name: "DucoBox"
+        value_template: >
+          {% if states('sensor.ducobox') is defined %}
+            on
+          {% else %}
+            off
+          {% endif %}
+        turn_on:
+          action: rest_command.set_ducobox_mode
+          data:
+            state: "AUTO"
+        turn_off:
+          action: rest_command.set_ducobox_mode
+          data:
+            state: "AUTO"
+        preset_modes:
+          - "Auto"
+          - "Away"
+          - "Manual 1"
+          - "Manual 1 Forced"
+          - "Manual 2"
+          - "Manual 2 Forced"
+          - "Manual 3"
+          - "Manual 3 Forced"
+        preset_mode_template: >
+          {% if states('sensor.ducobox') == "MAN1" %}
+            Manual 1
+          {% elif states('sensor.ducobox') == "CNT1" %}
+            Manual 1 Forced
+          {% elif states('sensor.ducobox') == "MAN2" %}
+            Manual 2
+          {% elif states('sensor.ducobox') == "CNT2" %}
+            Manual 2 Forced
+          {% elif states('sensor.ducobox') == "MAN3" %}
+            Manual 3
+          {% elif states('sensor.ducobox') == "CNT3" %}
+            Manual 3 Forced
+          {% elif states('sensor.ducobox') == "EMPT" %}
+            Away
+          {% else %}
+            Auto
+          {% endif %}
+        set_preset_mode:
+          - action: rest_command.set_ducobox_mode
+            data:
+              state: >
+                {% if preset_mode ==  "Manual 1" %}
+                  MAN1
+                {% elif preset_mode == "Manual 1 Forced" %}
+                  CNT1
+                {% elif preset_mode == "Manual 2" %}
+                  MAN2
+                {% elif preset_mode ==  "Manual 2 Forced" %}
+                  CNT2
+                {% elif preset_mode ==  "Manual 3" %}
+                  MAN3
+                {% elif preset_mode == "Manual 3 Forced" %}
+                  CNT3
+                {% elif preset_mode == "Away" %}
+                  EMPT
+                {% else %}
+                  AUTO
+                {% endif %}
+        percentage_template: "{{ states('sensor.ducobox_target') }}"
 
 rest:
   - resource: http://192.168.16.18/nodeinfoget?node=1
@@ -179,17 +236,5 @@ rest:
         unit_of_measurement: "ppm"
 
 rest_command:
-  ducobox_mode_auto:
-    url: "http://192.168.16.18/nodesetoperstate?node=1&value=AUTO"
-  ducobox_mode_cnt1:
-    url: "http://192.168.16.18/nodesetoperstate?node=1&value=CNT1"
-  ducobox_mode_cnt2:
-    url: "http://192.168.16.18/nodesetoperstate?node=1&value=CNT2"
-  ducobox_mode_cnt3:
-    url: "http://192.168.16.18/nodesetoperstate?node=1&value=CNT3"
-  ducobox_mode_man1:
-    url: "http://192.168.16.18/nodesetoperstate?node=1&value=MAN1"
-  ducobox_mode_man2:
-    url: "http://192.168.16.18/nodesetoperstate?node=1&value=MAN2"
-  ducobox_mode_man3:
-    url: "http://192.168.16.18/nodesetoperstate?node=1&value=MAN3"
+  set_ducobox_mode:
+    url: "http://192.168.16.18/nodesetoperstate?node=1&value={{ state }}"
