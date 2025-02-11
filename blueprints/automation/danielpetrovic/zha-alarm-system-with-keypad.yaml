@@ -854,7 +854,7 @@ actions:
               sequence:
                 - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                   data:
-                    message: "{{ trigger.to_state.name }} {{ alarm_notifications_armed_away }}"
+                    message: "{{ trigger.to_state.name }} {{ alarm_notifications_triggered }}"
                     data:
                       actions:
                         - action: disarm
