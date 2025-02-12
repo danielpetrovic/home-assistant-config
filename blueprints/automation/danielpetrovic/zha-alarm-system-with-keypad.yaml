@@ -1058,6 +1058,7 @@ actions:
                                   - action: arm_night
                                     title: Alarm Night
                                     icon: "sfsymbols:bell"
+                                channel: alarm_stream
                                 priority: high
                                 ttl: 0
                   - alias: Notify Critical Apple
@@ -1145,6 +1146,7 @@ actions:
                                   - action: arm_night
                                     title: Alarm Night
                                     icon: "sfsymbols:bell"
+                                channel: alarm_stream
                                 priority: high
                                 ttl: 0
                   - alias: Notify Critical Apple
@@ -1232,6 +1234,7 @@ actions:
                                   - action: arm_night
                                     title: Alarm Night
                                     icon: "sfsymbols:bell"
+                                channel: alarm_stream
                                 priority: high
                                 ttl: 0
                   - alias: Notify Critical Apple
@@ -1321,6 +1324,7 @@ actions:
                                     title: Alarm Night
                                     icon: "sfsymbols:bell"
                                 entity_id: !input alarm_camera_triggered
+                                channel: alarm_stream
                                 priority: high
                                 ttl: 0
                   - alias: Notify Critical Apple
@@ -1409,6 +1413,7 @@ actions:
                                   - action: arm_night
                                     title: Alarm Night
                                     icon: "sfsymbols:bell"
+                                channel: alarm_stream
                                 priority: high
                                 ttl: 0
                   - alias: Notify Critical Apple
@@ -1504,6 +1509,7 @@ actions:
                                     title: Alarm Night
                                     icon: "sfsymbols:bell"
                                 entity_id: !input alarm_camera_away
+                                channel: alarm_stream
                                 priority: high
                                 ttl: 0
                   - alias: Notify Critical Apple
@@ -1598,6 +1604,7 @@ actions:
                                     title: Alarm Night
                                     icon: "sfsymbols:bell"
                                 entity_id: !input alarm_camera_home
+                                channel: alarm_stream
                                 priority: high
                                 ttl: 0
                   - alias: Notify Critical Apple
@@ -1692,6 +1699,7 @@ actions:
                                     title: Alarm Night
                                     icon: "sfsymbols:bell"
                                 entity_id: !input alarm_camera_night
+                                channel: alarm_stream
                                 priority: high
                                 ttl: 0
                   - alias: Notify Critical Apple
@@ -1815,6 +1823,7 @@ actions:
                                     title: Alarm Night
                                     icon: "sfsymbols:bell"
                                 entity_id: !input alarm_camera_always
+                                channel: alarm_stream
                                 priority: high
                                 ttl: 0
                   - alias: Notify Critical Apple
@@ -1902,6 +1911,7 @@ actions:
                                     title: Alarm Night
                                     icon: "sfsymbols:bell"
                                 entity_id: !input alarm_camera_fire
+                                channel: alarm_stream
                                 priority: high
                                 ttl: 0
                   - alias: Notify Critical Apple
@@ -1989,6 +1999,7 @@ actions:
                                     title: Alarm Night
                                     icon: "sfsymbols:bell"
                                 entity_id: !input alarm_camera_gas
+                                channel: alarm_stream
                                 priority: high
                                 ttl: 0
                   - alias: Notify Critical Apple
@@ -2076,6 +2087,7 @@ actions:
                                     title: Alarm Night
                                     icon: "sfsymbols:bell"
                                 entity_id: !input alarm_camera_moisture
+                                channel: alarm_stream
                                 priority: high
                                 ttl: 0
                   - alias: Notify Critical Apple
