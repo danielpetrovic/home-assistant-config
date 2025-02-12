@@ -4333,37 +4333,45 @@
       alarm_keypad_device: a435712f3dbc11c7dfa9e34c5b6cbc20
       alarm_keypad: alarm_control_panel.keypad
       alarm_code_keypad: input_text.alarm_code_keypad
+      alarm_notifications_target:
+      - e5f5b46d90aa27e95bc1427c31404082
+      - 83e80af529f72cfac5e1a29223dc5797
+      - b8070d7cda3c7d8c76aa095da0944f2b
+      - 014d37597b774510e191920a2b931b9b
       alarm_sensor_away:
       - binary_sensor.dakterras_deursensor_contact
       - binary_sensor.entree_deursensor_contact
       - binary_sensor.tuin_deursensor_contact
       - binary_sensor.woonkamer_raamsensor_contact
+      alarm_camera_away: camera.entree
       alarm_sensor_night:
       - binary_sensor.dakterras_deursensor_contact
       - binary_sensor.entree_deursensor_contact
       - binary_sensor.tuin_deursensor_contact
       - binary_sensor.woonkamer_raamsensor_contact
       alarm_camera_night: camera.entree
-      alarm_camera_away: camera.entree
+      alarm_notifications_priority_pending:
+      - critical_apple
+      alarm_notifications_priority_triggered:
+      - critical_apple
       alarm_scripts_away:
       - script.music_away
       alarm_scripts_home:
       - script.music_home
       alarm_scripts_night:
       - script.music_night
-      alarm_notifications_target:
-      - e5f5b46d90aa27e95bc1427c31404082
-      - 83e80af529f72cfac5e1a29223dc5797
-      - b8070d7cda3c7d8c76aa095da0944f2b
-      - 014d37597b774510e191920a2b931b9b
       alarm_sensor_fire:
       - binary_sensor.entree_brandmelder_smoke
       - binary_sensor.gameroom_brandmelder_smoke
       - binary_sensor.gang_brandmelder_smoke
       - binary_sensor.schuur_brandmelder_smoke
+      alarm_notifications_priority_fire:
+      - critical_apple
       alarm_sensor_moisture:
       - binary_sensor.keuken_vochtmelder_water_leak
       - binary_sensor.wasruimte_vochtmelder_water_leak
+      alarm_notifications_priority_moisture:
+      - critical_apple
 - id: '1737573245494'
   alias: Keuken Media
   description: ''
