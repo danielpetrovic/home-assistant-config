@@ -20,3 +20,7 @@ http:
     - 172.30.33.0/24
     - ::1
     - 2001:DB8:ABCD::/48
+
+zha:
+  zigpy_config:
+    source_routing: true

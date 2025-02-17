@@ -789,23 +789,18 @@
       - action: script.schuur_looppad_open
         metadata: {}
         data: {}
-      - alias: If temporary scene does not exist
-        if:
-        - condition: template
-          value_template: '{{ states(''scene.tuin_before'') == ''unknown'' }}'
-        then:
-        - data:
-            scene_id: tuin_before
-            snapshot_entities:
-            - input_boolean.tuin_dicht
-            - input_boolean.tuin_open
-            - input_boolean.tuin_winter
-            - input_boolean.tuin_zomer
-          action: scene.create
-        - target:
-            entity_id: input_boolean.tuin_open
-          data: {}
-          action: input_boolean.turn_on
+      - data:
+          scene_id: tuin_before
+          snapshot_entities:
+          - input_boolean.tuin_dicht
+          - input_boolean.tuin_open
+          - input_boolean.tuin_winter
+          - input_boolean.tuin_zomer
+        action: scene.create
+      - target:
+          entity_id: input_boolean.tuin_open
+        data: {}
+        action: input_boolean.turn_on
     - conditions:
       - condition: trigger
         id:
@@ -814,23 +809,18 @@
       - action: script.schuur_open
         metadata: {}
         data: {}
-      - alias: If temporary scene does not exist
-        if:
-        - condition: template
-          value_template: '{{ states(''scene.tuin_before'') == ''unknown'' }}'
-        then:
-        - data:
-            scene_id: tuin_before
-            snapshot_entities:
-            - input_boolean.tuin_dicht
-            - input_boolean.tuin_open
-            - input_boolean.tuin_winter
-            - input_boolean.tuin_zomer
-          action: scene.create
-        - target:
-            entity_id: input_boolean.tuin_open
-          data: {}
-          action: input_boolean.turn_on
+      - data:
+          scene_id: tuin_before
+          snapshot_entities:
+          - input_boolean.tuin_dicht
+          - input_boolean.tuin_open
+          - input_boolean.tuin_winter
+          - input_boolean.tuin_zomer
+        action: scene.create
+      - target:
+          entity_id: input_boolean.tuin_open
+        data: {}
+        action: input_boolean.turn_on
     - conditions:
       - condition: trigger
         id:
@@ -839,23 +829,18 @@
       - action: script.schuur_tuin_open
         metadata: {}
         data: {}
-      - alias: If temporary scene does not exist
-        if:
-        - condition: template
-          value_template: '{{ states(''scene.tuin_before'') == ''unknown'' }}'
-        then:
-        - data:
-            scene_id: tuin_before
-            snapshot_entities:
-            - input_boolean.tuin_dicht
-            - input_boolean.tuin_open
-            - input_boolean.tuin_winter
-            - input_boolean.tuin_zomer
-          action: scene.create
-        - target:
-            entity_id: input_boolean.tuin_open
-          data: {}
-          action: input_boolean.turn_on
+      - data:
+          scene_id: tuin_before
+          snapshot_entities:
+          - input_boolean.tuin_dicht
+          - input_boolean.tuin_open
+          - input_boolean.tuin_winter
+          - input_boolean.tuin_zomer
+        action: scene.create
+      - target:
+          entity_id: input_boolean.tuin_open
+        data: {}
+        action: input_boolean.turn_on
   mode: queued
   max: 10
 - id: '1705485099900'
@@ -4424,3 +4409,41 @@
         target:
           entity_id: media_player.group
   mode: parallel
+- id: '1739747155876'
+  alias: Alarm - Geofence
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - zone.home
+    attribute: persons
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: zone.home
+        below: 1
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.home
+      - action: alarm_control_panel.alarm_arm_away
+        metadata: {}
+        data: {}
+        target:
+          entity_id: alarm_control_panel.alarm
+      alias: No one home
+    - conditions:
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
+      sequence:
+      - action: input_boolean.turn_on
+        data: {}
+        target:
+          entity_id: input_boolean.home
+      alias: Someone home
+  mode: single
