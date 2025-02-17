@@ -1,24 +1,18 @@
 voordeur_bel_woonkamer_tv:
   alias: Voordeur Bel - Woonkamer TV
   sequence:
-  - action: media_player.media_pause
+  - action: remote.send_command
     metadata: {}
-    data: {}
+    data:
+      command: HOME
     target:
-      entity_id: media_player.woonkamer_tv_adb
+      entity_id: remote.woonkamer_tv
   - action: androidtv.adb_command
     target:
       entity_id: media_player.woonkamer_tv_adb
     data:
       command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
         rtsp://192.168.16.1:7447/XzuE8SiJlRorIkMe
-  - action: androidtv.adb_command
-    target:
-      entity_id: media_player.woonkamer_tv_adb
-    data:
-      command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
-        http://192.168.16.50:11984/api/stream.mp4?src=camera.voordeur
-    enabled: false
   description: ''
   icon: mdi:doorbell-video
 voordeur_bel_announce:
@@ -1392,8 +1386,8 @@ music_night:
     data:
       enqueue: replace_next
       media_id:
-      - Pianomuziek
-      - Smoothjazz essentials
+      - Jazz
+      - Piano
       media_type: playlist
       radio_mode: false
     metadata: {}
@@ -1423,11 +1417,9 @@ music_home:
       media_type: playlist
       radio_mode: false
       media_id:
-      - Onmisbare jaren 10-hits
-      - Hits uit de jaren 00 essentials
-      - Jaren 90 hits essentials
-      - Jaren 80 hits essentials
       - Eurovision
+      - Pop
+      - Rock
     target:
       entity_id: media_player.group
   - action: media_player.shuffle_set
@@ -1682,3 +1674,20 @@ voordeur_bel_lights:
     alias: Scene, remove
     target:
       entity_id: scene.alarm_before
+schuur_camera_woonkamer_tv:
+  sequence:
+  - action: remote.send_command
+    metadata: {}
+    data:
+      command: HOME
+    target:
+      entity_id: remote.woonkamer_tv
+  - action: androidtv.adb_command
+    target:
+      entity_id: media_player.woonkamer_tv_adb
+    data:
+      command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
+        rtsp://192.168.16.1:7447/M8Qtns93Hf1HjRT6
+  alias: Schuur Camera - Woonkamer TV
+  description: ''
+  icon: mdi:camera
