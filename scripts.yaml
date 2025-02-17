@@ -2,7 +2,6 @@ voordeur_bel_woonkamer_tv:
   alias: Voordeur Bel - Woonkamer TV
   sequence:
   - action: remote.send_command
-    metadata: {}
     data:
       command: HOME
     target:
@@ -1677,7 +1676,6 @@ voordeur_bel_lights:
 schuur_camera_woonkamer_tv:
   sequence:
   - action: remote.send_command
-    metadata: {}
     data:
       command: HOME
     target:
