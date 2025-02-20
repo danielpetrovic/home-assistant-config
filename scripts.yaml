@@ -1385,8 +1385,8 @@ music_night:
     data:
       enqueue: replace_next
       media_id:
+      - Classical
       - Jazz
-      - Piano
       media_type: playlist
       radio_mode: false
     metadata: {}
