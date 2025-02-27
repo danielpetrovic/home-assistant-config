@@ -2355,7 +2355,6 @@
           - action: input_boolean.turn_on
             target:
               entity_id:
-              - input_boolean.dakterras_winter
               - input_boolean.gameroom_winter
             data: {}
         - conditions:
@@ -2378,7 +2377,6 @@
           - action: input_boolean.turn_on
             target:
               entity_id:
-              - input_boolean.dakterras_zomer
               - input_boolean.gameroom_zomer
             data: {}
     - alias: Sun luminosity 10000-50000
@@ -2406,7 +2404,6 @@
       - action: input_boolean.turn_on
         target:
           entity_id:
-          - input_boolean.dakterras_zomer
           - input_boolean.gameroom_zomer
         data: {}
   mode: single
@@ -3972,6 +3969,12 @@
           - input_boolean.slaapkamer_open
         data: {}
         action: input_boolean.turn_on
+      - action: media_player.media_next_track
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - media_player.sauna
       - if:
         - condition: or
           conditions:
@@ -4070,6 +4073,12 @@
         target:
           entity_id:
           - input_boolean.slaapkamer_open
+      - action: media_player.media_next_track
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - media_player.sauna
       - if:
         - condition: or
           conditions:
