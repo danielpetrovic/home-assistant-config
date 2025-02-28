@@ -3,6 +3,11 @@ voordeur_bel_woonkamer_tv:
   sequence:
   - action: remote.send_command
     data:
+      command: BACK
+    target:
+      entity_id: remote.woonkamer_tv
+  - action: remote.send_command
+    data:
       command: HOME
     target:
       entity_id: remote.woonkamer_tv
@@ -11,7 +16,7 @@ voordeur_bel_woonkamer_tv:
       entity_id: media_player.woonkamer_tv_adb
     data:
       command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
-        rtsp://192.168.16.1:7447/XzuE8SiJlRorIkMe
+        rtsp://192.168.16.50:38433/38c70ef404f34bf8
   description: ''
   icon: mdi:doorbell-video
 voordeur_bel_announce:
