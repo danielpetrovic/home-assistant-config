@@ -1,0 +1,13 @@
+media_player:
+  - platform: kef_connector
+    host: 192.168.16.20
+  - platform: kef_connector
+    host: 192.168.16.21
+  - platform: kef_connector
+    host: 192.168.16.22
+  - platform: kef_connector
+    host: 192.168.16.23
+  - platform: kef_connector
+    host: 192.168.16.24
+  - platform: kef_connector
+    host: 192.168.16.25

@@ -884,10 +884,10 @@
   conditions: []
   actions:
   - parallel:
-    - action: script.voordeur_bel_announce
     - action: script.voordeur_bel_lights
-    - action: script.voordeur_bel_notify
+      data: {}
     - action: script.voordeur_bel_woonkamer_tv
+      data: {}
   mode: restart
 - id: '1706028727906'
   alias: Keukenkast Deur
@@ -1410,7 +1410,7 @@
             volume_level: 0.4
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       - alias: 18:00-00:00
         if:
@@ -1422,7 +1422,7 @@
             volume_level: 0.45
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       alias: Apple TV
     - conditions:
@@ -1460,7 +1460,7 @@
             volume_level: 0.35
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       - alias: 18:00-00:00
         if:
@@ -1472,7 +1472,7 @@
             volume_level: 0.45
           action: media_player.volume_set
           target:
-            entity_id: media_player.woonkamer_songpal
+            entity_id: media_player.woonkamer
       alias: Disney+
     - conditions:
       - condition: state
@@ -1522,7 +1522,7 @@
             volume_level: 0.4
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       - alias: 18:00-00:00
         if:
@@ -1534,7 +1534,7 @@
             volume_level: 0.45
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       alias: Netflix
     - conditions:
@@ -1558,7 +1558,7 @@
             volume_level: 0.3
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       - alias: 18:00-00:00
         if:
@@ -1569,7 +1569,7 @@
             volume_level: 0.35
           action: media_player.volume_set
           target:
-            entity_id: media_player.woonkamer_songpal
+            entity_id: media_player.woonkamer
       alias: NLZIET
     - conditions:
       - condition: state
@@ -1593,7 +1593,7 @@
             volume_level: 0.35
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       - alias: 18:00-00:00
         if:
@@ -1605,7 +1605,7 @@
             volume_level: 0.45
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       alias: Plex
     - conditions:
@@ -1656,7 +1656,7 @@
             volume_level: 0.2
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       - alias: 18:00-00:00
         if:
@@ -1668,7 +1668,7 @@
             volume_level: 0.25
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       alias: SmartTube
     - conditions:
@@ -1693,7 +1693,7 @@
             volume_level: 0.4
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       - alias: 18:00-00:00
         if:
@@ -1705,7 +1705,7 @@
             volume_level: 0.45
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       alias: Sony Pictures Core
     - conditions:
@@ -1729,7 +1729,7 @@
             volume_level: 0.25
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       - alias: 18:00-00:00
         if:
@@ -1740,7 +1740,7 @@
             volume_level: 0.35
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       alias: TV
     - conditions:
@@ -1765,7 +1765,7 @@
             volume_level: 0.2
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       - alias: 18:00-00:00
         if:
@@ -1777,7 +1777,7 @@
             volume_level: 0.25
           target:
             entity_id:
-            - media_player.woonkamer_songpal
+            - media_player.woonkamer
           action: media_player.volume_set
       alias: YouTube
   mode: restart
@@ -3377,7 +3377,6 @@
         entity_id: light.badkamer_lamp
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.badkamer
-      button_3_media_leader: media_player.group
 - id: '1736811938136'
   alias: Eettafel Knop
   description: ''
@@ -3555,7 +3554,6 @@
         metadata: {}
         data: {}
       button_3_media: media_player.kantoor
-      button_3_media_leader: media_player.group
       button_4_short_release:
       - action: script.kantoor_zomer
         metadata: {}
@@ -3899,19 +3897,6 @@
           - input_boolean.gameroom_zomer
           - input_boolean.kantoor_zomer
           - input_boolean.sauna_zomer
-      - action: unifi.reconnect_client
-        data:
-          device_id: abe09598513da597d3761e6c08780ae3
-        metadata: {}
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 10
-      - action: media_player.media_next_track
-        metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.badkamer
     - alias: 08:00, weekday
       conditions:
       - condition: trigger
@@ -4134,20 +4119,6 @@
           transition: 900
         target:
           entity_id: light.keuken_lampen
-      - action: unifi.reconnect_client
-        data:
-          device_id: abe09598513da597d3761e6c08780ae3
-        metadata: {}
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 10
-      - action: media_player.media_next_track
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - media_player.badkamer
     - alias: '18:00'
       conditions:
       - condition: trigger
