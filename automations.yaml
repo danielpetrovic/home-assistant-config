@@ -30,13 +30,6 @@
     below: 7.5
     id: shower off
     trigger: numeric_state
-  - alias: media player idle
-    trigger: state
-    entity_id:
-    - media_player.badkamer
-    to: idle
-    id: media player idle
-    from: 'off'
   conditions: []
   actions:
   - choose:
@@ -92,17 +85,6 @@
           entity_id: media_player.badkamer
         action: media_player.volume_set
       alias: shower off - volume down
-    - alias: media player idle
-      conditions:
-      - condition: trigger
-        id: media player idle
-      sequence:
-      - action: media_player.join
-        data:
-          group_members:
-          - media_player.badkamer
-        target:
-          entity_id: media_player.group
   mode: parallel
 - id: '1704667361587'
   alias: Tuin Raambekleding
@@ -1188,13 +1170,6 @@
     - light.sauna_lamp
     to: 'off'
     id: lights off
-  - alias: media player idle
-    trigger: state
-    entity_id:
-    - media_player.sauna
-    from: 'off'
-    to: idle
-    id: media player idle
   conditions: []
   actions:
   - choose:
@@ -1222,17 +1197,6 @@
           entity_id:
           - media_player.sauna
         action: media_player.volume_set
-    - alias: media player idle
-      conditions:
-      - condition: trigger
-        id: media player idle
-      sequence:
-      - action: media_player.join
-        data:
-          group_members:
-          - media_player.sauna
-        target:
-          entity_id: media_player.group
   mode: parallel
 - id: '1706168546378'
   alias: Gang Beweging
@@ -1310,13 +1274,6 @@
     - binary_sensor.deni_macbook_audio_input_in_use
     to: 'off'
     id: mic not in use
-  - alias: media player idle
-    trigger: state
-    entity_id:
-    - media_player.kantoor
-    to: idle
-    id: media player idle
-    from: 'off'
   conditions: []
   actions:
   - choose:
@@ -1364,17 +1321,6 @@
         target:
           entity_id: media_player.kantoor
         action: media_player.volume_set
-    - alias: media player idle
-      conditions:
-      - condition: trigger
-        id: media player idle
-      sequence:
-      - action: media_player.join
-        data:
-          group_members:
-          - media_player.kantoor
-        target:
-          entity_id: media_player.group
   mode: parallel
 - id: '1706169648965'
   alias: Woonkamer Media
@@ -4277,58 +4223,6 @@
       - binary_sensor.wasruimte_vochtmelder_water_leak
       alarm_notifications_priority_moisture:
       - critical_apple
-- id: '1737573245494'
-  alias: Keuken Media
-  description: ''
-  triggers:
-  - alias: media player idle
-    trigger: state
-    entity_id:
-    - media_player.keuken
-    from: 'off'
-    to: idle
-    id: media player idle
-  conditions: []
-  actions:
-  - choose:
-    - alias: media player idle
-      conditions:
-      - condition: trigger
-        id: media player idle
-      sequence:
-      - action: media_player.join
-        data:
-          group_members:
-          - media_player.keuken
-        target:
-          entity_id: media_player.group
-  mode: parallel
-- id: '1737806490128'
-  alias: Gameroom Media
-  description: ''
-  triggers:
-  - alias: media player idle
-    trigger: state
-    entity_id:
-    - media_player.gameroom
-    from: 'off'
-    to: idle
-    id: media player idle
-  conditions: []
-  actions:
-  - choose:
-    - alias: media player idle
-      conditions:
-      - condition: trigger
-        id: media player idle
-      sequence:
-      - action: media_player.join
-        data:
-          group_members:
-          - media_player.gameroom
-        target:
-          entity_id: media_player.group
-  mode: parallel
 - id: '1739747155876'
   alias: Alarm - Geofence
   description: ''
