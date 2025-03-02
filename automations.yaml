@@ -708,9 +708,6 @@
         id:
         - Schuur Looppad Open
       sequence:
-      - action: script.schuur_looppad_open
-        metadata: {}
-        data: {}
       - data:
           scene_id: tuin_before
           snapshot_entities:
@@ -723,14 +720,14 @@
           entity_id: input_boolean.tuin_open
         data: {}
         action: input_boolean.turn_on
+      - action: script.schuur_looppad_open
+        metadata: {}
+        data: {}
     - conditions:
       - condition: trigger
         id:
         - Schuur Open
       sequence:
-      - action: script.schuur_open
-        metadata: {}
-        data: {}
       - data:
           scene_id: tuin_before
           snapshot_entities:
@@ -743,14 +740,14 @@
           entity_id: input_boolean.tuin_open
         data: {}
         action: input_boolean.turn_on
+      - action: script.schuur_open
+        metadata: {}
+        data: {}
     - conditions:
       - condition: trigger
         id:
         - Schuur Tuin Open
       sequence:
-      - action: script.schuur_tuin_open
-        metadata: {}
-        data: {}
       - data:
           scene_id: tuin_before
           snapshot_entities:
@@ -763,6 +760,9 @@
           entity_id: input_boolean.tuin_open
         data: {}
         action: input_boolean.turn_on
+      - action: script.schuur_tuin_open
+        metadata: {}
+        data: {}
   mode: queued
   max: 10
 - id: '1705485099900'
