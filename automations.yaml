@@ -4261,3 +4261,639 @@
           entity_id: input_boolean.home
       alias: Someone home
   mode: single
+- id: '1740923945051'
+  alias: Apple Music
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_boolean.airplay_group
+    to: 'on'
+    alias: airplay_group
+    id: airplay_group
+  - trigger: state
+    entity_id:
+    - input_boolean.airplay_group_gameroom
+    to: 'on'
+    alias: airplay_group_gameroom
+    id: airplay_group_gameroom
+  - trigger: state
+    entity_id:
+    - input_boolean.airplay_group_gameroom_kantoor
+    to: 'on'
+    alias: airplay_group_gameroom_kantoor
+    id: airplay_group_gameroom_kantoor
+  - trigger: state
+    entity_id:
+    - input_boolean.airplay_group_kantoor
+    to: 'on'
+    alias: airplay_group_kantoor
+    id: airplay_group_kantoor
+  - trigger: state
+    entity_id:
+    - input_boolean.airplay_group_woonkamer
+    to: 'on'
+    alias: airplay_group_woonkamer
+    id: airplay_group_woonkamer
+  - trigger: state
+    entity_id:
+    - input_select.airplay
+    alias: airplay
+    id: airplay
+  - trigger: state
+    entity_id:
+    - input_boolean.music_alex
+    to: 'on'
+    alias: music_alex
+    id: music_alex
+  - trigger: state
+    entity_id:
+    - input_boolean.music_classical
+    to: 'on'
+    alias: music_classical
+    id: music_classical
+  - trigger: state
+    entity_id:
+    - input_boolean.music_day
+    to: 'on'
+    alias: music_day
+    id: music_day
+  - trigger: state
+    entity_id:
+    - input_boolean.music_deni
+    to: 'on'
+    alias: music_deni
+    id: music_deni
+  - trigger: state
+    entity_id:
+    - input_boolean.music_eurovision
+    to: 'on'
+    alias: music_eurovision
+    id: music_eurovision
+  - trigger: state
+    entity_id:
+    - input_boolean.music_hits
+    to: 'on'
+    alias: music_hits
+    id: music_hits
+  - trigger: state
+    entity_id:
+    - input_boolean.music_jazz
+    to: 'on'
+    alias: music_jazz
+    id: music_jazz
+  - trigger: state
+    entity_id:
+    - input_boolean.music_night
+    to: 'on'
+    alias: music_night
+    id: music_night
+  - trigger: state
+    entity_id:
+    - input_boolean.music_pop
+    to: 'on'
+    alias: music_pop
+    id: music_pop
+  - trigger: state
+    entity_id:
+    - input_boolean.music_rock
+    to: 'on'
+    alias: music_rock
+    id: music_rock
+  - trigger: state
+    entity_id:
+    - input_select.hub_playlist
+    alias: hub_playlist
+    id: hub_playlist
+  conditions: []
+  actions:
+  - alias: AirPlay Groep
+    choose:
+    - alias: AirPlay Groep on
+      conditions:
+      - condition: trigger
+        id:
+        - airplay_group
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.airplay_group_all
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+    - alias: AirPlay Groep Alles on
+      conditions:
+      - condition: trigger
+        id:
+        - airplay_group_all
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+    - alias: AirPlay Groep Gameroom on
+      conditions:
+      - condition: trigger
+        id:
+        - airplay_group_gameroom
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.airplay_group_all
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+    - alias: AirPlay Groep Gameroom Kantoor on
+      conditions:
+      - condition: trigger
+        id:
+        - airplay_group_gameroom_kantoor
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.airplay_group_all
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+    - alias: AirPlay Groep Kantoor on
+      conditions:
+      - condition: trigger
+        id:
+        - airplay_group_kantoor
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.airplay_group_all
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_woonkamer
+    - alias: AirPlay Groep Woonkamer on
+      conditions:
+      - condition: trigger
+        id:
+        - airplay_group_woonkamer
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.airplay_group_all
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_kantoor
+  - alias: AirPlay
+    choose:
+    - alias: Groep
+      conditions:
+      - condition: trigger
+        id:
+        - airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Groep
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.airplay_group
+    - alias: Groep Alles
+      conditions:
+      - condition: trigger
+        id:
+        - airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Groep Alles
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.airplay_group_all
+    - alias: Groep + Gameroom
+      conditions:
+      - condition: trigger
+        id:
+        - airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Groep + Gameroom
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.airplay_group_gameroom
+    - alias: Groep + Gameroom + Kantoor
+      conditions:
+      - condition: trigger
+        id:
+        - airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Groep + Gameroom + Kantoor
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.airplay_group_gameroom_kantoor
+    - alias: Groep + Kantoor
+      conditions:
+      - condition: trigger
+        id:
+        - airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Groep + Kantoor
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.airplay_group_kantoor
+    - alias: Groep + Woonkamer
+      conditions:
+      - condition: trigger
+        id:
+        - airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Groep + Woonkamer
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.airplay_group_woonkamer
+  - alias: Apple Music Playlist
+    choose:
+    - alias: Music Alex on
+      conditions:
+      - condition: trigger
+        id:
+        - music_alex
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.music_classical
+          - input_boolean.music_day
+          - input_boolean.music_deni
+          - input_boolean.music_eurovision
+          - input_boolean.music_hits
+          - input_boolean.music_jazz
+          - input_boolean.music_night
+          - input_boolean.music_pop
+          - input_boolean.music_rock
+    - alias: Music Classical on
+      conditions:
+      - condition: trigger
+        id:
+        - music_classical
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.music_alex
+          - input_boolean.music_day
+          - input_boolean.music_deni
+          - input_boolean.music_eurovision
+          - input_boolean.music_hits
+          - input_boolean.music_jazz
+          - input_boolean.music_night
+          - input_boolean.music_pop
+          - input_boolean.music_rock
+    - alias: Music Day on
+      conditions:
+      - condition: trigger
+        id:
+        - music_day
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.music_alex
+          - input_boolean.music_classical
+          - input_boolean.music_deni
+          - input_boolean.music_eurovision
+          - input_boolean.music_hits
+          - input_boolean.music_jazz
+          - input_boolean.music_night
+          - input_boolean.music_pop
+          - input_boolean.music_rock
+    - alias: Music Deni on
+      conditions:
+      - condition: trigger
+        id:
+        - music_deni
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.music_alex
+          - input_boolean.music_classical
+          - input_boolean.music_day
+          - input_boolean.music_eurovision
+          - input_boolean.music_hits
+          - input_boolean.music_jazz
+          - input_boolean.music_night
+          - input_boolean.music_pop
+          - input_boolean.music_rock
+    - alias: Music Eurovision on
+      conditions:
+      - condition: trigger
+        id:
+        - music_eurovision
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.music_alex
+          - input_boolean.music_classical
+          - input_boolean.music_day
+          - input_boolean.music_deni
+          - input_boolean.music_hits
+          - input_boolean.music_jazz
+          - input_boolean.music_night
+          - input_boolean.music_pop
+          - input_boolean.music_rock
+    - alias: Music Hits on
+      conditions:
+      - condition: trigger
+        id:
+        - music_hits
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.music_alex
+          - input_boolean.music_classical
+          - input_boolean.music_day
+          - input_boolean.music_deni
+          - input_boolean.music_eurovision
+          - input_boolean.music_jazz
+          - input_boolean.music_night
+          - input_boolean.music_pop
+          - input_boolean.music_rock
+    - alias: Music Jazz on
+      conditions:
+      - condition: trigger
+        id:
+        - music_jazz
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.music_alex
+          - input_boolean.music_classical
+          - input_boolean.music_day
+          - input_boolean.music_deni
+          - input_boolean.music_eurovision
+          - input_boolean.music_hits
+          - input_boolean.music_night
+          - input_boolean.music_pop
+          - input_boolean.music_rock
+    - alias: Music Night on
+      conditions:
+      - condition: trigger
+        id:
+        - music_night
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.music_alex
+          - input_boolean.music_classical
+          - input_boolean.music_day
+          - input_boolean.music_deni
+          - input_boolean.music_eurovision
+          - input_boolean.music_hits
+          - input_boolean.music_jazz
+          - input_boolean.music_pop
+          - input_boolean.music_rock
+    - alias: Music Pop on
+      conditions:
+      - condition: trigger
+        id:
+        - music_pop
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.music_alex
+          - input_boolean.music_classical
+          - input_boolean.music_day
+          - input_boolean.music_deni
+          - input_boolean.music_eurovision
+          - input_boolean.music_hits
+          - input_boolean.music_jazz
+          - input_boolean.music_night
+          - input_boolean.music_rock
+    - alias: Music Rock on
+      conditions:
+      - condition: trigger
+        id:
+        - music_rock
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - input_boolean.music_alex
+          - input_boolean.music_classical
+          - input_boolean.music_day
+          - input_boolean.music_deni
+          - input_boolean.music_eurovision
+          - input_boolean.music_hits
+          - input_boolean.music_jazz
+          - input_boolean.music_night
+          - input_boolean.music_pop
+  - alias: Hub Playlist
+    choose:
+    - alias: Alex
+      conditions:
+      - condition: trigger
+        id:
+        - hub_playlist
+      - condition: state
+        entity_id: input_select.hub_playlist
+        state: Alex
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.music_alex
+    - alias: Classical
+      conditions:
+      - condition: trigger
+        id:
+        - hub_playlist
+      - condition: state
+        entity_id: input_select.hub_playlist
+        state: Classical
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.music_classical
+    - alias: Day
+      conditions:
+      - condition: trigger
+        id:
+        - hub_playlist
+      - condition: state
+        entity_id: input_select.hub_playlist
+        state: Day
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.music_day
+    - alias: Deni
+      conditions:
+      - condition: trigger
+        id:
+        - hub_playlist
+      - condition: state
+        entity_id: input_select.hub_playlist
+        state: Deni
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.music_deni
+    - alias: Eurovision
+      conditions:
+      - condition: trigger
+        id:
+        - hub_playlist
+      - condition: state
+        entity_id: input_select.hub_playlist
+        state: Eurovision
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.music_eurovision
+    - alias: Hits
+      conditions:
+      - condition: trigger
+        id:
+        - hub_playlist
+      - condition: state
+        entity_id: input_select.hub_playlist
+        state: Hits
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.music_hits
+    - alias: Jazz
+      conditions:
+      - condition: trigger
+        id:
+        - hub_playlist
+      - condition: state
+        entity_id: input_select.hub_playlist
+        state: Jazz
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.music_jazz
+    - alias: Night
+      conditions:
+      - condition: trigger
+        id:
+        - hub_playlist
+      - condition: state
+        entity_id: input_select.hub_playlist
+        state: Night
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.music_night
+    - alias: Pop
+      conditions:
+      - condition: trigger
+        id:
+        - hub_playlist
+      - condition: state
+        entity_id: input_select.hub_playlist
+        state: Pop
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.music_pop
+    - alias: Rock
+      conditions:
+      - condition: trigger
+        id:
+        - hub_playlist
+      - condition: state
+        entity_id: input_select.hub_playlist
+        state: Rock
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.music_rock
+  mode: parallel
+  max: 10

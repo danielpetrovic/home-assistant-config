@@ -1,0 +1,74 @@
+input_boolean:
+  music_alex:
+    name: Apple Music Alex Playlist
+    icon: mdi:music
+  music_day:
+    name: Apple Music Day Playlist
+    icon: mdi:music
+  music_deni:
+    name: Apple Music Deni Playlist
+    icon: mdi:music
+  music_classical:
+    name: Apple Music Classical Playlist
+    icon: mdi:music
+  music_eurovision:
+    name: Apple Music Eurovision Playlist
+    icon: mdi:music
+  music_hits:
+    name: Apple Music Hits Playlist
+    icon: mdi:music
+  music_jazz:
+    name: Apple Music Jazz Playlist
+    icon: mdi:music
+  music_night:
+    name: Apple Music Night Playlist
+    icon: mdi:music
+  music_pop:
+    name: Apple Music Pop Playlist
+    icon: mdi:music
+  music_rock:
+    name: Apple Music Rock Playlist
+    icon: mdi:music
+  airplay_group:
+    name: AirPlay Groep
+    icon: mdi:speaker-multiple
+  airplay_group_all:
+    name: AirPlay Groep Alles
+    icon: mdi:speaker-multiple
+  airplay_group_gameroom:
+    name: AirPlay Groep + Gameroom
+    icon: mdi:speaker-multiple
+  airplay_group_gameroom_kantoor:
+    name: AirPlay Groep + Gameroom + Kantoor
+    icon: mdi:speaker-multiple
+  airplay_group_kantoor:
+    name: AirPlay Groep + Kantoor
+    icon: mdi:speaker-multiple
+  airplay_group_woonkamer:
+    name: Airplay Groep + Woonkamer
+    icon: mdi:speaker-multiple
+input_select:
+  hub_playlist:
+    name: Playlist
+    options:
+      - Alex
+      - Day
+      - Deni
+      - Classical
+      - Eurovision
+      - Hits
+      - Jazz
+      - Night
+      - Pop
+      - Rock
+    icon: mdi:music
+  airplay:
+    name: AirPlay
+    options:
+      - Groep
+      - Groep Alles
+      - Groep + Gameroom
+      - Groep + Gameroom + Kantoor
+      - Groep + Kantoor
+      - Groep + Woonkamer
+    icon: mdi:speaker-multiple
