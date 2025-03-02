@@ -20,3 +20,10 @@ http:
     - 172.30.33.0/24
     - ::1
     - 2001:DB8:ABCD::/48
+
+zha:
+  zigpy_config:
+    ota:
+      extra_providers:
+        - type: z2m
+          url: https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/index.json
