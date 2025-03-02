@@ -4497,6 +4497,129 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
+      - choose:
+        - alias: Groep Alles
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep Alles
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep Alles
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Woonkamer
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Woonkamer
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Woonkamer
+            target:
+              entity_id: input_select.airplay
+        default:
+        - action: input_select.select_option
+          data:
+            option: Uit
+          target:
+            entity_id: input_select.airplay
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
+        - action: input_select.select_option
+          data:
+            option: Groep
+          target:
+            entity_id: input_select.airplay
+        alias: AirPlay Groep
     - alias: music_classical
       conditions:
       - condition: trigger
@@ -4517,6 +4640,129 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
+      - choose:
+        - alias: Groep Alles
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep Alles
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep Alles
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Woonkamer
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Woonkamer
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Woonkamer
+            target:
+              entity_id: input_select.airplay
+        default:
+        - action: input_select.select_option
+          data:
+            option: Uit
+          target:
+            entity_id: input_select.airplay
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
+        - action: input_select.select_option
+          data:
+            option: Groep
+          target:
+            entity_id: input_select.airplay
+        alias: AirPlay Groep
     - alias: music_day
       conditions:
       - condition: trigger
@@ -4537,6 +4783,129 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
+      - choose:
+        - alias: Groep Alles
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep Alles
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep Alles
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Woonkamer
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Woonkamer
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Woonkamer
+            target:
+              entity_id: input_select.airplay
+        default:
+        - action: input_select.select_option
+          data:
+            option: Uit
+          target:
+            entity_id: input_select.airplay
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
+        - action: input_select.select_option
+          data:
+            option: Groep
+          target:
+            entity_id: input_select.airplay
+        alias: AirPlay Groep
     - alias: music_deni
       conditions:
       - condition: trigger
@@ -4557,6 +4926,129 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
+      - choose:
+        - alias: Groep Alles
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep Alles
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep Alles
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Woonkamer
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Woonkamer
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Woonkamer
+            target:
+              entity_id: input_select.airplay
+        default:
+        - action: input_select.select_option
+          data:
+            option: Uit
+          target:
+            entity_id: input_select.airplay
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
+        - action: input_select.select_option
+          data:
+            option: Groep
+          target:
+            entity_id: input_select.airplay
+        alias: AirPlay Groep
     - alias: music_eurovision
       conditions:
       - condition: trigger
@@ -4577,6 +5069,129 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
+      - choose:
+        - alias: Groep Alles
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep Alles
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep Alles
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Woonkamer
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Woonkamer
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Woonkamer
+            target:
+              entity_id: input_select.airplay
+        default:
+        - action: input_select.select_option
+          data:
+            option: Uit
+          target:
+            entity_id: input_select.airplay
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
+        - action: input_select.select_option
+          data:
+            option: Groep
+          target:
+            entity_id: input_select.airplay
+        alias: AirPlay Groep
     - alias: music_hits
       conditions:
       - condition: trigger
@@ -4597,6 +5212,129 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
+      - choose:
+        - alias: Groep Alles
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep Alles
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep Alles
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Woonkamer
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Woonkamer
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Woonkamer
+            target:
+              entity_id: input_select.airplay
+        default:
+        - action: input_select.select_option
+          data:
+            option: Uit
+          target:
+            entity_id: input_select.airplay
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
+        - action: input_select.select_option
+          data:
+            option: Groep
+          target:
+            entity_id: input_select.airplay
+        alias: AirPlay Groep
     - alias: music_jazz
       conditions:
       - condition: trigger
@@ -4617,6 +5355,129 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
+      - choose:
+        - alias: Groep Alles
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep Alles
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep Alles
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Woonkamer
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Woonkamer
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Woonkamer
+            target:
+              entity_id: input_select.airplay
+        default:
+        - action: input_select.select_option
+          data:
+            option: Uit
+          target:
+            entity_id: input_select.airplay
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
+        - action: input_select.select_option
+          data:
+            option: Groep
+          target:
+            entity_id: input_select.airplay
+        alias: AirPlay Groep
     - alias: music_night
       conditions:
       - condition: trigger
@@ -4637,6 +5498,129 @@
           - input_boolean.music_jazz
           - input_boolean.music_pop
           - input_boolean.music_rock
+      - choose:
+        - alias: Groep Alles
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep Alles
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep Alles
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Woonkamer
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Woonkamer
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Woonkamer
+            target:
+              entity_id: input_select.airplay
+        default:
+        - action: input_select.select_option
+          data:
+            option: Uit
+          target:
+            entity_id: input_select.airplay
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
+        - action: input_select.select_option
+          data:
+            option: Groep
+          target:
+            entity_id: input_select.airplay
+        alias: AirPlay Groep
     - alias: music_pop
       conditions:
       - condition: trigger
@@ -4657,6 +5641,129 @@
           - input_boolean.music_jazz
           - input_boolean.music_night
           - input_boolean.music_rock
+      - choose:
+        - alias: Groep Alles
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep Alles
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep Alles
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Woonkamer
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Woonkamer
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Woonkamer
+            target:
+              entity_id: input_select.airplay
+        default:
+        - action: input_select.select_option
+          data:
+            option: Uit
+          target:
+            entity_id: input_select.airplay
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
+        - action: input_select.select_option
+          data:
+            option: Groep
+          target:
+            entity_id: input_select.airplay
+        alias: AirPlay Groep
     - alias: music_rock
       conditions:
       - condition: trigger
@@ -4677,6 +5784,129 @@
           - input_boolean.music_jazz
           - input_boolean.music_night
           - input_boolean.music_pop
+      - choose:
+        - alias: Groep Alles
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep Alles
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep Alles
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Woonkamer
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Woonkamer
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Woonkamer
+            target:
+              entity_id: input_select.airplay
+        default:
+        - action: input_select.select_option
+          data:
+            option: Uit
+          target:
+            entity_id: input_select.airplay
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
+        - action: input_select.select_option
+          data:
+            option: Groep
+          target:
+            entity_id: input_select.airplay
+        alias: AirPlay Groep
   - alias: input_select.airplay
     choose:
     - alias: Groep
