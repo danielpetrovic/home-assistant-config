@@ -61,6 +61,7 @@ input_select:
       - Night
       - Pop
       - Rock
+      - Uit
     icon: mdi:music
   airplay:
     name: AirPlay
@@ -71,4 +72,5 @@ input_select:
       - Groep + Gameroom + Kantoor
       - Groep + Kantoor
       - Groep + Woonkamer
+      - Uit
     icon: mdi:speaker-multiple

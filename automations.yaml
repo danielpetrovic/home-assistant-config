@@ -4297,11 +4297,6 @@
     id: airplay_group_woonkamer
   - trigger: state
     entity_id:
-    - input_select.airplay
-    alias: airplay
-    id: airplay
-  - trigger: state
-    entity_id:
     - input_boolean.music_alex
     to: 'on'
     alias: music_alex
@@ -4361,199 +4356,128 @@
     alias: music_rock
     id: music_rock
   - trigger: state
-    entity_id:
-    - input_select.hub_playlist
-    alias: hub_playlist
-    id: hub_playlist
+    entity_id: input_select.airplay
+    alias: input_select.airplay
+    id: input_select.airplay
+  - trigger: state
+    entity_id: input_select.hub_playlist
+    alias: input_select.hub_playlist
+    id: input_select.hub_playlist
   conditions: []
   actions:
   - alias: AirPlay Groep
     choose:
-    - alias: AirPlay Groep on
+    - alias: airplay_group
       conditions:
       - condition: trigger
-        id:
-        - airplay_group
-      sequence:
-      - action: input_boolean.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - input_boolean.airplay_group_all
-          - input_boolean.airplay_group_gameroom
-          - input_boolean.airplay_group_gameroom_kantoor
-          - input_boolean.airplay_group_kantoor
-          - input_boolean.airplay_group_woonkamer
-    - alias: AirPlay Groep Alles on
-      conditions:
-      - condition: trigger
-        id:
-        - airplay_group_all
-      sequence:
-      - action: input_boolean.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - input_boolean.airplay_group
-          - input_boolean.airplay_group_gameroom
-          - input_boolean.airplay_group_gameroom_kantoor
-          - input_boolean.airplay_group_kantoor
-          - input_boolean.airplay_group_woonkamer
-    - alias: AirPlay Groep Gameroom on
-      conditions:
-      - condition: trigger
-        id:
-        - airplay_group_gameroom
-      sequence:
-      - action: input_boolean.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - input_boolean.airplay_group_all
-          - input_boolean.airplay_group
-          - input_boolean.airplay_group_gameroom_kantoor
-          - input_boolean.airplay_group_kantoor
-          - input_boolean.airplay_group_woonkamer
-    - alias: AirPlay Groep Gameroom Kantoor on
-      conditions:
-      - condition: trigger
-        id:
-        - airplay_group_gameroom_kantoor
-      sequence:
-      - action: input_boolean.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - input_boolean.airplay_group_all
-          - input_boolean.airplay_group
-          - input_boolean.airplay_group_gameroom
-          - input_boolean.airplay_group_kantoor
-          - input_boolean.airplay_group_woonkamer
-    - alias: AirPlay Groep Kantoor on
-      conditions:
-      - condition: trigger
-        id:
-        - airplay_group_kantoor
-      sequence:
-      - action: input_boolean.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - input_boolean.airplay_group_all
-          - input_boolean.airplay_group
-          - input_boolean.airplay_group_gameroom_kantoor
-          - input_boolean.airplay_group_gameroom
-          - input_boolean.airplay_group_woonkamer
-    - alias: AirPlay Groep Woonkamer on
-      conditions:
-      - condition: trigger
-        id:
-        - airplay_group_woonkamer
-      sequence:
-      - action: input_boolean.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - input_boolean.airplay_group_all
-          - input_boolean.airplay_group
-          - input_boolean.airplay_group_gameroom_kantoor
-          - input_boolean.airplay_group_gameroom
-          - input_boolean.airplay_group_kantoor
-  - alias: AirPlay
-    choose:
-    - alias: Groep
-      conditions:
-      - condition: trigger
-        id:
-        - airplay
-      - condition: state
-        entity_id: input_select.airplay
-        state: Groep
+        id: airplay_group
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.airplay_group
-    - alias: Groep Alles
+        data: {}
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group_all
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+        data: {}
+    - alias: airplay_group_all
       conditions:
       - condition: trigger
-        id:
-        - airplay
-      - condition: state
-        entity_id: input_select.airplay
-        state: Groep Alles
+        id: airplay_group_all
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.airplay_group_all
-    - alias: Groep + Gameroom
+        data: {}
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+        data: {}
+    - alias: airplay_group_gameroom
       conditions:
       - condition: trigger
-        id:
-        - airplay
-      - condition: state
-        entity_id: input_select.airplay
-        state: Groep + Gameroom
+        id: airplay_group_gameroom
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.airplay_group_gameroom
-    - alias: Groep + Gameroom + Kantoor
+        data: {}
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group_all
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+        data: {}
+    - alias: airplay_group_gameroom_kantoor
       conditions:
       - condition: trigger
-        id:
-        - airplay
-      - condition: state
-        entity_id: input_select.airplay
-        state: Groep + Gameroom + Kantoor
+        id: airplay_group_gameroom_kantoor
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.airplay_group_gameroom_kantoor
-    - alias: Groep + Kantoor
+        data: {}
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group_all
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+        data: {}
+    - alias: airplay_group_kantoor
       conditions:
       - condition: trigger
-        id:
-        - airplay
-      - condition: state
-        entity_id: input_select.airplay
-        state: Groep + Kantoor
+        id: airplay_group_kantoor
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.airplay_group_kantoor
-    - alias: Groep + Woonkamer
+        data: {}
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group_all
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_woonkamer
+        data: {}
+    - alias: airplay_group_woonkamer
       conditions:
       - condition: trigger
-        id:
-        - airplay
-      - condition: state
-        entity_id: input_select.airplay
-        state: Groep + Woonkamer
+        id: airplay_group_woonkamer
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.airplay_group_woonkamer
+        data: {}
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group_all
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_kantoor
+        data: {}
   - alias: Apple Music Playlist
     choose:
-    - alias: Music Alex on
+    - alias: music_alex
       conditions:
       - condition: trigger
         id:
@@ -4573,7 +4497,7 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
-    - alias: Music Classical on
+    - alias: music_classical
       conditions:
       - condition: trigger
         id:
@@ -4593,7 +4517,7 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
-    - alias: Music Day on
+    - alias: music_day
       conditions:
       - condition: trigger
         id:
@@ -4613,7 +4537,7 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
-    - alias: Music Deni on
+    - alias: music_deni
       conditions:
       - condition: trigger
         id:
@@ -4633,7 +4557,7 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
-    - alias: Music Eurovision on
+    - alias: music_eurovision
       conditions:
       - condition: trigger
         id:
@@ -4653,7 +4577,7 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
-    - alias: Music Hits on
+    - alias: music_hits
       conditions:
       - condition: trigger
         id:
@@ -4673,7 +4597,7 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
-    - alias: Music Jazz on
+    - alias: music_jazz
       conditions:
       - condition: trigger
         id:
@@ -4693,7 +4617,7 @@
           - input_boolean.music_night
           - input_boolean.music_pop
           - input_boolean.music_rock
-    - alias: Music Night on
+    - alias: music_night
       conditions:
       - condition: trigger
         id:
@@ -4713,7 +4637,7 @@
           - input_boolean.music_jazz
           - input_boolean.music_pop
           - input_boolean.music_rock
-    - alias: Music Pop on
+    - alias: music_pop
       conditions:
       - condition: trigger
         id:
@@ -4733,7 +4657,7 @@
           - input_boolean.music_jazz
           - input_boolean.music_night
           - input_boolean.music_rock
-    - alias: Music Rock on
+    - alias: music_rock
       conditions:
       - condition: trigger
         id:
@@ -4753,147 +4677,306 @@
           - input_boolean.music_jazz
           - input_boolean.music_night
           - input_boolean.music_pop
-  - alias: Hub Playlist
+  - alias: input_select.airplay
+    choose:
+    - alias: Groep
+      conditions:
+      - condition: trigger
+        id: input_select.airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Groep
+      sequence:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.airplay_group
+        data: {}
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+          - input_boolean.airplay_group_all
+        data: {}
+    - alias: Groep Alles
+      conditions:
+      - condition: trigger
+        id: input_select.airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Groep Alles
+      sequence:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.airplay_group_all
+        data: {}
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+        data: {}
+    - alias: Groep + Gameroom
+      conditions:
+      - condition: trigger
+        id: input_select.airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Groep + Gameroom
+      sequence:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.airplay_group_gameroom
+        data: {}
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+          - input_boolean.airplay_group_all
+        data: {}
+    - alias: Groep + Gameroom + Kantoor
+      conditions:
+      - condition: trigger
+        id: input_select.airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Groep + Gameroom + Kantoor
+      sequence:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.airplay_group_gameroom_kantoor
+        data: {}
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+          - input_boolean.airplay_group_all
+        data: {}
+    - alias: Groep + Kantoor
+      conditions:
+      - condition: trigger
+        id: input_select.airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Groep + Kantoor
+      sequence:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.airplay_group_kantoor
+        data: {}
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_woonkamer
+          - input_boolean.airplay_group_all
+        data: {}
+    - alias: Groep + Woonkamer
+      conditions:
+      - condition: trigger
+        id: input_select.airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Groep + Woonkamer
+      sequence:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.airplay_group_woonkamer
+        data: {}
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_all
+        data: {}
+    - alias: Uit
+      conditions:
+      - condition: trigger
+        id: input_select.airplay
+      - condition: state
+        entity_id: input_select.airplay
+        state: Uit
+      sequence:
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.airplay_group
+          - input_boolean.airplay_group_gameroom
+          - input_boolean.airplay_group_gameroom_kantoor
+          - input_boolean.airplay_group_kantoor
+          - input_boolean.airplay_group_woonkamer
+          - input_boolean.airplay_group_all
+        data: {}
+  - alias: input_select.hub_playlist
     choose:
     - alias: Alex
       conditions:
       - condition: trigger
-        id:
-        - hub_playlist
+        id: input_select.hub_playlist
       - condition: state
         entity_id: input_select.hub_playlist
         state: Alex
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.music_alex
+        data: {}
     - alias: Classical
       conditions:
       - condition: trigger
-        id:
-        - hub_playlist
+        id: input_select.hub_playlist
       - condition: state
         entity_id: input_select.hub_playlist
         state: Classical
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.music_classical
+        data: {}
     - alias: Day
       conditions:
       - condition: trigger
-        id:
-        - hub_playlist
+        id: input_select.hub_playlist
       - condition: state
         entity_id: input_select.hub_playlist
         state: Day
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.music_day
+        data: {}
     - alias: Deni
       conditions:
       - condition: trigger
-        id:
-        - hub_playlist
+        id: input_select.hub_playlist
       - condition: state
         entity_id: input_select.hub_playlist
         state: Deni
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.music_deni
+        data: {}
     - alias: Eurovision
       conditions:
       - condition: trigger
-        id:
-        - hub_playlist
+        id: input_select.hub_playlist
       - condition: state
         entity_id: input_select.hub_playlist
         state: Eurovision
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.music_eurovision
+        data: {}
     - alias: Hits
       conditions:
       - condition: trigger
-        id:
-        - hub_playlist
+        id: input_select.hub_playlist
       - condition: state
         entity_id: input_select.hub_playlist
         state: Hits
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.music_hits
+        data: {}
     - alias: Jazz
       conditions:
       - condition: trigger
-        id:
-        - hub_playlist
+        id: input_select.hub_playlist
       - condition: state
         entity_id: input_select.hub_playlist
         state: Jazz
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.music_jazz
+        data: {}
     - alias: Night
       conditions:
       - condition: trigger
-        id:
-        - hub_playlist
+        id: input_select.hub_playlist
       - condition: state
         entity_id: input_select.hub_playlist
         state: Night
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.music_night
+        data: {}
     - alias: Pop
       conditions:
       - condition: trigger
-        id:
-        - hub_playlist
+        id: input_select.hub_playlist
       - condition: state
         entity_id: input_select.hub_playlist
         state: Pop
       sequence:
       - action: input_boolean.turn_on
-        metadata: {}
-        data: {}
         target:
           entity_id: input_boolean.music_pop
+        data: {}
     - alias: Rock
       conditions:
       - condition: trigger
-        id:
-        - hub_playlist
+        id: input_select.hub_playlist
       - condition: state
         entity_id: input_select.hub_playlist
         state: Rock
       sequence:
       - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.music_rock
+        data: {}
+    - alias: Uit
+      conditions:
+      - condition: trigger
+        id: input_select.hub_playlist
+      - condition: state
+        entity_id: input_select.hub_playlist
+        state: Uit
+      sequence:
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+          - input_boolean.music_alex
+          - input_boolean.music_classical
+          - input_boolean.music_day
+          - input_boolean.music_deni
+          - input_boolean.music_eurovision
+          - input_boolean.music_hits
+          - input_boolean.music_jazz
+          - input_boolean.music_night
+          - input_boolean.music_pop
+          - input_boolean.music_rock
+        data: {}
+      - action: media_player.turn_off
         metadata: {}
         data: {}
         target:
-          entity_id: input_boolean.music_rock
+          entity_id:
+          - media_player.badkamer
+          - media_player.gameroom
+          - media_player.kantoor
+          - media_player.keuken
+          - media_player.sauna
+          - media_player.slaapkamer
   mode: parallel
   max: 10
