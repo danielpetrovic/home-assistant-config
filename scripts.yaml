@@ -1368,29 +1368,74 @@ woonkamer_zomer:
   icon: mdi:window-shutter-settings
 music_away:
   sequence:
-  - action: media_player.turn_off
-    data: {}
+  - action: input_select.select_option
     metadata: {}
+    data:
+      option: Uit
     target:
       entity_id:
-      - media_player.hub
-      - media_player.badkamer
-      - media_player.gameroom
-      - media_player.kantoor
-      - media_player.keuken
-      - media_player.sauna
-      - media_player.slaapkamer
-      - media_player.woonkamer
+      - input_select.airplay
+      - input_select.hub_playlist
   alias: Music Away
   description: ''
   icon: mdi:music-note-off-outline
 music_night:
-  sequence: []
+  sequence:
+  - action: input_select.select_option
+    data:
+      option: Night
+    target:
+      entity_id: input_select.hub_playlist
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 3
+      milliseconds: 0
+  - action: input_select.select_option
+    data:
+      option: Uit
+    target:
+      entity_id: input_select.airplay
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - action: input_select.select_option
+    data:
+      option: Groep
+    target:
+      entity_id: input_select.airplay
   alias: Music Night
   description: ''
   icon: mdi:music-note-outline
 music_home:
-  sequence: []
+  sequence:
+  - action: input_select.select_option
+    data:
+      option: Day
+    target:
+      entity_id: input_select.hub_playlist
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 3
+      milliseconds: 0
+  - action: input_select.select_option
+    data:
+      option: Uit
+    target:
+      entity_id: input_select.airplay
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - action: input_select.select_option
+    data:
+      option: Groep
+    target:
+      entity_id: input_select.airplay
   alias: Music Home
   description: ''
   icon: mdi:music-note
