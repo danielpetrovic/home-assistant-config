@@ -1373,6 +1373,7 @@ music_away:
     metadata: {}
     target:
       entity_id:
+      - media_player.hub
       - media_player.badkamer
       - media_player.gameroom
       - media_player.kantoor
@@ -1380,63 +1381,16 @@ music_away:
       - media_player.sauna
       - media_player.slaapkamer
       - media_player.woonkamer
-      - media_player.group
   alias: Music Away
   description: ''
   icon: mdi:music-note-off-outline
 music_night:
-  sequence:
-  - action: music_assistant.play_media
-    data:
-      enqueue: replace_next
-      media_id:
-      - Classical
-      - Jazz
-      media_type: playlist
-      radio_mode: false
-    metadata: {}
-    target:
-      entity_id:
-      - media_player.group
-  - action: media_player.shuffle_set
-    metadata: {}
-    data:
-      shuffle: true
-    target:
-      entity_id: media_player.group
-  - action: media_player.media_play
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.group
+  sequence: []
   alias: Music Night
   description: ''
   icon: mdi:music-note-outline
 music_home:
-  sequence:
-  - action: music_assistant.play_media
-    metadata: {}
-    data:
-      enqueue: replace_next
-      media_type: playlist
-      radio_mode: false
-      media_id:
-      - Eurovision
-      - Pop
-      - Rock
-    target:
-      entity_id: media_player.group
-  - action: media_player.shuffle_set
-    metadata: {}
-    data:
-      shuffle: true
-    target:
-      entity_id: media_player.group
-  - action: media_player.media_play
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.group
+  sequence: []
   alias: Music Home
   description: ''
   icon: mdi:music-note
