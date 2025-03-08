@@ -153,7 +153,8 @@
         metadata: {}
         data: {}
       alias: winter
-  mode: restart
+  mode: queued
+  max: 10
 - id: '1705102075842'
   alias: Dakterras Raambekleding
   description: ''
@@ -221,7 +222,8 @@
         metadata: {}
         data: {}
       alias: winter
-  mode: restart
+  mode: queued
+  max: 10
 - id: '1705102234298'
   alias: Keuken Raambekleding
   description: ''
@@ -289,7 +291,8 @@
         metadata: {}
         data: {}
       alias: winter
-  mode: restart
+  mode: queued
+  max: 10
 - id: '1705102376305'
   alias: Woonkamer Raambekleding
   description: ''
@@ -352,13 +355,13 @@
       - condition: trigger
         id:
         - winter
-        - 08:00
       sequence:
       - action: script.woonkamer_winter
         metadata: {}
         data: {}
       alias: winter
-  mode: restart
+  mode: queued
+  max: 10
 - id: '1705102591662'
   alias: Gameroom Raambekleding
   description: ''
@@ -426,7 +429,8 @@
         metadata: {}
         data: {}
       alias: winter
-  mode: restart
+  mode: queued
+  max: 10
 - id: '1705102937810'
   alias: Gang Raambekleding
   description: ''
@@ -494,7 +498,8 @@
         metadata: {}
         data: {}
       alias: winter
-  mode: restart
+  mode: queued
+  max: 10
 - id: '1705102977657'
   alias: Sauna Raambekleding
   description: ''
@@ -562,7 +567,8 @@
         metadata: {}
         data: {}
       alias: winter
-  mode: restart
+  mode: queued
+  max: 10
 - id: '1705484274062'
   alias: Kantoor Raambekleding
   description: ''
@@ -630,7 +636,8 @@
         metadata: {}
         data: {}
       alias: winter
-  mode: restart
+  mode: queued
+  max: 10
 - id: '1705485008582'
   alias: Schuur Raambekleding
   description: ''
@@ -670,56 +677,11 @@
       - action: script.schuur_dicht
         metadata: {}
         data: {}
-      - if:
-        - condition: state
-          entity_id: binary_sensor.tuin_deursensor_contact
-          state: 'on'
-        then:
-        - wait_for_trigger:
-          - trigger: state
-            entity_id:
-            - binary_sensor.tuin_deursensor_contact
-            to: 'off'
-            from: 'on'
-        - target:
-            entity_id: scene.tuin_before
-          data: {}
-          action: scene.turn_on
-        - target:
-            entity_id: scene.tuin_before
-          data: {}
-          action: scene.delete
-        else:
-        - delay:
-            hours: 0
-            minutes: 0
-            seconds: 15
-            milliseconds: 0
-        - target:
-            entity_id: scene.tuin_before
-          data: {}
-          action: scene.turn_on
-        - target:
-            entity_id: scene.tuin_before
-          data: {}
-          action: scene.delete
     - conditions:
       - condition: trigger
         id:
         - Schuur Looppad Open
       sequence:
-      - data:
-          scene_id: tuin_before
-          snapshot_entities:
-          - input_boolean.tuin_dicht
-          - input_boolean.tuin_open
-          - input_boolean.tuin_winter
-          - input_boolean.tuin_zomer
-        action: scene.create
-      - target:
-          entity_id: input_boolean.tuin_open
-        data: {}
-        action: input_boolean.turn_on
       - action: script.schuur_looppad_open
         metadata: {}
         data: {}
@@ -728,18 +690,6 @@
         id:
         - Schuur Open
       sequence:
-      - data:
-          scene_id: tuin_before
-          snapshot_entities:
-          - input_boolean.tuin_dicht
-          - input_boolean.tuin_open
-          - input_boolean.tuin_winter
-          - input_boolean.tuin_zomer
-        action: scene.create
-      - target:
-          entity_id: input_boolean.tuin_open
-        data: {}
-        action: input_boolean.turn_on
       - action: script.schuur_open
         metadata: {}
         data: {}
@@ -748,18 +698,6 @@
         id:
         - Schuur Tuin Open
       sequence:
-      - data:
-          scene_id: tuin_before
-          snapshot_entities:
-          - input_boolean.tuin_dicht
-          - input_boolean.tuin_open
-          - input_boolean.tuin_winter
-          - input_boolean.tuin_zomer
-        action: scene.create
-      - target:
-          entity_id: input_boolean.tuin_open
-        data: {}
-        action: input_boolean.turn_on
       - action: script.schuur_tuin_open
         metadata: {}
         data: {}
@@ -832,7 +770,8 @@
         metadata: {}
         data: {}
       alias: winter
-  mode: restart
+  mode: queued
+  max: 10
 - id: '1705489182686'
   alias: Toilet Deur
   description: ''
