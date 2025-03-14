@@ -1213,6 +1213,13 @@
     - binary_sensor.deni_macbook_audio_input_in_use
     to: 'off'
     id: mic not in use
+  - trigger: state
+    entity_id:
+    - media_player.kantoor
+    from: 'off'
+    to: idle
+    alias: media on
+    id: media on
   conditions: []
   actions:
   - choose:
@@ -1243,7 +1250,7 @@
         id: mic in use
       sequence:
       - data:
-          volume_level: 0.1
+          volume_level: 0.05
         target:
           entity_id: media_player.kantoor
         action: media_player.volume_set
@@ -1256,10 +1263,138 @@
         state: 'on'
       sequence:
       - data:
-          volume_level: 0.35
+          volume_level: 0.25
         target:
           entity_id: media_player.kantoor
         action: media_player.volume_set
+    - conditions:
+      - condition: trigger
+        id:
+        - media on
+      sequence:
+      - alias: AirPlay Groep
+        choose:
+        - alias: Groep Alles
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep Alles
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep Alles
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Woonkamer
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Woonkamer
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Woonkamer
+            target:
+              entity_id: input_select.airplay
+        default:
+        - action: input_select.select_option
+          data:
+            option: Uit
+          target:
+            entity_id: input_select.airplay
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
+        - action: input_select.select_option
+          data:
+            option: Groep + Kantoor
+          target:
+            entity_id: input_select.airplay
   mode: parallel
 - id: '1706169648965'
   alias: Woonkamer Media
@@ -1363,19 +1498,6 @@
       - condition: state
         entity_id: remote.woonkamer_tv
         attribute: current_activity
-        state: com.spauldhaliwal.dispatch
-      sequence:
-      - alias: Keuken volume omhoog
-        data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      alias: Launcher Dispatch
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
         state: com.google.android.apps.tv.launcherx
       sequence:
       - alias: Keuken volume omhoog
@@ -1385,6 +1507,19 @@
           entity_id: media_player.keuken
         action: media_player.volume_set
       alias: Launcher Google
+    - conditions:
+      - condition: state
+        entity_id: remote.woonkamer_tv
+        attribute: current_activity
+        state: com.spocky.projengmenu
+      sequence:
+      - alias: Keuken volume omhoog
+        data:
+          volume_level: 0.35
+        target:
+          entity_id: media_player.keuken
+        action: media_player.volume_set
+      alias: Launcher Projectivy
     - conditions:
       - condition: state
         entity_id: remote.woonkamer_tv
@@ -3770,14 +3905,6 @@
           - input_boolean.keuken_zomer
           - input_boolean.tuin_zomer
           - input_boolean.woonkamer_zomer
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 5
-      - action: input_boolean.turn_on
-        data: {}
-        target:
-          entity_id:
           - input_boolean.dakterras_zomer
           - input_boolean.gameroom_zomer
           - input_boolean.kantoor_zomer
@@ -6623,3 +6750,146 @@
           - media_player.slaapkamer
   mode: parallel
   max: 10
+- id: '1741596457647'
+  alias: Gameroom Media
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.gameroom
+    from: 'off'
+    to: idle
+    alias: media on
+    id: media on
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - media on
+      sequence:
+      - alias: AirPlay Groep
+        choose:
+        - alias: Groep Alles
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep Alles
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep Alles
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Gameroom + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Gameroom + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Kantoor
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Kantoor
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Gameroom + Kantoor
+            target:
+              entity_id: input_select.airplay
+        - alias: Groep + Woonkamer
+          conditions:
+          - condition: state
+            entity_id: input_select.airplay
+            state: Groep + Woonkamer
+          sequence:
+          - action: input_select.select_option
+            data:
+              option: Uit
+            target:
+              entity_id: input_select.airplay
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: input_select.select_option
+            data:
+              option: Groep + Woonkamer
+            target:
+              entity_id: input_select.airplay
+        default:
+        - action: input_select.select_option
+          data:
+            option: Uit
+          target:
+            entity_id: input_select.airplay
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
+        - action: input_select.select_option
+          data:
+            option: Groep + Gameroom
+          target:
+            entity_id: input_select.airplay
+  mode: parallel

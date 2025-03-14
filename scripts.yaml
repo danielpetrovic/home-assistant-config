@@ -1448,12 +1448,18 @@ woonkamer_zomer:
 music_away:
   sequence:
   - action: input_select.select_option
-    metadata: {}
     data:
       option: Uit
+    metadata: {}
     target:
       entity_id:
       - input_select.airplay
+  - action: input_select.select_option
+    data:
+      option: Uit
+    metadata: {}
+    target:
+      entity_id:
       - input_select.hub_playlist
   alias: Music Away
   description: ''
@@ -1747,17 +1753,53 @@ voordeur_bel_lights:
       entity_id: scene.alarm_before
 schuur_camera_woonkamer_tv:
   sequence:
-  - action: remote.send_command
-    data:
-      command: HOME
-    target:
+  - if:
+    - condition: state
       entity_id: remote.woonkamer_tv
-  - action: androidtv.adb_command
-    target:
-      entity_id: media_player.woonkamer_tv_adb
-    data:
-      command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
-        rtsp://192.168.16.1:7447/M8Qtns93Hf1HjRT6
+      state: 'on'
+    then:
+    - action: remote.send_command
+      data:
+        command: BACK
+      target:
+        entity_id: remote.woonkamer_tv
+    - action: remote.send_command
+      data:
+        command: HOME
+      target:
+        entity_id: remote.woonkamer_tv
+    - action: androidtv.adb_command
+      target:
+        entity_id: media_player.woonkamer_tv_adb
+      data:
+        command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
+          rtsp://192.168.16.50:35697/ab4ab8d894562829
   alias: Schuur Camera - Woonkamer TV
+  description: ''
+  icon: mdi:camera
+tuin_camera_woonkamer_tv:
+  sequence:
+  - if:
+    - condition: state
+      entity_id: remote.woonkamer_tv
+      state: 'on'
+    then:
+    - action: remote.send_command
+      data:
+        command: BACK
+      target:
+        entity_id: remote.woonkamer_tv
+    - action: remote.send_command
+      data:
+        command: HOME
+      target:
+        entity_id: remote.woonkamer_tv
+    - action: androidtv.adb_command
+      target:
+        entity_id: media_player.woonkamer_tv_adb
+      data:
+        command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
+          rtsp://192.168.16.50:36549/e8af31023c70118f
+  alias: Tuin Camera - Woonkamer TV
   description: ''
   icon: mdi:camera
