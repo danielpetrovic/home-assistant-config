@@ -41,6 +41,26 @@ blueprint:
               filter:
                 - integration: mqtt
               multiple: false
+        alarm_keypad:
+          name: Alarm Control Panel (Keypad)
+          description: Set the Alarm Control Panel of the Keypad Device to be able to sync the state to the Keypad.
+          default: []
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - alarm_control_panel
+              multiple: false
+        alarm_code_keypad:
+          name: Alarm Code Keypad (Text Helper)
+          description: Create a Text helper within Home Assistant to contain the Alarm Code of the Keypad alarm_control_panel set in the ZHA Settings.
+          default: []
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_text
+              multiple: false
     alarm_notifications:
       name: Here you can set which devices should receive the notifications.
       icon: mdi:bell-ring
