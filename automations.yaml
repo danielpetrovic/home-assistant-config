@@ -4069,17 +4069,17 @@
         target:
           entity_id:
           - input_boolean.slaapkamer_open
-      - if:
+      - alias: Disarm alarm if home
+        if:
         - condition: numeric_state
           entity_id: zone.home
           above: 0
         then:
-        - action: alarm_control_panel.alarm_arm_home
+        - action: alarm_control_panel.alarm_disarm
           metadata: {}
           data: {}
           target:
             entity_id: alarm_control_panel.alarm
-        alias: Arm alarm if home
     - alias: 09:00, weekday
       conditions:
       - condition: trigger
@@ -4267,17 +4267,17 @@
         target:
           entity_id:
           - input_boolean.slaapkamer_open
-      - if:
+      - alias: Disarm alarm if home
+        if:
         - condition: numeric_state
           entity_id: zone.home
           above: 0
         then:
-        - action: alarm_control_panel.alarm_arm_home
+        - action: alarm_control_panel.alarm_disarm
           metadata: {}
           data: {}
           target:
             entity_id: alarm_control_panel.alarm
-        alias: Arm alarm if home
     - alias: 10:00, weekday
       conditions:
       - condition: trigger
