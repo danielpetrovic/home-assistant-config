@@ -758,6 +758,8 @@ variables:
   alarm_scripts_home: !input alarm_scripts_home
   alarm_scripts_night: !input alarm_scripts_night
   alarm_scripts_disarmed: !input alarm_scripts_disarmed
+  alarm_scripts_arming: !input alarm_scripts_arming
+  alarm_scripts_pending: !input alarm_scripts_pending
   alarm_scripts_triggered: !input alarm_scripts_triggered
   alarm_scripts_always: !input alarm_scripts_always
   alarm_scripts_fire: !input alarm_scripts_fire
