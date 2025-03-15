@@ -2,8 +2,10 @@ blueprint:
   name: ZHA - Alarm System with Keypad (KEPZB-110)
   author: danielpetrovic
   description: "# ZHA - Alarm System with Keypad (KEPZB-110)\n\n
-    This blueprint enables a custom Alarm system without the needs of any custom_component. It can sync the states with a phsyical keypad connected to ZHA.\n\n
-    You can set multiple codes for multiple users, including hexadicimals for RFID tags. The logic to check if a code is present is inside this blueprint so your alarm panel doesn't need to support multiple codes.\n\n
+    This blueprint enables a custom Alarm system without the needs of any custom_component.\n\n
+    It can sync the states with a phsyical keypad connected to ZHA. I'm using it with the frient Intelligent Keypad.\n\n
+    You can set multiple codes for multiple users, including hexadicimals for RFID tags.\n
+    The logic to check if a code is present is inside this blueprint so your alarm panel doesn't need to support multiple codes.\n\n
     You can change the notifications that are sent when the Alarm Control Panel changes states, defaults are set.\n
     You can set to show a (live) camerafeed from any of your cameras inside the notification of the state change.\n
     You can change what scripts are run per Alarm state change. They will run at the same time, so the order doesn't matter.\n"
@@ -40,7 +42,7 @@ blueprint:
       input:
         alarm_keypad_device:
           name: Alarm Control Panel (Keypad)
-          description: I'm using it with the frient Intelligent Keypad connected to ZHA. Set the ZHA Keypad Device to be able to receive the key commands from the device.
+          description: Set the ZHA Keypad Device to be able to receive the key commands from the device.
           selector:
             device:
               filter:
