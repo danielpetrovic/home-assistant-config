@@ -4738,16 +4738,14 @@
   alias: Alarm
   description: ''
   use_blueprint:
-    path: danielpetrovic/zha-alarm-system-with-keypad.yaml
+    path: danielpetrovic/z2m-alarm-system-with-keypad.yaml
     input:
       alarm_main: alarm_control_panel.alarm
       alarm_code_user:
       - input_text.alarm_code_user_1
       - input_text.alarm_code_user_2
       - input_text.alarm_code_user_3
-      alarm_keypad_device: a435712f3dbc11c7dfa9e34c5b6cbc20
-      alarm_keypad: alarm_control_panel.keypad
-      alarm_code_keypad: input_text.alarm_code_keypad
+      alarm_keypad: Keypad
       alarm_notifications_target:
       - 83e80af529f72cfac5e1a29223dc5797
       - 501c054c3da925a0f4bd0a567a78b82f
@@ -4787,6 +4785,8 @@
       - binary_sensor.wasruimte_vochtmelder_water_leak
       alarm_notifications_priority_moisture:
       - critical_apple
+      alarm_scripts_disarmed:
+      - script.music_home
 - id: '1739747155876'
   alias: Alarm - Geofence
   description: ''
