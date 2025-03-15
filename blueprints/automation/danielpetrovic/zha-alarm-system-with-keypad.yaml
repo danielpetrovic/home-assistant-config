@@ -666,49 +666,6 @@ blueprint:
 mode: parallel
 max_exceeded: silent
 
-variables:
-  alarm_main: !input alarm_main
-  alarm_keypad: !input alarm_keypad
-  alarm_code_keypad: !input alarm_code_keypad
-  alarm_code_keypad_state: "{{ states(alarm_code_keypad) }}"
-  alarm_code_user: !input alarm_code_user
-  alarm_code_user_state: "{{ alarm_code_user | map('states') | list }}"
-  alarm_notifications_target: !input alarm_notifications_target
-  alarm_notifications_armed_away: !input alarm_notifications_armed_away
-  alarm_notifications_priority_armed_away: !input alarm_notifications_priority_armed_away
-  alarm_notifications_armed_home: !input alarm_notifications_armed_home
-  alarm_notifications_priority_armed_home: !input alarm_notifications_priority_armed_home
-  alarm_notifications_armed_night: !input alarm_notifications_armed_night
-  alarm_notifications_priority_armed_night: !input alarm_notifications_priority_armed_night
-  alarm_notifications_arming: !input alarm_notifications_arming
-  alarm_notifications_priority_arming: !input alarm_notifications_priority_arming
-  alarm_notifications_pending: !input alarm_notifications_pending
-  alarm_notifications_priority_pending: !input alarm_notifications_priority_pending
-  alarm_notifications_triggered: !input alarm_notifications_triggered
-  alarm_notifications_priority_triggered: !input alarm_notifications_priority_triggered
-  alarm_notifications_disarmed: !input alarm_notifications_disarmed
-  alarm_notifications_priority_disarmed: !input alarm_notifications_priority_disarmed
-  alarm_notifications_always: !input alarm_notifications_always
-  alarm_notifications_priority_always: !input alarm_notifications_priority_always
-  alarm_notifications_fire: !input alarm_notifications_fire
-  alarm_notifications_priority_fire: !input alarm_notifications_priority_fire
-  alarm_notifications_gas: !input alarm_notifications_gas
-  alarm_notifications_priority_gas: !input alarm_notifications_priority_gas
-  alarm_notifications_moisture: !input alarm_notifications_moisture
-  alarm_notifications_priority_moisture: !input alarm_notifications_priority_moisture
-  alarm_sensor_fire: !input alarm_sensor_fire
-  alarm_sensor_gas: !input alarm_sensor_gas
-  alarm_sensor_moisture: !input alarm_sensor_moisture
-  alarm_scripts_away: !input alarm_scripts_away
-  alarm_scripts_home: !input alarm_scripts_home
-  alarm_scripts_night: !input alarm_scripts_night
-  alarm_scripts_disarmed: !input alarm_scripts_disarmed
-  alarm_scripts_triggered: !input alarm_scripts_triggered
-  alarm_scripts_always: !input alarm_scripts_always
-  alarm_scripts_fire: !input alarm_scripts_fire
-  alarm_scripts_gas: !input alarm_scripts_gas
-  alarm_scripts_moisture: !input alarm_scripts_moisture
-
 triggers:
   - trigger: state
     entity_id: !input alarm_main
@@ -777,6 +734,51 @@ triggers:
       action: "disarm"
     alias: action_disarm
     id: action_disarm
+
+variables:
+  alarm_main: !input alarm_main
+  alarm_keypad: !input alarm_keypad
+  alarm_code_keypad: !input alarm_code_keypad
+  alarm_code_keypad_state: "{{ states(alarm_code_keypad) }}"
+  alarm_code_user: !input alarm_code_user
+  alarm_code_user_state: "{{ alarm_code_user | map('states') | list }}"
+  alarm_notifications_target: !input alarm_notifications_target
+  alarm_notifications_armed_away: !input alarm_notifications_armed_away
+  alarm_notifications_priority_armed_away: !input alarm_notifications_priority_armed_away
+  alarm_notifications_armed_home: !input alarm_notifications_armed_home
+  alarm_notifications_priority_armed_home: !input alarm_notifications_priority_armed_home
+  alarm_notifications_armed_night: !input alarm_notifications_armed_night
+  alarm_notifications_priority_armed_night: !input alarm_notifications_priority_armed_night
+  alarm_notifications_arming: !input alarm_notifications_arming
+  alarm_notifications_priority_arming: !input alarm_notifications_priority_arming
+  alarm_notifications_pending: !input alarm_notifications_pending
+  alarm_notifications_priority_pending: !input alarm_notifications_priority_pending
+  alarm_notifications_triggered: !input alarm_notifications_triggered
+  alarm_notifications_priority_triggered: !input alarm_notifications_priority_triggered
+  alarm_notifications_disarmed: !input alarm_notifications_disarmed
+  alarm_notifications_priority_disarmed: !input alarm_notifications_priority_disarmed
+  alarm_notifications_always: !input alarm_notifications_always
+  alarm_notifications_priority_always: !input alarm_notifications_priority_always
+  alarm_notifications_fire: !input alarm_notifications_fire
+  alarm_notifications_priority_fire: !input alarm_notifications_priority_fire
+  alarm_notifications_gas: !input alarm_notifications_gas
+  alarm_notifications_priority_gas: !input alarm_notifications_priority_gas
+  alarm_notifications_moisture: !input alarm_notifications_moisture
+  alarm_notifications_priority_moisture: !input alarm_notifications_priority_moisture
+  alarm_sensor_fire: !input alarm_sensor_fire
+  alarm_sensor_gas: !input alarm_sensor_gas
+  alarm_sensor_moisture: !input alarm_sensor_moisture
+  alarm_scripts_away: !input alarm_scripts_away
+  alarm_scripts_home: !input alarm_scripts_home
+  alarm_scripts_night: !input alarm_scripts_night
+  alarm_scripts_disarmed: !input alarm_scripts_disarmed
+  alarm_scripts_arming: !input alarm_scripts_arming
+  alarm_scripts_pending: !input alarm_scripts_pending
+  alarm_scripts_triggered: !input alarm_scripts_triggered
+  alarm_scripts_always: !input alarm_scripts_always
+  alarm_scripts_fire: !input alarm_scripts_fire
+  alarm_scripts_gas: !input alarm_scripts_gas
+  alarm_scripts_moisture: !input alarm_scripts_moisture
 
 conditions: []
 
