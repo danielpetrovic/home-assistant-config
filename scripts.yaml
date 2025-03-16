@@ -124,12 +124,11 @@ dakterras_winter:
     target:
       entity_id:
       - input_boolean.dakterras_winter
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.dakterras_gordijn
+      entity_id: button.dakterras_gordijn_my_position
   - action: cover.set_cover_position
     data:
       position: 80
@@ -155,12 +154,11 @@ dakterras_zomer:
     target:
       entity_id:
       - input_boolean.dakterras_zomer
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.dakterras_gordijn
+      entity_id: button.dakterras_gordijn_my_position
   - action: cover.set_cover_position
     data:
       position: 50
@@ -185,16 +183,15 @@ gameroom_dicht:
     metadata: {}
     target:
       entity_id: input_boolean.gameroom_dicht
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
       entity_id:
-      - cover.gameroom_gordijn_links1
-      - cover.gameroom_gordijn_links2
-      - cover.gameroom_gordijn_rechts1
-      - cover.gameroom_gordijn_rechts2
+      - button.gameroom_gordijn_links1_my_position
+      - button.gameroom_gordijn_links2_my_position
+      - button.gameroom_gordijn_rechts1_my_position
+      - button.gameroom_gordijn_rechts2_my_position
   - action: cover.close_cover
     data: {}
     metadata: {}
@@ -221,16 +218,15 @@ gameroom_open:
     target:
       entity_id:
       - input_boolean.gameroom_open
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
       entity_id:
-      - cover.gameroom_gordijn_links1
-      - cover.gameroom_gordijn_links2
-      - cover.gameroom_gordijn_rechts1
-      - cover.gameroom_gordijn_rechts2
+      - button.gameroom_gordijn_links1_my_position
+      - button.gameroom_gordijn_links2_my_position
+      - button.gameroom_gordijn_rechts1_my_position
+      - button.gameroom_gordijn_rechts2_my_position
   - action: cover.open_cover
     data: {}
     metadata: {}
@@ -257,16 +253,15 @@ gameroom_winter:
     target:
       entity_id:
       - input_boolean.gameroom_winter
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
       entity_id:
-      - cover.gameroom_gordijn_links1
-      - cover.gameroom_gordijn_links2
-      - cover.gameroom_gordijn_rechts1
-      - cover.gameroom_gordijn_rechts2
+      - button.gameroom_gordijn_links1_my_position
+      - button.gameroom_gordijn_links2_my_position
+      - button.gameroom_gordijn_rechts1_my_position
+      - button.gameroom_gordijn_rechts2_my_position
   - action: cover.set_cover_position
     data:
       position: 50
@@ -300,16 +295,15 @@ gameroom_zomer:
     target:
       entity_id:
       - input_boolean.gameroom_zomer
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
       entity_id:
-      - cover.gameroom_gordijn_links1
-      - cover.gameroom_gordijn_links2
-      - cover.gameroom_gordijn_rechts1
-      - cover.gameroom_gordijn_rechts2
+      - button.gameroom_gordijn_links1_my_position
+      - button.gameroom_gordijn_links2_my_position
+      - button.gameroom_gordijn_rechts1_my_position
+      - button.gameroom_gordijn_rechts2_my_position
   - action: cover.set_cover_position
     data:
       position: 20
@@ -394,12 +388,12 @@ gang_winter:
     target:
       entity_id:
       - input_boolean.gang_winter
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.gang_gordijn
+      entity_id:
+      - button.gang_gordijn_my_position
   - action: cover.set_cover_position
     data:
       position: 80
@@ -425,12 +419,12 @@ gang_zomer:
     target:
       entity_id:
       - input_boolean.gang_zomer
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.gang_gordijn
+      entity_id:
+      - button.gang_gordijn_my_position
   - action: cover.set_cover_position
     data:
       position: 20
@@ -509,14 +503,13 @@ kantoor_winter:
     target:
       entity_id:
       - input_boolean.kantoor_winter
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
       entity_id:
-      - cover.kantoor_gordijn_links
-      - cover.kantoor_gordijn_rechts
+      - button.kantoor_gordijn_links_my_position
+      - button.kantoor_gordijn_rechts_my_position
   - action: cover.set_cover_position
     data:
       position: 80
@@ -542,14 +535,13 @@ kantoor_zomer:
     target:
       entity_id:
       - input_boolean.kantoor_zomer
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
       entity_id:
-      - cover.kantoor_gordijn_links
-      - cover.kantoor_gordijn_rechts
+      - button.kantoor_gordijn_links_my_position
+      - button.kantoor_gordijn_rechts_my_position
   - action: cover.set_cover_position
     data:
       position: 40
@@ -574,12 +566,11 @@ keuken_dicht:
     metadata: {}
     target:
       entity_id: input_boolean.keuken_dicht
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.keuken_gordijn
+      entity_id: button.keuken_gordijn_my_position
   - action: cover.close_cover
     data: {}
     metadata: {}
@@ -630,12 +621,11 @@ keuken_winter:
     target:
       entity_id:
       - input_boolean.keuken_winter
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.keuken_gordijn
+      entity_id: button.keuken_gordijn_my_position
   - action: cover.set_cover_position
     data:
       position: 90
@@ -661,12 +651,11 @@ keuken_zomer:
     target:
       entity_id:
       - input_boolean.keuken_zomer
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.keuken_gordijn
+      entity_id: button.keuken_gordijn_my_position
   - action: cover.set_cover_position
     data:
       position: 80
@@ -743,12 +732,12 @@ sauna_winter:
     target:
       entity_id:
       - input_boolean.sauna_winter
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.sauna_gordijn
+      entity_id:
+      - button.sauna_gordijn_my_position
   - action: cover.set_cover_position
     data:
       position: 90
@@ -1118,12 +1107,12 @@ slaapkamer_zomer:
     target:
       entity_id:
       - input_boolean.slaapkamer_zomer
-  - action: cover.set_cover_position
-    data:
-      position: 20
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.slaapkamer_gordijn
+      entity_id:
+      - button.slaapkamer_gordijn_my_position
   - action: cover.set_cover_position
     data:
       position: 20
@@ -1151,12 +1140,12 @@ tuin_dicht:
     metadata: {}
     target:
       entity_id: input_boolean.tuin_dicht
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.tuin_gordijn
+      entity_id:
+      - button.tuin_gordijn_my_position
   - alias: Deur open?
     choose:
     - conditions:
@@ -1230,12 +1219,12 @@ tuin_winter:
     target:
       entity_id:
       - input_boolean.tuin_winter
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.tuin_gordijn
+      entity_id:
+      - button.tuin_gordijn_my_position
   - alias: Deur open?
     choose:
     - conditions:
@@ -1285,12 +1274,12 @@ tuin_zomer:
     target:
       entity_id:
       - input_boolean.tuin_zomer
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.tuin_gordijn
+      entity_id:
+      - button.tuin_gordijn_my_position
   - alias: Deur open?
     choose:
     - conditions:
@@ -1339,12 +1328,12 @@ woonkamer_dicht:
     metadata: {}
     target:
       entity_id: input_boolean.woonkamer_dicht
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.woonkamer_gordijn
+      entity_id:
+      - button.woonkamer_gordijn_my_position
   - action: cover.close_cover
     data: {}
     metadata: {}
@@ -1369,12 +1358,12 @@ woonkamer_open:
     target:
       entity_id:
       - input_boolean.woonkamer_open
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.woonkamer_gordijn
+      entity_id:
+      - button.woonkamer_gordijn_my_position
   - action: cover.open_cover
     data: {}
     metadata: {}
@@ -1400,12 +1389,12 @@ woonkamer_winter:
     target:
       entity_id:
       - input_boolean.woonkamer_winter
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.woonkamer_gordijn
+      entity_id:
+      - button.woonkamer_gordijn_my_position
   - action: cover.set_cover_position
     data:
       position: 80
@@ -1431,12 +1420,12 @@ woonkamer_zomer:
     target:
       entity_id:
       - input_boolean.woonkamer_zomer
-  - action: cover.set_cover_position
-    data:
-      position: 50
+  - action: button.press
+    data: {}
     metadata: {}
     target:
-      entity_id: cover.woonkamer_gordijn
+      entity_id:
+      - button.woonkamer_gordijn_my_position
   - action: cover.set_cover_position
     data:
       position: 40
