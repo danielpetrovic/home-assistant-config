@@ -3457,31 +3457,32 @@
       button_1_light_schedule: schedule.lights_bright
       button_2_short_release:
       - action: script.dakterras_winter
+        metadata: {}
         data: {}
       - action: script.gameroom_winter
+        metadata: {}
         data: {}
       button_2_long_release:
       - action: script.dakterras_open
+        metadata: {}
         data: {}
       - action: script.gameroom_open
+        metadata: {}
         data: {}
-      button_3_light:
-        entity_id: light.gameroom_bureau_lampen
-      button_3_light_schedule: schedule.lights_bright
-      button_3_double:
-      - action: switch.toggle
-        target:
-          entity_id: switch.gameroom_bureau
-        data: {}
+      button_3_media: media_player.gameroom
       button_4_short_release:
       - action: script.dakterras_zomer
+        metadata: {}
         data: {}
       - action: script.gameroom_zomer
+        metadata: {}
         data: {}
       button_4_long_release:
       - action: script.dakterras_dicht
+        metadata: {}
         data: {}
       - action: script.gameroom_dicht
+        metadata: {}
         data: {}
 - id: '1736812276991'
   alias: Gameroom Knop
@@ -3509,7 +3510,6 @@
         metadata: {}
         data: {}
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.group
       button_4_short_release:
       - action: script.dakterras_zomer
         metadata: {}
