@@ -231,17 +231,17 @@ schedule:
       - from: "07:00:00"
         to: "09:00:00"
         data:
-          brightness_pct: 20
+          brightness_pct: 30
           color_temp_kelvin: 3000
       - from: "09:00:00"
         to: "19:00:00"
         data:
-          brightness_pct: 30
+          brightness_pct: 50
           color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
-          brightness_pct: 20
+          brightness_pct: 30
           color_temp_kelvin: 3500
       - from: "21:00:00"
         to: "23:00:00"
@@ -293,17 +293,17 @@ schedule:
       - from: "07:00:00"
         to: "09:00:00"
         data:
-          brightness_pct: 20
+          brightness_pct: 30
           color_temp_kelvin: 3000
       - from: "09:00:00"
         to: "19:00:00"
         data:
-          brightness_pct: 30
+          brightness_pct: 50
           color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
-          brightness_pct: 20
+          brightness_pct: 30
           color_temp_kelvin: 3500
       - from: "21:00:00"
         to: "23:00:00"
@@ -324,17 +324,17 @@ schedule:
       - from: "07:00:00"
         to: "09:00:00"
         data:
-          brightness_pct: 20
+          brightness_pct: 30
           color_temp_kelvin: 3000
       - from: "09:00:00"
         to: "19:00:00"
         data:
-          brightness_pct: 30
+          brightness_pct: 50
           color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
-          brightness_pct: 20
+          brightness_pct: 30
           color_temp_kelvin: 3500
       - from: "21:00:00"
         to: "23:00:00"
@@ -355,17 +355,17 @@ schedule:
       - from: "07:00:00"
         to: "09:00:00"
         data:
-          brightness_pct: 20
+          brightness_pct: 30
           color_temp_kelvin: 3000
       - from: "09:00:00"
         to: "19:00:00"
         data:
-          brightness_pct: 30
+          brightness_pct: 50
           color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
-          brightness_pct: 20
+          brightness_pct: 30
           color_temp_kelvin: 3500
       - from: "21:00:00"
         to: "23:00:00"
@@ -386,17 +386,17 @@ schedule:
       - from: "07:00:00"
         to: "10:00:00"
         data:
-          brightness_pct: 20
+          brightness_pct: 30
           color_temp_kelvin: 3000
       - from: "10:00:00"
         to: "19:00:00"
         data:
-          brightness_pct: 30
+          brightness_pct: 50
           color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
-          brightness_pct: 20
+          brightness_pct: 30
           color_temp_kelvin: 3500
       - from: "21:00:00"
         to: "23:00:00"
@@ -417,17 +417,17 @@ schedule:
       - from: "07:00:00"
         to: "10:00:00"
         data:
-          brightness_pct: 20
+          brightness_pct: 30
           color_temp_kelvin: 3000
       - from: "10:00:00"
         to: "19:00:00"
         data:
-          brightness_pct: 30
+          brightness_pct: 50
           color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
-          brightness_pct: 20
+          brightness_pct: 30
           color_temp_kelvin: 3500
       - from: "21:00:00"
         to: "23:00:00"

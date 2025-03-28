@@ -1,61 +1,3 @@
-voordeur_bel_woonkamer_tv:
-  alias: Voordeur Bel - Woonkamer TV
-  sequence:
-  - if:
-    - condition: state
-      entity_id: remote.woonkamer_tv
-      state: 'on'
-    then:
-    - action: remote.send_command
-      data:
-        command: BACK
-      target:
-        entity_id: remote.woonkamer_tv
-    - action: remote.send_command
-      data:
-        command: HOME
-      target:
-        entity_id: remote.woonkamer_tv
-    - action: androidtv.adb_command
-      target:
-        entity_id: media_player.woonkamer_tv_adb
-      data:
-        command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
-          rtsp://192.168.16.50:38433/38c70ef404f34bf8
-  description: ''
-  icon: mdi:doorbell-video
-voordeur_bel_announce:
-  alias: Voordeur Bel - Announce
-  sequence:
-  - alias: Announce
-    metadata: {}
-    data:
-      cache: true
-      media_player_entity_id: media_player.group
-      message: Iemand heeft aangebeld.
-    target:
-      entity_id:
-      - tts.home_assistant_cloud
-    action: tts.speak
-  description: ''
-  icon: mdi:bullhorn
-voordeur_bel_notify:
-  alias: Voordeur Bel - Notify
-  sequence:
-  - action: notify.notify
-    data:
-      message: Iemand heeft aangebeld.
-      data:
-        entity_id: camera.voordeur
-        push:
-          sound:
-            name: Doorbell.caf
-            critical: 1
-            volume: 0.5
-        url: /lovelace/voordeur
-    metadata: {}
-  description: ''
-  icon: mdi:message-badge
 dakterras_dicht:
   alias: Dakterras Dicht
   sequence:
@@ -67,18 +9,45 @@ dakterras_dicht:
       - input_boolean.dakterras_open
       - input_boolean.dakterras_winter
       - input_boolean.dakterras_zomer
+    enabled: true
   - action: input_boolean.turn_on
     data: {}
     metadata: {}
     target:
       entity_id: input_boolean.dakterras_dicht
-  - action: cover.close_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.dakterras_gordijn
-      - cover.dakterras_rolluik
+    enabled: false
+  - alias: Deur open?
+    choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.dakterras_deursensor_contact
+        state: 'off'
+      sequence:
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.dakterras_gordijn
+          - cover.dakterras_rolluik
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.dakterras_deursensor_contact
+        state: 'on'
+      sequence:
+      - wait_for_trigger:
+        - entity_id:
+          - binary_sensor.dakterras_deursensor_contact
+          to: 'off'
+          trigger: state
+        continue_on_timeout: true
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.dakterras_gordijn
+          - cover.dakterras_rolluik
   description: ''
   icon: mdi:window-shutter
 dakterras_open:
@@ -92,12 +61,7 @@ dakterras_open:
       - input_boolean.dakterras_dicht
       - input_boolean.dakterras_winter
       - input_boolean.dakterras_zomer
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.dakterras_open
+    enabled: true
   - action: cover.open_cover
     data: {}
     metadata: {}
@@ -118,23 +82,54 @@ dakterras_winter:
       - input_boolean.dakterras_dicht
       - input_boolean.dakterras_open
       - input_boolean.dakterras_zomer
+    enabled: true
   - action: input_boolean.turn_on
     data: {}
     metadata: {}
     target:
       entity_id:
       - input_boolean.dakterras_winter
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id: button.dakterras_gordijn_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 80
-    metadata: {}
-    target:
-      entity_id: cover.dakterras_rolluik
+    enabled: false
+  - alias: Deur open?
+    choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.dakterras_deursensor_contact
+        state: 'off'
+      sequence:
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.dakterras_gordijn_my_position
+      - action: cover.set_cover_position
+        data:
+          position: 80
+        metadata: {}
+        target:
+          entity_id: cover.dakterras_rolluik
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.dakterras_deursensor_contact
+        state: 'on'
+      sequence:
+      - wait_for_trigger:
+        - entity_id:
+          - binary_sensor.dakterras_deursensor_contact
+          to: 'off'
+          trigger: state
+        continue_on_timeout: true
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.dakterras_gordijn_my_position
+      - action: cover.set_cover_position
+        data:
+          position: 80
+        metadata: {}
+        target:
+          entity_id: cover.dakterras_rolluik
   description: ''
   icon: mdi:window-shutter-cog
 dakterras_zomer:
@@ -148,23 +143,54 @@ dakterras_zomer:
       - input_boolean.dakterras_dicht
       - input_boolean.dakterras_open
       - input_boolean.dakterras_winter
+    enabled: true
   - action: input_boolean.turn_on
     data: {}
     metadata: {}
     target:
       entity_id:
       - input_boolean.dakterras_zomer
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id: button.dakterras_gordijn_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 50
-    metadata: {}
-    target:
-      entity_id: cover.dakterras_rolluik
+    enabled: false
+  - alias: Deur open?
+    choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.dakterras_deursensor_contact
+        state: 'off'
+      sequence:
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.dakterras_gordijn_my_position
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.dakterras_rolluik
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.dakterras_deursensor_contact
+        state: 'on'
+      sequence:
+      - wait_for_trigger:
+        - entity_id:
+          - binary_sensor.dakterras_deursensor_contact
+          to: 'off'
+          trigger: state
+        continue_on_timeout: true
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.dakterras_gordijn_my_position
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.dakterras_rolluik
   description: ''
   icon: mdi:window-shutter-settings
 gameroom_dicht:
@@ -1135,11 +1161,13 @@ tuin_dicht:
       - input_boolean.tuin_open
       - input_boolean.tuin_winter
       - input_boolean.tuin_zomer
+    enabled: true
   - action: input_boolean.turn_on
     data: {}
     metadata: {}
     target:
       entity_id: input_boolean.tuin_dicht
+    enabled: false
   - action: button.press
     data: {}
     metadata: {}
@@ -1187,12 +1215,14 @@ tuin_open:
       - input_boolean.tuin_dicht
       - input_boolean.tuin_winter
       - input_boolean.tuin_zomer
+    enabled: true
   - action: input_boolean.turn_on
     metadata: {}
     data: {}
     target:
       entity_id:
       - input_boolean.tuin_open
+    enabled: false
   - action: cover.open_cover
     data: {}
     metadata: {}
@@ -1213,12 +1243,14 @@ tuin_winter:
       - input_boolean.tuin_dicht
       - input_boolean.tuin_open
       - input_boolean.tuin_zomer
+    enabled: true
   - action: input_boolean.turn_on
     data: {}
     metadata: {}
     target:
       entity_id:
       - input_boolean.tuin_winter
+    enabled: false
   - action: button.press
     data: {}
     metadata: {}
@@ -1268,12 +1300,14 @@ tuin_zomer:
       - input_boolean.tuin_dicht
       - input_boolean.tuin_open
       - input_boolean.tuin_winter
+    enabled: true
   - action: input_boolean.turn_on
     metadata: {}
     data: {}
     target:
       entity_id:
       - input_boolean.tuin_zomer
+    enabled: false
   - action: button.press
     data: {}
     metadata: {}
@@ -1513,121 +1547,205 @@ music_home:
   alias: Music Home
   description: ''
   icon: mdi:music-note
+notify_voordeur_bel:
+  sequence:
+  - action: notify.notify
+    data:
+      data:
+        entity_id: camera.voordeur
+        push:
+          sound:
+            name: Doorbell.caf
+            critical: 1
+            volume: 0.5
+        url: /lovelace/voordeur
+      message: Someone pressed the doorbell!
+    metadata: {}
+  alias: Notify - Voordeur Bel
+  description: ''
+  icon: mdi:message-badge
+announce_voordeur_bel:
+  sequence:
+  - alias: Announce
+    action: tts.speak
+    data:
+      cache: true
+      media_player_entity_id: media_player.meterkast
+      message: Someone pressed the doorbell!
+    metadata: {}
+    target:
+      entity_id: tts.home_assistant_cloud
+  alias: Announce - Voordeur Bel
+  description: ''
+  icon: mdi:bullhorn
+lights_green:
+  sequence:
+  - action: scene.create
+    alias: Scene, create
+    data:
+      scene_id: alarm_before
+      snapshot_entities:
+      - light.badkamer_lamp
+      - light.eettafel_lamp_onder
+      - light.gameroom_lamp_onder
+      - light.gameroom_lamp_links
+      - light.gameroom_lamp_rechts
+      - light.gang_lamp
+      - light.kantoor_lamp
+      - light.schuur_lamp_werkbank
+      - light.slaapkamer_alex_lamp
+      - light.slaapkamer_deni_lamp
+      - light.toilet_lamp
+      - light.woonkamer_lamp_onder
+  - alias: Lights green, flash long
+    action: light.turn_on
+    data:
+      brightness_pct: 100
+      color_name: green
+      flash: long
+    target:
+      entity_id: light.alarm
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 15
+      milliseconds: 0
+  - action: light.turn_on
+    alias: Lights on, white
+    data:
+      brightness_pct: 50
+      color_temp_kelvin: 3333
+      transition: 1
+    target:
+      entity_id: light.alarm
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - action: scene.turn_on
+    alias: Scene, restore
+    data:
+      transition: 1
+    target:
+      entity_id: scene.alarm_before
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - action: scene.delete
+    alias: Scene, remove
+    target:
+      entity_id: scene.alarm_before
+    data: {}
+  alias: Lights - Green
+  description: ''
+  icon: mdi:alarm-light
 lights_blue:
   sequence:
+  - action: scene.create
+    alias: Scene, create
+    data:
+      scene_id: alarm_before
+      snapshot_entities:
+      - light.badkamer_lamp
+      - light.eettafel_lamp_onder
+      - light.gameroom_lamp_onder
+      - light.gameroom_lamp_links
+      - light.gameroom_lamp_rechts
+      - light.gang_lamp
+      - light.kantoor_lamp
+      - light.schuur_lamp_werkbank
+      - light.slaapkamer_alex_lamp
+      - light.slaapkamer_deni_lamp
+      - light.toilet_lamp
+      - light.woonkamer_lamp_onder
   - action: light.turn_on
     alias: Lights blue, flash long
     data:
       brightness_pct: 100
       color_name: blue
       flash: long
-    metadata: {}
     target:
-      entity_id:
-      - light.alarm_lampen
+      entity_id: light.alarm
   - delay:
       hours: 0
       minutes: 0
       seconds: 15
       milliseconds: 0
-  alias: Lights Blue
-  description: ''
-  icon: mdi:alarm-light
-lights_green:
-  sequence:
   - action: light.turn_on
-    alias: Lights green, flash long
+    alias: Lights on, white
     data:
-      brightness_pct: 100
-      color_name: green
-      flash: long
-    metadata: {}
+      brightness_pct: 50
+      color_temp_kelvin: 3333
+      transition: 1
     target:
-      entity_id:
-      - light.alarm_lampen
+      entity_id: light.alarm
   - delay:
       hours: 0
       minutes: 0
-      seconds: 15
+      seconds: 1
       milliseconds: 0
-  alias: Lights Green
-  description: ''
-  icon: mdi:alarm-light
-lights_orange:
-  sequence:
-  - action: light.turn_on
-    alias: Lights orange, flash long
+  - action: scene.turn_on
+    alias: Scene, restore
     data:
-      brightness_pct: 100
-      color_name: orange
-      flash: long
-    metadata: {}
+      transition: 1
     target:
-      entity_id:
-      - light.alarm_lampen
+      entity_id: scene.alarm_before
   - delay:
       hours: 0
       minutes: 0
-      seconds: 15
+      seconds: 1
       milliseconds: 0
-  alias: Lights Orange
+  - action: scene.delete
+    alias: Scene, remove
+    target:
+      entity_id: scene.alarm_before
+    data: {}
+  alias: Lights - Blue
   description: ''
   icon: mdi:alarm-light
 lights_red:
   sequence:
+  - action: scene.create
+    alias: Scene, create
+    data:
+      scene_id: alarm_before
+      snapshot_entities:
+      - light.badkamer_lamp
+      - light.eettafel_lamp_onder
+      - light.gameroom_lamp_onder
+      - light.gameroom_lamp_links
+      - light.gameroom_lamp_rechts
+      - light.gang_lamp
+      - light.kantoor_lamp
+      - light.schuur_lamp_werkbank
+      - light.slaapkamer_alex_lamp
+      - light.slaapkamer_deni_lamp
+      - light.toilet_lamp
+      - light.woonkamer_lamp_onder
   - action: light.turn_on
     alias: Lights red, flash long
     data:
       brightness_pct: 100
       color_name: red
       flash: long
-    metadata: {}
     target:
-      entity_id:
-      - light.alarm_lampen
+      entity_id: light.alarm
   - delay:
       hours: 0
       minutes: 0
       seconds: 15
       milliseconds: 0
-  alias: Lights Red
-  description: ''
-  icon: mdi:alarm-light
-lights_scene_create:
-  sequence:
-  - action: scene.create
-    alias: Scene, create
-    data:
-      scene_id: alarm_before
-      snapshot_entities:
-      - light.badkamer_lamp
-      - light.eettafel_lamp_onder
-      - light.gameroom_lamp_onder
-      - light.gameroom_lamp_links
-      - light.gameroom_lamp_rechts
-      - light.gang_lamp
-      - light.kantoor_lamp
-      - light.schuur_lamp_werkbank
-      - light.slaapkamer_alex_lamp
-      - light.slaapkamer_deni_lamp
-      - light.toilet_lamp
-      - light.woonkamer_lamp_onder
-    metadata: {}
-  alias: Lights Scene create
-  description: ''
-  icon: mdi:alarm-light
-lights_scene_restore:
-  sequence:
   - action: light.turn_on
     alias: Lights on, white
     data:
       brightness_pct: 50
       color_temp_kelvin: 3333
       transition: 1
-    metadata: {}
     target:
-      entity_id:
-      - light.alarm_lampen
+      entity_id: light.alarm
   - delay:
       hours: 0
       minutes: 0
@@ -1637,7 +1755,6 @@ lights_scene_restore:
     alias: Scene, restore
     data:
       transition: 1
-    metadata: {}
     target:
       entity_id: scene.alarm_before
   - delay:
@@ -1647,16 +1764,13 @@ lights_scene_restore:
       milliseconds: 0
   - action: scene.delete
     alias: Scene, remove
-    data: {}
     target:
       entity_id: scene.alarm_before
-  alias: Lights Scene restore
+    data: {}
+  alias: Lights - Red
   description: ''
   icon: mdi:alarm-light
-voordeur_bel_lights:
-  alias: Voordeur Bel - Lights
-  description: ''
-  icon: mdi:alarm-light
+lights_orange:
   sequence:
   - action: scene.create
     alias: Scene, create
@@ -1676,25 +1790,13 @@ voordeur_bel_lights:
       - light.toilet_lamp
       - light.woonkamer_lamp_onder
   - action: light.turn_on
-    alias: Lights green, flash long
+    alias: Lights orange, flash long
     data:
       brightness_pct: 100
-      color_name: green
+      color_name: orange
       flash: long
     target:
-      entity_id:
-      - light.badkamer_lamp
-      - light.eettafel_lamp_onder
-      - light.gameroom_lamp_onder
-      - light.gameroom_lamp_links
-      - light.gameroom_lamp_rechts
-      - light.gang_lamp
-      - light.kantoor_lamp
-      - light.schuur_lamp_werkbank
-      - light.slaapkamer_alex_lamp
-      - light.slaapkamer_deni_lamp
-      - light.toilet_lamp
-      - light.woonkamer_lamp_onder
+      entity_id: light.alarm
   - delay:
       hours: 0
       minutes: 0
@@ -1707,19 +1809,7 @@ voordeur_bel_lights:
       color_temp_kelvin: 3333
       transition: 1
     target:
-      entity_id:
-      - light.badkamer_lamp
-      - light.eettafel_lamp_onder
-      - light.gameroom_lamp_onder
-      - light.gameroom_lamp_links
-      - light.gameroom_lamp_rechts
-      - light.gang_lamp
-      - light.kantoor_lamp
-      - light.schuur_lamp_werkbank
-      - light.slaapkamer_alex_lamp
-      - light.slaapkamer_deni_lamp
-      - light.toilet_lamp
-      - light.woonkamer_lamp_onder
+      entity_id: light.alarm
   - delay:
       hours: 0
       minutes: 0
@@ -1740,7 +1830,11 @@ voordeur_bel_lights:
     alias: Scene, remove
     target:
       entity_id: scene.alarm_before
-schuur_camera_woonkamer_tv:
+    data: {}
+  alias: Lights - Orange
+  description: ''
+  icon: mdi:alarm-light
+woonkamer_tv_voordeur:
   sequence:
   - if:
     - condition: state
@@ -1762,11 +1856,11 @@ schuur_camera_woonkamer_tv:
         entity_id: media_player.woonkamer_tv_adb
       data:
         command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
-          rtsp://192.168.16.50:35697/ab4ab8d894562829
-  alias: Schuur Camera - Woonkamer TV
+          rtsp://192.168.16.50:8554/voordeur
+  alias: Woonkamer TV - Voordeur
   description: ''
   icon: mdi:camera
-tuin_camera_woonkamer_tv:
+woonkamer_tv_tuin:
   sequence:
   - if:
     - condition: state
@@ -1788,7 +1882,59 @@ tuin_camera_woonkamer_tv:
         entity_id: media_player.woonkamer_tv_adb
       data:
         command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
-          rtsp://192.168.16.50:36549/e8af31023c70118f
-  alias: Tuin Camera - Woonkamer TV
+          rtsp://192.168.16.50:8554/schuur
+  alias: Woonkamer TV - Tuin
+  description: ''
+  icon: mdi:camera
+woonkamer_tv_schuur:
+  sequence:
+  - if:
+    - condition: state
+      entity_id: remote.woonkamer_tv
+      state: 'on'
+    then:
+    - action: remote.send_command
+      data:
+        command: BACK
+      target:
+        entity_id: remote.woonkamer_tv
+    - action: remote.send_command
+      data:
+        command: HOME
+      target:
+        entity_id: remote.woonkamer_tv
+    - action: androidtv.adb_command
+      target:
+        entity_id: media_player.woonkamer_tv_adb
+      data:
+        command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
+          rtsp://192.168.16.50:8554/schuur
+  alias: Woonkamer TV - Schuur
+  description: ''
+  icon: mdi:camera
+woonkamer_tv_entree:
+  sequence:
+  - if:
+    - condition: state
+      entity_id: remote.woonkamer_tv
+      state: 'on'
+    then:
+    - action: remote.send_command
+      data:
+        command: BACK
+      target:
+        entity_id: remote.woonkamer_tv
+    - action: remote.send_command
+      data:
+        command: HOME
+      target:
+        entity_id: remote.woonkamer_tv
+    - action: androidtv.adb_command
+      target:
+        entity_id: media_player.woonkamer_tv_adb
+      data:
+        command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
+          rtsp://192.168.16.50:8554/entree
+  alias: Woonkamer TV - Entree
   description: ''
   icon: mdi:camera
