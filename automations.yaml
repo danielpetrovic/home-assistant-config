@@ -4805,6 +4805,9 @@
       alarm_notifications_fire: heeft vuur gedetecteerd!
       alarm_notifications_gas: heeft gas gedetecteerd!
       alarm_notifications_moisture: heeft vocht gedetecteerd!
+      alarm_announcements_engine: tts.home_assistant_cloud
+      alarm_announcements_player:
+      - media_player.meterkast
 - id: '1739747155876'
   alias: Alarm - Geofence
   description: ''
