@@ -1571,7 +1571,7 @@ announce_voordeur_bel:
     data:
       cache: true
       media_player_entity_id: media_player.meterkast
-      message: Someone pressed the doorbell!
+      message: Er heeft iemand aangebeld!
     metadata: {}
     target:
       entity_id: tts.home_assistant_cloud
@@ -1580,16 +1580,14 @@ announce_voordeur_bel:
   icon: mdi:bullhorn
 lights_green:
   sequence:
-  - action: scene.create
-    alias: Scene, create
+  - alias: Scene, create
+    action: scene.create
     data:
       scene_id: alarm_before
       snapshot_entities:
       - light.badkamer_lamp
       - light.eettafel_lamp_onder
       - light.gameroom_lamp_onder
-      - light.gameroom_lamp_links
-      - light.gameroom_lamp_rechts
       - light.gang_lamp
       - light.kantoor_lamp
       - light.schuur_lamp_werkbank
@@ -1644,16 +1642,14 @@ lights_green:
   icon: mdi:alarm-light
 lights_blue:
   sequence:
-  - action: scene.create
-    alias: Scene, create
+  - alias: Scene, create
+    action: scene.create
     data:
       scene_id: alarm_before
       snapshot_entities:
       - light.badkamer_lamp
       - light.eettafel_lamp_onder
       - light.gameroom_lamp_onder
-      - light.gameroom_lamp_links
-      - light.gameroom_lamp_rechts
       - light.gang_lamp
       - light.kantoor_lamp
       - light.schuur_lamp_werkbank
@@ -1708,16 +1704,14 @@ lights_blue:
   icon: mdi:alarm-light
 lights_red:
   sequence:
-  - action: scene.create
-    alias: Scene, create
+  - alias: Scene, create
+    action: scene.create
     data:
       scene_id: alarm_before
       snapshot_entities:
       - light.badkamer_lamp
       - light.eettafel_lamp_onder
       - light.gameroom_lamp_onder
-      - light.gameroom_lamp_links
-      - light.gameroom_lamp_rechts
       - light.gang_lamp
       - light.kantoor_lamp
       - light.schuur_lamp_werkbank
@@ -1772,16 +1766,14 @@ lights_red:
   icon: mdi:alarm-light
 lights_orange:
   sequence:
-  - action: scene.create
-    alias: Scene, create
+  - alias: Scene, create
+    action: scene.create
     data:
       scene_id: alarm_before
       snapshot_entities:
       - light.badkamer_lamp
       - light.eettafel_lamp_onder
       - light.gameroom_lamp_onder
-      - light.gameroom_lamp_links
-      - light.gameroom_lamp_rechts
       - light.gang_lamp
       - light.kantoor_lamp
       - light.schuur_lamp_werkbank
@@ -1834,101 +1826,3 @@ lights_orange:
   alias: Lights - Orange
   description: ''
   icon: mdi:alarm-light
-announce_alarm_armed_home:
-  sequence:
-  - alias: Announce
-    action: tts.speak
-    data:
-      cache: true
-      media_player_entity_id: media_player.meterkast
-      message: The alarm is now in Home mode.
-    metadata: {}
-    target:
-      entity_id: tts.home_assistant_cloud
-  alias: Announce - Alarm Armed Home
-  description: ''
-  icon: mdi:bullhorn
-announce_alarm_armed_night:
-  sequence:
-  - alias: Announce
-    action: tts.speak
-    data:
-      cache: true
-      media_player_entity_id: media_player.meterkast
-      message: The alarm is now in Night mode.
-    metadata: {}
-    target:
-      entity_id: tts.home_assistant_cloud
-  alias: Announce - Alarm Armed Night
-  description: ''
-  icon: mdi:bullhorn
-announce_alarm_armed_away:
-  sequence:
-  - alias: Announce
-    action: tts.speak
-    data:
-      cache: true
-      media_player_entity_id: media_player.meterkast
-      message: The alarm is now in Away mode.
-    metadata: {}
-    target:
-      entity_id: tts.home_assistant_cloud
-  alias: Announce - Alarm Armed Away
-  description: ''
-  icon: mdi:bullhorn
-announce_alarm_disarmed:
-  sequence:
-  - alias: Announce
-    action: tts.speak
-    data:
-      cache: true
-      media_player_entity_id: media_player.meterkast
-      message: The alarm is now disarmed.
-    metadata: {}
-    target:
-      entity_id: tts.home_assistant_cloud
-  alias: Announce - Alarm Disarmed
-  description: ''
-  icon: mdi:bullhorn
-announce_alarm_arming:
-  sequence:
-  - alias: Announce
-    action: tts.speak
-    data:
-      cache: true
-      media_player_entity_id: media_player.meterkast
-      message: The alarm is being set. Please exit the house promptly!
-    metadata: {}
-    target:
-      entity_id: tts.home_assistant_cloud
-  alias: Announce - Alarm Arming
-  description: ''
-  icon: mdi:bullhorn
-announce_alarm_pending:
-  sequence:
-  - alias: Announce
-    action: tts.speak
-    data:
-      cache: true
-      media_player_entity_id: media_player.meterkast
-      message: triggered the alarm! Please disarm the alarm to prevent it from activating!
-    metadata: {}
-    target:
-      entity_id: tts.home_assistant_cloud
-  alias: Announce - Alarm Pending
-  description: ''
-  icon: mdi:bullhorn
-announce_alarm_triggered:
-  sequence:
-  - alias: Announce
-    action: tts.speak
-    data:
-      cache: true
-      media_player_entity_id: media_player.meterkast
-      message: triggered the alarm! The alarm has been activated!
-    metadata: {}
-    target:
-      entity_id: tts.home_assistant_cloud
-  alias: Announce - Alarm Triggered
-  description: ''
-  icon: mdi:bullhorn
