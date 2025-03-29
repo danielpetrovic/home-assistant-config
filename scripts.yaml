@@ -1834,107 +1834,101 @@ lights_orange:
   alias: Lights - Orange
   description: ''
   icon: mdi:alarm-light
-woonkamer_tv_voordeur:
+announce_alarm_armed_home:
   sequence:
-  - if:
-    - condition: state
-      entity_id: remote.woonkamer_tv
-      state: 'on'
-    then:
-    - action: remote.send_command
-      data:
-        command: BACK
-      target:
-        entity_id: remote.woonkamer_tv
-    - action: remote.send_command
-      data:
-        command: HOME
-      target:
-        entity_id: remote.woonkamer_tv
-    - action: androidtv.adb_command
-      target:
-        entity_id: media_player.woonkamer_tv_adb
-      data:
-        command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
-          rtsp://192.168.16.50:8554/voordeur
-  alias: Woonkamer TV - Voordeur
+  - alias: Announce
+    action: tts.speak
+    data:
+      cache: true
+      media_player_entity_id: media_player.meterkast
+      message: The alarm is now in Home mode.
+    metadata: {}
+    target:
+      entity_id: tts.home_assistant_cloud
+  alias: Announce - Alarm Armed Home
   description: ''
-  icon: mdi:camera
-woonkamer_tv_tuin:
+  icon: mdi:bullhorn
+announce_alarm_armed_night:
   sequence:
-  - if:
-    - condition: state
-      entity_id: remote.woonkamer_tv
-      state: 'on'
-    then:
-    - action: remote.send_command
-      data:
-        command: BACK
-      target:
-        entity_id: remote.woonkamer_tv
-    - action: remote.send_command
-      data:
-        command: HOME
-      target:
-        entity_id: remote.woonkamer_tv
-    - action: androidtv.adb_command
-      target:
-        entity_id: media_player.woonkamer_tv_adb
-      data:
-        command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
-          rtsp://192.168.16.50:8554/schuur
-  alias: Woonkamer TV - Tuin
+  - alias: Announce
+    action: tts.speak
+    data:
+      cache: true
+      media_player_entity_id: media_player.meterkast
+      message: The alarm is now in Night mode.
+    metadata: {}
+    target:
+      entity_id: tts.home_assistant_cloud
+  alias: Announce - Alarm Armed Night
   description: ''
-  icon: mdi:camera
-woonkamer_tv_schuur:
+  icon: mdi:bullhorn
+announce_alarm_armed_away:
   sequence:
-  - if:
-    - condition: state
-      entity_id: remote.woonkamer_tv
-      state: 'on'
-    then:
-    - action: remote.send_command
-      data:
-        command: BACK
-      target:
-        entity_id: remote.woonkamer_tv
-    - action: remote.send_command
-      data:
-        command: HOME
-      target:
-        entity_id: remote.woonkamer_tv
-    - action: androidtv.adb_command
-      target:
-        entity_id: media_player.woonkamer_tv_adb
-      data:
-        command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
-          rtsp://192.168.16.50:8554/schuur
-  alias: Woonkamer TV - Schuur
+  - alias: Announce
+    action: tts.speak
+    data:
+      cache: true
+      media_player_entity_id: media_player.meterkast
+      message: The alarm is now in Away mode.
+    metadata: {}
+    target:
+      entity_id: tts.home_assistant_cloud
+  alias: Announce - Alarm Armed Away
   description: ''
-  icon: mdi:camera
-woonkamer_tv_entree:
+  icon: mdi:bullhorn
+announce_alarm_disarmed:
   sequence:
-  - if:
-    - condition: state
-      entity_id: remote.woonkamer_tv
-      state: 'on'
-    then:
-    - action: remote.send_command
-      data:
-        command: BACK
-      target:
-        entity_id: remote.woonkamer_tv
-    - action: remote.send_command
-      data:
-        command: HOME
-      target:
-        entity_id: remote.woonkamer_tv
-    - action: androidtv.adb_command
-      target:
-        entity_id: media_player.woonkamer_tv_adb
-      data:
-        command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
-          rtsp://192.168.16.50:8554/entree
-  alias: Woonkamer TV - Entree
+  - alias: Announce
+    action: tts.speak
+    data:
+      cache: true
+      media_player_entity_id: media_player.meterkast
+      message: The alarm is now disarmed.
+    metadata: {}
+    target:
+      entity_id: tts.home_assistant_cloud
+  alias: Announce - Alarm Disarmed
   description: ''
-  icon: mdi:camera
+  icon: mdi:bullhorn
+announce_alarm_arming:
+  sequence:
+  - alias: Announce
+    action: tts.speak
+    data:
+      cache: true
+      media_player_entity_id: media_player.meterkast
+      message: The alarm is being set. Please exit the house promptly!
+    metadata: {}
+    target:
+      entity_id: tts.home_assistant_cloud
+  alias: Announce - Alarm Arming
+  description: ''
+  icon: mdi:bullhorn
+announce_alarm_pending:
+  sequence:
+  - alias: Announce
+    action: tts.speak
+    data:
+      cache: true
+      media_player_entity_id: media_player.meterkast
+      message: triggered the alarm! Please disarm the alarm to prevent it from activating!
+    metadata: {}
+    target:
+      entity_id: tts.home_assistant_cloud
+  alias: Announce - Alarm Pending
+  description: ''
+  icon: mdi:bullhorn
+announce_alarm_triggered:
+  sequence:
+  - alias: Announce
+    action: tts.speak
+    data:
+      cache: true
+      media_player_entity_id: media_player.meterkast
+      message: triggered the alarm! The alarm has been activated!
+    metadata: {}
+    target:
+      entity_id: tts.home_assistant_cloud
+  alias: Announce - Alarm Triggered
+  description: ''
+  icon: mdi:bullhorn

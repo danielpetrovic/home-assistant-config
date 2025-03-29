@@ -945,12 +945,6 @@
     - action: script.lights_green
       metadata: {}
       data: {}
-    - action: script.notify_voordeur_bel
-      metadata: {}
-      data: {}
-    - action: script.woonkamer_tv_voordeur
-      metadata: {}
-      data: {}
   mode: restart
 - id: '1706028727906'
   alias: Keukenkast Deur
@@ -1679,6 +1673,7 @@
     - remote.woonkamer_tv
     attribute: current_activity
     trigger: state
+    enabled: false
   conditions: []
   actions:
   - alias: Woonkamer TV
@@ -4779,10 +4774,13 @@
       - critical_apple
       alarm_scripts_away:
       - script.music_away
+      - script.announce_alarm_armed_away
       alarm_scripts_home:
       - script.music_home
+      - script.announce_alarm_armed_home
       alarm_scripts_night:
       - script.music_night
+      - script.announce_alarm_armed_night
       alarm_sensor_fire:
       - binary_sensor.entree_brandmelder_smoke
       - binary_sensor.gameroom_brandmelder_smoke
@@ -4797,6 +4795,13 @@
       - critical_apple
       alarm_scripts_disarmed:
       - script.music_home
+      - script.announce_alarm_disarmed
+      alarm_scripts_arming:
+      - script.announce_alarm_arming
+      alarm_scripts_pending:
+      - script.announce_alarm_pending
+      alarm_scripts_triggered:
+      - script.announce_alarm_triggered
 - id: '1739747155876'
   alias: Alarm - Geofence
   description: ''
