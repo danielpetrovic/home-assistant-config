@@ -4774,13 +4774,10 @@
       - critical_apple
       alarm_scripts_away:
       - script.music_away
-      - script.announce_alarm_armed_away
       alarm_scripts_home:
       - script.music_home
-      - script.announce_alarm_armed_home
       alarm_scripts_night:
       - script.music_night
-      - script.announce_alarm_armed_night
       alarm_sensor_fire:
       - binary_sensor.entree_brandmelder_smoke
       - binary_sensor.gameroom_brandmelder_smoke
@@ -4795,13 +4792,19 @@
       - critical_apple
       alarm_scripts_disarmed:
       - script.music_home
-      - script.announce_alarm_disarmed
-      alarm_scripts_arming:
-      - script.announce_alarm_arming
-      alarm_scripts_pending:
-      - script.announce_alarm_pending
-      alarm_scripts_triggered:
-      - script.announce_alarm_triggered
+      alarm_notifications_armed_away: Het alarm is nu ingesteld op Afwezig modus.
+      alarm_notifications_armed_home: Het alarm is nu ingesteld op Thuis modus.
+      alarm_notifications_armed_night: Het alarm is nu ingesteld op Nacht modus.
+      alarm_notifications_arming: Het alarm wordt ingeschakeld. Verlaat het huis zo
+        snel mogelijk!
+      alarm_notifications_pending: heeft het alarm geactiveerd! Schakel het alarm
+        uit om te voorkomen dat het afgaat!
+      alarm_notifications_disarmed: Het alarm is nu uitgeschakeld.
+      alarm_notifications_triggered: heeft het alarm geactiveerd! Het alarm gaat af!
+      alarm_notifications_always: geactiveerd!
+      alarm_notifications_fire: heeft vuur gedetecteerd!
+      alarm_notifications_gas: heeft gas gedetecteerd!
+      alarm_notifications_moisture: heeft vocht gedetecteerd!
 - id: '1739747155876'
   alias: Alarm - Geofence
   description: ''
