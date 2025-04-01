@@ -1665,412 +1665,6 @@
           target:
             entity_id: input_select.airplay
   mode: parallel
-- id: '1706169648965'
-  alias: Woonkamer Media
-  description: ''
-  triggers:
-  - entity_id:
-    - remote.woonkamer_tv
-    attribute: current_activity
-    trigger: state
-    enabled: false
-  conditions: []
-  actions:
-  - alias: Woonkamer TV
-    choose:
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.apple.atve.sony.appletv
-      sequence:
-      - data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        alias: Keuken volume omlaag
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.4
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.45
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      alias: Apple TV
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.google.android.apps.mediashell
-      sequence:
-      - alias: Keuken volume omhoog
-        data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      alias: Cast
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.disney.disneyplus
-      sequence:
-      - alias: Keuken volume omlaag
-        data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.35
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.45
-          action: media_player.volume_set
-          target:
-            entity_id: media_player.woonkamer
-      alias: Disney+
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.google.android.apps.tv.launcherx
-      sequence:
-      - alias: Keuken volume omhoog
-        data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      alias: Launcher Google
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.spocky.projengmenu
-      sequence:
-      - alias: Keuken volume omhoog
-        data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      alias: Launcher Projectivy
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        state: com.netflix.ninja
-        attribute: current_activity
-      sequence:
-      - data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        alias: Keuken volume omlaag
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.4
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.45
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      alias: Netflix
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: nl.nlziet
-      sequence:
-      - data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        alias: Keuken volume omlaag
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - data:
-            volume_level: 0.3
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - data:
-            volume_level: 0.35
-          action: media_player.volume_set
-          target:
-            entity_id: media_player.woonkamer
-      alias: NLZIET
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.plexapp.android
-      sequence:
-      - alias: Keuken volume omlaag
-        data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.35
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.45
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      alias: Plex
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.neilturner.aerialviews
-      sequence:
-      - alias: Keuken volume omhoog
-        data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      alias: Screen Saver Aerial Views
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.google.android.apps.tv.dreamx
-      sequence:
-      - alias: Keuken volume omhoog
-        data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      alias: Screen Saver Google
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.teamsmart.videomanager.tv
-      sequence:
-      - alias: Keuken volume omlaag
-        data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.2
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.25
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      alias: SmartTube
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.google.android.apps.tv.launcherx
-      sequence:
-      - data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        alias: Keuken volume omlaag
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.4
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.45
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      alias: Sony Pictures Core
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.sony.dtv.tvx
-      sequence:
-      - data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        alias: Keuken volume omlaag
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - data:
-            volume_level: 0.25
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - data:
-            volume_level: 0.35
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      alias: TV
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.google.android.youtube.tv
-      sequence:
-      - alias: Keuken volume omlaag
-        data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.2
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.25
-          target:
-            entity_id:
-            - media_player.woonkamer
-          action: media_player.volume_set
-      alias: YouTube
-  mode: restart
 - id: '1706196800159'
   alias: Badkamer Deur
   description: ''
@@ -2619,7 +2213,7 @@
         - conditions:
           - condition: numeric_state
             entity_id: sensor.outdoor_temperature
-            below: 20
+            below: 10
           sequence:
           - action: input_boolean.turn_on
             target:
@@ -2641,7 +2235,7 @@
         - conditions:
           - condition: numeric_state
             entity_id: sensor.outdoor_temperature
-            above: 20
+            above: 10
           sequence:
           - action: input_boolean.turn_on
             target:
@@ -6914,3 +6508,48 @@
           target:
             entity_id: input_select.airplay
   mode: parallel
+- id: '1743325307976'
+  alias: Woonkamer Media
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.woonkamer
+    to:
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: media_player.woonkamer
+        state: idle
+      sequence:
+      - action: media_player.volume_set
+        metadata: {}
+        data:
+          volume_level: 0.35
+        target:
+          entity_id: media_player.keuken
+    - conditions:
+      - condition: state
+        entity_id: media_player.woonkamer
+        state: paused
+      sequence:
+      - action: media_player.volume_set
+        metadata: {}
+        data:
+          volume_level: 0.35
+        target:
+          entity_id: media_player.keuken
+    - conditions:
+      - condition: state
+        entity_id: media_player.woonkamer
+        state: playing
+      sequence:
+      - action: media_player.volume_set
+        metadata: {}
+        data:
+          volume_level: 0.01
+        target:
+          entity_id: media_player.keuken
+  mode: single
