@@ -290,7 +290,7 @@ gameroom_winter:
       - button.gameroom_gordijn_rechts2_my_position
   - action: cover.set_cover_position
     data:
-      position: 50
+      position: 40
     metadata: {}
     target:
       entity_id:
