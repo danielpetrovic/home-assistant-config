@@ -1492,30 +1492,30 @@ actions:
       - alias: Button 1
         sequence:
           - variables:
-              short_release_light_mode: !input button_1_short_release_light_mode
-              long_release_light_mode: !input button_1_long_release_light_mode
-              rotate_light_mode: !input button_1_rotate_light_mode
-              light: !input button_1_light
-              schedule: !input button_1_light_schedule
-              brightness_pct_input: !input button_1_light_brightness
-              brightness_pct: "{{ state_attr(schedule, 'brightness_pct') if schedule is defined and schedule != [] and state_attr(schedule, 'brightness_pct') is not none else brightness_pct_input }}"
-              color_temp_kelvin_input: !input button_1_light_color
-              color_temp_kelvin: "{{ state_attr(schedule, 'color_temp_kelvin') if schedule is defined and schedule != [] and state_attr(schedule, 'color_temp_kelvin') is not none else color_temp_kelvin_input }}"
-              transition_input: !input button_1_light_transition
-              transition: "{{ state_attr(schedule, 'transition') if schedule is defined and schedule != [] and state_attr(schedule, 'transition') is not none else transition_input }}"
-              short_release_media_mode: !input button_1_short_release_media_mode
-              short_release_media_control: !input button_1_short_release_media_control
-              long_release_media_mode: !input button_1_long_release_media_mode
-              long_release_media_control: !input button_1_long_release_media_control
-              double_media_mode: !input button_1_double_media_mode
-              double_media_control: !input button_1_double_media_control
-              triple_media_mode: !input button_1_triple_media_mode
-              triple_media_control: !input button_1_triple_media_control
-              rotate_media_mode: !input button_1_rotate_media_mode
-              media: !input button_1_media
-              media_leader: !input button_1_media_leader
-              volume: !input button_1_media_volume
-              current_volume: "{{ state_attr(media, 'volume_level') if media is defined and media != [] and state_attr(media, 'volume_level') is not none else volume }}"
+              button_1_short_release_light_mode: !input button_1_short_release_light_mode
+              button_1_long_release_light_mode: !input button_1_long_release_light_mode
+              button_1_rotate_light_mode: !input button_1_rotate_light_mode
+              button_1_light: !input button_1_light
+              button_1_schedule: !input button_1_light_schedule
+              button_1_brightness_pct_input: !input button_1_light_brightness
+              button_1_brightness_pct: "{{ state_attr(button_1_schedule, 'brightness_pct') if button_1_schedule is defined and button_1_schedule != [] and state_attr(button_1_schedule, 'brightness_pct') is not none else button_1_brightness_pct_input }}"
+              button_1_color_temp_kelvin_input: !input button_1_light_color
+              button_1_color_temp_kelvin: "{{ state_attr(button_1_schedule, 'color_temp_kelvin') if button_1_schedule is defined and button_1_schedule != [] and state_attr(button_1_schedule, 'color_temp_kelvin') is not none else button_1_color_temp_kelvin_input }}"
+              button_1_transition_input: !input button_1_light_transition
+              button_1_transition: "{{ state_attr(button_1_schedule, 'transition') if button_1_schedule is defined and button_1_schedule != [] and state_attr(button_1_schedule, 'transition') is not none else button_1_transition_input }}"
+              button_1_short_release_media_mode: !input button_1_short_release_media_mode
+              button_1_short_release_media_control: !input button_1_short_release_media_control
+              button_1_long_release_media_mode: !input button_1_long_release_media_mode
+              button_1_long_release_media_control: !input button_1_long_release_media_control
+              button_1_double_media_mode: !input button_1_double_media_mode
+              button_1_double_media_control: !input button_1_double_media_control
+              button_1_triple_media_mode: !input button_1_triple_media_mode
+              button_1_triple_media_control: !input button_1_triple_media_control
+              button_1_rotate_media_mode: !input button_1_rotate_media_mode
+              button_1_media: !input button_1_media
+              button_1_media_leader: !input button_1_media_leader
+              button_1_volume: !input button_1_media_volume
+              button_1_current_volume: "{{ state_attr(button_1_media, 'volume_level') if button_1_media is defined and button_1_media != [] and state_attr(button_1_media, 'volume_level') is not none else button_1_volume }}"
           - choose:
               - alias: button_1_press
                 conditions: "{{ command == 'button_1_press' }}"
@@ -1528,114 +1528,114 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_1_light.entity_id | length > 0 or button_1_light.device_id | length > 0 or button_1_light.area_id | length > 0 }}"
                     then:
                       - parallel:
                           - alias: turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in short_release_light_mode }}"
+                                value_template: "{{ 'turn_on' in button_1_short_release_light_mode }}"
                             then:
                               - action: light.turn_on
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                                target: "{{ button_1_light }}"
                           - alias: turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in short_release_light_mode }}"
+                                value_template: "{{ 'turn_off' in button_1_short_release_light_mode }}"
                             then:
                               - action: light.turn_off
                                 data:
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  transition: "{{ button_1_transition }}"
+                                target: "{{ button_1_light }}"
                           - alias: toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in short_release_light_mode }}"
+                                value_template: "{{ 'toggle' in button_1_short_release_light_mode }}"
                             then:
                               - action: light.toggle
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                                target: "{{ button_1_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_1_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in short_release_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_1_short_release_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in short_release_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_1_short_release_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in short_release_media_mode }}"
+                                value_template: "{{ 'toggle' in button_1_short_release_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in short_release_media_mode }}"
+                                value_template: "{{ 'join' in button_1_short_release_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_1_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_1_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in short_release_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_1_short_release_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in short_release_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_1_short_release_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in short_release_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_1_short_release_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in short_release_media_control }}"
+                                value_template: "{{ 'volume_set' in button_1_short_release_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_1_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
               - alias: button_1_hold
                 conditions: "{{ command == 'button_1_hold' }}"
                 sequence: !input button_1_hold
@@ -1647,114 +1647,114 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_1_light.entity_id | length > 0 or button_1_light.device_id | length > 0 or button_1_light.area_id | length > 0 }}"
                     then:
                       - parallel:
                           - alias: turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in long_release_light_mode }}"
+                                value_template: "{{ 'turn_on' in button_1_long_release_light_mode }}"
                             then:
                               - action: light.turn_on
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                                target: "{{ button_1_light }}"
                           - alias: turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in long_release_light_mode }}"
+                                value_template: "{{ 'turn_off' in button_1_long_release_light_mode }}"
                             then:
                               - action: light.turn_off
                                 data:
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  transition: "{{ button_1_transition }}"
+                                target: "{{ button_1_light }}"
                           - alias: toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in long_release_light_mode }}"
+                                value_template: "{{ 'toggle' in button_1_long_release_light_mode }}"
                             then:
                               - action: light.toggle
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                                target: "{{ button_1_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_1_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in long_release_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_1_long_release_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in long_release_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_1_long_release_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in long_release_media_mode }}"
+                                value_template: "{{ 'toggle' in button_1_long_release_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in long_release_media_mode }}"
+                                value_template: "{{ 'join' in button_1_long_release_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_1_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_1_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in long_release_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_1_long_release_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in long_release_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_1_long_release_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in long_release_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_1_long_release_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in long_release_media_control }}"
+                                value_template: "{{ 'volume_set' in button_1_long_release_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_1_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
               - alias: button_1_double
                 conditions: "{{ command == 'button_1_double_press' }}"
                 sequence:
@@ -1763,77 +1763,77 @@ actions:
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_1_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in double_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_1_double_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in double_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_1_double_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in double_media_mode }}"
+                                value_template: "{{ 'toggle' in button_1_double_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in double_media_mode }}"
+                                value_template: "{{ 'join' in button_1_double_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_1_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_1_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in double_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_1_double_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in double_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_1_double_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in double_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_1_double_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in double_media_control }}"
+                                value_template: "{{ 'volume_set' in button_1_double_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_1_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
               - alias: button_1_triple
                 conditions: "{{ command == 'button_1_triple_press' }}"
                 sequence:
@@ -1842,77 +1842,77 @@ actions:
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_1_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in triple_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_1_triple_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in triple_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_1_triple_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in triple_media_mode }}"
+                                value_template: "{{ 'toggle' in button_1_triple_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in triple_media_mode }}"
+                                value_template: "{{ 'join' in button_1_triple_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_1_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_1_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in triple_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_1_triple_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in triple_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_1_triple_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in triple_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_1_triple_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in triple_media_control }}"
+                                value_template: "{{ 'volume_set' in button_1_triple_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_1_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_1_media }}"
               - alias: button_1_quadruple
                 conditions: "{{ command == 'button_1_quadruple_press' }}"
                 sequence: !input button_1_quadruple
@@ -1927,34 +1927,34 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_1_light.entity_id | length > 0 or button_1_light.device_id | length > 0 or button_1_light.area_id | length > 0 }}"
                     then:
                       - alias: dim
                         if:
                           - condition: template
-                            value_template: "{{ 'dim' in rotate_light_mode }}"
+                            value_template: "{{ 'dim' in button_1_rotate_light_mode }}"
                         then:
                           - action: light.turn_on
                             data:
                               brightness_step: -{{ step_size }}
-                              transition: "{{ transition }}"
-                            target: "{{ light }}"
+                              transition: "{{ button_1_transition }}"
+                            target: "{{ button_1_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_1_media != [] }}"
                     then:
                       - alias: volume
                         if:
                           - condition: template
-                            value_template: "{{ 'volume' in rotate_media_mode }}"
+                            value_template: "{{ 'volume' in button_1_rotate_media_mode }}"
                         then:
                           sequence:
                             - action: media_player.volume_set
                               data:
-                                volume_level: "{% set new_volume = current_volume - ( (step_size / 8) / 100)%} {{ 0.0 if new_volume < 0.0 else new_volume }}"
+                                volume_level: "{% set button_1_new_volume = button_1_current_volume - ( (step_size / 8) / 100)%} {{ 0.0 if button_1_new_volume < 0.0 else button_1_new_volume }}"
                               target:
-                                entity_id: "{{ media }}"
+                                entity_id: "{{ button_1_media }}"
               - alias: button_1_rotate_right
                 conditions: "{{ command == 'step_with_on_off' and step_mode == 'StepMode.Up' and step_size != 255 and states(last_pressed) == '1' }}"
                 sequence:
@@ -1963,61 +1963,61 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_1_light.entity_id | length > 0 or button_1_light.device_id | length > 0 or button_1_light.area_id | length > 0 }}"
                     then:
                       - alias: dim
                         if:
                           - condition: template
-                            value_template: "{{ 'dim' in rotate_light_mode }}"
+                            value_template: "{{ 'dim' in button_1_rotate_light_mode }}"
                         then:
                           - action: light.turn_on
                             data:
                               brightness_step: "{{ step_size }}"
-                              transition: "{{ transition }}"
-                            target: "{{ light }}"
+                              transition: "{{ button_1_transition }}"
+                            target: "{{ button_1_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_1_media != [] }}"
                     then:
                       - alias: volume
                         if:
                           - condition: template
-                            value_template: "{{ 'volume' in rotate_media_mode }}"
+                            value_template: "{{ 'volume' in button_1_rotate_media_mode }}"
                         then:
                           sequence:
                             - action: media_player.volume_set
                               data:
-                                volume_level: "{% set new_volume = current_volume + ( (step_size / 8) / 100)%} {{ 1.0 if new_volume > 1.0 else new_volume }}"
+                                volume_level: "{% set button_1_new_volume = button_1_current_volume + ( (step_size / 8) / 100)%} {{ 1.0 if button_1_new_volume > 1.0 else button_1_new_volume }}"
                               target:
-                                entity_id: "{{ media }}"
+                                entity_id: "{{ button_1_media }}"
       - alias: Button 2
         sequence:
           - variables:
-              short_release_light_mode: !input button_2_short_release_light_mode
-              long_release_light_mode: !input button_2_long_release_light_mode
-              rotate_light_mode: !input button_2_rotate_light_mode
-              light: !input button_2_light
-              schedule: !input button_2_light_schedule
-              brightness_pct_input: !input button_2_light_brightness
-              brightness_pct: "{{ state_attr(schedule, 'brightness_pct') if schedule is defined and schedule != [] and state_attr(schedule, 'brightness_pct') is not none else brightness_pct_input }}"
-              color_temp_kelvin_input: !input button_2_light_color
-              color_temp_kelvin: "{{ state_attr(schedule, 'color_temp_kelvin') if schedule is defined and schedule != [] and state_attr(schedule, 'color_temp_kelvin') is not none else color_temp_kelvin_input }}"
-              transition_input: !input button_2_light_transition
-              transition: "{{ state_attr(schedule, 'transition') if schedule is defined and schedule != [] and state_attr(schedule, 'transition') is not none else transition_input }}"
-              short_release_media_mode: !input button_2_short_release_media_mode
-              short_release_media_control: !input button_2_short_release_media_control
-              long_release_media_mode: !input button_2_long_release_media_mode
-              long_release_media_control: !input button_2_long_release_media_control
-              double_media_mode: !input button_2_double_media_mode
-              double_media_control: !input button_2_double_media_control
-              triple_media_mode: !input button_2_triple_media_mode
-              triple_media_control: !input button_2_triple_media_control
-              rotate_media_mode: !input button_2_rotate_media_mode
-              media: !input button_2_media
-              media_leader: !input button_2_media_leader
-              volume: !input button_2_media_volume
-              current_volume: "{{ state_attr(media, 'volume_level') if media is defined and media != [] and state_attr(media, 'volume_level') is not none else volume }}"
+              button_2_short_release_light_mode: !input button_2_short_release_light_mode
+              button_2_long_release_light_mode: !input button_2_long_release_light_mode
+              button_2_rotate_light_mode: !input button_2_rotate_light_mode
+              button_2_light: !input button_2_light
+              button_2_schedule: !input button_2_light_schedule
+              button_2_brightness_pct_input: !input button_2_light_brightness
+              button_2_brightness_pct: "{{ state_attr(button_2_schedule, 'brightness_pct') if button_2_schedule is defined and button_2_schedule != [] and state_attr(button_2_schedule, 'brightness_pct') is not none else button_2_brightness_pct_input }}"
+              button_2_color_temp_kelvin_input: !input button_2_light_color
+              button_2_color_temp_kelvin: "{{ state_attr(button_2_schedule, 'color_temp_kelvin') if button_2_schedule is defined and button_2_schedule != [] and state_attr(button_2_schedule, 'color_temp_kelvin') is not none else button_2_color_temp_kelvin_input }}"
+              button_2_transition_input: !input button_2_light_transition
+              button_2_transition: "{{ state_attr(button_2_schedule, 'transition') if button_2_schedule is defined and button_2_schedule != [] and state_attr(button_2_schedule, 'transition') is not none else button_2_transition_input }}"
+              button_2_short_release_media_mode: !input button_2_short_release_media_mode
+              button_2_short_release_media_control: !input button_2_short_release_media_control
+              button_2_long_release_media_mode: !input button_2_long_release_media_mode
+              button_2_long_release_media_control: !input button_2_long_release_media_control
+              button_2_double_media_mode: !input button_2_double_media_mode
+              button_2_double_media_control: !input button_2_double_media_control
+              button_2_triple_media_mode: !input button_2_triple_media_mode
+              button_2_triple_media_control: !input button_2_triple_media_control
+              button_2_rotate_media_mode: !input button_2_rotate_media_mode
+              button_2_media: !input button_2_media
+              button_2_media_leader: !input button_2_media_leader
+              button_2_volume: !input button_2_media_volume
+              button_2_current_volume: "{{ state_attr(button_2_media, 'volume_level') if button_2_media is defined and button_2_media != [] and state_attr(button_2_media, 'volume_level') is not none else button_2_volume }}"
           - choose:
               - alias: button_2_press
                 conditions: "{{ command == 'button_2_press' }}"
@@ -2030,114 +2030,114 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_2_light.entity_id | length > 0 or button_2_light.device_id | length > 0 or button_2_light.area_id | length > 0 }}"
                     then:
                       - parallel:
                           - alias: turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in short_release_light_mode }}"
+                                value_template: "{{ 'turn_on' in button_2_short_release_light_mode }}"
                             then:
                               - action: light.turn_on
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                                target: "{{ button_2_light }}"
                           - alias: turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in short_release_light_mode }}"
+                                value_template: "{{ 'turn_off' in button_2_short_release_light_mode }}"
                             then:
                               - action: light.turn_off
                                 data:
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  transition: "{{ button_2_transition }}"
+                                target: "{{ button_2_light }}"
                           - alias: toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in short_release_light_mode }}"
+                                value_template: "{{ 'toggle' in button_2_short_release_light_mode }}"
                             then:
                               - action: light.toggle
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                                target: "{{ button_2_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_2_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in short_release_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_2_short_release_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in short_release_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_2_short_release_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in short_release_media_mode }}"
+                                value_template: "{{ 'toggle' in button_2_short_release_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in short_release_media_mode }}"
+                                value_template: "{{ 'join' in button_2_short_release_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_2_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_2_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in short_release_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_2_short_release_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in short_release_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_2_short_release_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in short_release_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_2_short_release_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in short_release_media_control }}"
+                                value_template: "{{ 'volume_set' in button_2_short_release_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_2_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
               - alias: button_2_hold
                 conditions: "{{ command == 'button_2_hold' }}"
                 sequence: !input button_2_hold
@@ -2149,114 +2149,114 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_2_light.entity_id | length > 0 or button_2_light.device_id | length > 0 or button_2_light.area_id | length > 0 }}"
                     then:
                       - parallel:
                           - alias: turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in long_release_light_mode }}"
+                                value_template: "{{ 'turn_on' in button_2_long_release_light_mode }}"
                             then:
                               - action: light.turn_on
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                                target: "{{ button_2_light }}"
                           - alias: turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in long_release_light_mode }}"
+                                value_template: "{{ 'turn_off' in button_2_long_release_light_mode }}"
                             then:
                               - action: light.turn_off
                                 data:
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  transition: "{{ button_2_transition }}"
+                                target: "{{ button_2_light }}"
                           - alias: toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in long_release_light_mode }}"
+                                value_template: "{{ 'toggle' in button_2_long_release_light_mode }}"
                             then:
                               - action: light.toggle
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                                target: "{{ button_2_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_2_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in long_release_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_2_long_release_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in long_release_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_2_long_release_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in long_release_media_mode }}"
+                                value_template: "{{ 'toggle' in button_2_long_release_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in long_release_media_mode }}"
+                                value_template: "{{ 'join' in button_2_long_release_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_2_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_2_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in long_release_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_2_long_release_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in long_release_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_2_long_release_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in long_release_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_2_long_release_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in long_release_media_control }}"
+                                value_template: "{{ 'volume_set' in button_2_long_release_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_2_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
               - alias: button_2_double
                 conditions: "{{ command == 'button_2_double_press' }}"
                 sequence:
@@ -2265,77 +2265,77 @@ actions:
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_2_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in double_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_2_double_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in double_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_2_double_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in double_media_mode }}"
+                                value_template: "{{ 'toggle' in button_2_double_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in double_media_mode }}"
+                                value_template: "{{ 'join' in button_2_double_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_2_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_2_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in double_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_2_double_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in double_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_2_double_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in double_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_2_double_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in double_media_control }}"
+                                value_template: "{{ 'volume_set' in button_2_double_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_2_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
               - alias: button_2_triple
                 conditions: "{{ command == 'button_2_triple_press' }}"
                 sequence:
@@ -2344,77 +2344,77 @@ actions:
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_2_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in triple_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_2_triple_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in triple_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_2_triple_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in triple_media_mode }}"
+                                value_template: "{{ 'toggle' in button_2_triple_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in triple_media_mode }}"
+                                value_template: "{{ 'join' in button_2_triple_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_2_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_2_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in triple_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_2_triple_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in triple_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_2_triple_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in triple_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_2_triple_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in triple_media_control }}"
+                                value_template: "{{ 'volume_set' in button_2_triple_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_2_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_2_media }}"
               - alias: button_2_quadruple
                 conditions: "{{ command == 'button_2_quadruple_press' }}"
                 sequence: !input button_2_quadruple
@@ -2429,34 +2429,34 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_2_light.entity_id | length > 0 or button_2_light.device_id | length > 0 or button_2_light.area_id | length > 0 }}"
                     then:
                       - alias: dim
                         if:
                           - condition: template
-                            value_template: "{{ 'dim' in rotate_light_mode }}"
+                            value_template: "{{ 'dim' in button_2_rotate_light_mode }}"
                         then:
                           - action: light.turn_on
                             data:
                               brightness_step: -{{ step_size }}
-                              transition: "{{ transition }}"
-                            target: "{{ light }}"
+                              transition: "{{ button_2_transition }}"
+                            target: "{{ button_2_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_2_media != [] }}"
                     then:
                       - alias: volume
                         if:
                           - condition: template
-                            value_template: "{{ 'volume' in rotate_media_mode }}"
+                            value_template: "{{ 'volume' in button_2_rotate_media_mode }}"
                         then:
                           sequence:
                             - action: media_player.volume_set
                               data:
-                                volume_level: "{% set new_volume = current_volume - ( (step_size / 8) / 100)%} {{ 0.0 if new_volume < 0.0 else new_volume }}"
+                                volume_level: "{% set button_2_new_volume = button_2_current_volume - ( (step_size / 8) / 100)%} {{ 0.0 if button_2_new_volume < 0.0 else button_2_new_volume }}"
                               target:
-                                entity_id: "{{ media }}"
+                                entity_id: "{{ button_2_media }}"
               - alias: button_2_rotate_right
                 conditions: "{{ command == 'step_with_on_off' and step_mode == 'StepMode.Up' and step_size != 255 and states(last_pressed) == '2' }}"
                 sequence:
@@ -2465,61 +2465,61 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_2_light.entity_id | length > 0 or button_2_light.device_id | length > 0 or button_2_light.area_id | length > 0 }}"
                     then:
                       - alias: dim
                         if:
                           - condition: template
-                            value_template: "{{ 'dim' in rotate_light_mode }}"
+                            value_template: "{{ 'dim' in button_2_rotate_light_mode }}"
                         then:
                           - action: light.turn_on
                             data:
                               brightness_step: "{{ step_size }}"
-                              transition: "{{ transition }}"
-                            target: "{{ light }}"
+                              transition: "{{ button_2_transition }}"
+                            target: "{{ button_2_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_2_media != [] }}"
                     then:
                       - alias: volume
                         if:
                           - condition: template
-                            value_template: "{{ 'volume' in rotate_media_mode }}"
+                            value_template: "{{ 'volume' in button_2_rotate_media_mode }}"
                         then:
                           sequence:
                             - action: media_player.volume_set
                               data:
-                                volume_level: "{% set new_volume = current_volume + ( (step_size / 8) / 100)%} {{ 1.0 if new_volume > 1.0 else new_volume }}"
+                                volume_level: "{% set button_2_new_volume = button_2_current_volume + ( (step_size / 8) / 100)%} {{ 2.0 if button_2_new_volume > 2.0 else button_2_new_volume }}"
                               target:
-                                entity_id: "{{ media }}"
+                                entity_id: "{{ button_2_media }}"
       - alias: Button 3
         sequence:
           - variables:
-              short_release_light_mode: !input button_3_short_release_light_mode
-              long_release_light_mode: !input button_3_long_release_light_mode
-              rotate_light_mode: !input button_3_rotate_light_mode
-              light: !input button_3_light
-              schedule: !input button_3_light_schedule
-              brightness_pct_input: !input button_3_light_brightness
-              brightness_pct: "{{ state_attr(schedule, 'brightness_pct') if schedule is defined and schedule != [] and state_attr(schedule, 'brightness_pct') is not none else brightness_pct_input }}"
-              color_temp_kelvin_input: !input button_3_light_color
-              color_temp_kelvin: "{{ state_attr(schedule, 'color_temp_kelvin') if schedule is defined and schedule != [] and state_attr(schedule, 'color_temp_kelvin') is not none else color_temp_kelvin_input }}"
-              transition_input: !input button_3_light_transition
-              transition: "{{ state_attr(schedule, 'transition') if schedule is defined and schedule != [] and state_attr(schedule, 'transition') is not none else transition_input }}"
-              short_release_media_mode: !input button_3_short_release_media_mode
-              short_release_media_control: !input button_3_short_release_media_control
-              long_release_media_mode: !input button_3_long_release_media_mode
-              long_release_media_control: !input button_3_long_release_media_control
-              double_media_mode: !input button_3_double_media_mode
-              double_media_control: !input button_3_double_media_control
-              triple_media_mode: !input button_3_triple_media_mode
-              triple_media_control: !input button_3_triple_media_control
-              rotate_media_mode: !input button_3_rotate_media_mode
-              media: !input button_3_media
-              media_leader: !input button_3_media_leader
-              volume: !input button_3_media_volume
-              current_volume: "{{ state_attr(media, 'volume_level') if media is defined and media != [] and state_attr(media, 'volume_level') is not none else volume }}"
+              button_3_short_release_light_mode: !input button_3_short_release_light_mode
+              button_3_long_release_light_mode: !input button_3_long_release_light_mode
+              button_3_rotate_light_mode: !input button_3_rotate_light_mode
+              button_3_light: !input button_3_light
+              button_3_schedule: !input button_3_light_schedule
+              button_3_brightness_pct_input: !input button_3_light_brightness
+              button_3_brightness_pct: "{{ state_attr(button_3_schedule, 'brightness_pct') if button_3_schedule is defined and button_3_schedule != [] and state_attr(button_3_schedule, 'brightness_pct') is not none else button_3_brightness_pct_input }}"
+              button_3_color_temp_kelvin_input: !input button_3_light_color
+              button_3_color_temp_kelvin: "{{ state_attr(button_3_schedule, 'color_temp_kelvin') if button_3_schedule is defined and button_3_schedule != [] and state_attr(button_3_schedule, 'color_temp_kelvin') is not none else button_3_color_temp_kelvin_input }}"
+              button_3_transition_input: !input button_3_light_transition
+              button_3_transition: "{{ state_attr(button_3_schedule, 'transition') if button_3_schedule is defined and button_3_schedule != [] and state_attr(button_3_schedule, 'transition') is not none else button_3_transition_input }}"
+              button_3_short_release_media_mode: !input button_3_short_release_media_mode
+              button_3_short_release_media_control: !input button_3_short_release_media_control
+              button_3_long_release_media_mode: !input button_3_long_release_media_mode
+              button_3_long_release_media_control: !input button_3_long_release_media_control
+              button_3_double_media_mode: !input button_3_double_media_mode
+              button_3_double_media_control: !input button_3_double_media_control
+              button_3_triple_media_mode: !input button_3_triple_media_mode
+              button_3_triple_media_control: !input button_3_triple_media_control
+              button_3_rotate_media_mode: !input button_3_rotate_media_mode
+              button_3_media: !input button_3_media
+              button_3_media_leader: !input button_3_media_leader
+              button_3_volume: !input button_3_media_volume
+              button_3_current_volume: "{{ state_attr(button_3_media, 'volume_level') if button_3_media is defined and button_3_media != [] and state_attr(button_3_media, 'volume_level') is not none else button_3_volume }}"
           - choose:
               - alias: button_3_press
                 conditions: "{{ command == 'button_3_press' }}"
@@ -2532,114 +2532,114 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_3_light.entity_id | length > 0 or button_3_light.device_id | length > 0 or button_3_light.area_id | length > 0 }}"
                     then:
                       - parallel:
                           - alias: turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in short_release_light_mode }}"
+                                value_template: "{{ 'turn_on' in button_3_short_release_light_mode }}"
                             then:
                               - action: light.turn_on
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                                target: "{{ button_3_light }}"
                           - alias: turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in short_release_light_mode }}"
+                                value_template: "{{ 'turn_off' in button_3_short_release_light_mode }}"
                             then:
                               - action: light.turn_off
                                 data:
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  transition: "{{ button_3_transition }}"
+                                target: "{{ button_3_light }}"
                           - alias: toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in short_release_light_mode }}"
+                                value_template: "{{ 'toggle' in button_3_short_release_light_mode }}"
                             then:
                               - action: light.toggle
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                                target: "{{ button_3_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_3_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in short_release_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_3_short_release_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in short_release_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_3_short_release_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in short_release_media_mode }}"
+                                value_template: "{{ 'toggle' in button_3_short_release_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in short_release_media_mode }}"
+                                value_template: "{{ 'join' in button_3_short_release_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_3_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_3_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in short_release_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_3_short_release_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in short_release_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_3_short_release_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in short_release_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_3_short_release_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in short_release_media_control }}"
+                                value_template: "{{ 'volume_set' in button_3_short_release_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_3_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
               - alias: button_3_hold
                 conditions: "{{ command == 'button_3_hold' }}"
                 sequence: !input button_3_hold
@@ -2651,114 +2651,114 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_3_light.entity_id | length > 0 or button_3_light.device_id | length > 0 or button_3_light.area_id | length > 0 }}"
                     then:
                       - parallel:
                           - alias: turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in long_release_light_mode }}"
+                                value_template: "{{ 'turn_on' in button_3_long_release_light_mode }}"
                             then:
                               - action: light.turn_on
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                                target: "{{ button_3_light }}"
                           - alias: turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in long_release_light_mode }}"
+                                value_template: "{{ 'turn_off' in button_3_long_release_light_mode }}"
                             then:
                               - action: light.turn_off
                                 data:
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  transition: "{{ button_3_transition }}"
+                                target: "{{ button_3_light }}"
                           - alias: toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in long_release_light_mode }}"
+                                value_template: "{{ 'toggle' in button_3_long_release_light_mode }}"
                             then:
                               - action: light.toggle
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                                target: "{{ button_3_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_3_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in long_release_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_3_long_release_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in long_release_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_3_long_release_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in long_release_media_mode }}"
+                                value_template: "{{ 'toggle' in button_3_long_release_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in long_release_media_mode }}"
+                                value_template: "{{ 'join' in button_3_long_release_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_3_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_3_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in long_release_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_3_long_release_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in long_release_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_3_long_release_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in long_release_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_3_long_release_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in long_release_media_control }}"
+                                value_template: "{{ 'volume_set' in button_3_long_release_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_3_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
               - alias: button_3_double
                 conditions: "{{ command == 'button_3_double_press' }}"
                 sequence:
@@ -2767,77 +2767,77 @@ actions:
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_3_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in double_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_3_double_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in double_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_3_double_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in double_media_mode }}"
+                                value_template: "{{ 'toggle' in button_3_double_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in double_media_mode }}"
+                                value_template: "{{ 'join' in button_3_double_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_3_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_3_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in double_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_3_double_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in double_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_3_double_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in double_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_3_double_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in double_media_control }}"
+                                value_template: "{{ 'volume_set' in button_3_double_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_3_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
               - alias: button_3_triple
                 conditions: "{{ command == 'button_3_triple_press' }}"
                 sequence:
@@ -2846,77 +2846,77 @@ actions:
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_3_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in triple_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_3_triple_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in triple_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_3_triple_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in triple_media_mode }}"
+                                value_template: "{{ 'toggle' in button_3_triple_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in triple_media_mode }}"
+                                value_template: "{{ 'join' in button_3_triple_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_3_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_3_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in triple_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_3_triple_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in triple_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_3_triple_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in triple_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_3_triple_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in triple_media_control }}"
+                                value_template: "{{ 'volume_set' in button_3_triple_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_3_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_3_media }}"
               - alias: button_3_quadruple
                 conditions: "{{ command == 'button_3_quadruple_press' }}"
                 sequence: !input button_3_quadruple
@@ -2931,34 +2931,34 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_3_light.entity_id | length > 0 or button_3_light.device_id | length > 0 or button_3_light.area_id | length > 0 }}"
                     then:
                       - alias: dim
                         if:
                           - condition: template
-                            value_template: "{{ 'dim' in rotate_light_mode }}"
+                            value_template: "{{ 'dim' in button_3_rotate_light_mode }}"
                         then:
                           - action: light.turn_on
                             data:
                               brightness_step: -{{ step_size }}
-                              transition: "{{ transition }}"
-                            target: "{{ light }}"
+                              transition: "{{ button_3_transition }}"
+                            target: "{{ button_3_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_3_media != [] }}"
                     then:
                       - alias: volume
                         if:
                           - condition: template
-                            value_template: "{{ 'volume' in rotate_media_mode }}"
+                            value_template: "{{ 'volume' in button_3_rotate_media_mode }}"
                         then:
                           sequence:
                             - action: media_player.volume_set
                               data:
-                                volume_level: "{% set new_volume = current_volume - ( (step_size / 8) / 100)%} {{ 0.0 if new_volume < 0.0 else new_volume }}"
+                                volume_level: "{% set button_3_new_volume = button_3_current_volume - ( (step_size / 8) / 100)%} {{ 0.0 if button_3_new_volume < 0.0 else button_3_new_volume }}"
                               target:
-                                entity_id: "{{ media }}"
+                                entity_id: "{{ button_3_media }}"
               - alias: button_3_rotate_right
                 conditions: "{{ command == 'step_with_on_off' and step_mode == 'StepMode.Up' and step_size != 255 and states(last_pressed) == '3' }}"
                 sequence:
@@ -2967,61 +2967,61 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_3_light.entity_id | length > 0 or button_3_light.device_id | length > 0 or button_3_light.area_id | length > 0 }}"
                     then:
                       - alias: dim
                         if:
                           - condition: template
-                            value_template: "{{ 'dim' in rotate_light_mode }}"
+                            value_template: "{{ 'dim' in button_3_rotate_light_mode }}"
                         then:
                           - action: light.turn_on
                             data:
                               brightness_step: "{{ step_size }}"
-                              transition: "{{ transition }}"
-                            target: "{{ light }}"
+                              transition: "{{ button_3_transition }}"
+                            target: "{{ button_3_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_3_media != [] }}"
                     then:
                       - alias: volume
                         if:
                           - condition: template
-                            value_template: "{{ 'volume' in rotate_media_mode }}"
+                            value_template: "{{ 'volume' in button_3_rotate_media_mode }}"
                         then:
                           sequence:
                             - action: media_player.volume_set
                               data:
-                                volume_level: "{% set new_volume = current_volume + ( (step_size / 8) / 100)%} {{ 1.0 if new_volume > 1.0 else new_volume }}"
+                                volume_level: "{% set button_3_new_volume = button_3_current_volume + ( (step_size / 8) / 100)%} {{ 3.0 if button_3_new_volume > 3.0 else button_3_new_volume }}"
                               target:
-                                entity_id: "{{ media }}"
+                                entity_id: "{{ button_3_media }}"
       - alias: Button 4
         sequence:
           - variables:
-              short_release_light_mode: !input button_4_short_release_light_mode
-              long_release_light_mode: !input button_4_long_release_light_mode
-              rotate_light_mode: !input button_4_rotate_light_mode
-              light: !input button_4_light
-              schedule: !input button_4_light_schedule
-              brightness_pct_input: !input button_4_light_brightness
-              brightness_pct: "{{ state_attr(schedule, 'brightness_pct') if schedule is defined and schedule != [] and state_attr(schedule, 'brightness_pct') is not none else brightness_pct_input }}"
-              color_temp_kelvin_input: !input button_4_light_color
-              color_temp_kelvin: "{{ state_attr(schedule, 'color_temp_kelvin') if schedule is defined and schedule != [] and state_attr(schedule, 'color_temp_kelvin') is not none else color_temp_kelvin_input }}"
-              transition_input: !input button_4_light_transition
-              transition: "{{ state_attr(schedule, 'transition') if schedule is defined and schedule != [] and state_attr(schedule, 'transition') is not none else transition_input }}"
-              short_release_media_mode: !input button_4_short_release_media_mode
-              short_release_media_control: !input button_4_short_release_media_control
-              long_release_media_mode: !input button_4_long_release_media_mode
-              long_release_media_control: !input button_4_long_release_media_control
-              double_media_mode: !input button_4_double_media_mode
-              double_media_control: !input button_4_double_media_control
-              triple_media_mode: !input button_4_triple_media_mode
-              triple_media_control: !input button_4_triple_media_control
-              rotate_media_mode: !input button_4_rotate_media_mode
-              media: !input button_4_media
-              media_leader: !input button_4_media_leader
-              volume: !input button_4_media_volume
-              current_volume: "{{ state_attr(media, 'volume_level') if media is defined and media != [] and state_attr(media, 'volume_level') is not none else volume }}"
+              button_4_short_release_light_mode: !input button_4_short_release_light_mode
+              button_4_long_release_light_mode: !input button_4_long_release_light_mode
+              button_4_rotate_light_mode: !input button_4_rotate_light_mode
+              button_4_light: !input button_4_light
+              button_4_schedule: !input button_4_light_schedule
+              button_4_brightness_pct_input: !input button_4_light_brightness
+              button_4_brightness_pct: "{{ state_attr(button_4_schedule, 'brightness_pct') if button_4_schedule is defined and button_4_schedule != [] and state_attr(button_4_schedule, 'brightness_pct') is not none else button_4_brightness_pct_input }}"
+              button_4_color_temp_kelvin_input: !input button_4_light_color
+              button_4_color_temp_kelvin: "{{ state_attr(button_4_schedule, 'color_temp_kelvin') if button_4_schedule is defined and button_4_schedule != [] and state_attr(button_4_schedule, 'color_temp_kelvin') is not none else button_4_color_temp_kelvin_input }}"
+              button_4_transition_input: !input button_4_light_transition
+              button_4_transition: "{{ state_attr(button_4_schedule, 'transition') if button_4_schedule is defined and button_4_schedule != [] and state_attr(button_4_schedule, 'transition') is not none else button_4_transition_input }}"
+              button_4_short_release_media_mode: !input button_4_short_release_media_mode
+              button_4_short_release_media_control: !input button_4_short_release_media_control
+              button_4_long_release_media_mode: !input button_4_long_release_media_mode
+              button_4_long_release_media_control: !input button_4_long_release_media_control
+              button_4_double_media_mode: !input button_4_double_media_mode
+              button_4_double_media_control: !input button_4_double_media_control
+              button_4_triple_media_mode: !input button_4_triple_media_mode
+              button_4_triple_media_control: !input button_4_triple_media_control
+              button_4_rotate_media_mode: !input button_4_rotate_media_mode
+              button_4_media: !input button_4_media
+              button_4_media_leader: !input button_4_media_leader
+              button_4_volume: !input button_4_media_volume
+              button_4_current_volume: "{{ state_attr(button_4_media, 'volume_level') if button_4_media is defined and button_4_media != [] and state_attr(button_4_media, 'volume_level') is not none else button_4_volume }}"
           - choose:
               - alias: button_4_press
                 conditions: "{{ command == 'button_4_press' }}"
@@ -3034,114 +3034,114 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_4_light.entity_id | length > 0 or button_4_light.device_id | length > 0 or button_4_light.area_id | length > 0 }}"
                     then:
                       - parallel:
                           - alias: turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in short_release_light_mode }}"
+                                value_template: "{{ 'turn_on' in button_4_short_release_light_mode }}"
                             then:
                               - action: light.turn_on
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                                target: "{{ button_4_light }}"
                           - alias: turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in short_release_light_mode }}"
+                                value_template: "{{ 'turn_off' in button_4_short_release_light_mode }}"
                             then:
                               - action: light.turn_off
                                 data:
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  transition: "{{ button_4_transition }}"
+                                target: "{{ button_4_light }}"
                           - alias: toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in short_release_light_mode }}"
+                                value_template: "{{ 'toggle' in button_4_short_release_light_mode }}"
                             then:
                               - action: light.toggle
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                                target: "{{ button_4_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_4_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in short_release_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_4_short_release_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in short_release_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_4_short_release_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in short_release_media_mode }}"
+                                value_template: "{{ 'toggle' in button_4_short_release_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in short_release_media_mode }}"
+                                value_template: "{{ 'join' in button_4_short_release_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_4_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_4_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in short_release_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_4_short_release_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in short_release_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_4_short_release_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in short_release_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_4_short_release_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in short_release_media_control }}"
+                                value_template: "{{ 'volume_set' in button_4_short_release_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_4_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
               - alias: button_4_hold
                 conditions: "{{ command == 'button_4_hold' }}"
                 sequence: !input button_4_hold
@@ -3153,114 +3153,114 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_4_light.entity_id | length > 0 or button_4_light.device_id | length > 0 or button_4_light.area_id | length > 0 }}"
                     then:
                       - parallel:
                           - alias: turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in long_release_light_mode }}"
+                                value_template: "{{ 'turn_on' in button_4_long_release_light_mode }}"
                             then:
                               - action: light.turn_on
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                                target: "{{ button_4_light }}"
                           - alias: turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in long_release_light_mode }}"
+                                value_template: "{{ 'turn_off' in button_4_long_release_light_mode }}"
                             then:
                               - action: light.turn_off
                                 data:
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  transition: "{{ button_4_transition }}"
+                                target: "{{ button_4_light }}"
                           - alias: toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in long_release_light_mode }}"
+                                value_template: "{{ 'toggle' in button_4_long_release_light_mode }}"
                             then:
                               - action: light.toggle
                                 data:
-                                  brightness_pct: "{{ brightness_pct }}"
-                                  color_temp_kelvin: "{{ color_temp_kelvin }}"
-                                  transition: "{{ transition }}"
-                                target: "{{ light }}"
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                                target: "{{ button_4_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_4_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in long_release_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_4_long_release_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in long_release_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_4_long_release_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in long_release_media_mode }}"
+                                value_template: "{{ 'toggle' in button_4_long_release_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in long_release_media_mode }}"
+                                value_template: "{{ 'join' in button_4_long_release_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_4_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_4_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in long_release_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_4_long_release_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in long_release_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_4_long_release_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in long_release_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_4_long_release_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in long_release_media_control }}"
+                                value_template: "{{ 'volume_set' in button_4_long_release_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_4_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
               - alias: button_4_double
                 conditions: "{{ command == 'button_4_double_press' }}"
                 sequence:
@@ -3269,77 +3269,77 @@ actions:
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_4_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in double_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_4_double_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in double_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_4_double_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in double_media_mode }}"
+                                value_template: "{{ 'toggle' in button_4_double_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in double_media_mode }}"
+                                value_template: "{{ 'join' in button_4_double_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_4_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_4_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in double_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_4_double_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in double_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_4_double_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in double_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_4_double_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in double_media_control }}"
+                                value_template: "{{ 'volume_set' in button_4_double_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_4_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
               - alias: button_4_triple
                 conditions: "{{ command == 'button_4_triple_press' }}"
                 sequence:
@@ -3348,77 +3348,77 @@ actions:
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_4_media != [] }}"
                     then:
                       - parallel:
                           - alias: media_player.turn_on
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_on' in triple_media_mode }}"
+                                value_template: "{{ 'turn_on' in button_4_triple_media_mode }}"
                             then:
                               - action: media_player.turn_on
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.turn_off
                             if:
                               - condition: template
-                                value_template: "{{ 'turn_off' in triple_media_mode }}"
+                                value_template: "{{ 'turn_off' in button_4_triple_media_mode }}"
                             then:
                               - action: media_player.turn_off
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.toggle
                             if:
                               - condition: template
-                                value_template: "{{ 'toggle' in triple_media_mode }}"
+                                value_template: "{{ 'toggle' in button_4_triple_media_mode }}"
                             then:
                               - action: media_player.toggle
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.join
                             if:
                               - condition: template
-                                value_template: "{{ 'join' in triple_media_mode }}"
+                                value_template: "{{ 'join' in button_4_triple_media_mode }}"
                             then:
                               - action: media_player.join
                                 data:
-                                  group_members: "{{ media }}"
+                                  group_members: "{{ button_4_media }}"
                                 target:
-                                  entity_id: "{{ media_leader }}"
+                                  entity_id: "{{ button_4_media_leader }}"
                           - alias: media_player.unjoin
                             if:
                               - condition: template
-                                value_template: "{{ 'unjoin' in triple_media_mode }}"
+                                value_template: "{{ 'unjoin' in button_4_triple_media_mode }}"
                             then:
                               - action: media_player.unjoin
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.media_previous_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_previous_track' in triple_media_control }}"
+                                value_template: "{{ 'media_previous_track' in button_4_triple_media_control }}"
                             then:
                               - action: media_player.media_previous_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.media_next_track
                             if:
                               - condition: template
-                                value_template: "{{ 'media_next_track' in triple_media_control }}"
+                                value_template: "{{ 'media_next_track' in button_4_triple_media_control }}"
                             then:
                               - action: media_player.media_next_track
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
                           - alias: media_player.volume_set
                             if:
                               - condition: template
-                                value_template: "{{ 'volume_set' in triple_media_control }}"
+                                value_template: "{{ 'volume_set' in button_4_triple_media_control }}"
                             then:
                               - action: media_player.volume_set
                                 data:
-                                  volume_level: "{{( volume / 100 )}}"
+                                  volume_level: "{{( button_4_volume / 100 )}}"
                                 target:
-                                  entity_id: "{{ media }}"
+                                  entity_id: "{{ button_4_media }}"
               - alias: button_4_quadruple
                 conditions: "{{ command == 'button_4_quadruple_press' }}"
                 sequence: !input button_4_quadruple
@@ -3433,34 +3433,34 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_4_light.entity_id | length > 0 or button_4_light.device_id | length > 0 or button_4_light.area_id | length > 0 }}"
                     then:
                       - alias: dim
                         if:
                           - condition: template
-                            value_template: "{{ 'dim' in rotate_light_mode }}"
+                            value_template: "{{ 'dim' in button_4_rotate_light_mode }}"
                         then:
                           - action: light.turn_on
                             data:
                               brightness_step: -{{ step_size }}
-                              transition: "{{ transition }}"
-                            target: "{{ light }}"
+                              transition: "{{ button_4_transition }}"
+                            target: "{{ button_4_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_4_media != [] }}"
                     then:
                       - alias: volume
                         if:
                           - condition: template
-                            value_template: "{{ 'volume' in rotate_media_mode }}"
+                            value_template: "{{ 'volume' in button_4_rotate_media_mode }}"
                         then:
                           sequence:
                             - action: media_player.volume_set
                               data:
-                                volume_level: "{% set new_volume = current_volume - ( (step_size / 8) / 100)%} {{ 0.0 if new_volume < 0.0 else new_volume }}"
+                                volume_level: "{% set button_4_new_volume = button_4_current_volume - ( (step_size / 8) / 100)%} {{ 0.0 if button_4_new_volume < 0.0 else button_4_new_volume }}"
                               target:
-                                entity_id: "{{ media }}"
+                                entity_id: "{{ button_4_media }}"
               - alias: button_4_rotate_right
                 conditions: "{{ command == 'step_with_on_off' and step_mode == 'StepMode.Up' and step_size != 255 and states(last_pressed) == '4' }}"
                 sequence:
@@ -3469,31 +3469,31 @@ actions:
                   - alias: Light Mode
                     if:
                       - condition: template
-                        value_template: "{{ light.entity_id | length > 0 or light.device_id | length > 0 or light.area_id | length > 0 }}"
+                        value_template: "{{ button_4_light.entity_id | length > 0 or button_4_light.device_id | length > 0 or button_4_light.area_id | length > 0 }}"
                     then:
                       - alias: dim
                         if:
                           - condition: template
-                            value_template: "{{ 'dim' in rotate_light_mode }}"
+                            value_template: "{{ 'dim' in button_4_rotate_light_mode }}"
                         then:
                           - action: light.turn_on
                             data:
                               brightness_step: "{{ step_size }}"
-                              transition: "{{ transition }}"
-                            target: "{{ light }}"
+                              transition: "{{ button_4_transition }}"
+                            target: "{{ button_4_light }}"
                   - alias: Media Mode
                     if:
                       - condition: template
-                        value_template: "{{ media != [] }}"
+                        value_template: "{{ button_4_media != [] }}"
                     then:
                       - alias: volume
                         if:
                           - condition: template
-                            value_template: "{{ 'volume' in rotate_media_mode }}"
+                            value_template: "{{ 'volume' in button_4_rotate_media_mode }}"
                         then:
                           sequence:
                             - action: media_player.volume_set
                               data:
-                                volume_level: "{% set new_volume = current_volume + ( (step_size / 8) / 100)%} {{ 1.0 if new_volume > 1.0 else new_volume }}"
+                                volume_level: "{% set button_4_new_volume = button_4_current_volume + ( (step_size / 8) / 100)%} {{ 4.0 if button_4_new_volume > 4.0 else button_4_new_volume }}"
                               target:
-                                entity_id: "{{ media }}"
+                                entity_id: "{{ button_4_media }}"
