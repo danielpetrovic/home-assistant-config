@@ -29,8 +29,7 @@ blueprint:
       description:
         Create an input text helper within Home Assistant to keep track
         of the last button pressed. This will facilitate implementing different rotation
-        actions based on the last button pressed. **Each switch requires a unique
-        helper!**
+        actions based on the last button pressed. **Each switch requires a unique helper!**
       selector:
         entity:
           filter:
