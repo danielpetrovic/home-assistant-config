@@ -811,7 +811,7 @@ actions:
             id: alarm_main
         sequence:
           - variables:
-              arm_action: |
+              arm_action_keypad: |
                 {% if is_state(alarm_main, 'armed_away') %}
                   alarm_control_panel.alarm_arm_away
                 {% elif is_state(alarm_main, 'armed_home') %}
@@ -827,7 +827,7 @@ actions:
                 {% elif is_state(alarm_main, 'triggered') %}
                   alarm_control_panel.alarm_trigger
                 {% endif %}
-          - action: "{{ arm_action }}"
+          - action: "{{ arm_action_keypad }}"
             data:
               code: "{{ alarm_code_keypad_state }}"
             target:

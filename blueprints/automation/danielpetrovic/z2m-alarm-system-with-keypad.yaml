@@ -797,7 +797,7 @@ actions:
             id: alarm_main
         sequence:
           - variables:
-              arm_action: |
+              arm_action_keypad: |
                 {% if is_state(alarm_main, 'armed_away') %}
                   {  "arm_mode":   {    "mode": "arm_all_zones"  }}
                 {% elif is_state(alarm_main, 'armed_home') %}
@@ -816,7 +816,7 @@ actions:
           - action: mqtt.publish
             data:
               topic: "{{ base_topic ~ '/' ~ alarm_keypad ~ '/set' }}"
-              payload: "{{ arm_action }}"
+              payload: "{{ arm_action_keypad }}"
       - alias: Alarm Keypad to Alarm Main sync
         conditions:
           - condition: trigger
