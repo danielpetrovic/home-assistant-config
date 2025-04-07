@@ -1587,13 +1587,13 @@ lights_green:
       snapshot_entities:
       - light.badkamer_lamp
       - light.eettafel_lamp_onder
+      - light.entree_lamp
       - light.gameroom_lamp_onder
       - light.gang_lamp
       - light.kantoor_lamp
       - light.schuur_lamp_werkbank
       - light.slaapkamer_alex_lamp
       - light.slaapkamer_deni_lamp
-      - light.toilet_lamp
       - light.woonkamer_lamp_onder
   - alias: Lights green, flash long
     action: light.turn_on
@@ -1649,13 +1649,13 @@ lights_blue:
       snapshot_entities:
       - light.badkamer_lamp
       - light.eettafel_lamp_onder
+      - light.entree_lamp
       - light.gameroom_lamp_onder
       - light.gang_lamp
       - light.kantoor_lamp
       - light.schuur_lamp_werkbank
       - light.slaapkamer_alex_lamp
       - light.slaapkamer_deni_lamp
-      - light.toilet_lamp
       - light.woonkamer_lamp_onder
   - action: light.turn_on
     alias: Lights blue, flash long
@@ -1711,13 +1711,13 @@ lights_red:
       snapshot_entities:
       - light.badkamer_lamp
       - light.eettafel_lamp_onder
+      - light.entree_lamp
       - light.gameroom_lamp_onder
       - light.gang_lamp
       - light.kantoor_lamp
       - light.schuur_lamp_werkbank
       - light.slaapkamer_alex_lamp
       - light.slaapkamer_deni_lamp
-      - light.toilet_lamp
       - light.woonkamer_lamp_onder
   - action: light.turn_on
     alias: Lights red, flash long
@@ -1773,13 +1773,13 @@ lights_orange:
       snapshot_entities:
       - light.badkamer_lamp
       - light.eettafel_lamp_onder
+      - light.entree_lamp
       - light.gameroom_lamp_onder
       - light.gang_lamp
       - light.kantoor_lamp
       - light.schuur_lamp_werkbank
       - light.slaapkamer_alex_lamp
       - light.slaapkamer_deni_lamp
-      - light.toilet_lamp
       - light.woonkamer_lamp_onder
   - action: light.turn_on
     alias: Lights orange, flash long
@@ -1826,3 +1826,21 @@ lights_orange:
   alias: Lights - Orange
   description: ''
   icon: mdi:alarm-light
+alarm_disarmed:
+  sequence:
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.entree_sirene_alarm_state
+  alias: Alarm Disarmed
+  description: ''
+alarm_pending:
+  sequence:
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.entree_sirene_alarm_state
+  alias: Alarm Pending
+  description: ''
