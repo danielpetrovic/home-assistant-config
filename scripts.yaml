@@ -814,11 +814,6 @@ schuur_dicht:
       - input_boolean.schuur_open
       - input_boolean.schuur_loopad_open
       - input_boolean.schuur_tuin_open
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.schuur_dicht
   - action: cover.close_cover
     data: {}
     metadata: {}
@@ -826,6 +821,13 @@ schuur_dicht:
       entity_id:
       - cover.schuur_looppad_rolluik
       - cover.schuur_tuin_rolluik
+  - action: light.turn_off
+    data: {}
+    metadata: {}
+    target:
+      entity_id:
+      - light.schuur
+      - light.tuin
   - if:
     - condition: state
       entity_id: binary_sensor.tuin_deursensor_contact
@@ -859,13 +861,6 @@ schuur_dicht:
         entity_id: scene.tuin_before
       data: {}
       action: scene.delete
-  - action: light.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - light.schuur_lampen
-      - light.tuin_lampen
   description: ''
   icon: mdi:window-shutter
 schuur_open:
@@ -879,13 +874,6 @@ schuur_open:
       - input_boolean.schuur_dicht
       - input_boolean.schuur_loopad_open
       - input_boolean.schuur_tuin_open
-  - metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - cover.schuur_looppad_rolluik
-      - cover.schuur_tuin_rolluik
-    action: cover.open_cover
   - action: light.turn_on
     data:
       brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
@@ -895,8 +883,15 @@ schuur_open:
     metadata: {}
     target:
       entity_id:
-      - light.schuur_lampen
-      - light.tuin_lampen
+      - light.schuur
+      - light.tuin
+  - metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - cover.schuur_looppad_rolluik
+      - cover.schuur_tuin_rolluik
+    action: cover.open_cover
   - action: scene.create
     data:
       scene_id: tuin_before
@@ -924,11 +919,17 @@ schuur_looppad_open:
       - input_boolean.schuur_dicht
       - input_boolean.schuur_open
       - input_boolean.schuur_tuin_open
-  - action: input_boolean.turn_on
+  - action: light.turn_on
+    data:
+      brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+        }}'
+      color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+        }}'
+    metadata: {}
     target:
       entity_id:
-      - input_boolean.schuur_loopad_open
-    data: {}
+      - light.schuur
+      - light.tuin
   - action: cover.open_cover
     data: {}
     metadata: {}
@@ -954,17 +955,6 @@ schuur_looppad_open:
     metadata: {}
     target:
       entity_id: input_boolean.tuin_open
-  - action: light.turn_on
-    data:
-      brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-        }}'
-      color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-        }}'
-    metadata: {}
-    target:
-      entity_id:
-      - light.schuur_lampen
-      - light.tuin_lampen
   description: ''
   icon: mdi:window-shutter-cog
 schuur_tuin_open:
@@ -978,12 +968,17 @@ schuur_tuin_open:
       - input_boolean.schuur_dicht
       - input_boolean.schuur_open
       - input_boolean.schuur_loopad_open
-  - action: input_boolean.turn_on
+  - action: light.turn_on
+    data:
+      brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+        }}'
+      color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+        }}'
     metadata: {}
-    data: {}
     target:
       entity_id:
-      - input_boolean.schuur_tuin_open
+      - light.schuur
+      - light.tuin
   - action: cover.open_cover
     data: {}
     metadata: {}
@@ -1010,17 +1005,6 @@ schuur_tuin_open:
     metadata: {}
     target:
       entity_id: input_boolean.tuin_open
-  - action: light.turn_on
-    data:
-      brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-        }}'
-      color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-        }}'
-    metadata: {}
-    target:
-      entity_id:
-      - light.schuur_lampen
-      - light.tuin_lampen
   description: ''
   icon: mdi:window-shutter-settings
 slaapkamer_dicht:
@@ -1844,3 +1828,34 @@ alarm_pending:
       entity_id: switch.entree_sirene_alarm_state
   alias: Alarm Pending
   description: ''
+media_voordeur_bel:
+  sequence:
+  - action: media_player.media_pause
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - media_player.hub
+      - media_player.woonkamer
+  - wait_for_trigger:
+    - trigger: state
+      entity_id:
+      - binary_sensor.entree_deursensor_contact
+      from: 'on'
+      to: 'off'
+    continue_on_timeout: true
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - action: media_player.media_play
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - media_player.hub
+      - media_player.woonkamer
+  alias: Media - Voordeur Bel
+  description: ''
+  icon: mdi:multimedia
