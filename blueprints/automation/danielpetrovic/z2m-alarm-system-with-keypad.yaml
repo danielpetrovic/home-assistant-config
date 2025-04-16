@@ -13,7 +13,7 @@ blueprint:
   source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/z2m-alarm-system-with-keypad.yaml
   input:
     alarm_main:
-      name: Set your Primary Alarm Control Panel.
+      name: Set your Primary Alarm Control Panel
       icon: mdi:dialpad
       collapsed: false
       input:
@@ -36,7 +36,7 @@ blueprint:
                     - input_text
               multiple: true
     alarm_keypad:
-      name: Set your Z2M Keypad.
+      name: Set your Z2M Keypad
       icon: mdi:dialpad
       collapsed: false
       input:
@@ -53,7 +53,7 @@ blueprint:
           selector:
             text:
     alarm_notifications:
-      name: Here you can set which devices should receive the text notifications and/or audio announcements.
+      name: Here you can set which devices should receive the text notifications and/or audio announcements
       icon: mdi:bell-ring
       collapsed: true
       input:
@@ -85,7 +85,7 @@ blueprint:
                     - media_player
               multiple: true
     alarm_mode_away:
-      name: Settings for when the alarm is set to Away mode.
+      name: Settings for when the alarm is set to Away mode
       icon: mdi:shield-lock
       collapsed: true
       input:
@@ -148,7 +148,7 @@ blueprint:
                     - camera
               multiple: false
     alarm_mode_home:
-      name: Settings for when the alarm is set to Home mode.
+      name: Settings for when the alarm is set to Home mode
       icon: mdi:shield-home
       collapsed: true
       input:
@@ -211,7 +211,7 @@ blueprint:
                     - camera
               multiple: false
     alarm_mode_night:
-      name: Settings for when the alarm is set to Night mode.
+      name: Settings for when the alarm is set to Night mode
       icon: mdi:shield-moon
       collapsed: true
       input:
@@ -427,8 +427,55 @@ blueprint:
                 - domain:
                     - camera
               multiple: false
+    alarm_mode_emergency:
+      name: Settings for when Emergency mode of the Keypad is activated
+      description: "It is activated by long pressing the SOS button on the Keypad, no pin needed. There is no link to the Alarm Control Panel as it doesn't support an Emergency state, you can choose to add scripts to do whatever you want, when this is activated."
+      icon: mdi:shield-star
+      collapsed: true
+      input:
+        alarm_notifications_emergency:
+          name: Notification
+          default: Emergency mode activated!
+          description: Here you can set the notification to be sent when the Emergency mode is activated.
+          selector:
+            text:
+        alarm_notifications_priority_emergency:
+          name: Notification Priority
+          default: normal
+          description: Here you can set the priority of the notifications for this mode. If you do not select any of the options here, it will not send any notificatino for this mode.
+          selector:
+            select:
+              options:
+                - label: "Normal for all devices"
+                  value: normal
+                - label: "Critical for Android devices"
+                  value: critical_android
+                - label: "Critical for Apple devices"
+                  value: critical_apple
+              custom_value: false
+              multiple: true
+        alarm_scripts_emergency:
+          name: Scripts
+          default: []
+          description: Scripts to run when the Emergency mode is activated. They will run at the same time, so the order doesn't matter.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - script
+              multiple: true
+        alarm_camera_emergency:
+          name: Camera
+          default: []
+          description: Camera to show in notification when the Emergency mode is activated. If not set it will just show the notification with the actions.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - camera
+              multiple: false
     alarm_mode_always:
-      name: Settings for actions not tied to the alarm status.
+      name: Settings for actions not tied to the alarm status
       icon: mdi:shield
       collapsed: true
       input:
@@ -491,7 +538,7 @@ blueprint:
                     - camera
               multiple: false
     alarm_mode_fire:
-      name: Settings for Fire, Smoke and Heat detections.
+      name: Settings for Fire, Smoke and Heat detections
       icon: mdi:fire-alert
       collapsed: true
       input:
@@ -550,7 +597,7 @@ blueprint:
                     - camera
               multiple: false
     alarm_mode_gas:
-      name: Settings for Carbon Monoxide and Gas detections.
+      name: Settings for Carbon Monoxide and Gas detections
       icon: mdi:smoke-detector-alert
       collapsed: true
       input:
@@ -609,7 +656,7 @@ blueprint:
                     - camera
               multiple: false
     alarm_mode_moisture:
-      name: Settings for Moisture detections.
+      name: Settings for Moisture detections
       icon: mdi:water-alert
       collapsed: true
       input:
@@ -763,6 +810,8 @@ variables:
   alarm_notifications_priority_triggered: !input alarm_notifications_priority_triggered
   alarm_notifications_disarmed: !input alarm_notifications_disarmed
   alarm_notifications_priority_disarmed: !input alarm_notifications_priority_disarmed
+  alarm_notifications_emergency: !input alarm_notifications_emergency
+  alarm_notifications_priority_emergency: !input alarm_notifications_priority_emergency
   alarm_notifications_always: !input alarm_notifications_always
   alarm_notifications_priority_always: !input alarm_notifications_priority_always
   alarm_notifications_fire: !input alarm_notifications_fire
@@ -781,6 +830,7 @@ variables:
   alarm_scripts_arming: !input alarm_scripts_arming
   alarm_scripts_pending: !input alarm_scripts_pending
   alarm_scripts_triggered: !input alarm_scripts_triggered
+  alarm_scripts_emergency: !input alarm_scripts_emergency
   alarm_scripts_always: !input alarm_scripts_always
   alarm_scripts_fire: !input alarm_scripts_fire
   alarm_scripts_gas: !input alarm_scripts_gas
@@ -1845,6 +1895,113 @@ actions:
                         cache: true
                         media_player_entity_id: "{{ alarm_announcements_player }}"
                         message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
+                      target:
+                        entity_id: "{{ alarm_announcements_engine }}"
+  - alias: Keypad Emergency Mode
+    choose:
+      - alias: Alarm Keypad
+        conditions:
+          - condition: trigger
+            id: alarm_keypad
+          - condition: template
+            value_template: "{{ trigger.payload_json.action == 'emergency' }}"
+        sequence:
+          - action: script.turn_on
+            target:
+              entity_id: "{{ alarm_scripts_emergency }}"
+          - alias: Notify
+            if:
+              - condition: template
+                value_template: "{{ alarm_notifications_priority_emergency is defined }}"
+            then:
+              - parallel:
+                  - alias: Notify Normal
+                    if:
+                      - condition: template
+                        value_template: "{{ 'normal' in alarm_notifications_priority_emergency }}"
+                    then:
+                      repeat:
+                        for_each: !input alarm_notifications_target
+                        sequence:
+                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                            data:
+                              message: "{{ alarm_notifications_emergency }}"
+                              data:
+                                actions:
+                                  - action: disarm
+                                    title: Alarm Disarm
+                                    icon: "sfsymbols:bell.slash"
+                                  - action: arm_home
+                                    title: Alarm Home
+                                    icon: "sfsymbols:bell.fill"
+                                  - action: arm_night
+                                    title: Alarm Night
+                                    icon: "sfsymbols:bell"
+                                entity_id: !input alarm_camera_emergency
+                  - alias: Notify Critical Android
+                    if:
+                      - condition: template
+                        value_template: "{{ 'critical_android' in alarm_notifications_priority_emergency }}"
+                    then:
+                      repeat:
+                        for_each: !input alarm_notifications_target
+                        sequence:
+                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                            data:
+                              message: "{{ alarm_notifications_emergency }}"
+                              data:
+                                actions:
+                                  - action: disarm
+                                    title: Alarm Disarm
+                                    icon: "sfsymbols:bell.slash"
+                                  - action: arm_home
+                                    title: Alarm Home
+                                    icon: "sfsymbols:bell.fill"
+                                  - action: arm_night
+                                    title: Alarm Night
+                                    icon: "sfsymbols:bell"
+                                entity_id: !input alarm_camera_emergency
+                                channel: alarm_stream
+                                priority: high
+                                ttl: 0
+                  - alias: Notify Critical Apple
+                    if:
+                      - condition: template
+                        value_template: "{{ 'critical_apple' in alarm_notifications_priority_emergency }}"
+                    then:
+                      repeat:
+                        for_each: !input alarm_notifications_target
+                        sequence:
+                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                            data:
+                              message: "{{ alarm_notifications_emergency }}"
+                              data:
+                                actions:
+                                  - action: disarm
+                                    title: Alarm Disarm
+                                    icon: "sfsymbols:bell.slash"
+                                  - action: arm_home
+                                    title: Alarm Home
+                                    icon: "sfsymbols:bell.fill"
+                                  - action: arm_night
+                                    title: Alarm Night
+                                    icon: "sfsymbols:bell"
+                                entity_id: !input alarm_camera_emergency
+                                push:
+                                  sound:
+                                    name: default
+                                    critical: 1
+                                    volume: 1
+                  - alias: Announce
+                    if:
+                      - condition: template
+                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
+                    then:
+                      action: tts.speak
+                      data:
+                        cache: true
+                        media_player_entity_id: "{{ alarm_announcements_player }}"
+                        message: "{{ alarm_notifications_emergency }}"
                       target:
                         entity_id: "{{ alarm_announcements_engine }}"
   - alias: Sensor Scripts
