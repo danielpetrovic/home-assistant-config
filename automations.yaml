@@ -5189,6 +5189,7 @@
       - media_player.meterkast
       alarm_scripts_pending:
       - script.alarm_pending
+      alarm_notifications_emergency: SOS knop is ingedrukt!
 - id: '1739747155876'
   alias: Alarm - Geofence
   description: ''
