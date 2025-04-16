@@ -1454,6 +1454,17 @@ woonkamer_zomer:
   icon: mdi:window-shutter-settings
 music_away:
   sequence:
+  - action: media_player.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - media_player.badkamer
+      - media_player.gameroom
+      - media_player.kantoor
+      - media_player.keuken
+      - media_player.sauna
+      - media_player.slaapkamer
   - action: input_select.select_option
     data:
       option: Uit
