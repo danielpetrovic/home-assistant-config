@@ -3,6 +3,9 @@
 /.storage
 /@eaDir
 /addons_config
+/custom_components/hacs
+/custom_components/kef_connector
+/custom_components/truenas
 /image
 /tts
 /zigbee2mqtt
