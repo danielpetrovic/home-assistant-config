@@ -10,17 +10,11 @@ dakterras_dicht:
       - input_boolean.dakterras_winter
       - input_boolean.dakterras_zomer
     enabled: true
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.dakterras_dicht
-    enabled: false
   - alias: Deur open?
     choose:
     - conditions:
       - condition: state
-        entity_id: binary_sensor.dakterras_deursensor_contact
+        entity_id: binary_sensor.dakterras_deursensor
         state: 'off'
       sequence:
       - action: cover.close_cover
@@ -32,15 +26,27 @@ dakterras_dicht:
           - cover.dakterras_rolluik
     - conditions:
       - condition: state
-        entity_id: binary_sensor.dakterras_deursensor_contact
+        entity_id: binary_sensor.dakterras_deursensor
         state: 'on'
       sequence:
       - wait_for_trigger:
         - entity_id:
-          - binary_sensor.dakterras_deursensor_contact
+          - binary_sensor.dakterras_deursensor
           to: 'off'
           trigger: state
         continue_on_timeout: true
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.dakterras_gordijn
+          - cover.dakterras_rolluik
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.dakterras_deursensor
+        state: unavailable
+      sequence:
       - action: cover.close_cover
         data: {}
         metadata: {}
@@ -83,18 +89,11 @@ dakterras_winter:
       - input_boolean.dakterras_open
       - input_boolean.dakterras_zomer
     enabled: true
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.dakterras_winter
-    enabled: false
   - alias: Deur open?
     choose:
     - conditions:
       - condition: state
-        entity_id: binary_sensor.dakterras_deursensor_contact
+        entity_id: binary_sensor.dakterras_deursensor
         state: 'off'
       sequence:
       - action: button.press
@@ -110,15 +109,31 @@ dakterras_winter:
           entity_id: cover.dakterras_rolluik
     - conditions:
       - condition: state
-        entity_id: binary_sensor.dakterras_deursensor_contact
+        entity_id: binary_sensor.dakterras_deursensor
         state: 'on'
       sequence:
       - wait_for_trigger:
         - entity_id:
-          - binary_sensor.dakterras_deursensor_contact
+          - binary_sensor.dakterras_deursensor
           to: 'off'
           trigger: state
         continue_on_timeout: true
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.dakterras_gordijn_my_position
+      - action: cover.set_cover_position
+        data:
+          position: 80
+        metadata: {}
+        target:
+          entity_id: cover.dakterras_rolluik
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.dakterras_deursensor
+        state: unavailable
+      sequence:
       - action: button.press
         data: {}
         metadata: {}
@@ -144,18 +159,11 @@ dakterras_zomer:
       - input_boolean.dakterras_open
       - input_boolean.dakterras_winter
     enabled: true
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.dakterras_zomer
-    enabled: false
   - alias: Deur open?
     choose:
     - conditions:
       - condition: state
-        entity_id: binary_sensor.dakterras_deursensor_contact
+        entity_id: binary_sensor.dakterras_deursensor
         state: 'off'
       sequence:
       - action: button.press
@@ -171,15 +179,31 @@ dakterras_zomer:
           entity_id: cover.dakterras_rolluik
     - conditions:
       - condition: state
-        entity_id: binary_sensor.dakterras_deursensor_contact
+        entity_id: binary_sensor.dakterras_deursensor
         state: 'on'
       sequence:
       - wait_for_trigger:
         - entity_id:
-          - binary_sensor.dakterras_deursensor_contact
+          - binary_sensor.dakterras_deursensor
           to: 'off'
           trigger: state
         continue_on_timeout: true
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.dakterras_gordijn_my_position
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.dakterras_rolluik
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.dakterras_deursensor
+        state: unavailable
+      sequence:
       - action: button.press
         data: {}
         metadata: {}
@@ -830,13 +854,13 @@ schuur_dicht:
       - light.tuin
   - if:
     - condition: state
-      entity_id: binary_sensor.tuin_deursensor_contact
+      entity_id: binary_sensor.tuin_deursensor
       state: 'on'
     then:
     - wait_for_trigger:
       - trigger: state
         entity_id:
-        - binary_sensor.tuin_deursensor_contact
+        - binary_sensor.tuin_deursensor
         to: 'off'
         from: 'on'
     - target:
@@ -1162,7 +1186,7 @@ tuin_dicht:
     choose:
     - conditions:
       - condition: state
-        entity_id: binary_sensor.tuin_deursensor_contact
+        entity_id: binary_sensor.tuin_deursensor
         state: 'off'
       sequence:
       - metadata: {}
@@ -1172,12 +1196,12 @@ tuin_dicht:
         action: cover.close_cover
     - conditions:
       - condition: state
-        entity_id: binary_sensor.tuin_deursensor_contact
+        entity_id: binary_sensor.tuin_deursensor
         state: 'on'
       sequence:
       - wait_for_trigger:
         - entity_id:
-          - binary_sensor.tuin_deursensor_contact
+          - binary_sensor.tuin_deursensor
           to: 'off'
           trigger: state
         continue_on_timeout: true
@@ -1245,7 +1269,7 @@ tuin_winter:
     choose:
     - conditions:
       - condition: state
-        entity_id: binary_sensor.tuin_deursensor_contact
+        entity_id: binary_sensor.tuin_deursensor
         state: 'off'
       sequence:
       - metadata: {}
@@ -1256,12 +1280,12 @@ tuin_winter:
         action: cover.set_cover_position
     - conditions:
       - condition: state
-        entity_id: binary_sensor.tuin_deursensor_contact
+        entity_id: binary_sensor.tuin_deursensor
         state: 'on'
       sequence:
       - wait_for_trigger:
         - entity_id:
-          - binary_sensor.tuin_deursensor_contact
+          - binary_sensor.tuin_deursensor
           to: 'off'
           trigger: state
         continue_on_timeout: true
@@ -1302,7 +1326,7 @@ tuin_zomer:
     choose:
     - conditions:
       - condition: state
-        entity_id: binary_sensor.tuin_deursensor_contact
+        entity_id: binary_sensor.tuin_deursensor
         state: 'off'
       sequence:
       - metadata: {}
@@ -1313,12 +1337,12 @@ tuin_zomer:
         action: cover.set_cover_position
     - conditions:
       - condition: state
-        entity_id: binary_sensor.tuin_deursensor_contact
+        entity_id: binary_sensor.tuin_deursensor
         state: 'on'
       sequence:
       - wait_for_trigger:
         - entity_id:
-          - binary_sensor.tuin_deursensor_contact
+          - binary_sensor.tuin_deursensor
           to: 'off'
           trigger: state
         continue_on_timeout: true
@@ -1454,6 +1478,11 @@ woonkamer_zomer:
   icon: mdi:window-shutter-settings
 music_away:
   sequence:
+  - action: media_player.media_stop
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.badkamer
   - action: media_player.turn_off
     metadata: {}
     data: {}
@@ -1554,7 +1583,7 @@ notify_voordeur_bel:
             critical: 1
             volume: 0.5
         url: /lovelace/voordeur
-      message: Someone pressed the doorbell!
+      message: Er heeft iemand aangebeld!
     metadata: {}
   alias: Notify - Voordeur Bel
   description: ''
@@ -1821,24 +1850,6 @@ lights_orange:
   alias: Lights - Orange
   description: ''
   icon: mdi:alarm-light
-alarm_disarmed:
-  sequence:
-  - action: switch.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.entree_sirene_alarm_state
-  alias: Alarm Disarmed
-  description: ''
-alarm_pending:
-  sequence:
-  - action: switch.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.entree_sirene_alarm_state
-  alias: Alarm Pending
-  description: ''
 media_voordeur_bel:
   sequence:
   - action: media_player.media_pause
@@ -1851,7 +1862,7 @@ media_voordeur_bel:
   - wait_for_trigger:
     - trigger: state
       entity_id:
-      - binary_sensor.entree_deursensor_contact
+      - binary_sensor.entree_deursensor
       from: 'on'
       to: 'off'
     continue_on_timeout: true
@@ -1870,3 +1881,48 @@ media_voordeur_bel:
   alias: Media - Voordeur Bel
   description: ''
   icon: mdi:multimedia
+alarm_pending:
+  sequence:
+  - action: switch.turn_on
+    data: {}
+    metadata: {}
+    target:
+      entity_id: switch.entree_sirene_alarm_state
+  alias: Alarm - Pending
+  description: ''
+  icon: mdi:shield-outline
+alarm_away:
+  sequence: []
+  alias: Alarm - Away
+  description: ''
+  icon: mdi:shield-lock
+alarm_home:
+  sequence:
+  - action: switch.turn_off
+    data: {}
+    metadata: {}
+    target:
+      entity_id: switch.entree_sirene_alarm_state
+  alias: Alarm - Home
+  description: ''
+  icon: mdi:shield-home
+alarm_night:
+  sequence:
+  - action: switch.turn_off
+    data: {}
+    metadata: {}
+    target:
+      entity_id: switch.entree_sirene_alarm_state
+  alias: Alarm - Night
+  description: ''
+  icon: mdi:shield-moon
+alarm_disarmed:
+  sequence:
+  - action: switch.turn_off
+    data: {}
+    metadata: {}
+    target:
+      entity_id: switch.entree_sirene_alarm_state
+  alias: Alarm - Disarmed
+  description: ''
+  icon: mdi:shield-off
