@@ -1,5 +1,8 @@
 media_player:
   - platform: kef_connector
+    speaker_model: LSX2LT
+    host: 192.168.16.20
+  - platform: kef_connector
     speaker_model: LSX2
     host: 192.168.16.21
   - platform: kef_connector

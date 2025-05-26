@@ -1,1607 +1,98 @@
-dakterras_dicht:
-  alias: Dakterras Dicht
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.dakterras_open
-      - input_boolean.dakterras_winter
-      - input_boolean.dakterras_zomer
-    enabled: true
-  - alias: Deur open?
-    choose:
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.dakterras_deursensor
-        state: 'off'
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.dakterras_gordijn
-          - cover.dakterras_rolluik
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.dakterras_deursensor
-        state: 'on'
-      sequence:
-      - wait_for_trigger:
-        - entity_id:
-          - binary_sensor.dakterras_deursensor
-          to: 'off'
-          trigger: state
-        continue_on_timeout: true
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.dakterras_gordijn
-          - cover.dakterras_rolluik
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.dakterras_deursensor
-        state: unavailable
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.dakterras_gordijn
-          - cover.dakterras_rolluik
-  description: ''
-  icon: mdi:window-shutter
-dakterras_open:
-  alias: Dakterras Open
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.dakterras_dicht
-      - input_boolean.dakterras_winter
-      - input_boolean.dakterras_zomer
-    enabled: true
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.dakterras_gordijn
-      - cover.dakterras_rolluik
-  description: ''
-  icon: mdi:window-shutter-open
-dakterras_winter:
-  alias: Dakterras Winter
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.dakterras_dicht
-      - input_boolean.dakterras_open
-      - input_boolean.dakterras_zomer
-    enabled: true
-  - alias: Deur open?
-    choose:
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.dakterras_deursensor
-        state: 'off'
-      sequence:
-      - action: button.press
-        data: {}
-        metadata: {}
-        target:
-          entity_id: button.dakterras_gordijn_my_position
-      - action: cover.set_cover_position
-        data:
-          position: 80
-        metadata: {}
-        target:
-          entity_id: cover.dakterras_rolluik
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.dakterras_deursensor
-        state: 'on'
-      sequence:
-      - wait_for_trigger:
-        - entity_id:
-          - binary_sensor.dakterras_deursensor
-          to: 'off'
-          trigger: state
-        continue_on_timeout: true
-      - action: button.press
-        data: {}
-        metadata: {}
-        target:
-          entity_id: button.dakterras_gordijn_my_position
-      - action: cover.set_cover_position
-        data:
-          position: 80
-        metadata: {}
-        target:
-          entity_id: cover.dakterras_rolluik
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.dakterras_deursensor
-        state: unavailable
-      sequence:
-      - action: button.press
-        data: {}
-        metadata: {}
-        target:
-          entity_id: button.dakterras_gordijn_my_position
-      - action: cover.set_cover_position
-        data:
-          position: 80
-        metadata: {}
-        target:
-          entity_id: cover.dakterras_rolluik
-  description: ''
-  icon: mdi:window-shutter-cog
-dakterras_zomer:
-  alias: Dakterras Zomer
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.dakterras_dicht
-      - input_boolean.dakterras_open
-      - input_boolean.dakterras_winter
-    enabled: true
-  - alias: Deur open?
-    choose:
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.dakterras_deursensor
-        state: 'off'
-      sequence:
-      - action: button.press
-        data: {}
-        metadata: {}
-        target:
-          entity_id: button.dakterras_gordijn_my_position
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.dakterras_rolluik
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.dakterras_deursensor
-        state: 'on'
-      sequence:
-      - wait_for_trigger:
-        - entity_id:
-          - binary_sensor.dakterras_deursensor
-          to: 'off'
-          trigger: state
-        continue_on_timeout: true
-      - action: button.press
-        data: {}
-        metadata: {}
-        target:
-          entity_id: button.dakterras_gordijn_my_position
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.dakterras_rolluik
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.dakterras_deursensor
-        state: unavailable
-      sequence:
-      - action: button.press
-        data: {}
-        metadata: {}
-        target:
-          entity_id: button.dakterras_gordijn_my_position
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.dakterras_rolluik
-  description: ''
-  icon: mdi:window-shutter-settings
-gameroom_dicht:
-  alias: Gameroom Dicht
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.gameroom_open
-      - input_boolean.gameroom_winter
-      - input_boolean.gameroom_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.gameroom_dicht
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.gameroom_gordijn_links1_my_position
-      - button.gameroom_gordijn_links2_my_position
-      - button.gameroom_gordijn_rechts1_my_position
-      - button.gameroom_gordijn_rechts2_my_position
-  - action: cover.close_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.gameroom_rolluik_links
-      - cover.gameroom_rolluik_rechts
-  description: ''
-  icon: mdi:window-shutter
-gameroom_open:
-  alias: Gameroom Open
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.gameroom_dicht
-      - input_boolean.gameroom_winter
-      - input_boolean.gameroom_zomer
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.gameroom_open
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.gameroom_gordijn_links1_my_position
-      - button.gameroom_gordijn_links2_my_position
-      - button.gameroom_gordijn_rechts1_my_position
-      - button.gameroom_gordijn_rechts2_my_position
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.gameroom_rolluik_links
-      - cover.gameroom_rolluik_rechts
-  description: ''
-  icon: mdi:window-shutter-open
-gameroom_winter:
-  alias: Gameroom Winter
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.gameroom_dicht
-      - input_boolean.gameroom_open
-      - input_boolean.gameroom_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.gameroom_winter
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.gameroom_gordijn_links1_my_position
-      - button.gameroom_gordijn_links2_my_position
-      - button.gameroom_gordijn_rechts1_my_position
-      - button.gameroom_gordijn_rechts2_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 40
-    metadata: {}
-    target:
-      entity_id:
-      - cover.gameroom_rolluik_links
-  - action: cover.set_cover_position
-    data:
-      position: 80
-    metadata: {}
-    target:
-      entity_id:
-      - cover.gameroom_rolluik_rechts
-  description: ''
-  icon: mdi:window-shutter-cog
-gameroom_zomer:
-  alias: Gameroom Zomer
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.gameroom_dicht
-      - input_boolean.gameroom_open
-      - input_boolean.gameroom_winter
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.gameroom_zomer
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.gameroom_gordijn_links1_my_position
-      - button.gameroom_gordijn_links2_my_position
-      - button.gameroom_gordijn_rechts1_my_position
-      - button.gameroom_gordijn_rechts2_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 20
-    metadata: {}
-    target:
-      entity_id:
-      - cover.gameroom_rolluik_links
-  - action: cover.set_cover_position
-    data:
-      position: 40
-    metadata: {}
-    target:
-      entity_id:
-      - cover.gameroom_rolluik_rechts
-  description: ''
-  icon: mdi:window-shutter-settings
-gang_dicht:
-  alias: Gang Dicht
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.gang_open
-      - input_boolean.gang_winter
-      - input_boolean.gang_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.gang_dicht
-  - action: cover.close_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.gang_gordijn
-      - cover.gang_rolluik
-  description: ''
-  icon: mdi:window-shutter
-gang_open:
-  alias: Gang Open
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.gang_dicht
-      - input_boolean.gang_winter
-      - input_boolean.gang_zomer
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.gang_open
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.gang_gordijn
-      - cover.gang_rolluik
-  description: ''
-  icon: mdi:window-shutter-open
-gang_winter:
-  alias: Gang Winter
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.gang_dicht
-      - input_boolean.gang_open
-      - input_boolean.gang_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.gang_winter
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.gang_gordijn_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 80
-    metadata: {}
-    target:
-      entity_id: cover.gang_rolluik
-  description: ''
-  icon: mdi:window-shutter-cog
-gang_zomer:
-  alias: Gang Zomer
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.gang_dicht
-      - input_boolean.gang_open
-      - input_boolean.gang_winter
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.gang_zomer
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.gang_gordijn_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 20
-    metadata: {}
-    target:
-      entity_id: cover.gang_rolluik
-  description: ''
-  icon: mdi:window-shutter-settings
-kantoor_dicht:
-  alias: Kantoor Dicht
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.kantoor_open
-      - input_boolean.kantoor_winter
-      - input_boolean.kantoor_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.kantoor_dicht
-  - action: cover.close_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.kantoor_gordijn_links
-      - cover.kantoor_gordijn_rechts
-      - cover.kantoor_rolluik
-  description: ''
-  icon: mdi:window-shutter
-kantoor_open:
-  alias: Kantoor Open
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.kantoor_dicht
-      - input_boolean.kantoor_winter
-      - input_boolean.kantoor_zomer
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.kantoor_open
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.kantoor_gordijn_links
-      - cover.kantoor_gordijn_rechts
-      - cover.kantoor_rolluik
-  description: ''
-  icon: mdi:window-shutter-open
-kantoor_winter:
-  alias: Kantoor Winter
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.kantoor_dicht
-      - input_boolean.kantoor_open
-      - input_boolean.kantoor_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.kantoor_winter
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.kantoor_gordijn_links_my_position
-      - button.kantoor_gordijn_rechts_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 80
-    metadata: {}
-    target:
-      entity_id: cover.kantoor_rolluik
-  description: ''
-  icon: mdi:window-shutter-cog
-kantoor_zomer:
-  alias: Kantoor Zomer
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.kantoor_dicht
-      - input_boolean.kantoor_open
-      - input_boolean.kantoor_winter
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.kantoor_zomer
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.kantoor_gordijn_links_my_position
-      - button.kantoor_gordijn_rechts_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 40
-    metadata: {}
-    target:
-      entity_id: cover.kantoor_rolluik
-  description: ''
-  icon: mdi:window-shutter-settings
-keuken_dicht:
-  alias: Keuken Dicht
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.keuken_open
-      - input_boolean.keuken_winter
-      - input_boolean.keuken_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.keuken_dicht
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id: button.keuken_gordijn_my_position
-  - action: cover.close_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id: cover.keuken_rolluik
-  description: ''
-  icon: mdi:window-shutter
-keuken_open:
-  alias: Keuken Open
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.keuken_dicht
-      - input_boolean.keuken_winter
-      - input_boolean.keuken_zomer
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.keuken_open
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.keuken_gordijn
-      - cover.keuken_rolluik
-  description: ''
-  icon: mdi:window-shutter-open
-keuken_winter:
-  alias: Keuken Winter
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.keuken_dicht
-      - input_boolean.keuken_open
-      - input_boolean.keuken_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.keuken_winter
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id: button.keuken_gordijn_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 90
-    metadata: {}
-    target:
-      entity_id: cover.keuken_rolluik
-  description: ''
-  icon: mdi:window-shutter-cog
-keuken_zomer:
-  alias: Keuken Zomer
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.keuken_dicht
-      - input_boolean.keuken_open
-      - input_boolean.keuken_winter
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.keuken_zomer
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id: button.keuken_gordijn_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 80
-    metadata: {}
-    target:
-      entity_id: cover.keuken_rolluik
-  description: ''
-  icon: mdi:window-shutter-settings
-sauna_dicht:
-  alias: Sauna Dicht
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.sauna_open
-      - input_boolean.sauna_winter
-      - input_boolean.sauna_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.sauna_dicht
-  - action: cover.close_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.sauna_gordijn
-      - cover.sauna_rolluik
-  description: ''
-  icon: mdi:window-shutter
-sauna_open:
-  alias: Sauna Open
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.sauna_dicht
-      - input_boolean.sauna_winter
-      - input_boolean.sauna_zomer
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.sauna_open
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.sauna_gordijn
-      - cover.sauna_rolluik
-  description: ''
-  icon: mdi:window-shutter-open
-sauna_winter:
-  alias: Sauna Winter
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.sauna_dicht
-      - input_boolean.sauna_open
-      - input_boolean.sauna_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.sauna_winter
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.sauna_gordijn_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 90
-    metadata: {}
-    target:
-      entity_id: cover.sauna_rolluik
-  description: ''
-  icon: mdi:window-shutter-cog
-sauna_zomer:
-  alias: Sauna Zomer
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.sauna_dicht
-      - input_boolean.sauna_open
-      - input_boolean.sauna_winter
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.sauna_zomer
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.sauna_gordijn
-  - action: cover.set_cover_position
-    data:
-      position: 20
-    metadata: {}
-    target:
-      entity_id: cover.sauna_rolluik
-  description: ''
-  icon: mdi:window-shutter-settings
-schuur_dicht:
-  alias: Schuur Dicht
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.schuur_open
-      - input_boolean.schuur_loopad_open
-      - input_boolean.schuur_tuin_open
-  - action: cover.close_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.schuur_looppad_rolluik
-      - cover.schuur_tuin_rolluik
-  - action: light.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - light.schuur
-      - light.tuin
-  - if:
-    - condition: state
-      entity_id: binary_sensor.tuin_deursensor
-      state: 'on'
-    then:
-    - wait_for_trigger:
-      - trigger: state
-        entity_id:
-        - binary_sensor.tuin_deursensor
-        to: 'off'
-        from: 'on'
-    - target:
-        entity_id: scene.tuin_before
-      data: {}
-      action: scene.turn_on
-    - target:
-        entity_id: scene.tuin_before
-      data: {}
-      action: scene.delete
-    else:
-    - delay:
-        hours: 0
-        minutes: 0
-        seconds: 15
-        milliseconds: 0
-    - target:
-        entity_id: scene.tuin_before
-      data: {}
-      action: scene.turn_on
-    - target:
-        entity_id: scene.tuin_before
-      data: {}
-      action: scene.delete
-  description: ''
-  icon: mdi:window-shutter
-schuur_open:
-  alias: Schuur Open
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.schuur_dicht
-      - input_boolean.schuur_loopad_open
-      - input_boolean.schuur_tuin_open
-  - action: light.turn_on
-    data:
-      brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-        }}'
-      color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-        }}'
-    metadata: {}
-    target:
-      entity_id:
-      - light.schuur
-      - light.tuin
-  - metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - cover.schuur_looppad_rolluik
-      - cover.schuur_tuin_rolluik
-    action: cover.open_cover
-  - action: scene.create
-    data:
-      scene_id: tuin_before
-      snapshot_entities:
-      - input_boolean.tuin_dicht
-      - input_boolean.tuin_open
-      - input_boolean.tuin_winter
-      - input_boolean.tuin_zomer
-    metadata: {}
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.tuin_open
-  description: ''
-  icon: mdi:window-shutter-open
-schuur_looppad_open:
-  alias: Schuur Looppad Open
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.schuur_dicht
-      - input_boolean.schuur_open
-      - input_boolean.schuur_tuin_open
-  - action: light.turn_on
-    data:
-      brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-        }}'
-      color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-        }}'
-    metadata: {}
-    target:
-      entity_id:
-      - light.schuur
-      - light.tuin
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.schuur_looppad_rolluik
-  - action: cover.close_cover
-    data: {}
-    target:
-      entity_id:
-      - cover.schuur_tuin_rolluik
-  - action: scene.create
-    data:
-      scene_id: tuin_before
-      snapshot_entities:
-      - input_boolean.tuin_dicht
-      - input_boolean.tuin_open
-      - input_boolean.tuin_winter
-      - input_boolean.tuin_zomer
-    metadata: {}
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.tuin_open
-  description: ''
-  icon: mdi:window-shutter-cog
-schuur_tuin_open:
-  alias: Schuur Tuin Open
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.schuur_dicht
-      - input_boolean.schuur_open
-      - input_boolean.schuur_loopad_open
-  - action: light.turn_on
-    data:
-      brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-        }}'
-      color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-        }}'
-    metadata: {}
-    target:
-      entity_id:
-      - light.schuur
-      - light.tuin
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.schuur_tuin_rolluik
-  - action: cover.close_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.schuur_looppad_rolluik
-  - action: scene.create
-    data:
-      scene_id: tuin_before
-      snapshot_entities:
-      - input_boolean.tuin_dicht
-      - input_boolean.tuin_open
-      - input_boolean.tuin_winter
-      - input_boolean.tuin_zomer
-    metadata: {}
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.tuin_open
-  description: ''
-  icon: mdi:window-shutter-settings
-slaapkamer_dicht:
-  alias: Slaapkamer Dicht
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.slaapkamer_open
-      - input_boolean.slaapkamer_winter
-      - input_boolean.slaapkamer_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.slaapkamer_dicht
-  - action: cover.close_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.slaapkamer_gordijn
-      - cover.slaapkamer_rolluik_links
-      - cover.slaapkamer_rolluik_midden
-      - cover.slaapkamer_rolluik_rechts
-  description: ''
-  icon: mdi:window-shutter
-slaapkamer_open:
-  alias: Slaapkamer Open
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.slaapkamer_dicht
-      - input_boolean.slaapkamer_winter
-      - input_boolean.slaapkamer_zomer
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.slaapkamer_open
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.slaapkamer_gordijn
-  - action: cover.set_cover_position
-    data:
-      position: 20
-    metadata: {}
-    target:
-      entity_id:
-      - cover.slaapkamer_rolluik_links
-      - cover.slaapkamer_rolluik_midden
-      - cover.slaapkamer_rolluik_rechts
-  description: ''
-  icon: mdi:window-shutter-open
-slaapkamer_winter:
-  alias: Slaapkamer Winter
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.slaapkamer_dicht
-      - input_boolean.slaapkamer_open
-      - input_boolean.slaapkamer_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.slaapkamer_winter
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id: cover.slaapkamer_gordijn
-  - action: cover.close_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.slaapkamer_rolluik_links
-      - cover.slaapkamer_rolluik_midden
-      - cover.slaapkamer_rolluik_rechts
-  description: ''
-  icon: mdi:window-shutter-cog
-slaapkamer_zomer:
-  alias: Slaapkamer Zomer
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.slaapkamer_dicht
-      - input_boolean.slaapkamer_open
-      - input_boolean.slaapkamer_winter
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.slaapkamer_zomer
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.slaapkamer_gordijn_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 20
-    metadata: {}
-    target:
-      entity_id:
-      - cover.slaapkamer_rolluik_links
-      - cover.slaapkamer_rolluik_midden
-      - cover.slaapkamer_rolluik_rechts
-  description: ''
-  icon: mdi:window-shutter-settings
-tuin_dicht:
-  alias: Tuin Dicht
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.tuin_open
-      - input_boolean.tuin_winter
-      - input_boolean.tuin_zomer
-    enabled: true
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.tuin_dicht
-    enabled: false
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.tuin_gordijn_my_position
-  - alias: Deur open?
-    choose:
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.tuin_deursensor
-        state: 'off'
-      sequence:
-      - metadata: {}
-        data: {}
-        target:
-          entity_id: cover.tuin_rolluik
-        action: cover.close_cover
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.tuin_deursensor
-        state: 'on'
-      sequence:
-      - wait_for_trigger:
-        - entity_id:
-          - binary_sensor.tuin_deursensor
-          to: 'off'
-          trigger: state
-        continue_on_timeout: true
-      - metadata: {}
-        data: {}
-        target:
-          entity_id: cover.tuin_rolluik
-        action: cover.close_cover
-  description: ''
-  icon: mdi:window-shutter
-tuin_open:
-  alias: Tuin Open
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.tuin_dicht
-      - input_boolean.tuin_winter
-      - input_boolean.tuin_zomer
-    enabled: true
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.tuin_open
-    enabled: false
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.tuin_gordijn
-      - cover.tuin_rolluik
-  description: ''
-  icon: mdi:window-shutter-open
-tuin_winter:
-  alias: Tuin Winter
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.tuin_dicht
-      - input_boolean.tuin_open
-      - input_boolean.tuin_zomer
-    enabled: true
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.tuin_winter
-    enabled: false
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.tuin_gordijn_my_position
-  - alias: Deur open?
-    choose:
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.tuin_deursensor
-        state: 'off'
-      sequence:
-      - metadata: {}
-        data:
-          position: 90
-        target:
-          entity_id: cover.tuin_rolluik
-        action: cover.set_cover_position
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.tuin_deursensor
-        state: 'on'
-      sequence:
-      - wait_for_trigger:
-        - entity_id:
-          - binary_sensor.tuin_deursensor
-          to: 'off'
-          trigger: state
-        continue_on_timeout: true
-      - metadata: {}
-        data:
-          position: 90
-        target:
-          entity_id: cover.tuin_rolluik
-        action: cover.set_cover_position
-  description: ''
-  icon: mdi:window-shutter-cog
-tuin_zomer:
-  alias: Tuin Zomer
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.tuin_dicht
-      - input_boolean.tuin_open
-      - input_boolean.tuin_winter
-    enabled: true
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.tuin_zomer
-    enabled: false
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.tuin_gordijn_my_position
-  - alias: Deur open?
-    choose:
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.tuin_deursensor
-        state: 'off'
-      sequence:
-      - metadata: {}
-        data:
-          position: 80
-        target:
-          entity_id: cover.tuin_rolluik
-        action: cover.set_cover_position
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.tuin_deursensor
-        state: 'on'
-      sequence:
-      - wait_for_trigger:
-        - entity_id:
-          - binary_sensor.tuin_deursensor
-          to: 'off'
-          trigger: state
-        continue_on_timeout: true
-      - metadata: {}
-        data:
-          position: 80
-        target:
-          entity_id: cover.tuin_rolluik
-        action: cover.set_cover_position
-  description: ''
-  icon: mdi:window-shutter-settings
-woonkamer_dicht:
-  alias: Woonkamer Dicht
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.woonkamer_open
-      - input_boolean.woonkamer_winter
-      - input_boolean.woonkamer_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id: input_boolean.woonkamer_dicht
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.woonkamer_gordijn_my_position
-  - action: cover.close_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id: cover.woonkamer_rolluik
-  description: ''
-  icon: mdi:window-shutter
-woonkamer_open:
-  alias: Woonkamer Open
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.woonkamer_dicht
-      - input_boolean.woonkamer_winter
-      - input_boolean.woonkamer_zomer
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.woonkamer_open
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.woonkamer_gordijn_my_position
-  - action: cover.open_cover
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - cover.woonkamer_rolluik
-  description: ''
-  icon: mdi:window-shutter-open
-woonkamer_winter:
-  alias: Woonkamer Winter
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.woonkamer_dicht
-      - input_boolean.woonkamer_open
-      - input_boolean.woonkamer_zomer
-  - action: input_boolean.turn_on
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.woonkamer_winter
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.woonkamer_gordijn_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 80
-    metadata: {}
-    target:
-      entity_id: cover.woonkamer_rolluik
-  description: ''
-  icon: mdi:window-shutter-cog
-woonkamer_zomer:
-  alias: Woonkamer Zomer
-  sequence:
-  - action: input_boolean.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - input_boolean.woonkamer_dicht
-      - input_boolean.woonkamer_open
-      - input_boolean.woonkamer_winter
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - input_boolean.woonkamer_zomer
-  - action: button.press
-    data: {}
-    metadata: {}
-    target:
-      entity_id:
-      - button.woonkamer_gordijn_my_position
-  - action: cover.set_cover_position
-    data:
-      position: 40
-    metadata: {}
-    target:
-      entity_id: cover.woonkamer_rolluik
-  description: ''
-  icon: mdi:window-shutter-settings
 music_away:
   sequence:
-  - action: media_player.media_stop
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.badkamer
   - action: media_player.turn_off
     metadata: {}
     data: {}
     target:
       entity_id:
-      - media_player.badkamer
-      - media_player.gameroom
-      - media_player.kantoor
-      - media_player.keuken
-      - media_player.sauna
-      - media_player.slaapkamer
-  - action: input_select.select_option
-    data:
-      option: Uit
-    metadata: {}
-    target:
-      entity_id:
-      - input_select.airplay
-  - action: input_select.select_option
-    data:
-      option: Uit
-    metadata: {}
-    target:
-      entity_id:
-      - input_select.hub_playlist
-  alias: Music Away
+      - media_player.groep
+      - media_player.badkamer_kef
+      - media_player.gameroom_kef
+      - media_player.kantoor_kef
+      - media_player.keuken_kef
+      - media_player.sauna_kef
+      - media_player.slaapkamer_kef
+  alias: Music - Away
   description: ''
   icon: mdi:music-note-off-outline
 music_night:
-  sequence:
-  - action: input_select.select_option
-    data:
-      option: Night
-    target:
-      entity_id: input_select.hub_playlist
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 3
-      milliseconds: 0
-  - action: input_select.select_option
-    data:
-      option: Uit
-    target:
-      entity_id: input_select.airplay
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 1
-      milliseconds: 0
-  - action: input_select.select_option
-    data:
-      option: Groep
-    target:
-      entity_id: input_select.airplay
-  alias: Music Night
+  alias: Music - Night
   description: ''
   icon: mdi:music-note-outline
-music_home:
   sequence:
-  - action: input_select.select_option
-    data:
-      option: Day
+  - action: media_player.turn_on
+    data: {}
+    metadata: {}
     target:
-      entity_id: input_select.hub_playlist
+      entity_id: media_player.groep
+  - action: music_assistant.play_media
+    metadata: {}
+    data:
+      media_type: playlist
+      radio_mode: false
+      enqueue: replace_next
+      media_id:
+      - Calm Piano
+      - Classical
+    target:
+      entity_id: media_player.groep
   - delay:
       hours: 0
       minutes: 0
-      seconds: 3
+      seconds: 10
       milliseconds: 0
-  - action: input_select.select_option
-    data:
-      option: Uit
+  - action: media_player.media_play
+    metadata: {}
+    data: {}
     target:
-      entity_id: input_select.airplay
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 1
-      milliseconds: 0
-  - action: input_select.select_option
+      entity_id: media_player.groep
+  - action: media_player.shuffle_set
+    metadata: {}
     data:
-      option: Groep
+      shuffle: true
     target:
-      entity_id: input_select.airplay
-  alias: Music Home
+      entity_id: media_player.groep
+music_home:
+  alias: Music - Home
   description: ''
   icon: mdi:music-note
-notify_voordeur_bel:
   sequence:
-  - action: notify.notify
-    data:
-      data:
-        entity_id: camera.voordeur
-        push:
-          sound:
-            name: Doorbell.caf
-            critical: 1
-            volume: 0.5
-        url: /lovelace/voordeur
-      message: Er heeft iemand aangebeld!
-    metadata: {}
-  alias: Notify - Voordeur Bel
-  description: ''
-  icon: mdi:message-badge
-announce_voordeur_bel:
-  sequence:
-  - alias: Announce
-    action: tts.speak
-    data:
-      cache: true
-      media_player_entity_id: media_player.meterkast
-      message: Er heeft iemand aangebeld!
+  - action: media_player.turn_on
+    data: {}
     metadata: {}
     target:
-      entity_id: tts.home_assistant_cloud
-  alias: Announce - Voordeur Bel
-  description: ''
-  icon: mdi:bullhorn
+      entity_id: media_player.groep
+  - action: music_assistant.play_media
+    metadata: {}
+    data:
+      media_type: playlist
+      radio_mode: false
+      enqueue: replace_next
+      media_id:
+      - 80ies Pop
+      - 90ies Pop
+      - 2000s Pop
+      - 2010s Pop
+      - '''20s Hits'
+      - Eurovision
+    target:
+      entity_id: media_player.groep
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - action: media_player.media_play
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.groep
+  - action: media_player.shuffle_set
+    metadata: {}
+    data:
+      shuffle: true
+    target:
+      entity_id: media_player.groep
 lights_green:
   sequence:
   - alias: Scene, create
@@ -1850,15 +341,73 @@ lights_orange:
   alias: Lights - Orange
   description: ''
   icon: mdi:alarm-light
-media_voordeur_bel:
+alarm_pending:
+  sequence:
+  - action: switch.turn_on
+    data: {}
+    metadata: {}
+    target:
+      entity_id: switch.alarm_sirene_alarm_state
+  alias: Alarm - Pending
+  description: ''
+  icon: mdi:shield-outline
+alarm_away:
+  sequence: []
+  alias: Alarm - Away
+  description: ''
+  icon: mdi:shield-lock
+alarm_home:
+  sequence:
+  - action: switch.turn_off
+    data: {}
+    metadata: {}
+    target:
+      entity_id: switch.alarm_sirene_alarm_state
+  alias: Alarm - Home
+  description: ''
+  icon: mdi:shield-home
+alarm_night:
+  sequence:
+  - action: switch.turn_off
+    data: {}
+    metadata: {}
+    target:
+      entity_id: switch.alarm_sirene_alarm_state
+  alias: Alarm - Night
+  description: ''
+  icon: mdi:shield-moon
+alarm_disarmed:
+  sequence:
+  - action: switch.turn_off
+    data: {}
+    metadata: {}
+    target:
+      entity_id: switch.alarm_sirene_alarm_state
+  alias: Alarm - Disarmed
+  description: ''
+  icon: mdi:shield-off
+voordeur_announce:
+  sequence:
+  - alias: Announce
+    action: tts.speak
+    data:
+      cache: true
+      media_player_entity_id: media_player.meterkast
+      message: Er heeft iemand aangebeld!
+    metadata: {}
+    target:
+      entity_id: tts.home_assistant_cloud
+  alias: Voordeur - Announce
+  description: ''
+  icon: mdi:bullhorn
+voordeur_media:
   sequence:
   - action: media_player.media_pause
     metadata: {}
     data: {}
     target:
       entity_id:
-      - media_player.hub
-      - media_player.woonkamer
+      - media_player.groep
   - wait_for_trigger:
     - trigger: state
       entity_id:
@@ -1876,53 +425,21 @@ media_voordeur_bel:
     data: {}
     target:
       entity_id:
-      - media_player.hub
-      - media_player.woonkamer
-  alias: Media - Voordeur Bel
+      - media_player.groep
+  alias: Voordeur - Media
   description: ''
   icon: mdi:multimedia
-alarm_pending:
+voordeur_notify:
   sequence:
-  - action: switch.turn_on
-    data: {}
+  - action: notify.notify
+    data:
+      data:
+        channel: alarm_stream
+        entity_id: camera.voordeur
+        priority: high
+        ttl: 0
+      message: Er heeft iemand aangebeld!
     metadata: {}
-    target:
-      entity_id: switch.entree_sirene_alarm_state
-  alias: Alarm - Pending
+  alias: Voordeur - Notify
   description: ''
-  icon: mdi:shield-outline
-alarm_away:
-  sequence: []
-  alias: Alarm - Away
-  description: ''
-  icon: mdi:shield-lock
-alarm_home:
-  sequence:
-  - action: switch.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id: switch.entree_sirene_alarm_state
-  alias: Alarm - Home
-  description: ''
-  icon: mdi:shield-home
-alarm_night:
-  sequence:
-  - action: switch.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id: switch.entree_sirene_alarm_state
-  alias: Alarm - Night
-  description: ''
-  icon: mdi:shield-moon
-alarm_disarmed:
-  sequence:
-  - action: switch.turn_off
-    data: {}
-    metadata: {}
-    target:
-      entity_id: switch.entree_sirene_alarm_state
-  alias: Alarm - Disarmed
-  description: ''
-  icon: mdi:shield-off
+  icon: mdi:message-badge
