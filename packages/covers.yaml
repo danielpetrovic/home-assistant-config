@@ -1,0 +1,96 @@
+input_select:
+  dakterras_raambekleding:
+    name: Dakterras Raambekleding Preset
+    options:
+      - "000%"
+      - "020%"
+      - "040%"
+      - "060%"
+      - "080%"
+      - "100%"
+    icon: mdi:window-shutter-auto
+  gameroom_raambekleding:
+    name: Gameroom Raambekleding Preset
+    options:
+      - "000%"
+      - "020%"
+      - "040%"
+      - "060%"
+      - "080%"
+      - "100%"
+    icon: mdi:window-shutter-auto
+  gang_raambekleding:
+    name: Gang Raambekleding Preset
+    options:
+      - "000%"
+      - "020%"
+      - "040%"
+      - "060%"
+      - "080%"
+      - "100%"
+    icon: mdi:window-shutter-auto
+  kantoor_raambekleding:
+    name: Kantoor Raambekleding Preset
+    options:
+      - "000%"
+      - "020%"
+      - "040%"
+      - "060%"
+      - "080%"
+      - "100%"
+    icon: mdi:window-shutter-auto
+  keuken_raambekleding:
+    name: Keuken Raambekleding Preset
+    options:
+      - "000%"
+      - "020%"
+      - "040%"
+      - "060%"
+      - "080%"
+      - "100%"
+    icon: mdi:window-shutter-auto
+  sauna_raambekleding:
+    name: Sauna Raambekleding Preset
+    options:
+      - "000%"
+      - "020%"
+      - "040%"
+      - "060%"
+      - "080%"
+      - "100%"
+    icon: mdi:window-shutter-auto
+  schuur_raambekleding:
+    name: Schuur Raambekleding Preset
+    options:
+      - "Open"
+      - "Looppad"
+      - "Tuin"
+      - "Dicht"
+    icon: mdi:window-shutter-auto
+  slaapkamer_raambekleding:
+    name: Slaapkamer Raambekleding Preset
+    options:
+      - "000%"
+      - "020%"
+      - "100%"
+    icon: mdi:window-shutter-auto
+  tuin_raambekleding:
+    name: Tuin Raambekleding Preset
+    options:
+      - "000%"
+      - "020%"
+      - "040%"
+      - "060%"
+      - "080%"
+      - "100%"
+    icon: mdi:window-shutter-auto
+  woonkamer_raambekleding:
+    name: Woonkamer Raambekleding Preset
+    options:
+      - "000%"
+      - "020%"
+      - "040%"
+      - "060%"
+      - "080%"
+      - "100%"
+    icon: mdi:window-shutter-auto
