@@ -5,12 +5,12 @@ Enhanced Black:
     light:
       primary-color: darkgrey
       accent-color: grey
-      paper-item-icon-color: black
+      state-icon-color: black
       card-background-color: none
     dark:
       primary-color: lightgrey
       accent-color: grey
-      paper-item-icon-color: white
+      state-icon-color: white
       card-background-color: none
 Enhanced Blue:
   ha-card-box-shadow: none
@@ -19,11 +19,11 @@ Enhanced Blue:
     light:
       primary-color: darkblue
       accent-color: darkcyan
-      paper-item-icon-color: cyan
+      state-icon-color: cyan
     dark:
       primary-color: lightblue
       accent-color: cyan
-      paper-item-icon-color: cyan
+      state-icon-color: cyan
 Enhanced Brown:
   ha-card-box-shadow: none
   ha-card-border-width: 0
@@ -31,11 +31,11 @@ Enhanced Brown:
     light:
       primary-color: darkbrown
       accent-color: brown
-      paper-item-icon-color: brown
+      state-icon-color: brown
     dark:
       primary-color: lightbrown
       accent-color: brown
-      paper-item-icon-color: brown
+      state-icon-color: brown
 Enhanced Green:
   ha-card-box-shadow: none
   ha-card-border-width: 0
@@ -43,11 +43,11 @@ Enhanced Green:
     light:
       primary-color: darkgreen
       accent-color: green
-      paper-item-icon-color: green
+      state-icon-color: green
     dark:
       primary-color: lightgreen
       accent-color: green
-      paper-item-icon-color: green
+      state-icon-color: green
 Enhanced Grey:
   ha-card-box-shadow: none
   ha-card-border-width: 0
@@ -55,11 +55,11 @@ Enhanced Grey:
     light:
       primary-color: darkgrey
       accent-color: grey
-      paper-item-icon-color: black
+      state-icon-color: black
     dark:
       primary-color: lightgrey
       accent-color: grey
-      paper-item-icon-color: white
+      state-icon-color: white
 Enhanced Orange:
   ha-card-box-shadow: none
   ha-card-border-width: 0
@@ -67,11 +67,11 @@ Enhanced Orange:
     light:
       primary-color: darkorange
       accent-color: orange
-      paper-item-icon-color: orange
+      state-icon-color: orange
     dark:
       primary-color: lightorange
       accent-color: orange
-      paper-item-icon-color: orange
+      state-icon-color: orange
 Enhanced Purple:
   ha-card-box-shadow: none
   ha-card-border-width: 0
@@ -79,11 +79,11 @@ Enhanced Purple:
     light:
       primary-color: darkpurple
       accent-color: purple
-      paper-item-icon-color: purple
+      state-icon-color: purple
     dark:
       primary-color: lightpurple
       accent-color: purple
-      paper-item-icon-color: purple
+      state-icon-color: purple
 Enhanced Red:
   ha-card-box-shadow: none
   ha-card-border-width: 0
@@ -91,11 +91,11 @@ Enhanced Red:
     light:
       primary-color: darkred
       accent-color: red
-      paper-item-icon-color: red
+      state-icon-color: red
     dark:
       primary-color: lightred
       accent-color: red
-      paper-item-icon-color: red
+      state-icon-color: red
 Enhanced Yellow:
   ha-card-box-shadow: none
   ha-card-border-width: 0
@@ -103,8 +103,8 @@ Enhanced Yellow:
     light:
       primary-color: darkyellow
       accent-color: yellow
-      paper-item-icon-color: yellow
+      state-icon-color: yellow
     dark:
       primary-color: lightyellow
       accent-color: yellow
-      paper-item-icon-color: yellow
+      state-icon-color: yellow
