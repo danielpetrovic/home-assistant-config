@@ -42,7 +42,7 @@
       - action: media_player.volume_set
         metadata: {}
         data:
-          volume_level: 0.3
+          volume_level: 0.35
         target:
           entity_id: media_player.badkamer
     - alias: lights off - speaker off
@@ -54,7 +54,7 @@
       - action: media_player.volume_set
         metadata: {}
         data:
-          volume_level: 0.1
+          volume_level: 0.15
         target:
           entity_id: media_player.badkamer
     - conditions:
@@ -66,7 +66,7 @@
         state: 'on'
       sequence:
       - data:
-          volume_level: 0.4
+          volume_level: 0.45
         target:
           entity_id: media_player.badkamer
         action: media_player.volume_set
@@ -80,7 +80,7 @@
         state: 'on'
       sequence:
       - data:
-          volume_level: 0.3
+          volume_level: 0.35
         target:
           entity_id: media_player.badkamer
         action: media_player.volume_set
@@ -1750,7 +1750,7 @@
         - lights on
       sequence:
       - data:
-          volume_level: 0.3
+          volume_level: 0.35
         target:
           entity_id:
           - media_player.sauna
@@ -1762,7 +1762,7 @@
         - lights off
       sequence:
       - data:
-          volume_level: 0.1
+          volume_level: 0.15
         target:
           entity_id:
           - media_player.sauna
@@ -1771,13 +1771,33 @@
       - condition: trigger
         id:
         - tv on
-      sequence: []
+      sequence:
+      - action: media_player.unjoin
+        metadata: {}
+        data: {}
+        target:
+          entity_id: media_player.sauna
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 3
+          milliseconds: 0
+      - action: media_player.media_play
+        metadata: {}
+        data: {}
+        target:
+          entity_id: media_player.groep
       alias: tv on
     - conditions:
       - condition: trigger
         id:
         - tv off
       sequence:
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 3
+          milliseconds: 0
       - action: media_player.join
         metadata: {}
         data:
@@ -1788,7 +1808,7 @@
       - delay:
           hours: 0
           minutes: 0
-          seconds: 5
+          seconds: 3
           milliseconds: 0
       - action: media_player.media_play
         metadata: {}
@@ -1893,7 +1913,7 @@
         - lights on
       sequence:
       - data:
-          volume_level: 0.3
+          volume_level: 0.35
         target:
           entity_id:
           - media_player.slaapkamer
@@ -1905,7 +1925,7 @@
         - lights off
       sequence:
       - data:
-          volume_level: 0.2
+          volume_level: 0.25
         target:
           entity_id: media_player.slaapkamer
         action: media_player.volume_set
@@ -3466,10 +3486,13 @@
         entity_id: light.badkamer_lamp
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.badkamer
+      button_3_media_leader: media_player.groep
       button_3_short_release_media_mode:
       - turn_on
+      - join
       button_3_long_release_media_mode:
       - turn_off
+      - unjoin
 - id: '1736811938136'
   alias: Eettafel Knop
   description: ''
@@ -3541,10 +3564,13 @@
         entity_id: light.gameroom_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.gameroom
+      button_3_media_leader: media_player.groep
       button_3_short_release_media_mode:
       - turn_on
+      - join
       button_3_long_release_media_mode:
       - turn_off
+      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3593,10 +3619,13 @@
         entity_id: light.gameroom_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.gameroom
+      button_3_media_leader: media_player.groep
       button_3_short_release_media_mode:
       - turn_on
+      - join
       button_3_long_release_media_mode:
       - turn_off
+      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3693,11 +3722,13 @@
         target:
           entity_id: switch.kantoor_bureau
       button_3_media: media_player.kantoor
-      button_3_media_volume: 25
+      button_3_media_leader: media_player.groep
       button_3_short_release_media_mode:
       - turn_on
+      - join
       button_3_long_release_media_mode:
       - turn_off
+      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3738,10 +3769,13 @@
         entity_id: light.keuken_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.keuken
+      button_3_media_leader: media_player.groep
       button_3_short_release_media_mode:
       - turn_on
+      - join
       button_3_long_release_media_mode:
       - turn_off
+      - unjoin
       button_2_short_release:
       - action: input_select.select_option
         data:
@@ -3782,10 +3816,13 @@
         entity_id: light.sauna_lamp
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.sauna
+      button_3_media_leader: media_player.groep
       button_3_short_release_media_mode:
       - turn_on
+      - join
       button_3_long_release_media_mode:
       - turn_off
+      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3827,10 +3864,13 @@
         - light.slaapkamer_lamp
       button_1_light_schedule: schedule.lights_dimmed
       button_3_media: media_player.slaapkamer
+      button_3_media_leader: media_player.groep
       button_3_short_release_media_mode:
       - turn_on
+      - join
       button_3_long_release_media_mode:
       - turn_off
+      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -4001,398 +4041,6 @@
         metadata: {}
         target:
           entity_id: input_select.schuur_raambekleding
-- id: '1737037700345'
-  alias: Timed
-  description: ''
-  triggers:
-  - trigger: time
-    at: 00:00:00
-    alias: 00:00
-    id: 00:00
-  - trigger: time
-    at: 01:00:00
-    alias: 01:00
-    id: 01:00
-  - trigger: time
-    at: 06:00:00
-    alias: 06:00
-    id: 06:00
-  - trigger: time
-    at: 08:00:00
-    alias: 08:00
-    id: 08:00
-  - trigger: time
-    at: 09:00:00
-    alias: 09:00
-    id: 09:00
-  - trigger: time
-    at: '10:00:00'
-    alias: '10:00'
-    id: '10:00'
-  - trigger: time
-    at: '11:00:00'
-    alias: '11:00'
-    id: '11:00'
-  - trigger: time
-    at: '17:30:00'
-    alias: '17:30'
-    id: '17:30'
-  - trigger: time
-    at: '18:00:00'
-    alias: '18:00'
-    id: '18:00'
-  - trigger: time
-    at: '18:30:00'
-    alias: '18:30'
-    id: '18:30'
-  - trigger: time
-    at: '23:00:00'
-    alias: '23:00'
-    id: '23:00'
-  conditions: []
-  actions:
-  - choose:
-    - alias: 00:00
-      conditions:
-      - condition: trigger
-        id:
-        - 00:00
-      sequence:
-      - action: light.turn_off
-        data:
-          transition: 30
-        metadata: {}
-        target:
-          area_id:
-          - dakterras
-          - eettafel
-          - entree
-          - gameroom
-          - gang
-          - kantoor
-          - keuken
-          - sauna
-          - schuur
-          - tuin
-          - wasruimte
-          - woonkamer
-    - alias: 01:00
-      conditions:
-      - condition: trigger
-        id:
-        - 01:00
-      sequence:
-      - action: light.turn_off
-        data:
-          transition: 30
-        metadata: {}
-        target:
-          area_id:
-          - dakterras
-          - eettafel
-          - entree
-          - gameroom
-          - gang
-          - kantoor
-          - keuken
-          - sauna
-          - schuur
-          - slaapkamer
-          - tuin
-          - wasruimte
-          - woonkamer
-    - alias: 06:00
-      conditions:
-      - condition: trigger
-        id:
-        - 06:00
-      sequence:
-      - action: input_select.select_option
-        data:
-          option: 080%
-        metadata: {}
-        target:
-          entity_id:
-          - input_select.keuken_raambekleding
-          - input_select.tuin_raambekleding
-          - input_select.woonkamer_raambekleding
-          - input_select.dakterras_raambekleding
-    - alias: 08:00, weekday
-      conditions:
-      - condition: trigger
-        id:
-        - 08:00
-      - condition: time
-        weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
-      sequence:
-      - action: light.turn_on
-        metadata: {}
-        data:
-          brightness_pct: 30
-          color_temp_kelvin: 3333
-          transition: 300
-        target:
-          entity_id:
-          - light.slaapkamer_alex_lamp_bed
-          - light.slaapkamer_deni_lamp_bed
-      - action: input_select.select_option
-        data:
-          option: 020%
-        metadata: {}
-        target:
-          entity_id:
-          - input_select.gang_raambekleding
-          - input_select.sauna_raambekleding
-          - input_select.slaapkamer_raambekleding
-      - alias: Disarm alarm if home
-        if:
-        - condition: numeric_state
-          entity_id: zone.home
-          above: 0
-        then:
-        - action: alarm_control_panel.alarm_disarm
-          metadata: {}
-          data: {}
-          target:
-            entity_id: alarm_control_panel.alarm
-    - alias: 09:00, weekday
-      conditions:
-      - condition: trigger
-        id:
-        - 09:00
-      - condition: time
-        weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
-      sequence:
-      - action: input_select.select_option
-        data:
-          option: 100%
-        metadata: {}
-        target:
-          entity_id: input_select.slaapkamer_raambekleding
-    - alias: 09:00, weekend
-      conditions:
-      - condition: trigger
-        id:
-        - 09:00
-      - condition: time
-        weekday:
-        - sat
-        - sun
-      sequence:
-      - action: light.turn_on
-        metadata: {}
-        data:
-          brightness_pct: 30
-          color_temp_kelvin: 3333
-          transition: 300
-        target:
-          entity_id:
-          - light.slaapkamer_alex_lamp_bed
-          - light.slaapkamer_deni_lamp_bed
-      - action: input_select.select_option
-        data:
-          option: 020%
-        metadata: {}
-        target:
-          entity_id:
-          - input_select.gang_raambekleding
-          - input_select.sauna_raambekleding
-          - input_select.slaapkamer_raambekleding
-      - alias: Disarm alarm if home
-        if:
-        - condition: numeric_state
-          entity_id: zone.home
-          above: 0
-        then:
-        - action: alarm_control_panel.alarm_disarm
-          metadata: {}
-          data: {}
-          target:
-            entity_id: alarm_control_panel.alarm
-    - alias: 10:00, weekday
-      conditions:
-      - condition: trigger
-        id:
-        - '10:00'
-      - condition: time
-        weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
-      sequence:
-      - action: input_select.select_option
-        data:
-          option: 100%
-        metadata: {}
-        target:
-          entity_id:
-          - input_select.gang_raambekleding
-          - input_select.sauna_raambekleding
-          - input_select.slaapkamer_raambekleding
-      - action: light.turn_off
-        data:
-          transition: 30
-        metadata: {}
-        target:
-          area_id: slaapkamer
-    - alias: 10:00, weekend
-      conditions:
-      - condition: trigger
-        id:
-        - '10:00'
-      - condition: time
-        weekday:
-        - sat
-        - sun
-      sequence:
-      - action: input_select.select_option
-        data:
-          option: 100%
-        metadata: {}
-        target:
-          entity_id: input_select.slaapkamer_raambekleding
-    - alias: '11:00'
-      conditions:
-      - condition: trigger
-        id:
-        - '11:00'
-      sequence:
-      - action: input_select.select_option
-        data:
-          option: 100%
-        metadata: {}
-        target:
-          entity_id:
-          - input_select.gang_raambekleding
-          - input_select.sauna_raambekleding
-          - input_select.slaapkamer_raambekleding
-      - action: light.turn_off
-        data:
-          transition: 30
-        metadata: {}
-        target:
-          area_id: slaapkamer
-    - alias: '17:30'
-      conditions:
-      - condition: trigger
-        id:
-        - '17:30'
-      sequence:
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
-          transition: 900
-        target:
-          entity_id: light.keuken_lampen
-    - alias: '18:00'
-      conditions:
-      - condition: trigger
-        id:
-        - '18:00'
-      sequence:
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
-          transition: 90
-        target:
-          entity_id:
-          - light.eettafel_lamp_boven
-          - light.woonkamer_lamp_boven
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
-            }}'
-          transition: 90
-        target:
-          entity_id:
-          - light.eettafel_lamp_onder
-          - light.woonkamer_lamp_onder
-      - action: input_select.select_option
-        data:
-          option: 000%
-        metadata: {}
-        target:
-          entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
-          - input_select.kantoor_raambekleding
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 5
-          milliseconds: 0
-      - action: input_select.select_option
-        data:
-          option: 000%
-        metadata: {}
-        target:
-          entity_id:
-          - input_select.gang_raambekleding
-          - input_select.sauna_raambekleding
-          - input_select.slaapkamer_raambekleding
-    - alias: '18:30'
-      conditions:
-      - condition: trigger
-        id:
-        - '18:30'
-      sequence:
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
-          transition: 300
-        target:
-          entity_id:
-          - light.eettafel_lamp_boven
-          - light.woonkamer_lamp_boven
-      - action: light.turn_off
-        data:
-          transition: 300
-        target:
-          entity_id:
-          - light.eettafel_lamp_onder
-          - light.woonkamer_lamp_onder
-          - light.keuken
-    - alias: '23:00'
-      conditions:
-      - condition: trigger
-        id:
-        - '23:00'
-      sequence:
-      - alias: Arm alarm if home
-        if:
-        - condition: numeric_state
-          entity_id: zone.home
-          above: 0
-        then:
-        - action: alarm_control_panel.alarm_arm_night
-          metadata: {}
-          data: {}
-          target:
-            entity_id: alarm_control_panel.alarm
-  mode: restart
 - id: '1743325307976'
   alias: Woonkamer Media
   description: ''
@@ -4413,7 +4061,7 @@
       sequence:
       - alias: Keuken volume omhoog
         data:
-          volume_level: 0.3
+          volume_level: 0.35
         target:
           entity_id: media_player.keuken
         action: media_player.volume_set
@@ -4462,7 +4110,7 @@
       sequence:
       - alias: Keuken volume omhoog
         data:
-          volume_level: 0.3
+          volume_level: 0.35
         target:
           entity_id: media_player.keuken
         action: media_player.volume_set
@@ -4475,7 +4123,7 @@
       sequence:
       - alias: Keuken volume omhoog
         data:
-          volume_level: 0.3
+          volume_level: 0.35
         target:
           entity_id: media_player.keuken
         action: media_player.volume_set
@@ -4535,7 +4183,7 @@
           before: '18:00:00'
         then:
         - data:
-            volume_level: 0.3
+            volume_level: 0.35
           target:
             entity_id:
             - media_player.woonkamer_songpal
@@ -4596,7 +4244,7 @@
       sequence:
       - alias: Keuken volume omhoog
         data:
-          volume_level: 0.3
+          volume_level: 0.35
         target:
           entity_id: media_player.keuken
         action: media_player.volume_set
@@ -4609,7 +4257,7 @@
       sequence:
       - alias: Keuken volume omhoog
         data:
-          volume_level: 0.3
+          volume_level: 0.35
         target:
           entity_id: media_player.keuken
         action: media_player.volume_set
@@ -4796,7 +4444,7 @@
       alarm_keypad: Alarm Paneel
       alarm_notifications_target:
       - 27e5bea4b625d80ff66fc5e7cb90de59
-      - 20aad8b41ffb7a9078e19c03e2e85ad2
+      - f8418287312cc8c3e8bfebbca53a099b
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
       - media_player.meterkast
@@ -4828,7 +4476,6 @@
       alarm_notifications_pending: heeft het alarm geactiveerd! Schakel het alarm
         uit om te voorkomen dat het afgaat!
       alarm_notifications_priority_pending:
-      - critical_apple
       - critical_android
       alarm_scripts_pending:
       - script.alarm_pending
@@ -4838,7 +4485,6 @@
       - script.alarm_disarmed
       alarm_notifications_triggered: heeft het alarm geactiveerd! Het alarm gaat af!
       alarm_notifications_priority_triggered:
-      - critical_apple
       - critical_android
       alarm_notifications_always: geactiveerd!
       alarm_sensor_fire:
@@ -4848,14 +4494,12 @@
       - binary_sensor.schuur_brandmelder_smoke
       alarm_notifications_fire: heeft vuur gedetecteerd!
       alarm_notifications_priority_fire:
-      - critical_apple
       - critical_android
       alarm_sensor_moisture:
       - binary_sensor.keuken_vochtmelder
       - binary_sensor.wasruimte_vochtmelder
       alarm_notifications_moisture: heeft vocht gedetecteerd!
       alarm_notifications_priority_moisture:
-      - critical_apple
       - critical_android
 - id: '1746611445373'
   alias: Slaapkamer Alex Beweging
@@ -5073,4 +4717,370 @@
     data:
       message: Deni heeft thuis verlaten!
     metadata: {}
+  mode: single
+- id: '1748759857960'
+  alias: 00:00
+  description: ''
+  triggers:
+  - trigger: time
+    at: 00:00:00
+  conditions: []
+  actions:
+  - action: light.turn_off
+    data:
+      transition: 30
+    metadata: {}
+    target:
+      area_id:
+      - dakterras
+      - eettafel
+      - entree
+      - gameroom
+      - gang
+      - kantoor
+      - keuken
+      - sauna
+      - schuur
+      - tuin
+      - wasruimte
+      - woonkamer
+  mode: single
+- id: '1748773429616'
+  alias: 01:00
+  description: ''
+  triggers:
+  - trigger: time
+    at: 01:00:00
+  conditions: []
+  actions:
+  - action: light.turn_off
+    data:
+      transition: 30
+    metadata: {}
+    target:
+      area_id:
+      - dakterras
+      - eettafel
+      - entree
+      - gameroom
+      - gang
+      - kantoor
+      - keuken
+      - sauna
+      - schuur
+      - slaapkamer
+      - tuin
+      - wasruimte
+      - woonkamer
+  mode: single
+- id: '1748773440064'
+  alias: 06:00
+  description: ''
+  triggers:
+  - trigger: time
+    at: 06:00:00
+  conditions: []
+  actions:
+  - action: input_select.select_option
+    data:
+      option: 080%
+    metadata: {}
+    target:
+      entity_id:
+      - input_select.keuken_raambekleding
+      - input_select.tuin_raambekleding
+      - input_select.woonkamer_raambekleding
+      - input_select.dakterras_raambekleding
+  - action: media_player.media_next_track
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.groep
+  mode: single
+- id: '1748773451561'
+  alias: 08:00
+  description: ''
+  triggers:
+  - trigger: time
+    at: 08:00:00
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: time
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 30
+          color_temp_kelvin: 3333
+          transition: 300
+        target:
+          entity_id:
+          - light.slaapkamer_alex_lamp_bed
+          - light.slaapkamer_deni_lamp_bed
+      - action: input_select.select_option
+        data:
+          option: 020%
+        metadata: {}
+        target:
+          entity_id:
+          - input_select.gang_raambekleding
+          - input_select.sauna_raambekleding
+          - input_select.slaapkamer_raambekleding
+      - alias: Disarm alarm if home
+        if:
+        - condition: numeric_state
+          entity_id: zone.home
+          above: 0
+        then:
+        - action: alarm_control_panel.alarm_disarm
+          metadata: {}
+          data: {}
+          target:
+            entity_id: alarm_control_panel.alarm
+  mode: single
+- id: '1748773460838'
+  alias: 09:00
+  description: ''
+  triggers:
+  - trigger: time
+    at: 09:00:00
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: time
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+      sequence:
+      - action: input_select.select_option
+        data:
+          option: 100%
+        metadata: {}
+        target:
+          entity_id: input_select.slaapkamer_raambekleding
+    - conditions:
+      - condition: time
+        weekday:
+        - sat
+        - sun
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 30
+          color_temp_kelvin: 3333
+          transition: 300
+        target:
+          entity_id:
+          - light.slaapkamer_alex_lamp_bed
+          - light.slaapkamer_deni_lamp_bed
+      - action: input_select.select_option
+        data:
+          option: 020%
+        metadata: {}
+        target:
+          entity_id:
+          - input_select.gang_raambekleding
+          - input_select.sauna_raambekleding
+          - input_select.slaapkamer_raambekleding
+      - alias: Disarm alarm if home
+        if:
+        - condition: numeric_state
+          entity_id: zone.home
+          above: 0
+        then:
+        - action: alarm_control_panel.alarm_disarm
+          metadata: {}
+          data: {}
+          target:
+            entity_id: alarm_control_panel.alarm
+  mode: single
+- id: '1748773472200'
+  alias: '10:00'
+  description: ''
+  triggers:
+  - trigger: time
+    at: '10:00:00'
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: time
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+      sequence:
+      - action: input_select.select_option
+        data:
+          option: 100%
+        metadata: {}
+        target:
+          entity_id:
+          - input_select.gang_raambekleding
+          - input_select.sauna_raambekleding
+          - input_select.slaapkamer_raambekleding
+      - action: light.turn_off
+        data:
+          transition: 30
+        metadata: {}
+        target:
+          area_id: slaapkamer
+    - conditions:
+      - condition: time
+        weekday:
+        - sat
+        - sun
+      sequence:
+      - action: input_select.select_option
+        data:
+          option: 100%
+        metadata: {}
+        target:
+          entity_id: input_select.slaapkamer_raambekleding
+  mode: single
+- id: '1748773482119'
+  alias: '11:00'
+  description: ''
+  triggers:
+  - trigger: time
+    at: '11:00:00'
+  conditions: []
+  actions:
+  - action: input_select.select_option
+    data:
+      option: 100%
+    metadata: {}
+    target:
+      entity_id:
+      - input_select.gang_raambekleding
+      - input_select.sauna_raambekleding
+      - input_select.slaapkamer_raambekleding
+  - action: light.turn_off
+    data:
+      transition: 30
+    metadata: {}
+    target:
+      area_id: slaapkamer
+  mode: single
+- id: '1748774130230'
+  alias: '18:00'
+  description: ''
+  triggers:
+  - trigger: time
+    at: '18:00:00'
+  conditions: []
+  actions:
+  - action: light.turn_on
+    data:
+      brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+        }}'
+      color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+        }}'
+      transition: 90
+    target:
+      entity_id:
+      - light.eettafel_lamp_boven
+      - light.woonkamer_lamp_boven
+  - action: light.turn_on
+    data:
+      brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
+        }}'
+      color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
+        }}'
+      transition: 90
+    target:
+      entity_id:
+      - light.eettafel_lamp_onder
+      - light.woonkamer_lamp_onder
+  - action: input_select.select_option
+    data:
+      option: 000%
+    metadata: {}
+    target:
+      entity_id:
+      - input_select.dakterras_raambekleding
+      - input_select.gameroom_raambekleding
+      - input_select.kantoor_raambekleding
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - action: input_select.select_option
+    data:
+      option: 000%
+    metadata: {}
+    target:
+      entity_id:
+      - input_select.gang_raambekleding
+      - input_select.sauna_raambekleding
+      - input_select.slaapkamer_raambekleding
+  - action: media_player.media_next_track
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.groep
+  mode: single
+- id: '1748774139655'
+  alias: '18:30'
+  description: ''
+  triggers:
+  - trigger: time
+    at: '18:30:00'
+  conditions: []
+  actions:
+  - action: light.turn_on
+    data:
+      brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+        }}'
+      color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+        }}'
+      transition: 300
+    target:
+      entity_id:
+      - light.eettafel_lamp_boven
+      - light.woonkamer_lamp_boven
+  - action: light.turn_off
+    data:
+      transition: 300
+    target:
+      entity_id:
+      - light.eettafel_lamp_onder
+      - light.woonkamer_lamp_onder
+      - light.keuken
+  mode: single
+- id: '1748774149094'
+  alias: '23:00'
+  description: ''
+  triggers:
+  - trigger: time
+    at: '23:00:00'
+  conditions: []
+  actions:
+  - alias: Arm alarm if home
+    if:
+    - condition: numeric_state
+      entity_id: zone.home
+      above: 0
+    then:
+    - action: alarm_control_panel.alarm_arm_night
+      metadata: {}
+      data: {}
+      target:
+        entity_id: alarm_control_panel.alarm
   mode: single
