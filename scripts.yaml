@@ -69,12 +69,18 @@ music_home:
       radio_mode: false
       enqueue: replace_next
       media_id:
-      - 80ies Pop
-      - 90ies Pop
+      - 80s Hits
+      - 90s Hits
+      - 80s Pop
+      - 90s Pop
       - 2000s Pop
       - 2010s Pop
-      - '''20s Hits'
       - Eurovision
+      - De Grootste Hits
+      - Happy Hits
+      - Pop Rewind
+      - Power Ballads
+      - Women of Metal
     target:
       entity_id: media_player.groep
   - delay:
@@ -443,3 +449,20 @@ voordeur_notify:
   alias: Voordeur - Notify
   description: ''
   icon: mdi:message-badge
+voordeur_woonkamer_tv:
+  sequence:
+  - action: remote.send_command
+    metadata: {}
+    data:
+      command: HOME
+    target:
+      entity_id: remote.woonkamer_tv
+  - action: androidtv.adb_command
+    metadata: {}
+    data:
+      command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
+        rtsp://192.168.16.1:7447/nW89EmoHxiJ4koVD
+    target:
+      entity_id: media_player.woonkamer_tv_adb
+  alias: Voordeur - Woonkamer TV
+  description: ''

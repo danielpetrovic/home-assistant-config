@@ -278,7 +278,6 @@
         metadata: {}
         target:
           entity_id: button.tuin_gordijn_my_position
-        enabled: false
       - alias: Deur open?
         choose:
         - conditions:
@@ -291,7 +290,6 @@
             metadata: {}
             target:
               entity_id:
-              - cover.tuin_gordijn
               - cover.tuin_rolluik
         - conditions:
           - condition: state
@@ -309,7 +307,6 @@
             metadata: {}
             target:
               entity_id:
-              - cover.tuin_gordijn
               - cover.tuin_rolluik
   mode: queued
   max: 10
@@ -730,12 +727,16 @@
         entity_id: input_select.woonkamer_raambekleding
         state: 000%
       sequence:
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.woonkamer_gordijn_my_position
       - action: cover.close_cover
         data: {}
         metadata: {}
         target:
           entity_id:
-          - cover.woonkamer_gordijn
           - cover.woonkamer_rolluik
   mode: queued
   max: 10
@@ -1762,7 +1763,7 @@
         - lights off
       sequence:
       - data:
-          volume_level: 0.15
+          volume_level: 0.25
         target:
           entity_id:
           - media_player.sauna
@@ -4426,6 +4427,9 @@
     - action: script.voordeur_media
       data: {}
       metadata: {}
+    - action: script.voordeur_woonkamer_tv
+      metadata: {}
+      data: {}
     - action: script.lights_green
       data: {}
       metadata: {}
@@ -4791,11 +4795,6 @@
       - input_select.tuin_raambekleding
       - input_select.woonkamer_raambekleding
       - input_select.dakterras_raambekleding
-  - action: media_player.media_next_track
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.groep
   mode: single
 - id: '1748773451561'
   alias: 08:00
@@ -4939,7 +4938,8 @@
           transition: 30
         metadata: {}
         target:
-          area_id: slaapkamer
+          entity_id:
+          - light.slaapkamer_lampen
     - conditions:
       - condition: time
         weekday:
@@ -4975,7 +4975,8 @@
       transition: 30
     metadata: {}
     target:
-      area_id: slaapkamer
+      entity_id:
+      - light.slaapkamer_lampen
   mode: single
 - id: '1748774130230'
   alias: '18:00'
@@ -5023,18 +5024,14 @@
       milliseconds: 0
   - action: input_select.select_option
     data:
-      option: 000%
+      option: 020%
     metadata: {}
     target:
       entity_id:
       - input_select.gang_raambekleding
       - input_select.sauna_raambekleding
       - input_select.slaapkamer_raambekleding
-  - action: media_player.media_next_track
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.groep
+      - input_select.woonkamer_raambekleding
   mode: single
 - id: '1748774139655'
   alias: '18:30'
@@ -5084,3 +5081,118 @@
       target:
         entity_id: alarm_control_panel.alarm
   mode: single
+- id: '1748867631257'
+  alias: Badkamer Media idle
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.badkamer_kef
+    to: idle
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+    enabled: false
+  - trigger: state
+    entity_id:
+    - media_player.badkamer_kef
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+    enabled: false
+  - trigger: time
+    at: 05:00:00
+  - trigger: time
+    at: '17:00:00'
+  conditions:
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
+  actions:
+  - action: media_player.unjoin
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.badkamer
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 3
+      milliseconds: 0
+  - action: media_player.join
+    data:
+      group_members:
+      - media_player.badkamer
+    metadata: {}
+    target:
+      entity_id: media_player.groep
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 3
+      milliseconds: 0
+  - action: media_player.media_play
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.groep
+  mode: parallel
+- id: '1748957176545'
+  alias: Slaapkamer Media idle
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.slaapkamer_kef
+    to: idle
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+  - trigger: state
+    entity_id:
+    - media_player.slaapkamer_kef
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+  conditions:
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
+  actions:
+  - action: media_player.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.groep
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 3
+      milliseconds: 0
+  - action: media_player.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.groep
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 3
+      milliseconds: 0
+  - action: media_player.media_next_track
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.groep
+  - action: media_player.media_next_track
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.groep
+  mode: parallel
