@@ -4424,9 +4424,6 @@
     - action: script.voordeur_announce
       data: {}
       metadata: {}
-    - action: script.voordeur_media
-      data: {}
-      metadata: {}
     - action: script.voordeur_woonkamer_tv
       metadata: {}
       data: {}
@@ -5085,26 +5082,10 @@
   alias: Badkamer Media idle
   description: ''
   triggers:
-  - trigger: state
-    entity_id:
-    - media_player.badkamer_kef
-    to: idle
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 30
-    enabled: false
-  - trigger: state
-    entity_id:
-    - media_player.badkamer_kef
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 30
-    enabled: false
   - trigger: time
-    at: 05:00:00
+    at: 02:00:00
+  - trigger: time
+    at: 06:00:00
   - trigger: time
     at: '17:00:00'
   conditions:
@@ -5117,10 +5098,14 @@
     data: {}
     target:
       entity_id: media_player.badkamer
+  - action: unifi.reconnect_client
+    metadata: {}
+    data:
+      device_id: 354b83bf081de21dc59e45153b555046
   - delay:
       hours: 0
       minutes: 0
-      seconds: 3
+      seconds: 9
       milliseconds: 0
   - action: media_player.join
     data:
@@ -5139,7 +5124,7 @@
     data: {}
     target:
       entity_id: media_player.groep
-  mode: parallel
+  mode: single
 - id: '1748957176545'
   alias: Slaapkamer Media idle
   description: ''
@@ -5150,49 +5135,24 @@
     to: idle
     for:
       hours: 0
-      minutes: 0
-      seconds: 10
+      minutes: 1
+      seconds: 0
   - trigger: state
     entity_id:
     - media_player.slaapkamer_kef
     to: 'off'
     for:
       hours: 0
-      minutes: 0
-      seconds: 10
+      minutes: 1
+      seconds: 0
   conditions:
   - condition: numeric_state
     entity_id: zone.home
     above: 0
   actions:
-  - action: media_player.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.groep
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 3
-      milliseconds: 0
-  - action: media_player.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.groep
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 3
-      milliseconds: 0
   - action: media_player.media_next_track
     metadata: {}
     data: {}
     target:
       entity_id: media_player.groep
-  - action: media_player.media_next_track
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.groep
-  mode: parallel
+  mode: single
