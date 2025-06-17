@@ -32,7 +32,6 @@ music_night:
       radio_mode: false
       enqueue: replace_next
       media_id:
-      - Calm Piano
       - Classical
     target:
       entity_id: media_player.groep
@@ -69,27 +68,16 @@ music_home:
       radio_mode: false
       enqueue: replace_next
       media_id:
-      - 100% Evanescence
-      - 100% Imagine Dragons
-      - 100% Linkin Park
-      - 100% Within Temptation
+      - 00's NL Hits
+      - 10's NL Hits
       - 80s Hits
       - 90s Hits
-      - 80s Pop
-      - 90s Pop
-      - 2000s Pop
-      - 2010s Pop
-      - 00s Anime
-      - 10s Anime
-      - 20s Anime
+      - 00s Hits
+      - 2010s party hits
       - Anime Essentials 定番アニメ
-      - Anime Radar 新着アニメ
       - Eurovision
-      - De Grootste Hits
       - Happy Hits
-      - Pop Rewind
       - Power Ballads
-      - Women of Metal
     target:
       entity_id: media_player.groep
   - delay:

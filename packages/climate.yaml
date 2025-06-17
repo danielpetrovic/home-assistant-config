@@ -1,0 +1,541 @@
+schedule:
+  badkamer_klimaat_heating:
+    name: "Badkamer Klimaat Verwarming"
+    icon: mdi:thermostat-auto
+    monday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 22
+          target_temp_low_normal: 21
+    tuesday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 22
+          target_temp_low_normal: 21
+    wednesday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 22
+          target_temp_low_normal: 21
+    thursday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 22
+          target_temp_low_normal: 21
+    friday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 22
+          target_temp_low_normal: 21
+    saturday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 22
+          target_temp_low_normal: 21
+    sunday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 22
+          target_temp_low_normal: 21
+  gameroom_klimaat_heating:
+    name: "Gameroom Klimaat Verwarming"
+    icon: mdi:thermostat-auto
+    monday:
+      - from: "06:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    tuesday:
+      - from: "06:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    wednesday:
+      - from: "06:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    thursday:
+      - from: "06:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    friday:
+      - from: "06:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+  gameroom_klimaat_cooling:
+    name: "Gameroom Klimaat Koeling"
+    icon: mdi:thermostat-auto
+    monday:
+      - from: "09:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    tuesday:
+      - from: "09:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    wednesday:
+      - from: "09:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    thursday:
+      - from: "09:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    friday:
+      - from: "09:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+  kantoor_klimaat_heating:
+    name: "Kantoor Klimaat Verwarming"
+    icon: mdi:thermostat-auto
+    monday:
+      - from: "06:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    tuesday:
+      - from: "06:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    wednesday:
+      - from: "06:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    thursday:
+      - from: "06:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    friday:
+      - from: "06:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+  kantoor_klimaat_cooling:
+    name: "Kantoor Klimaat Koeling"
+    icon: mdi:thermostat-auto
+    monday:
+      - from: "09:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    tuesday:
+      - from: "09:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    wednesday:
+      - from: "09:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    thursday:
+      - from: "09:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    friday:
+      - from: "09:00:00"
+        to: "18:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+  sauna_klimaat_heating:
+    name: "Sauna Klimaat Verwarming"
+    icon: mdi:thermostat-auto
+    monday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    tuesday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    wednesday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    thursday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    friday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    saturday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    sunday:
+      - from: "06:00:00"
+        to: "10:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+  slaapkamer_klimaat_heating:
+    name: "Slaapkamer Klimaat Verwarming"
+    icon: mdi:thermostat-auto
+    monday:
+      - from: "06:00:00"
+        to: "10:00:00"
+      - from: "20:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    tuesday:
+      - from: "06:00:00"
+        to: "10:00:00"
+      - from: "20:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    wednesday:
+      - from: "06:00:00"
+        to: "10:00:00"
+      - from: "20:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    thursday:
+      - from: "06:00:00"
+        to: "10:00:00"
+      - from: "20:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    friday:
+      - from: "06:00:00"
+        to: "10:00:00"
+      - from: "20:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    saturday:
+      - from: "06:00:00"
+        to: "10:00:00"
+      - from: "20:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    sunday:
+      - from: "06:00:00"
+        to: "10:00:00"
+      - from: "20:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+  slaapkamer_klimaat_cooling:
+    name: "Slaapkamer Klimaat Koeling"
+    icon: mdi:thermostat-auto
+    monday:
+      - from: "00:00:00"
+        to: "04:00:00"
+      - from: "22:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 23
+          target_temp_low: 18
+    tuesday:
+      - from: "00:00:00"
+        to: "04:00:00"
+      - from: "22:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 23
+          target_temp_low: 18
+    wednesday:
+      - from: "00:00:00"
+        to: "04:00:00"
+      - from: "22:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 23
+          target_temp_low: 18
+    thursday:
+      - from: "00:00:00"
+        to: "04:00:00"
+      - from: "22:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 23
+          target_temp_low: 18
+    friday:
+      - from: "00:00:00"
+        to: "04:00:00"
+      - from: "22:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 23
+          target_temp_low: 18
+    saturday:
+      - from: "00:00:00"
+        to: "04:00:00"
+      - from: "22:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 23
+          target_temp_low: 18
+    sunday:
+      - from: "00:00:00"
+        to: "04:00:00"
+      - from: "22:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 23
+          target_temp_low: 18
+  woonkamer_klimaat_heating:
+    name: "Woonkamer Klimaat Verwarming"
+    icon: mdi:thermostat-auto
+    monday:
+      - from: "06:00:00"
+        to: "10:00:00"
+      - from: "18:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    tuesday:
+      - from: "06:00:00"
+        to: "10:00:00"
+      - from: "18:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    wednesday:
+      - from: "06:00:00"
+        to: "10:00:00"
+      - from: "18:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    thursday:
+      - from: "06:00:00"
+        to: "10:00:00"
+      - from: "18:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    friday:
+      - from: "06:00:00"
+        to: "10:00:00"
+      - from: "18:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    saturday:
+      - from: "06:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+    sunday:
+      - from: "06:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: heat
+          target_temp_high: 26
+          target_temp_low_cold: 21
+          target_temp_low_normal: 20
+  woonkamer_klimaat_cooling:
+    name: "Woonkamer Klimaat Koeling"
+    icon: mdi:thermostat-auto
+    monday:
+      - from: "18:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    tuesday:
+      - from: "18:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    wednesday:
+      - from: "18:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    thursday:
+      - from: "18:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    friday:
+      - from: "18:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    saturday:
+      - from: "10:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
+    sunday:
+      - from: "10:00:00"
+        to: "24:00:00"
+        data:
+          hvac_mode: cool
+          target_temp_high: 24
+          target_temp_low: 18
