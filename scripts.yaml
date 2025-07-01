@@ -5,7 +5,6 @@ music_away:
     data: {}
     target:
       entity_id:
-      - media_player.groep
       - media_player.badkamer_kef
       - media_player.gameroom_kef
       - media_player.kantoor_kef
@@ -24,7 +23,7 @@ music_night:
     data: {}
     metadata: {}
     target:
-      entity_id: media_player.groep
+      entity_id: media_player.slaapkamer
   - action: music_assistant.play_media
     metadata: {}
     data:
@@ -34,7 +33,7 @@ music_night:
       media_id:
       - Classical
     target:
-      entity_id: media_player.groep
+      entity_id: media_player.slaapkamer
   - delay:
       hours: 0
       minutes: 0
@@ -44,13 +43,21 @@ music_night:
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.groep
+      entity_id: media_player.slaapkamer
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.groep
+      entity_id: media_player.slaapkamer
+  - action: media_player.join
+    metadata: {}
+    data:
+      group_members:
+      - media_player.keuken
+      - media_player.sauna
+    target:
+      entity_id: media_player.slaapkamer
 music_home:
   alias: Music - Home
   description: ''
@@ -60,7 +67,7 @@ music_home:
     data: {}
     metadata: {}
     target:
-      entity_id: media_player.groep
+      entity_id: media_player.slaapkamer
   - action: music_assistant.play_media
     metadata: {}
     data:
@@ -68,18 +75,15 @@ music_home:
       radio_mode: false
       enqueue: replace_next
       media_id:
-      - 00's NL Hits
-      - 10's NL Hits
       - 80s Hits
       - 90s Hits
       - 00s Hits
       - 2010s party hits
-      - Anime Essentials 定番アニメ
       - Eurovision
-      - Happy Hits
+      - Fresh Hits
       - Power Ballads
     target:
-      entity_id: media_player.groep
+      entity_id: media_player.slaapkamer
   - delay:
       hours: 0
       minutes: 0
@@ -89,13 +93,21 @@ music_home:
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.groep
+      entity_id: media_player.slaapkamer
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.groep
+      entity_id: media_player.slaapkamer
+  - action: media_player.join
+    metadata: {}
+    data:
+      group_members:
+      - media_player.keuken
+      - media_player.sauna
+    target:
+      entity_id: media_player.slaapkamer
 lights_green:
   sequence:
   - alias: Scene, create
@@ -448,18 +460,31 @@ voordeur_notify:
   icon: mdi:message-badge
 voordeur_woonkamer_tv:
   sequence:
-  - action: remote.send_command
-    metadata: {}
-    data:
-      command: HOME
-    target:
-      entity_id: remote.woonkamer_tv
-  - action: androidtv.adb_command
-    metadata: {}
-    data:
-      command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
-        rtsp://192.168.16.1:7447/nW89EmoHxiJ4koVD
-    target:
-      entity_id: media_player.woonkamer_tv_adb
+  - if:
+    - alias: Woonkamer TV not off
+      condition: not
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: media_player.woonkamer_tv
+          state: 'off'
+        - condition: state
+          entity_id: media_player.woonkamer_tv
+          state: unavailable
+    then:
+    - action: remote.send_command
+      metadata: {}
+      data:
+        command: HOME
+      target:
+        entity_id: remote.woonkamer_tv
+    - action: androidtv.adb_command
+      metadata: {}
+      data:
+        command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
+          rtsp://192.168.16.1:7447/nW89EmoHxiJ4koVD
+      target:
+        entity_id: media_player.woonkamer_tv_adb
   alias: Voordeur - Woonkamer TV
   description: ''

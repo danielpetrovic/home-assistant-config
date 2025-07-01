@@ -356,67 +356,53 @@ schedule:
     name: "Slaapkamer Klimaat Koeling"
     icon: mdi:thermostat-auto
     monday:
-      - from: "00:00:00"
-        to: "04:00:00"
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 23
+          target_temp_high: 21
           target_temp_low: 18
     tuesday:
-      - from: "00:00:00"
-        to: "04:00:00"
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 23
+          target_temp_high: 21
           target_temp_low: 18
     wednesday:
-      - from: "00:00:00"
-        to: "04:00:00"
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 23
+          target_temp_high: 21
           target_temp_low: 18
     thursday:
-      - from: "00:00:00"
-        to: "04:00:00"
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 23
+          target_temp_high: 21
           target_temp_low: 18
     friday:
-      - from: "00:00:00"
-        to: "04:00:00"
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 23
+          target_temp_high: 21
           target_temp_low: 18
     saturday:
-      - from: "00:00:00"
-        to: "04:00:00"
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 23
+          target_temp_high: 21
           target_temp_low: 18
     sunday:
-      - from: "00:00:00"
-        to: "04:00:00"
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 23
+          target_temp_high: 21
           target_temp_low: 18
   woonkamer_klimaat_heating:
     name: "Woonkamer Klimaat Verwarming"

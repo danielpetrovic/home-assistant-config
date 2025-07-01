@@ -12,24 +12,6 @@
     to: 'off'
     id: lights off
     trigger: state
-  - entity_id:
-    - sensor.watergebruik
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-    above: 7.5
-    id: shower on
-    trigger: numeric_state
-  - entity_id:
-    - sensor.watergebruik
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 10
-    below: 7.5
-    id: shower off
-    trigger: numeric_state
   conditions: []
   actions:
   - choose:
@@ -39,6 +21,13 @@
         id:
         - lights on
       sequence:
+      - action: media_player.join
+        data:
+          group_members:
+          - media_player.badkamer
+        metadata: {}
+        target:
+          entity_id: media_player.slaapkamer
       - action: media_player.volume_set
         metadata: {}
         data:
@@ -51,41 +40,17 @@
         id:
         - lights off
       sequence:
-      - action: media_player.volume_set
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 6
+          milliseconds: 0
+      - action: media_player.turn_off
         metadata: {}
-        data:
-          volume_level: 0.15
+        data: {}
         target:
           entity_id: media_player.badkamer
-    - conditions:
-      - condition: trigger
-        id:
-        - shower on
-      - condition: state
-        entity_id: light.badkamer_lampen
-        state: 'on'
-      sequence:
-      - data:
-          volume_level: 0.45
-        target:
-          entity_id: media_player.badkamer
-        action: media_player.volume_set
-      alias: shower on - volume up
-    - conditions:
-      - condition: trigger
-        id:
-        - shower off
-      - condition: state
-        entity_id: light.badkamer_lampen
-        state: 'on'
-      sequence:
-      - data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.badkamer
-        action: media_player.volume_set
-      alias: shower off - volume down
-  mode: parallel
+  mode: restart
 - id: '1704667361587'
   alias: Tuin Raambekleding
   description: ''
@@ -1745,24 +1710,6 @@
     - light.sauna_lamp
     to: 'off'
     id: lights off
-  - alias: tv on
-    trigger: state
-    entity_id:
-    - media_player.sauna_kef
-    attribute: source
-    to: tv
-    id: tv on
-  - alias: tv off
-    trigger: state
-    entity_id:
-    - media_player.sauna_kef
-    attribute: source
-    from: tv
-    id: tv off
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 3
   conditions: []
   actions:
   - choose:
@@ -1790,54 +1737,6 @@
           entity_id:
           - media_player.sauna
         action: media_player.volume_set
-    - conditions:
-      - condition: trigger
-        id:
-        - tv on
-      sequence:
-      - action: media_player.unjoin
-        metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.sauna
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 3
-          milliseconds: 0
-        enabled: true
-      - action: media_player.media_play
-        metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.groep
-        enabled: true
-      alias: tv on
-    - conditions:
-      - condition: trigger
-        id:
-        - tv off
-      sequence:
-      - action: media_player.join
-        metadata: {}
-        data:
-          group_members:
-          - media_player.sauna
-        target:
-          entity_id: media_player.groep
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 3
-          milliseconds: 0
-        enabled: false
-      - action: media_player.media_play
-        metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.groep
-        enabled: false
-      alias: tv off
   mode: parallel
 - id: '1706168546378'
   alias: Gang Beweging
@@ -2217,7 +2116,7 @@
 - id: '1713999237361'
   alias: Gameroom Energie
   description: ''
-  trigger:
+  triggers:
   - trigger: numeric_state
     entity_id:
     - sensor.alex_pc_power
@@ -2236,9 +2135,8 @@
       seconds: 0
     below: 10
     id: Deni PC
-    enabled: true
-  condition: []
-  action:
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: trigger
@@ -2709,7 +2607,8 @@
       - geofence
     then:
     - choose:
-      - conditions:
+      - alias: Cooling on, above 15C, at home
+        conditions:
         - condition: state
           entity_id: schedule.woonkamer_klimaat_cooling
           state: 'on'
@@ -2731,8 +2630,28 @@
           metadata: {}
           target:
             entity_id: climate.woonkamer_thermostaat
-        alias: Cooling on, above 15C, at home
-      - conditions:
+      - alias: Cooling off, above 15C, at home
+        conditions:
+        - condition: state
+          entity_id: schedule.woonkamer_klimaat_cooling
+          state: 'off'
+        - condition: numeric_state
+          entity_id: sensor.outdoor_temperature
+          above: 15
+        - condition: numeric_state
+          entity_id: zone.home
+          above: 0
+        sequence:
+        - action: climate.set_temperature
+          data:
+            target_temp_high: 26
+            target_temp_low: 18
+            hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.woonkamer_thermostaat
+      - alias: Not at home
+        conditions:
         - condition: numeric_state
           entity_id: zone.home
           below: 1
@@ -2740,12 +2659,11 @@
         - action: climate.set_temperature
           data:
             hvac_mode: cool
-            target_temp_low: 26
-            target_temp_high: 18
+            target_temp_high: 26
+            target_temp_low: 18
           metadata: {}
           target:
             entity_id: climate.woonkamer_thermostaat
-        alias: Not at home
   - alias: heating
     if:
     - condition: trigger
@@ -2833,12 +2751,72 @@
         - condition: state
           entity_id: climate.woonkamer_thermostaat
           attribute: target_temp_high
+          state: 20
+        sequence:
+        - action: climate.set_temperature
+          data:
+            temperature: 22
+            hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.woonkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: '5'
+          metadata: {}
+          target:
+            entity_id: climate.woonkamer_airco
+        alias: cooling, 20C
+      - conditions:
+        - condition: state
+          entity_id: climate.woonkamer_thermostaat
+          state: cool
+        - condition: state
+          entity_id: climate.woonkamer_thermostaat
+          attribute: hvac_action
+          state: cooling
+        - condition: state
+          entity_id: climate.woonkamer_thermostaat
+          attribute: target_temp_high
+          state: 21
+        sequence:
+        - action: climate.set_temperature
+          data:
+            temperature: 23
+            hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.woonkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: '3'
+          metadata: {}
+          target:
+            entity_id: climate.woonkamer_airco
+        alias: cooling, 21C
+      - conditions:
+        - condition: state
+          entity_id: climate.woonkamer_thermostaat
+          state: cool
+        - condition: state
+          entity_id: climate.woonkamer_thermostaat
+          attribute: hvac_action
+          state: cooling
+        - condition: state
+          entity_id: climate.woonkamer_thermostaat
+          attribute: target_temp_high
           state: 22
         sequence:
         - action: climate.set_temperature
           data:
             temperature: 24
             hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.woonkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.woonkamer_airco
@@ -2863,6 +2841,12 @@
           metadata: {}
           target:
             entity_id: climate.woonkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Auto
+          metadata: {}
+          target:
+            entity_id: climate.woonkamer_airco
         alias: cooling, 23C
       - conditions:
         - condition: state
@@ -2881,6 +2865,12 @@
           data:
             temperature: 26
             hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.woonkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.woonkamer_airco
@@ -2905,6 +2895,12 @@
           metadata: {}
           target:
             entity_id: climate.woonkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Silence
+          metadata: {}
+          target:
+            entity_id: climate.woonkamer_airco
         alias: cooling, 25C
       - conditions:
         - condition: state
@@ -2915,6 +2911,12 @@
           data:
             temperature: 28
             hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.woonkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Silence
           metadata: {}
           target:
             entity_id: climate.woonkamer_airco
@@ -3244,14 +3246,10 @@
       button_1_light:
         entity_id: light.badkamer_lamp
       button_1_light_schedule: schedule.lights_bright
-      button_3_media: media_player.badkamer
-      button_3_media_leader: media_player.groep
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
-      button_3_long_release_media_mode:
-      - turn_off
-      - unjoin
 - id: '1736811938136'
   alias: Eettafel Knop
   description: ''
@@ -3323,13 +3321,10 @@
         entity_id: light.gameroom_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.groep
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
-      button_3_long_release_media_mode:
-      - turn_off
-      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3378,13 +3373,10 @@
         entity_id: light.gameroom_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.groep
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
-      button_3_long_release_media_mode:
-      - turn_off
-      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3481,13 +3473,11 @@
         target:
           entity_id: switch.kantoor_bureau
       button_3_media: media_player.kantoor
-      button_3_media_leader: media_player.groep
+      button_3_media_leader: media_player.slaapkamer
+      button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
       - join
-      button_3_long_release_media_mode:
-      - turn_off
-      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3528,13 +3518,10 @@
         entity_id: light.keuken_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.keuken
-      button_3_media_leader: media_player.groep
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
-      button_3_long_release_media_mode:
-      - turn_off
-      - unjoin
       button_2_short_release:
       - action: input_select.select_option
         data:
@@ -3575,13 +3562,11 @@
         entity_id: light.sauna_lamp
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.sauna
-      button_3_media_leader: media_player.groep
+      button_3_media_leader: media_player.slaapkamer
+      button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
       - join
-      button_3_long_release_media_mode:
-      - turn_off
-      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3623,13 +3608,6 @@
         - light.slaapkamer_lamp
       button_1_light_schedule: schedule.lights_dimmed
       button_3_media: media_player.slaapkamer
-      button_3_media_leader: media_player.groep
-      button_3_short_release_media_mode:
-      - turn_on
-      - join
-      button_3_long_release_media_mode:
-      - turn_off
-      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3715,7 +3693,10 @@
         entity_id: light.toilet_lamp
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.keuken
-      button_3_media_leader: media_player.group
+      button_3_media_leader: media_player.slaapkamer
+      button_3_short_release_media_mode:
+      - turn_on
+      - join
 - id: '1736813115022'
   alias: Woonkamer Knop
   description: ''
@@ -3808,6 +3789,11 @@
     - remote.woonkamer_tv
     attribute: current_activity
     trigger: state
+  - trigger: state
+    entity_id:
+    - media_player.woonkamer_tv_cast
+    from:
+    to:
   conditions: []
   actions:
   - alias: Woonkamer TV
@@ -3818,12 +3804,55 @@
         attribute: current_activity
         state: com.google.android.apps.mediashell
       sequence:
-      - alias: Keuken volume omhoog
-        data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: playing
+          sequence:
+          - data:
+              volume_level: 0.01
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.25
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: idle
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: paused
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
       alias: Cast
     - conditions:
       - condition: state
@@ -3831,35 +3860,55 @@
         attribute: current_activity
         state: com.disney.disneyplus
       sequence:
-      - alias: Keuken volume omlaag
-        data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.35
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.45
-          action: media_player.volume_set
-          target:
-            entity_id: media_player.woonkamer_songpal
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: playing
+          sequence:
+          - data:
+              volume_level: 0.01
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: idle
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: paused
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
       alias: Disney+
     - conditions:
       - condition: state
@@ -3893,36 +3942,55 @@
         state: com.netflix.ninja
         attribute: current_activity
       sequence:
-      - data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        alias: Keuken volume omlaag
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.4
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.45
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: playing
+          sequence:
+          - data:
+              volume_level: 0.01
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: idle
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: paused
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
       alias: Netflix
     - conditions:
       - condition: state
@@ -3934,29 +4002,13 @@
           volume_level: 0.01
         target:
           entity_id: media_player.keuken
-        alias: Keuken volume omlaag
         action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - data:
-            volume_level: 0.35
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - data:
-            volume_level: 0.35
-          action: media_player.volume_set
-          target:
-            entity_id: media_player.woonkamer_songpal
+      - data:
+          volume_level: 0.3
+        target:
+          entity_id:
+          - media_player.woonkamer_songpal
+        action: media_player.volume_set
       alias: NLZIET
     - conditions:
       - condition: state
@@ -3964,36 +4016,55 @@
         attribute: current_activity
         state: com.plexapp.android
       sequence:
-      - alias: Keuken volume omlaag
-        data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.35
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.45
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: playing
+          sequence:
+          - data:
+              volume_level: 0.01
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: idle
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: paused
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
       alias: Plex
     - conditions:
       - condition: state
@@ -4001,8 +4072,7 @@
         attribute: current_activity
         state: com.neilturner.aerialviews
       sequence:
-      - alias: Keuken volume omhoog
-        data:
+      - data:
           volume_level: 0.35
         target:
           entity_id: media_player.keuken
@@ -4014,8 +4084,7 @@
         attribute: current_activity
         state: com.google.android.apps.tv.dreamx
       sequence:
-      - alias: Keuken volume omhoog
-        data:
+      - data:
           volume_level: 0.35
         target:
           entity_id: media_player.keuken
@@ -4027,36 +4096,55 @@
         attribute: current_activity
         state: com.teamsmart.videomanager.tv
       sequence:
-      - alias: Keuken volume omlaag
-        data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.2
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.25
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: playing
+          sequence:
+          - data:
+              volume_level: 0.01
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.25
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: idle
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: paused
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
       alias: SmartTube
     - conditions:
       - condition: state
@@ -4064,36 +4152,55 @@
         attribute: current_activity
         state: com.liskovsoft.smarttubetv.beta
       sequence:
-      - alias: Keuken volume omlaag
-        data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.2
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.25
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: playing
+          sequence:
+          - data:
+              volume_level: 0.01
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.25
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: idle
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: paused
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
       alias: SmartTube Beta
     - conditions:
       - condition: state
@@ -4101,34 +4208,55 @@
         attribute: current_activity
         state: com.sony.dtv.tvx
       sequence:
-      - data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        alias: Keuken volume omlaag
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - data:
-            volume_level: 0.25
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - data:
-            volume_level: 0.35
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: playing
+          sequence:
+          - data:
+              volume_level: 0.01
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.25
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: idle
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: paused
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
       alias: TV
     - conditions:
       - condition: state
@@ -4136,36 +4264,55 @@
         attribute: current_activity
         state: com.google.android.youtube.tv
       sequence:
-      - alias: Keuken volume omlaag
-        data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      - alias: 00:00-18:00
-        if:
-        - condition: time
-          before: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.25
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
-      - alias: 18:00-00:00
-        if:
-        - condition: time
-          after: '18:00:00'
-        then:
-        - alias: Woonkamer AV volume omhoog
-          data:
-            volume_level: 0.25
-          target:
-            entity_id:
-            - media_player.woonkamer_songpal
-          action: media_player.volume_set
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: playing
+          sequence:
+          - data:
+              volume_level: 0.01
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.25
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: idle
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv_cast
+            state: paused
+          sequence:
+          - data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.keuken
+            action: media_player.volume_set
+          - data:
+              volume_level: 0.15
+            target:
+              entity_id:
+              - media_player.woonkamer_songpal
+            action: media_player.volume_set
       alias: YouTube
   mode: restart
 - id: '1745758491686'
@@ -4203,7 +4350,7 @@
       alarm_keypad: Alarm Paneel
       alarm_notifications_target:
       - 27e5bea4b625d80ff66fc5e7cb90de59
-      - f8418287312cc8c3e8bfebbca53a099b
+      - e708c4b5ab4f20259c5474b8802343fd
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
       - media_player.meterkast
@@ -4214,12 +4361,12 @@
       - binary_sensor.woonkamer_raamsensor
       alarm_notifications_armed_away: Het alarm is nu ingesteld op Afwezig modus.
       alarm_scripts_away:
-      - script.music_away
       - script.alarm_away
+      - script.music_away
       alarm_notifications_armed_home: Het alarm is nu ingesteld op Thuis modus.
       alarm_scripts_home:
-      - script.music_home
       - script.alarm_home
+      - script.music_home
       alarm_sensor_night:
       - binary_sensor.dakterras_deursensor
       - binary_sensor.entree_deursensor
@@ -4227,8 +4374,8 @@
       - binary_sensor.woonkamer_raamsensor
       alarm_notifications_armed_night: Het alarm is nu ingesteld op Nacht modus.
       alarm_scripts_night:
-      - script.music_night
       - script.alarm_night
+      - script.music_night
       alarm_camera_night: camera.entree
       alarm_notifications_arming: Het alarm wordt ingeschakeld. Verlaat het huis zo
         snel mogelijk!
@@ -4549,6 +4696,21 @@
       - input_select.keuken_raambekleding
       - input_select.tuin_raambekleding
       - input_select.woonkamer_raambekleding
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - action: input_select.select_option
+    data:
+      option: 020%
+    metadata: {}
+    target:
+      entity_id:
+      - input_select.dakterras_raambekleding
+      - input_select.gang_raambekleding
+      - input_select.kantoor_raambekleding
+      - input_select.sauna_raambekleding
   mode: single
 - id: '1748773451561'
   alias: 08:00
@@ -4584,9 +4746,6 @@
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gang_raambekleding
-          - input_select.sauna_raambekleding
           - input_select.slaapkamer_raambekleding
       - alias: Disarm alarm if home
         if:
@@ -4646,9 +4805,6 @@
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gang_raambekleding
-          - input_select.sauna_raambekleding
           - input_select.slaapkamer_raambekleding
       - alias: Disarm alarm if home
         if:
@@ -4837,76 +4993,6 @@
       target:
         entity_id: alarm_control_panel.alarm
   mode: single
-- id: '1748867631257'
-  alias: Badkamer Media idle
-  description: ''
-  triggers:
-  - trigger: time
-    at: 01:00:00
-  - trigger: time
-    at: 07:00:00
-  - trigger: time
-    at: '13:00:00'
-  - trigger: time
-    at: '19:00:00'
-  conditions:
-  - condition: numeric_state
-    entity_id: zone.home
-    above: 0
-  actions:
-  - action: media_player.unjoin
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.badkamer
-  - action: unifi.reconnect_client
-    metadata: {}
-    data:
-      device_id: 354b83bf081de21dc59e45153b555046
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 9
-      milliseconds: 0
-  - action: media_player.join
-    data:
-      group_members:
-      - media_player.badkamer
-    metadata: {}
-    target:
-      entity_id: media_player.groep
-  mode: single
-- id: '1748957176545'
-  alias: Slaapkamer Media idle
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - media_player.slaapkamer_kef
-    to: idle
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-  - trigger: state
-    entity_id:
-    - media_player.slaapkamer_kef
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-  conditions:
-  - condition: numeric_state
-    entity_id: zone.home
-    above: 0
-  actions:
-  - action: media_player.media_next_track
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.groep
-  mode: single
 - id: '1750195301887'
   alias: Slaapkamer Klimaat
   description: ''
@@ -4938,7 +5024,8 @@
       - geofence
     then:
     - choose:
-      - conditions:
+      - alias: Cooling on, above 15C, at home
+        conditions:
         - condition: state
           entity_id: schedule.slaapkamer_klimaat_cooling
           state: 'on'
@@ -4960,8 +5047,28 @@
           metadata: {}
           target:
             entity_id: climate.slaapkamer_thermostaat
-        alias: Cooling on, above 15C, at home
-      - conditions:
+      - alias: Cooling off, above 15C, at home
+        conditions:
+        - condition: state
+          entity_id: schedule.slaapkamer_klimaat_cooling
+          state: 'off'
+        - condition: numeric_state
+          entity_id: sensor.outdoor_temperature
+          above: 15
+        - condition: numeric_state
+          entity_id: zone.home
+          above: 0
+        sequence:
+        - action: climate.set_temperature
+          data:
+            target_temp_high: 26
+            target_temp_low: 18
+            hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.slaapkamer_thermostaat
+      - alias: Not at home
+        conditions:
         - condition: numeric_state
           entity_id: zone.home
           below: 1
@@ -4969,12 +5076,11 @@
         - action: climate.set_temperature
           data:
             hvac_mode: cool
-            target_temp_low: 26
-            target_temp_high: 18
+            target_temp_high: 26
+            target_temp_low: 18
           metadata: {}
           target:
             entity_id: climate.slaapkamer_thermostaat
-        alias: Not at home
   - alias: heating
     if:
     - condition: trigger
@@ -5062,12 +5168,72 @@
         - condition: state
           entity_id: climate.slaapkamer_thermostaat
           attribute: target_temp_high
+          state: 20
+        sequence:
+        - action: climate.set_temperature
+          data:
+            temperature: 22
+            hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.slaapkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: '5'
+          metadata: {}
+          target:
+            entity_id: climate.slaapkamer_airco
+        alias: cooling, 20C
+      - conditions:
+        - condition: state
+          entity_id: climate.slaapkamer_thermostaat
+          state: cool
+        - condition: state
+          entity_id: climate.slaapkamer_thermostaat
+          attribute: hvac_action
+          state: cooling
+        - condition: state
+          entity_id: climate.slaapkamer_thermostaat
+          attribute: target_temp_high
+          state: 21
+        sequence:
+        - action: climate.set_temperature
+          data:
+            temperature: 23
+            hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.slaapkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: '3'
+          metadata: {}
+          target:
+            entity_id: climate.slaapkamer_airco
+        alias: cooling, 21C
+      - conditions:
+        - condition: state
+          entity_id: climate.slaapkamer_thermostaat
+          state: cool
+        - condition: state
+          entity_id: climate.slaapkamer_thermostaat
+          attribute: hvac_action
+          state: cooling
+        - condition: state
+          entity_id: climate.slaapkamer_thermostaat
+          attribute: target_temp_high
           state: 22
         sequence:
         - action: climate.set_temperature
           data:
             temperature: 24
             hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.slaapkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.slaapkamer_airco
@@ -5092,6 +5258,12 @@
           metadata: {}
           target:
             entity_id: climate.slaapkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Auto
+          metadata: {}
+          target:
+            entity_id: climate.slaapkamer_airco
         alias: cooling, 23C
       - conditions:
         - condition: state
@@ -5110,6 +5282,12 @@
           data:
             temperature: 26
             hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.slaapkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.slaapkamer_airco
@@ -5134,6 +5312,12 @@
           metadata: {}
           target:
             entity_id: climate.slaapkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Silence
+          metadata: {}
+          target:
+            entity_id: climate.slaapkamer_airco
         alias: cooling, 25C
       - conditions:
         - condition: state
@@ -5144,6 +5328,12 @@
           data:
             temperature: 28
             hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.slaapkamer_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Silence
           metadata: {}
           target:
             entity_id: climate.slaapkamer_airco
@@ -5215,7 +5405,8 @@
       - geofence
     then:
     - choose:
-      - conditions:
+      - alias: Cooling on, above 15C, at home
+        conditions:
         - condition: state
           entity_id: schedule.kantoor_klimaat_cooling
           state: 'on'
@@ -5237,8 +5428,28 @@
           metadata: {}
           target:
             entity_id: climate.kantoor_thermostaat
-        alias: Cooling on, above 15C, at home
-      - conditions:
+      - alias: Cooling off, above 15C, at home
+        conditions:
+        - condition: state
+          entity_id: schedule.kantoor_klimaat_cooling
+          state: 'off'
+        - condition: numeric_state
+          entity_id: sensor.outdoor_temperature
+          above: 15
+        - condition: numeric_state
+          entity_id: zone.home
+          above: 0
+        sequence:
+        - action: climate.set_temperature
+          data:
+            target_temp_high: 26
+            target_temp_low: 18
+            hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.kantoor_thermostaat
+      - alias: Not at home
+        conditions:
         - condition: numeric_state
           entity_id: zone.home
           below: 1
@@ -5246,12 +5457,11 @@
         - action: climate.set_temperature
           data:
             hvac_mode: cool
-            target_temp_low: 26
-            target_temp_high: 18
+            target_temp_high: 26
+            target_temp_low: 18
           metadata: {}
           target:
             entity_id: climate.kantoor_thermostaat
-        alias: Not at home
   - alias: heating
     if:
     - condition: trigger
@@ -5339,12 +5549,72 @@
         - condition: state
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_high
+          state: 20
+        sequence:
+        - action: climate.set_temperature
+          data:
+            temperature: 22
+            hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.kantoor_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: '5'
+          metadata: {}
+          target:
+            entity_id: climate.kantoor_airco
+        alias: cooling, 20C
+      - conditions:
+        - condition: state
+          entity_id: climate.kantoor_thermostaat
+          state: cool
+        - condition: state
+          entity_id: climate.kantoor_thermostaat
+          attribute: hvac_action
+          state: cooling
+        - condition: state
+          entity_id: climate.kantoor_thermostaat
+          attribute: target_temp_high
+          state: 21
+        sequence:
+        - action: climate.set_temperature
+          data:
+            temperature: 23
+            hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.kantoor_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: '3'
+          metadata: {}
+          target:
+            entity_id: climate.kantoor_airco
+        alias: cooling, 21C
+      - conditions:
+        - condition: state
+          entity_id: climate.kantoor_thermostaat
+          state: cool
+        - condition: state
+          entity_id: climate.kantoor_thermostaat
+          attribute: hvac_action
+          state: cooling
+        - condition: state
+          entity_id: climate.kantoor_thermostaat
+          attribute: target_temp_high
           state: 22
         sequence:
         - action: climate.set_temperature
           data:
             temperature: 24
             hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.kantoor_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.kantoor_airco
@@ -5369,6 +5639,12 @@
           metadata: {}
           target:
             entity_id: climate.kantoor_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Auto
+          metadata: {}
+          target:
+            entity_id: climate.kantoor_airco
         alias: cooling, 23C
       - conditions:
         - condition: state
@@ -5387,6 +5663,12 @@
           data:
             temperature: 26
             hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.kantoor_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.kantoor_airco
@@ -5411,6 +5693,12 @@
           metadata: {}
           target:
             entity_id: climate.kantoor_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Silence
+          metadata: {}
+          target:
+            entity_id: climate.kantoor_airco
         alias: cooling, 25C
       - conditions:
         - condition: state
@@ -5421,6 +5709,12 @@
           data:
             temperature: 28
             hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.kantoor_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Silence
           metadata: {}
           target:
             entity_id: climate.kantoor_airco
@@ -5492,7 +5786,8 @@
       - geofence
     then:
     - choose:
-      - conditions:
+      - alias: Cooling on, above 15C, at home
+        conditions:
         - condition: state
           entity_id: schedule.gameroom_klimaat_cooling
           state: 'on'
@@ -5502,6 +5797,9 @@
         - condition: numeric_state
           entity_id: zone.home
           above: 0
+        - condition: state
+          entity_id: person.alex
+          state: home
         sequence:
         - action: climate.set_temperature
           data:
@@ -5514,8 +5812,28 @@
           metadata: {}
           target:
             entity_id: climate.gameroom_thermostaat
-        alias: Cooling on, above 15C, at home
-      - conditions:
+      - alias: Cooling off, above 15C, at home
+        conditions:
+        - condition: state
+          entity_id: schedule.gameroom_klimaat_cooling
+          state: 'off'
+        - condition: numeric_state
+          entity_id: sensor.outdoor_temperature
+          above: 15
+        - condition: numeric_state
+          entity_id: zone.home
+          above: 0
+        sequence:
+        - action: climate.set_temperature
+          data:
+            target_temp_high: 26
+            target_temp_low: 18
+            hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.gameroom_thermostaat
+      - alias: Not at home
+        conditions:
         - condition: numeric_state
           entity_id: zone.home
           below: 1
@@ -5523,12 +5841,11 @@
         - action: climate.set_temperature
           data:
             hvac_mode: cool
-            target_temp_low: 26
-            target_temp_high: 18
+            target_temp_high: 26
+            target_temp_low: 18
           metadata: {}
           target:
             entity_id: climate.gameroom_thermostaat
-        alias: Not at home
   - alias: heating
     if:
     - condition: trigger
@@ -5616,12 +5933,72 @@
         - condition: state
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_high
+          state: 20
+        sequence:
+        - action: climate.set_temperature
+          data:
+            temperature: 22
+            hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.gameroom_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: '5'
+          metadata: {}
+          target:
+            entity_id: climate.gameroom_airco
+        alias: cooling, 20C
+      - conditions:
+        - condition: state
+          entity_id: climate.gameroom_thermostaat
+          state: cool
+        - condition: state
+          entity_id: climate.gameroom_thermostaat
+          attribute: hvac_action
+          state: cooling
+        - condition: state
+          entity_id: climate.gameroom_thermostaat
+          attribute: target_temp_high
+          state: 21
+        sequence:
+        - action: climate.set_temperature
+          data:
+            temperature: 23
+            hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.gameroom_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: '3'
+          metadata: {}
+          target:
+            entity_id: climate.gameroom_airco
+        alias: cooling, 21C
+      - conditions:
+        - condition: state
+          entity_id: climate.gameroom_thermostaat
+          state: cool
+        - condition: state
+          entity_id: climate.gameroom_thermostaat
+          attribute: hvac_action
+          state: cooling
+        - condition: state
+          entity_id: climate.gameroom_thermostaat
+          attribute: target_temp_high
           state: 22
         sequence:
         - action: climate.set_temperature
           data:
             temperature: 24
             hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.gameroom_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.gameroom_airco
@@ -5646,6 +6023,12 @@
           metadata: {}
           target:
             entity_id: climate.gameroom_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Auto
+          metadata: {}
+          target:
+            entity_id: climate.gameroom_airco
         alias: cooling, 23C
       - conditions:
         - condition: state
@@ -5664,6 +6047,12 @@
           data:
             temperature: 26
             hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.gameroom_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.gameroom_airco
@@ -5688,6 +6077,12 @@
           metadata: {}
           target:
             entity_id: climate.gameroom_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Silence
+          metadata: {}
+          target:
+            entity_id: climate.gameroom_airco
         alias: cooling, 25C
       - conditions:
         - condition: state
@@ -5698,6 +6093,12 @@
           data:
             temperature: 28
             hvac_mode: cool
+          metadata: {}
+          target:
+            entity_id: climate.gameroom_airco
+        - action: climate.set_fan_mode
+          data:
+            fan_mode: Silence
           metadata: {}
           target:
             entity_id: climate.gameroom_airco
@@ -6000,3 +6401,57 @@
         alias: heating off
   mode: parallel
   max: 10
+- id: '1751181775994'
+  alias: Badkamer Media water
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.watergebruik
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    above: 7.5
+    id: shower on
+    trigger: numeric_state
+  - entity_id:
+    - sensor.watergebruik
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+    below: 7.5
+    id: shower off
+    trigger: numeric_state
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - shower on
+      - condition: state
+        entity_id: light.badkamer_lampen
+        state: 'on'
+      sequence:
+      - data:
+          volume_level: 0.45
+        target:
+          entity_id: media_player.badkamer
+        action: media_player.volume_set
+      alias: shower on - volume up
+    - conditions:
+      - condition: trigger
+        id:
+        - shower off
+      - condition: state
+        entity_id: light.badkamer_lampen
+        state: 'on'
+      sequence:
+      - data:
+          volume_level: 0.35
+        target:
+          entity_id: media_player.badkamer
+        action: media_player.volume_set
+      alias: shower off - volume down
+  mode: restart
