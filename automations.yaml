@@ -5260,7 +5260,7 @@
             entity_id: climate.slaapkamer_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: Auto
+            fan_mode: Silence
           metadata: {}
           target:
             entity_id: climate.slaapkamer_airco
@@ -5287,7 +5287,7 @@
             entity_id: climate.slaapkamer_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: Auto
+            fan_mode: Silence
           metadata: {}
           target:
             entity_id: climate.slaapkamer_airco
