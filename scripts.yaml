@@ -80,7 +80,7 @@ music_home:
       - 00s Hits
       - 2010s party hits
       - Eurovision
-      - Fresh Hits
+      - Fresh Pop
       - Power Ballads
     target:
       entity_id: media_player.slaapkamer
