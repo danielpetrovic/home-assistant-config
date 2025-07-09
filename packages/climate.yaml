@@ -109,35 +109,35 @@ schedule:
         to: "18:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     tuesday:
       - from: "09:00:00"
         to: "18:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     wednesday:
       - from: "09:00:00"
         to: "18:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     thursday:
       - from: "09:00:00"
         to: "18:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     friday:
       - from: "09:00:00"
         to: "18:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
   kantoor_klimaat_heating:
     name: "Kantoor Klimaat Verwarming"
@@ -190,35 +190,35 @@ schedule:
         to: "18:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     tuesday:
       - from: "09:00:00"
         to: "18:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     wednesday:
       - from: "09:00:00"
         to: "18:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     thursday:
       - from: "09:00:00"
         to: "18:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     friday:
       - from: "09:00:00"
         to: "18:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
   sauna_klimaat_heating:
     name: "Sauna Klimaat Verwarming"
@@ -360,49 +360,49 @@ schedule:
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 21
+          target_temp_high: 22
           target_temp_low: 18
     tuesday:
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 21
+          target_temp_high: 22
           target_temp_low: 18
     wednesday:
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 21
+          target_temp_high: 22
           target_temp_low: 18
     thursday:
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 21
+          target_temp_high: 22
           target_temp_low: 18
     friday:
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 21
+          target_temp_high: 22
           target_temp_low: 18
     saturday:
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 21
+          target_temp_high: 22
           target_temp_low: 18
     sunday:
       - from: "22:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 21
+          target_temp_high: 22
           target_temp_low: 18
   woonkamer_klimaat_heating:
     name: "Woonkamer Klimaat Verwarming"
@@ -481,47 +481,47 @@ schedule:
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     tuesday:
       - from: "18:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     wednesday:
       - from: "18:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     thursday:
       - from: "18:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     friday:
       - from: "18:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     saturday:
       - from: "10:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18
     sunday:
       - from: "10:00:00"
         to: "24:00:00"
         data:
           hvac_mode: cool
-          target_temp_high: 24
+          target_temp_high: 25
           target_temp_low: 18

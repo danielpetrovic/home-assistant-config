@@ -28,6 +28,7 @@
         metadata: {}
         target:
           entity_id: media_player.slaapkamer
+        enabled: false
       - action: media_player.volume_set
         metadata: {}
         data:
@@ -45,9 +46,17 @@
           minutes: 0
           seconds: 6
           milliseconds: 0
+        enabled: false
       - action: media_player.turn_off
         metadata: {}
         data: {}
+        target:
+          entity_id: media_player.badkamer
+        enabled: false
+      - action: media_player.volume_set
+        metadata: {}
+        data:
+          volume_level: 0.15
         target:
           entity_id: media_player.badkamer
   mode: restart
@@ -1710,11 +1719,16 @@
     - light.sauna_lamp
     to: 'off'
     id: lights off
+  - alias: tv on
+    trigger: state
+    entity_id:
+    - media_player.sauna_tv
+    from: unavailable
+    id: tv on
   conditions: []
   actions:
   - choose:
-    - alias: lights on
-      conditions:
+    - conditions:
       - condition: trigger
         id:
         - lights on
@@ -1725,8 +1739,7 @@
           entity_id:
           - media_player.sauna
         action: media_player.volume_set
-    - alias: lights off
-      conditions:
+    - conditions:
       - condition: trigger
         id:
         - lights off
@@ -1737,6 +1750,16 @@
           entity_id:
           - media_player.sauna
         action: media_player.volume_set
+    - conditions:
+      - condition: trigger
+        id:
+        - tv on
+      sequence:
+      - action: media_player.unjoin
+        metadata: {}
+        data: {}
+        target:
+          entity_id: media_player.sauna
   mode: parallel
 - id: '1706168546378'
   alias: Gang Beweging
@@ -2168,46 +2191,46 @@
   triggers:
   - entity_id:
     - sensor.outdoor_luminosity
-    below: 500
+    below: 400
     trigger: numeric_state
     for:
       hours: 0
-      minutes: 5
+      minutes: 4
       seconds: 0
   - entity_id:
     - sensor.outdoor_luminosity
-    above: 500
-    below: 5000
+    above: 400
+    below: 4000
     trigger: numeric_state
     for:
       hours: 0
-      minutes: 5
+      minutes: 4
       seconds: 0
   - entity_id:
     - sensor.outdoor_luminosity
-    above: 5000
-    below: 50000
+    above: 4000
+    below: 40000
     trigger: numeric_state
     for:
       hours: 0
-      minutes: 5
+      minutes: 4
       seconds: 0
   - entity_id:
     - sensor.outdoor_luminosity
-    above: 50000
-    below: 100000
+    above: 40000
+    below: 80000
     trigger: numeric_state
     for:
       hours: 0
-      minutes: 5
+      minutes: 4
       seconds: 0
   - entity_id:
     - sensor.outdoor_luminosity
-    above: 100000
+    above: 80000
     trigger: numeric_state
     for:
       hours: 0
-      minutes: 5
+      minutes: 4
       seconds: 0
   - trigger: numeric_state
     entity_id:
@@ -2221,7 +2244,7 @@
     - conditions:
       - condition: numeric_state
         entity_id: sensor.outdoor_luminosity
-        below: 500
+        below: 400
       - condition: time
         after: '12:00:00'
       sequence:
@@ -2263,8 +2286,8 @@
     - conditions:
       - condition: numeric_state
         entity_id: sensor.outdoor_luminosity
-        above: 500
-        below: 5000
+        above: 400
+        below: 4000
       sequence:
       - choose:
         - conditions:
@@ -2310,8 +2333,8 @@
     - conditions:
       - condition: numeric_state
         entity_id: sensor.outdoor_luminosity
-        above: 5000
-        below: 50000
+        above: 4000
+        below: 40000
       - condition: time
         after: 09:00:00
         before: '18:00:00'
@@ -2341,8 +2364,8 @@
     - conditions:
       - condition: numeric_state
         entity_id: sensor.outdoor_luminosity
-        above: 50000
-        below: 100000
+        above: 40000
+        below: 80000
       - condition: time
         after: 09:00:00
         before: '18:00:00'
@@ -2415,7 +2438,7 @@
     - conditions:
       - condition: numeric_state
         entity_id: sensor.outdoor_luminosity
-        above: 100000
+        above: 80000
       - condition: time
         after: 09:00:00
         before: '18:00:00'
@@ -3246,10 +3269,11 @@
       button_1_light:
         entity_id: light.badkamer_lamp
       button_1_light_schedule: schedule.lights_bright
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.groep
       button_3_short_release_media_mode:
       - turn_on
       - join
+      button_3_media: media_player.badkamer
 - id: '1736811938136'
   alias: Eettafel Knop
   description: ''
@@ -3321,7 +3345,7 @@
         entity_id: light.gameroom_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.groep
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -3373,7 +3397,7 @@
         entity_id: light.gameroom_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.groep
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -3473,7 +3497,7 @@
         target:
           entity_id: switch.kantoor_bureau
       button_3_media: media_player.kantoor
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.groep
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -3518,7 +3542,7 @@
         entity_id: light.keuken_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.keuken
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.groep
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -3562,7 +3586,7 @@
         entity_id: light.sauna_lamp
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.sauna
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.groep
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -3608,6 +3632,10 @@
         - light.slaapkamer_lamp
       button_1_light_schedule: schedule.lights_dimmed
       button_3_media: media_player.slaapkamer
+      button_3_media_leader: media_player.groep
+      button_3_short_release_media_mode:
+      - turn_on
+      - join
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3872,7 +3900,7 @@
               entity_id: media_player.keuken
             action: media_player.volume_set
           - data:
-              volume_level: 0.35
+              volume_level: 0.4
             target:
               entity_id:
               - media_player.woonkamer_songpal
@@ -4350,7 +4378,7 @@
       alarm_keypad: Alarm Paneel
       alarm_notifications_target:
       - 27e5bea4b625d80ff66fc5e7cb90de59
-      - e708c4b5ab4f20259c5474b8802343fd
+      - e9dbaaa88f9e37c18a2fd11966142685
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
       - media_player.meterkast
@@ -4394,16 +4422,16 @@
       - critical_android
       alarm_notifications_always: geactiveerd!
       alarm_sensor_fire:
-      - binary_sensor.entree_brandmelder
-      - binary_sensor.gang_brandmelder
-      - binary_sensor.gameroom_brandmelder
+      - binary_sensor.entree_brandmelder_smoke
+      - binary_sensor.gang_brandmelder_smoke
+      - binary_sensor.gameroom_brandmelder_smoke
       - binary_sensor.schuur_brandmelder_smoke
       alarm_notifications_fire: heeft vuur gedetecteerd!
       alarm_notifications_priority_fire:
       - critical_android
       alarm_sensor_moisture:
-      - binary_sensor.keuken_vochtmelder
-      - binary_sensor.wasruimte_vochtmelder
+      - binary_sensor.keuken_vochtmelder_water_leak
+      - binary_sensor.wasruimte_vochtmelder_water_leak
       alarm_notifications_moisture: heeft vocht gedetecteerd!
       alarm_notifications_priority_moisture:
       - critical_android
@@ -4678,6 +4706,16 @@
       - tuin
       - wasruimte
       - woonkamer
+  - action: media_player.media_next_track
+    data: {}
+    metadata: {}
+    target:
+      entity_id: media_player.groep
+  - action: media_player.media_next_track
+    data: {}
+    metadata: {}
+    target:
+      entity_id: media_player.groep
   mode: single
 - id: '1748773440064'
   alias: 06:00
@@ -4711,6 +4749,16 @@
       - input_select.gang_raambekleding
       - input_select.kantoor_raambekleding
       - input_select.sauna_raambekleding
+  - action: media_player.media_next_track
+    data: {}
+    metadata: {}
+    target:
+      entity_id: media_player.groep
+  - action: media_player.media_next_track
+    data: {}
+    metadata: {}
+    target:
+      entity_id: media_player.groep
   mode: single
 - id: '1748773451561'
   alias: 08:00
@@ -4783,6 +4831,16 @@
         metadata: {}
         target:
           entity_id: input_select.slaapkamer_raambekleding
+      - action: media_player.media_next_track
+        data: {}
+        metadata: {}
+        target:
+          entity_id: media_player.groep
+      - action: media_player.media_next_track
+        data: {}
+        metadata: {}
+        target:
+          entity_id: media_player.groep
     - conditions:
       - condition: time
         weekday:
@@ -4864,6 +4922,16 @@
         metadata: {}
         target:
           entity_id: input_select.slaapkamer_raambekleding
+      - action: media_player.media_next_track
+        data: {}
+        metadata: {}
+        target:
+          entity_id: media_player.groep
+      - action: media_player.media_next_track
+        data: {}
+        metadata: {}
+        target:
+          entity_id: media_player.groep
   mode: single
 - id: '1748773482119'
   alias: '11:00'
@@ -6455,3 +6523,22 @@
         action: media_player.volume_set
       alias: shower off - volume down
   mode: restart
+- id: '1752068850852'
+  alias: '16:00'
+  description: ''
+  triggers:
+  - trigger: time
+    at: '16:00:00'
+  conditions: []
+  actions:
+  - action: media_player.media_next_track
+    data: {}
+    metadata: {}
+    target:
+      entity_id: media_player.groep
+  - action: media_player.media_next_track
+    data: {}
+    metadata: {}
+    target:
+      entity_id: media_player.groep
+  mode: single

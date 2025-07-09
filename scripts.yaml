@@ -5,12 +5,7 @@ music_away:
     data: {}
     target:
       entity_id:
-      - media_player.badkamer_kef
-      - media_player.gameroom_kef
-      - media_player.kantoor_kef
-      - media_player.keuken_kef
-      - media_player.sauna_kef
-      - media_player.slaapkamer_kef
+      - media_player.groep
   alias: Music - Away
   description: ''
   icon: mdi:music-note-off-outline
@@ -23,7 +18,7 @@ music_night:
     data: {}
     metadata: {}
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.groep
   - action: music_assistant.play_media
     metadata: {}
     data:
@@ -33,31 +28,23 @@ music_night:
       media_id:
       - Classical
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.groep
   - delay:
       hours: 0
       minutes: 0
-      seconds: 10
+      seconds: 3
       milliseconds: 0
   - action: media_player.media_play
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.groep
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.slaapkamer
-  - action: media_player.join
-    metadata: {}
-    data:
-      group_members:
-      - media_player.keuken
-      - media_player.sauna
-    target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.groep
 music_home:
   alias: Music - Home
   description: ''
@@ -67,12 +54,12 @@ music_home:
     data: {}
     metadata: {}
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.groep
   - action: music_assistant.play_media
     metadata: {}
     data:
       media_type: playlist
-      radio_mode: false
+      radio_mode: true
       enqueue: replace_next
       media_id:
       - 80s Hits
@@ -80,34 +67,20 @@ music_home:
       - 00s Hits
       - 2010s party hits
       - Eurovision
-      - Fresh Pop
       - Power Ballads
+      - Rock
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.groep
   - delay:
       hours: 0
       minutes: 0
-      seconds: 10
+      seconds: 3
       milliseconds: 0
   - action: media_player.media_play
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.slaapkamer
-  - action: media_player.shuffle_set
-    metadata: {}
-    data:
-      shuffle: true
-    target:
-      entity_id: media_player.slaapkamer
-  - action: media_player.join
-    metadata: {}
-    data:
-      group_members:
-      - media_player.keuken
-      - media_player.sauna
-    target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.groep
 lights_green:
   sequence:
   - alias: Scene, create
