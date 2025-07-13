@@ -1690,8 +1690,8 @@
     from: 'off'
   conditions:
   - condition: time
-    after: '10:00:00'
-    before: '22:00:00'
+    after: 09:00:00
+    before: '23:00:00'
   actions:
   - action: light.toggle
     data:
@@ -1719,12 +1719,6 @@
     - light.sauna_lamp
     to: 'off'
     id: lights off
-  - alias: tv on
-    trigger: state
-    entity_id:
-    - media_player.sauna_tv
-    from: unavailable
-    id: tv on
   conditions: []
   actions:
   - choose:
@@ -1750,16 +1744,6 @@
           entity_id:
           - media_player.sauna
         action: media_player.volume_set
-    - conditions:
-      - condition: trigger
-        id:
-        - tv on
-      sequence:
-      - action: media_player.unjoin
-        metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.sauna
   mode: parallel
 - id: '1706168546378'
   alias: Gang Beweging
@@ -3817,15 +3801,35 @@
     - remote.woonkamer_tv
     attribute: current_activity
     trigger: state
+    enabled: true
   - trigger: state
     entity_id:
     - media_player.woonkamer_tv_cast
     from:
     to:
+    enabled: true
   conditions: []
   actions:
   - alias: Woonkamer TV
     choose:
+    - conditions:
+      - condition: state
+        entity_id: remote.woonkamer_tv
+        attribute: current_activity
+        state: com.sony.dtv.hbbtvplayer
+      sequence:
+      - data:
+          volume_level: 0.01
+        target:
+          entity_id: media_player.keuken
+        action: media_player.volume_set
+      - data:
+          volume_level: 0.25
+        target:
+          entity_id:
+          - media_player.woonkamer_kef
+        action: media_player.volume_set
+      alias: BBC
     - conditions:
       - condition: state
         entity_id: remote.woonkamer_tv
@@ -3847,7 +3851,7 @@
               volume_level: 0.25
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -3863,7 +3867,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -3879,7 +3883,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
       alias: Cast
     - conditions:
@@ -3903,7 +3907,7 @@
               volume_level: 0.4
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -3919,7 +3923,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -3935,7 +3939,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
       alias: Disney+
     - conditions:
@@ -3970,55 +3974,17 @@
         state: com.netflix.ninja
         attribute: current_activity
       sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: playing
-          sequence:
-          - data:
-              volume_level: 0.01
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id:
-              - media_player.woonkamer_songpal
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: idle
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-          - data:
-              volume_level: 0.15
-            target:
-              entity_id:
-              - media_player.woonkamer_songpal
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: paused
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-          - data:
-              volume_level: 0.15
-            target:
-              entity_id:
-              - media_player.woonkamer_songpal
-            action: media_player.volume_set
+      - data:
+          volume_level: 0.01
+        target:
+          entity_id: media_player.keuken
+        action: media_player.volume_set
+      - data:
+          volume_level: 0.35
+        target:
+          entity_id:
+          - media_player.woonkamer_kef
+        action: media_player.volume_set
       alias: Netflix
     - conditions:
       - condition: state
@@ -4035,7 +4001,7 @@
           volume_level: 0.3
         target:
           entity_id:
-          - media_player.woonkamer_songpal
+          - media_player.woonkamer_kef
         action: media_player.volume_set
       alias: NLZIET
     - conditions:
@@ -4059,7 +4025,7 @@
               volume_level: 0.35
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -4075,7 +4041,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -4091,7 +4057,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
       alias: Plex
     - conditions:
@@ -4139,7 +4105,7 @@
               volume_level: 0.25
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -4155,7 +4121,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -4171,7 +4137,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
       alias: SmartTube
     - conditions:
@@ -4195,7 +4161,7 @@
               volume_level: 0.25
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -4211,7 +4177,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -4227,7 +4193,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
       alias: SmartTube Beta
     - conditions:
@@ -4251,7 +4217,7 @@
               volume_level: 0.25
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -4267,7 +4233,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -4283,7 +4249,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
       alias: TV
     - conditions:
@@ -4307,7 +4273,7 @@
               volume_level: 0.25
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -4323,7 +4289,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
         - conditions:
           - condition: state
@@ -4339,7 +4305,7 @@
               volume_level: 0.15
             target:
               entity_id:
-              - media_player.woonkamer_songpal
+              - media_player.woonkamer_kef
             action: media_player.volume_set
       alias: YouTube
   mode: restart
@@ -4706,16 +4672,6 @@
       - tuin
       - wasruimte
       - woonkamer
-  - action: media_player.media_next_track
-    data: {}
-    metadata: {}
-    target:
-      entity_id: media_player.groep
-  - action: media_player.media_next_track
-    data: {}
-    metadata: {}
-    target:
-      entity_id: media_player.groep
   mode: single
 - id: '1748773440064'
   alias: 06:00
@@ -4749,16 +4705,6 @@
       - input_select.gang_raambekleding
       - input_select.kantoor_raambekleding
       - input_select.sauna_raambekleding
-  - action: media_player.media_next_track
-    data: {}
-    metadata: {}
-    target:
-      entity_id: media_player.groep
-  - action: media_player.media_next_track
-    data: {}
-    metadata: {}
-    target:
-      entity_id: media_player.groep
   mode: single
 - id: '1748773451561'
   alias: 08:00
@@ -4831,16 +4777,6 @@
         metadata: {}
         target:
           entity_id: input_select.slaapkamer_raambekleding
-      - action: media_player.media_next_track
-        data: {}
-        metadata: {}
-        target:
-          entity_id: media_player.groep
-      - action: media_player.media_next_track
-        data: {}
-        metadata: {}
-        target:
-          entity_id: media_player.groep
     - conditions:
       - condition: time
         weekday:
@@ -4922,16 +4858,6 @@
         metadata: {}
         target:
           entity_id: input_select.slaapkamer_raambekleding
-      - action: media_player.media_next_track
-        data: {}
-        metadata: {}
-        target:
-          entity_id: media_player.groep
-      - action: media_player.media_next_track
-        data: {}
-        metadata: {}
-        target:
-          entity_id: media_player.groep
   mode: single
 - id: '1748773482119'
   alias: '11:00'
@@ -5463,6 +5389,14 @@
     entity_id:
     - climate.kantoor_thermostaat
     id: thermostat
+  - trigger: numeric_state
+    entity_id:
+    - sensor.kantoor_bureau_power
+    above: 10
+  - trigger: numeric_state
+    entity_id:
+    - sensor.kantoor_bureau_power
+    below: 10
   conditions: []
   actions:
   - alias: cooling
@@ -5473,6 +5407,32 @@
       - geofence
     then:
     - choose:
+      - alias: Cooling on, above 15C, at home, at desk
+        conditions:
+        - condition: state
+          entity_id: schedule.kantoor_klimaat_cooling
+          state: 'on'
+        - condition: numeric_state
+          entity_id: sensor.outdoor_temperature
+          above: 15
+        - condition: numeric_state
+          entity_id: zone.home
+          above: 0
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
+        sequence:
+        - action: climate.set_temperature
+          data:
+            hvac_mode: '{{ state_attr(''schedule.kantoor_klimaat_cooling'', ''hvac_mode'')
+              }}'
+            target_temp_high: '{{ state_attr(''schedule.kantoor_klimaat_cooling'',
+              ''target_temp_high'') }}'
+            target_temp_low: '{{ state_attr(''schedule.kantoor_klimaat_cooling'',
+              ''target_temp_low'') }}'
+          metadata: {}
+          target:
+            entity_id: climate.kantoor_thermostaat
       - alias: Cooling on, above 15C, at home
         conditions:
         - condition: state
@@ -5484,6 +5444,9 @@
         - condition: numeric_state
           entity_id: zone.home
           above: 0
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          below: 10
         sequence:
         - action: climate.set_temperature
           data:
@@ -6530,15 +6493,85 @@
   - trigger: time
     at: '16:00:00'
   conditions: []
+  actions: []
+  mode: single
+- id: '1752212141760'
+  alias: Badkamer Media rejoin
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.badkamer_kef
+    to: idle
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  conditions:
+  - condition: state
+    entity_id: media_player.groep
+    state: playing
   actions:
-  - action: media_player.media_next_track
-    data: {}
+  - action: media_player.unjoin
     metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.badkamer
+  - action: media_player.join
+    metadata: {}
+    data:
+      group_members:
+      - media_player.badkamer
     target:
       entity_id: media_player.groep
-  - action: media_player.media_next_track
-    data: {}
-    metadata: {}
-    target:
-      entity_id: media_player.groep
+  mode: single
+- id: '1752212454918'
+  alias: Sauna Media rejoin
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.sauna_kef
+    attribute: source
+    from: wifi
+    to: tv
+    id: tv on
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  - trigger: state
+    entity_id:
+    - media_player.sauna_kef
+    attribute: source
+    from: tv
+    id: tv off
+  conditions:
+  - condition: state
+    entity_id: media_player.groep
+    state: playing
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - tv on
+      sequence:
+      - action: media_player.unjoin
+        metadata: {}
+        data: {}
+        target:
+          entity_id: media_player.sauna
+    - conditions:
+      - condition: trigger
+        id:
+        - tv off
+      sequence:
+      - action: media_player.join
+        metadata: {}
+        data:
+          group_members:
+          - media_player.sauna
+        target:
+          entity_id: media_player.groep
   mode: single

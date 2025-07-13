@@ -59,7 +59,7 @@ music_home:
     metadata: {}
     data:
       media_type: playlist
-      radio_mode: true
+      radio_mode: false
       enqueue: replace_next
       media_id:
       - 80s Hits
@@ -79,6 +79,12 @@ music_home:
   - action: media_player.media_play
     metadata: {}
     data: {}
+    target:
+      entity_id: media_player.groep
+  - action: media_player.shuffle_set
+    metadata: {}
+    data:
+      shuffle: true
     target:
       entity_id: media_player.groep
 lights_green:
@@ -460,4 +466,21 @@ voordeur_woonkamer_tv:
       target:
         entity_id: media_player.woonkamer_tv_adb
   alias: Voordeur - Woonkamer TV
+  description: ''
+media_sauna_join:
+  sequence:
+  - if:
+    - condition: numeric_state
+      entity_id: zone.home
+      attribute: persons
+      above: 0
+    then:
+    - action: media_player.join
+      metadata: {}
+      data:
+        group_members:
+        - media_player.sauna
+      target:
+        entity_id: media_player.groep
+  alias: Media - Sauna join
   description: ''
