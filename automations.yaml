@@ -756,7 +756,7 @@
           - button.gameroom_gordijn_rechts2_my_position
       - action: cover.set_cover_position
         data:
-          position: 60
+          position: 40
         metadata: {}
         target:
           entity_id:
@@ -784,7 +784,7 @@
           - button.gameroom_gordijn_rechts2_my_position
       - action: cover.set_cover_position
         data:
-          position: 40
+          position: 30
         metadata: {}
         target:
           entity_id:
@@ -2133,6 +2133,10 @@
       seconds: 0
     below: 10
     id: Alex PC
+  - trigger: state
+    entity_id:
+    - switch.alex_pc
+    to:
   - trigger: numeric_state
     entity_id:
     - sensor.deni_pc_power
@@ -2142,6 +2146,23 @@
       seconds: 0
     below: 10
     id: Deni PC
+  - trigger: state
+    entity_id:
+    - switch.deni_pc
+    to:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.gameroom_bureau_power
+    for:
+      hours: 0
+      minutes: 50
+      seconds: 0
+    below: 50
+    id: Bureau Low
+  - trigger: state
+    entity_id:
+    - switch.gameroom_bureau
+    to:
   conditions: []
   actions:
   - choose:
@@ -2167,8 +2188,53 @@
           entity_id:
           - switch.deni_pc
         action: switch.turn_off
-  mode: queued
-  max: 10
+    - conditions:
+      - condition: trigger
+        id:
+        - Bureau Low
+      sequence:
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.gameroom_bureau
+  - alias: wifi on
+    if:
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: switch.alex_pc
+        state: 'on'
+      - condition: state
+        entity_id: switch.deni_pc
+        state: 'on'
+      - condition: state
+        entity_id: switch.gameroom_bureau
+        state: 'on'
+    then:
+    - action: switch.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.usw_gameroom_port_1_poe
+  - alias: wifi off
+    if:
+    - condition: state
+      entity_id: switch.alex_pc
+      state: 'off'
+    - condition: state
+      entity_id: switch.deni_pc
+      state: 'off'
+    - condition: state
+      entity_id: switch.gameroom_bureau
+      state: 'off'
+    then:
+    - action: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.usw_gameroom_port_1_poe
+  mode: restart
 - id: '1726665266579'
   alias: Sun luminosity
   description: ''
@@ -2651,8 +2717,8 @@
         sequence:
         - action: climate.set_temperature
           data:
-            target_temp_high: 26
-            target_temp_low: 18
+            target_temp_high: 18
+            target_temp_low: 26
             hvac_mode: cool
           metadata: {}
           target:
@@ -2666,8 +2732,8 @@
         - action: climate.set_temperature
           data:
             hvac_mode: cool
-            target_temp_high: 26
-            target_temp_low: 18
+            target_temp_high: 18
+            target_temp_low: 26
           metadata: {}
           target:
             entity_id: climate.woonkamer_thermostaat
@@ -2769,7 +2835,7 @@
             entity_id: climate.woonkamer_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: '5'
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.woonkamer_airco
@@ -2796,7 +2862,7 @@
             entity_id: climate.woonkamer_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: '3'
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.woonkamer_airco
@@ -2904,7 +2970,7 @@
             entity_id: climate.woonkamer_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: Silence
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.woonkamer_airco
@@ -2923,7 +2989,7 @@
             entity_id: climate.woonkamer_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: Silence
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.woonkamer_airco
@@ -3808,28 +3874,15 @@
     from:
     to:
     enabled: true
+  - trigger: state
+    entity_id:
+    - media_player.osmc
+    from:
+    to:
   conditions: []
   actions:
   - alias: Woonkamer TV
     choose:
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.sony.dtv.hbbtvplayer
-      sequence:
-      - data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      - data:
-          volume_level: 0.25
-        target:
-          entity_id:
-          - media_player.woonkamer_kef
-        action: media_player.volume_set
-      alias: BBC
     - conditions:
       - condition: state
         entity_id: remote.woonkamer_tv
@@ -3853,6 +3906,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
         - conditions:
           - condition: state
             entity_id: media_player.woonkamer_tv_cast
@@ -3869,6 +3923,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
         - conditions:
           - condition: state
             entity_id: media_player.woonkamer_tv_cast
@@ -3885,6 +3940,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
       alias: Cast
     - conditions:
       - condition: state
@@ -3904,11 +3960,12 @@
               entity_id: media_player.keuken
             action: media_player.volume_set
           - data:
-              volume_level: 0.4
+              volume_level: 0.35
             target:
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
         - conditions:
           - condition: state
             entity_id: media_player.woonkamer_tv_cast
@@ -3925,6 +3982,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
         - conditions:
           - condition: state
             entity_id: media_player.woonkamer_tv_cast
@@ -3941,6 +3999,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
       alias: Disney+
     - conditions:
       - condition: state
@@ -3985,6 +4044,7 @@
           entity_id:
           - media_player.woonkamer_kef
         action: media_player.volume_set
+        enabled: false
       alias: Netflix
     - conditions:
       - condition: state
@@ -3998,11 +4058,12 @@
           entity_id: media_player.keuken
         action: media_player.volume_set
       - data:
-          volume_level: 0.3
+          volume_level: 0.25
         target:
           entity_id:
           - media_player.woonkamer_kef
         action: media_player.volume_set
+        enabled: false
       alias: NLZIET
     - conditions:
       - condition: state
@@ -4027,6 +4088,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
         - conditions:
           - condition: state
             entity_id: media_player.woonkamer_tv_cast
@@ -4043,6 +4105,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
         - conditions:
           - condition: state
             entity_id: media_player.woonkamer_tv_cast
@@ -4059,6 +4122,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
       alias: Plex
     - conditions:
       - condition: state
@@ -4107,6 +4171,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
         - conditions:
           - condition: state
             entity_id: media_player.woonkamer_tv_cast
@@ -4123,6 +4188,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
         - conditions:
           - condition: state
             entity_id: media_player.woonkamer_tv_cast
@@ -4139,6 +4205,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
       alias: SmartTube
     - conditions:
       - condition: state
@@ -4163,6 +4230,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
         - conditions:
           - condition: state
             entity_id: media_player.woonkamer_tv_cast
@@ -4179,6 +4247,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
         - conditions:
           - condition: state
             entity_id: media_player.woonkamer_tv_cast
@@ -4195,17 +4264,49 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
       alias: SmartTube Beta
     - conditions:
       - condition: state
         entity_id: remote.woonkamer_tv
         attribute: current_activity
         state: com.sony.dtv.tvx
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: media_player.woonkamer_tv_cast
+          attribute: media_title
+          state: OSMC HDMI 1
+          enabled: true
+      sequence:
+      - data:
+          volume_level: 0.01
+        target:
+          entity_id: media_player.keuken
+        action: media_player.volume_set
+      - data:
+          volume_level: 0.35
+        target:
+          entity_id:
+          - media_player.woonkamer_kef
+        action: media_player.volume_set
+        enabled: false
+      alias: TV
+    - conditions:
+      - condition: state
+        entity_id: remote.woonkamer_tv
+        attribute: current_activity
+        state: com.sony.dtv.tvx
+      - condition: state
+        entity_id: media_player.woonkamer_tv_cast
+        attribute: media_title
+        state: OSMC HDMI 1
+        enabled: true
       sequence:
       - choose:
         - conditions:
           - condition: state
-            entity_id: media_player.woonkamer_tv_cast
+            entity_id: media_player.osmc
             state: playing
           sequence:
           - data:
@@ -4213,31 +4314,9 @@
             target:
               entity_id: media_player.keuken
             action: media_player.volume_set
-          - data:
-              volume_level: 0.25
-            target:
-              entity_id:
-              - media_player.woonkamer_kef
-            action: media_player.volume_set
         - conditions:
           - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: idle
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-          - data:
-              volume_level: 0.15
-            target:
-              entity_id:
-              - media_player.woonkamer_kef
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
+            entity_id: media_player.osmc
             state: paused
           sequence:
           - data:
@@ -4245,13 +4324,17 @@
             target:
               entity_id: media_player.keuken
             action: media_player.volume_set
+        - conditions:
+          - condition: state
+            entity_id: media_player.osmc
+            state: idle
+          sequence:
           - data:
-              volume_level: 0.15
+              volume_level: 0.35
             target:
-              entity_id:
-              - media_player.woonkamer_kef
+              entity_id: media_player.keuken
             action: media_player.volume_set
-      alias: TV
+      alias: TV HDMI1
     - conditions:
       - condition: state
         entity_id: remote.woonkamer_tv
@@ -4275,6 +4358,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
         - conditions:
           - condition: state
             entity_id: media_player.woonkamer_tv_cast
@@ -4291,6 +4375,7 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
         - conditions:
           - condition: state
             entity_id: media_player.woonkamer_tv_cast
@@ -4307,28 +4392,78 @@
               entity_id:
               - media_player.woonkamer_kef
             action: media_player.volume_set
+            enabled: false
       alias: YouTube
   mode: restart
 - id: '1745758491686'
   alias: Voordeur
   description: ''
   triggers:
-  - trigger: state
-    entity_id:
+  - entity_id:
     - binary_sensor.voordeur_doorbell
     to: 'on'
+    trigger: state
   conditions: []
   actions:
   - parallel:
-    - action: script.voordeur_announce
+    - alias: Lights Green
+      action: script.lights_green
       data: {}
+      enabled: true
+    - alias: Announce
+      data:
+        cache: true
+        media_player_entity_id: media_player.meterkast
+        message: Er heeft iemand aangebeld!
+      target:
+        entity_id: tts.home_assistant_cloud
+      action: tts.speak
+      enabled: true
+    - alias: Notify Phone
+      action: notify.notify
       metadata: {}
-    - action: script.voordeur_woonkamer_tv
-      metadata: {}
-      data: {}
-    - action: script.lights_green
-      data: {}
-      metadata: {}
+      data:
+        message: Er heeft iemand aangebeld!
+        data:
+          channel: Doorbell
+          image: https://{{ states('input_text.base_url') }}{{ state_attr('camera.voordeur','entity_picture')
+            }}
+          importance: high
+    - alias: Notify TV
+      if:
+      - alias: Woonkamer TV not off
+        condition: not
+        conditions:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv
+            state: 'off'
+          - condition: state
+            entity_id: media_player.woonkamer_tv
+            state: unavailable
+      then:
+      - target:
+          entity_id: media_player.woonkamer_tv_adb
+        action: media_player.media_play_pause
+        data: {}
+        enabled: true
+      - action: notify.woonkamer_tv
+        metadata: {}
+        data:
+          message: Er heeft iemand aangebeld!
+          data:
+            duration: 20
+            fontsize: small
+            image: http://{{ states('sensor.local_ip') }}:8123{{ state_attr('camera.voordeur','entity_picture')
+              }}
+            position: top-right
+            transparency: 50%
+  variables:
+    base_url_https: '{{ states(''input_text.base_url_https'') }}'
+    base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
+    image_url: '{{ base_url_https }}{{state_attr(''camera.voordeur'',''entity_picture'')+''&time=''}}{{as_timestamp(now())}}'
+    video_url: '{{ base_url_rtsp }}/voordeur'
   mode: restart
 - id: '1746031379136'
   alias: Alarm
@@ -4587,6 +4722,14 @@
     data:
       message: Alex heeft Ascom verlaten!
     metadata: {}
+  - action: notify.tvoverlaynotify_woonkamer_tv
+    metadata: {}
+    data:
+      data:
+        largeIcon: https://ha.rc16.fpet.nl{{ state_attr('person.alex', 'entity_picture')
+          }}
+        seconds: 10
+      message: Alex heeft Ascom verlaten!
   mode: single
 - id: '1747720967211'
   alias: Geofence - Alex leaves Home
@@ -4602,6 +4745,14 @@
     data:
       message: Alex heeft Thuis verlaten!
     metadata: {}
+  - action: notify.tvoverlaynotify_woonkamer_tv
+    metadata: {}
+    data:
+      data:
+        largeIcon: https://ha.rc16.fpet.nl{{ state_attr('person.alex', 'entity_picture')
+          }}
+        seconds: 10
+      message: Alex heeft Thuis verlaten!
   mode: single
 - id: '1747721058683'
   alias: Geofence - Deni leaves Home
@@ -4617,6 +4768,14 @@
     data:
       message: Deni heeft thuis verlaten!
     metadata: {}
+  - action: notify.tvoverlaynotify_woonkamer_tv
+    metadata: {}
+    data:
+      data:
+        largeIcon: https://ha.rc16.fpet.nl{{ state_attr('person.deni', 'entity_picture')
+          }}
+        seconds: 10
+      message: Deni heeft Thuis verlaten!
   mode: single
 - id: '1748759857960'
   alias: 00:00
@@ -5055,8 +5214,8 @@
         sequence:
         - action: climate.set_temperature
           data:
-            target_temp_high: 26
-            target_temp_low: 18
+            target_temp_high: 18
+            target_temp_low: 26
             hvac_mode: cool
           metadata: {}
           target:
@@ -5070,8 +5229,8 @@
         - action: climate.set_temperature
           data:
             hvac_mode: cool
-            target_temp_high: 26
-            target_temp_low: 18
+            target_temp_high: 18
+            target_temp_low: 26
           metadata: {}
           target:
             entity_id: climate.slaapkamer_thermostaat
@@ -5173,7 +5332,7 @@
             entity_id: climate.slaapkamer_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: '5'
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.slaapkamer_airco
@@ -5200,7 +5359,7 @@
             entity_id: climate.slaapkamer_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: '3'
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.slaapkamer_airco
@@ -5433,32 +5592,6 @@
           metadata: {}
           target:
             entity_id: climate.kantoor_thermostaat
-      - alias: Cooling on, above 15C, at home
-        conditions:
-        - condition: state
-          entity_id: schedule.kantoor_klimaat_cooling
-          state: 'on'
-        - condition: numeric_state
-          entity_id: sensor.outdoor_temperature
-          above: 15
-        - condition: numeric_state
-          entity_id: zone.home
-          above: 0
-        - condition: numeric_state
-          entity_id: sensor.kantoor_bureau_power
-          below: 10
-        sequence:
-        - action: climate.set_temperature
-          data:
-            hvac_mode: '{{ state_attr(''schedule.kantoor_klimaat_cooling'', ''hvac_mode'')
-              }}'
-            target_temp_high: '{{ state_attr(''schedule.kantoor_klimaat_cooling'',
-              ''target_temp_high'') }}'
-            target_temp_low: '{{ state_attr(''schedule.kantoor_klimaat_cooling'',
-              ''target_temp_low'') }}'
-          metadata: {}
-          target:
-            entity_id: climate.kantoor_thermostaat
       - alias: Cooling off, above 15C, at home
         conditions:
         - condition: state
@@ -5473,8 +5606,8 @@
         sequence:
         - action: climate.set_temperature
           data:
-            target_temp_high: 26
-            target_temp_low: 18
+            target_temp_high: 18
+            target_temp_low: 26
             hvac_mode: cool
           metadata: {}
           target:
@@ -5488,8 +5621,8 @@
         - action: climate.set_temperature
           data:
             hvac_mode: cool
-            target_temp_high: 26
-            target_temp_low: 18
+            target_temp_high: 18
+            target_temp_low: 26
           metadata: {}
           target:
             entity_id: climate.kantoor_thermostaat
@@ -5591,7 +5724,7 @@
             entity_id: climate.kantoor_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: '5'
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.kantoor_airco
@@ -5618,7 +5751,7 @@
             entity_id: climate.kantoor_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: '3'
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.kantoor_airco
@@ -5726,7 +5859,7 @@
             entity_id: climate.kantoor_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: Silence
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.kantoor_airco
@@ -5745,7 +5878,7 @@
             entity_id: climate.kantoor_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: Silence
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.kantoor_airco
@@ -5831,6 +5964,9 @@
         - condition: state
           entity_id: person.alex
           state: home
+        - condition: state
+          entity_id: switch.gameroom_bureau
+          state: 'on'
         sequence:
         - action: climate.set_temperature
           data:
@@ -5857,9 +5993,9 @@
         sequence:
         - action: climate.set_temperature
           data:
-            target_temp_high: 26
-            target_temp_low: 18
+            target_temp_low: 26
             hvac_mode: cool
+            target_temp_high: 18
           metadata: {}
           target:
             entity_id: climate.gameroom_thermostaat
@@ -5872,8 +6008,8 @@
         - action: climate.set_temperature
           data:
             hvac_mode: cool
-            target_temp_high: 26
-            target_temp_low: 18
+            target_temp_high: 18
+            target_temp_low: 26
           metadata: {}
           target:
             entity_id: climate.gameroom_thermostaat
@@ -5975,7 +6111,7 @@
             entity_id: climate.gameroom_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: '5'
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.gameroom_airco
@@ -6002,7 +6138,7 @@
             entity_id: climate.gameroom_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: '3'
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.gameroom_airco
@@ -6110,7 +6246,7 @@
             entity_id: climate.gameroom_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: Silence
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.gameroom_airco
@@ -6129,7 +6265,7 @@
             entity_id: climate.gameroom_airco
         - action: climate.set_fan_mode
           data:
-            fan_mode: Silence
+            fan_mode: Auto
           metadata: {}
           target:
             entity_id: climate.gameroom_airco
@@ -6454,16 +6590,16 @@
     below: 7.5
     id: shower off
     trigger: numeric_state
-  conditions: []
+  conditions:
+  - condition: state
+    entity_id: light.badkamer_lampen
+    state: 'on'
   actions:
   - choose:
     - conditions:
       - condition: trigger
         id:
         - shower on
-      - condition: state
-        entity_id: light.badkamer_lampen
-        state: 'on'
       sequence:
       - data:
           volume_level: 0.45
@@ -6475,9 +6611,6 @@
       - condition: trigger
         id:
         - shower off
-      - condition: state
-        entity_id: light.badkamer_lampen
-        state: 'on'
       sequence:
       - data:
           volume_level: 0.35
@@ -6505,7 +6638,7 @@
     to: idle
     for:
       hours: 0
-      minutes: 1
+      minutes: 5
       seconds: 0
   conditions:
   - condition: state
@@ -6574,4 +6707,124 @@
           - media_player.sauna
         target:
           entity_id: media_player.groep
+  mode: single
+- id: '1753111025679'
+  alias: Kantoor Energie
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.kantoor_bureau_power
+    for:
+      hours: 0
+      minutes: 50
+      seconds: 0
+    below: 50
+    id: low power
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - low power
+      sequence:
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.kantoor_bureau
+  mode: restart
+- id: '1753535515702'
+  alias: Geofence - Notifications
+  description: Send dynamic notifications when tracked persons enter or leave zones
+  triggers:
+  - entity_id: person.alex
+    zone: zone.home
+    event: enter
+    trigger: zone
+  - entity_id: person.alex
+    zone: zone.home
+    event: leave
+    trigger: zone
+  - entity_id: person.alex
+    zone: zone.ascom
+    event: enter
+    trigger: zone
+  - entity_id: person.alex
+    zone: zone.ascom
+    event: leave
+    trigger: zone
+  - entity_id: person.alex
+    zone: zone.botenhuis
+    event: enter
+    trigger: zone
+  - entity_id: person.alex
+    zone: zone.botenhuis
+    event: leave
+    trigger: zone
+  - entity_id: person.deni
+    zone: zone.home
+    event: enter
+    trigger: zone
+  - entity_id: person.deni
+    zone: zone.home
+    event: leave
+    trigger: zone
+  - entity_id: person.deni
+    zone: zone.ascom
+    event: enter
+    trigger: zone
+  - entity_id: person.deni
+    zone: zone.ascom
+    event: leave
+    trigger: zone
+  - entity_id: person.deni
+    zone: zone.botenhuis
+    event: enter
+    trigger: zone
+  - entity_id: person.deni
+    zone: zone.botenhuis
+    event: leave
+    trigger: zone
+  actions:
+  - parallel:
+    - data:
+        message: '{{ person_name }} is {{ action_word }} bij {{ zone_name }}.'
+      action: notify.notify
+    - alias: Woonkamer TV
+      if:
+      - alias: Woonkamer TV not off
+        condition: not
+        conditions:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: media_player.woonkamer_tv
+            state: 'off'
+          - condition: state
+            entity_id: media_player.woonkamer_tv
+            state: unavailable
+      then:
+      - action: notify.woonkamer_tv
+        metadata: {}
+        data:
+          message: '{{ person_name }} is {{ action_word }} bij {{ zone_name }}.'
+          data:
+            duration: 20
+            image: '{{ person_image }}'
+            fontsize: small
+            position: top-right
+            transparency: 50%
+  variables:
+    base_url_https: '{{ states(''input_text.base_url_https'') }}'
+    person_entity: '{{ trigger.entity_id }}'
+    person_name: '{{ state_attr(person_entity, ''friendly_name'') | default(''Iemand'')
+      }}'
+    person_image: http://{{ states('sensor.local_ip') }}:8123{{ state_attr(person_entity,'entity_picture')
+      | default('/local/anonymous.png') }}
+    zone_identity: '{{ trigger.zone }}'
+    zone_name: '{{ state_attr(zone_entity, ''friendly_name'') }}'
+    action_word: '{{ ''aangekomen'' if trigger.event == ''enter'' else ''vertrokken''
+      }}'
   mode: single
