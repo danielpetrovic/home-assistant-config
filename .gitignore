@@ -3,12 +3,11 @@
 /.storage
 /@eaDir
 /addons_config
-/custom_components/hacs
-/custom_components/ha_zyxel
 /custom_components/kef_connector
 /image
 /tts
 /zigbee2mqtt
+go2rtc.yaml
 home-assistant_v2.db
 home-assistant_v2.db-shm
 home-assistant_v2.db-wal
@@ -19,4 +18,3 @@ secrets.yaml
 zigbee.db
 zigbee.db-shm
 zigbee.db-wal
-go2rtc.yaml

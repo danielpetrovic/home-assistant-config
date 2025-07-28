@@ -1,0 +1,4 @@
+input_text:
+  base_url:
+    name: Home Assistant Base URL
+    icon: mdi:link
