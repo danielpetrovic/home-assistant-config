@@ -347,9 +347,9 @@ schedule:
       - from: "20:00:00"
         to: "24:00:00"
         data:
-          target_temp_high_hot: 23
-          target_temp_high_normal: 24
-          target_temp_high_cold: 25
+          target_temp_high_hot: 22
+          target_temp_high_normal: 23
+          target_temp_high_cold: 24
           target_temp_low_hot: 19
           target_temp_low_normal: 20
           target_temp_low_cold: 21
@@ -359,9 +359,9 @@ schedule:
       - from: "20:00:00"
         to: "24:00:00"
         data:
-          target_temp_high_hot: 23
-          target_temp_high_normal: 24
-          target_temp_high_cold: 25
+          target_temp_high_hot: 22
+          target_temp_high_normal: 23
+          target_temp_high_cold: 24
           target_temp_low_hot: 19
           target_temp_low_normal: 20
           target_temp_low_cold: 21
@@ -371,9 +371,9 @@ schedule:
       - from: "20:00:00"
         to: "24:00:00"
         data:
-          target_temp_high_hot: 23
-          target_temp_high_normal: 24
-          target_temp_high_cold: 25
+          target_temp_high_hot: 22
+          target_temp_high_normal: 23
+          target_temp_high_cold: 24
           target_temp_low_hot: 19
           target_temp_low_normal: 20
           target_temp_low_cold: 21
@@ -383,9 +383,9 @@ schedule:
       - from: "20:00:00"
         to: "24:00:00"
         data:
-          target_temp_high_hot: 23
-          target_temp_high_normal: 24
-          target_temp_high_cold: 25
+          target_temp_high_hot: 22
+          target_temp_high_normal: 23
+          target_temp_high_cold: 24
           target_temp_low_hot: 19
           target_temp_low_normal: 20
           target_temp_low_cold: 21
@@ -395,9 +395,9 @@ schedule:
       - from: "20:00:00"
         to: "24:00:00"
         data:
-          target_temp_high_hot: 23
-          target_temp_high_normal: 24
-          target_temp_high_cold: 25
+          target_temp_high_hot: 22
+          target_temp_high_normal: 23
+          target_temp_high_cold: 24
           target_temp_low_hot: 19
           target_temp_low_normal: 20
           target_temp_low_cold: 21
@@ -407,9 +407,9 @@ schedule:
       - from: "20:00:00"
         to: "24:00:00"
         data:
-          target_temp_high_hot: 23
-          target_temp_high_normal: 24
-          target_temp_high_cold: 25
+          target_temp_high_hot: 22
+          target_temp_high_normal: 23
+          target_temp_high_cold: 24
           target_temp_low_hot: 19
           target_temp_low_normal: 20
           target_temp_low_cold: 21
@@ -419,9 +419,9 @@ schedule:
       - from: "20:00:00"
         to: "24:00:00"
         data:
-          target_temp_high_hot: 23
-          target_temp_high_normal: 24
-          target_temp_high_cold: 25
+          target_temp_high_hot: 22
+          target_temp_high_normal: 23
+          target_temp_high_cold: 24
           target_temp_low_hot: 19
           target_temp_low_normal: 20
           target_temp_low_cold: 21

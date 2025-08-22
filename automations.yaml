@@ -1259,18 +1259,6 @@
         target:
           entity_id:
           - light.schuur_lampen
-      - action: scene.create
-        data:
-          scene_id: tuin_before
-          snapshot_entities:
-          - input_select.tuin_raambekleding
-        metadata: {}
-      - action: input_select.select_option
-        metadata: {}
-        data:
-          option: 100%
-        target:
-          entity_id: input_select.tuin_raambekleding
     - conditions:
       - condition: state
         entity_id: input_select.schuur_raambekleding
@@ -1648,33 +1636,12 @@
         id:
         - motion clear
       sequence:
-      - choose:
-        - conditions:
-          - condition: sun
-            after: sunrise
-            before: sunset
-          sequence:
-          - action: light.turn_off
-            metadata: {}
-            data:
-              transition: 9
-            target:
-              entity_id: light.looppad_lampen
-          alias: sunrise-sunset
-        - conditions:
-          - condition: sun
-            after: sunset
-            before: sunrise
-          sequence:
-          - action: light.turn_on
-            metadata: {}
-            data:
-              brightness_pct: 30
-              color_temp_kelvin: 3333
-              transition: 9
-            target:
-              entity_id: light.looppad_lampen
-          alias: sunset-sunrise
+      - action: light.turn_off
+        metadata: {}
+        data:
+          transition: 9
+        target:
+          entity_id: light.looppad_lampen
       alias: motion clear
   mode: restart
 - id: '1706166372098'
@@ -2521,134 +2488,6 @@
           entity_id:
           - input_select.gameroom_raambekleding
   mode: single
-- id: '1733007862058'
-  alias: Slaapkamer Bed
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.alex_in_bed
-    to:
-  - trigger: state
-    entity_id:
-    - binary_sensor.deni_in_bed
-    to:
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.alex_in_bed
-        state: 'off'
-      - condition: state
-        entity_id: binary_sensor.deni_in_bed
-        state: 'off'
-      sequence:
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
-            }}'
-          transition: 9
-        metadata: {}
-        target:
-          entity_id:
-          - light.slaapkamer_lamp
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
-          transition: 9
-        metadata: {}
-        target:
-          entity_id:
-          - light.slaapkamer_bed
-      - action: automation.turn_on
-        metadata: {}
-        target:
-          entity_id:
-          - automation.slaapkamer_deur
-        data: {}
-      alias: A not in bed, D not in bed
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.alex_in_bed
-        state: 'on'
-      - condition: state
-        entity_id: binary_sensor.deni_in_bed
-        state: 'on'
-      sequence:
-      - action: light.turn_off
-        data:
-          transition: 9
-        metadata: {}
-        target:
-          entity_id:
-          - light.slaapkamer_lamp
-          - light.slaapkamer_alex_lamp_bed
-          - light.slaapkamer_deni_lamp_bed
-      - action: automation.turn_off
-        data:
-          stop_actions: false
-        metadata: {}
-        target:
-          entity_id:
-          - automation.slaapkamer_deur
-      alias: A in bed, D in bed
-    - conditions:
-      - condition: or
-        conditions:
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: binary_sensor.alex_in_bed
-            state: 'on'
-          - condition: not
-            conditions:
-            - condition: state
-              entity_id: binary_sensor.deni_in_bed
-              state: 'on'
-          alias: A in bed, D not in bed
-        - alias: A not in bed, D in bed
-          condition: or
-          conditions:
-          - condition: not
-            conditions:
-            - condition: state
-              entity_id: binary_sensor.alex_in_bed
-              state: 'on'
-          - condition: state
-            entity_id: binary_sensor.deni_in_bed
-            state: 'on'
-      sequence:
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
-            }}'
-          transition: 9
-        metadata: {}
-        target:
-          entity_id:
-          - light.slaapkamer_bed
-      - action: light.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.slaapkamer_lamp
-      - action: automation.turn_off
-        data:
-          stop_actions: false
-        metadata: {}
-        target:
-          entity_id: automation.slaapkamer_deur
-      alias: A or D in bed
-  mode: queued
-  max: 10
 - id: '1734897201727'
   alias: Woonkamer Klimaat
   description: ''
@@ -2663,7 +2502,6 @@
   - trigger: state
     entity_id: climate.woonkamer_thermostaat
     id: thermostat
-    attribute: hvac_action
   conditions: []
   actions:
   - alias: schedule
@@ -3580,23 +3418,6 @@
         metadata: {}
         target:
           entity_id: input_select.tuin_raambekleding
-- id: '1736812069874'
-  alias: Entree Knop
-  description: ''
-  use_blueprint:
-    path: danielpetrovic/zha-philips-hue-tap-dial-switch.yaml
-    input:
-      remote: 8e2268f06da1b2d923b0d8e87dea4bc3
-      last_pressed: input_text.entree_knop_last_pressed
-      button_1_light:
-        entity_id: light.entree_lamp
-      button_1_light_schedule: schedule.lights_bright
-      button_1_double:
-      - action: automation.toggle
-        metadata: {}
-        data: {}
-        target:
-          entity_id: automation.entree_beweging
 - id: '1736812245757'
   alias: Gameroom Bureau Knop
   description: ''
@@ -3973,22 +3794,6 @@
         entity_id: light.slaapkamer_deni_lamp
       button_4_light_brightness: 5
       button_4_light_color: 2500
-- id: '1736812931327'
-  alias: Toilet Knop
-  description: ''
-  use_blueprint:
-    path: danielpetrovic/zha-philips-hue-tap-dial-switch.yaml
-    input:
-      remote: 26d5d55e4c3e3230789f8ad5a0638b5e
-      last_pressed: input_text.toilet_knop_last_pressed
-      button_1_light:
-        entity_id: light.toilet_lamp
-      button_1_light_schedule: schedule.lights_bright
-      button_3_media: media_player.keuken
-      button_3_media_leader: media_player.slaapkamer
-      button_3_short_release_media_mode:
-      - turn_on
-      - join
 - id: '1736813115022'
   alias: Woonkamer Knop
   description: ''
@@ -4623,7 +4428,6 @@
     - alias: Lights Green
       action: script.lights_green
       data: {}
-      enabled: true
     - alias: Announce
       data:
         cache: true
@@ -4632,7 +4436,6 @@
       target:
         entity_id: tts.home_assistant_cloud
       action: tts.speak
-      enabled: true
     - alias: Notify Phone
       action: notify.notify
       metadata: {}
@@ -4643,6 +4446,8 @@
           image: https://{{ states('input_text.base_url') }}{{ state_attr('camera.voordeur','entity_picture')
             }}
           importance: high
+          priority: high
+          ttl: 0
     - alias: Notify TV
       if:
       - alias: Woonkamer TV not off
@@ -4858,21 +4663,6 @@
           - light.slaapkamer_bed
       alias: motion clear
   mode: restart
-- id: '1747688850788'
-  alias: Geofence - Alex leaves Botenhuis
-  description: ''
-  triggers:
-  - trigger: zone
-    entity_id: person.alex
-    zone: zone.botenhuis
-    event: leave
-  conditions: []
-  actions:
-  - action: notify.mobile_app_deni_phone
-    data:
-      message: Alex heeft Botenhuis verlaten!
-    metadata: {}
-  mode: single
 - id: '1747688945748'
   alias: Geofence - Alarm
   description: ''
@@ -4891,105 +4681,6 @@
     data: {}
     target:
       entity_id: alarm_control_panel.alarm
-  mode: single
-- id: '1747689064668'
-  alias: Geofence - Deni reaches Home
-  description: ''
-  triggers:
-  - trigger: zone
-    entity_id: person.deni
-    zone: zone.home
-    event: enter
-  conditions: []
-  actions:
-  - action: notify.mobile_app_alex_phone
-    data:
-      message: Deni komt thuis!
-    metadata: {}
-  mode: single
-- id: '1747689099633'
-  alias: Geofence - Alex reaches Home
-  description: ''
-  triggers:
-  - trigger: zone
-    entity_id: person.alex
-    zone: zone.home
-    event: enter
-  conditions: []
-  actions:
-  - action: notify.mobile_app_deni_phone
-    data:
-      message: Alex komt thuis!
-    metadata: {}
-  mode: single
-- id: '1747689143437'
-  alias: Geofence - Alex leaves Ascom
-  description: ''
-  triggers:
-  - trigger: zone
-    entity_id: person.alex
-    zone: zone.ascom
-    event: leave
-  conditions: []
-  actions:
-  - action: notify.mobile_app_deni_phone
-    data:
-      message: Alex heeft Ascom verlaten!
-    metadata: {}
-  - action: notify.tvoverlaynotify_woonkamer_tv
-    metadata: {}
-    data:
-      data:
-        largeIcon: https://ha.rc16.fpet.nl{{ state_attr('person.alex', 'entity_picture')
-          }}
-        seconds: 10
-      message: Alex heeft Ascom verlaten!
-  mode: single
-- id: '1747720967211'
-  alias: Geofence - Alex leaves Home
-  description: ''
-  triggers:
-  - trigger: zone
-    entity_id: person.alex
-    zone: zone.home
-    event: leave
-  conditions: []
-  actions:
-  - action: notify.mobile_app_deni_phone
-    data:
-      message: Alex heeft Thuis verlaten!
-    metadata: {}
-  - action: notify.tvoverlaynotify_woonkamer_tv
-    metadata: {}
-    data:
-      data:
-        largeIcon: https://ha.rc16.fpet.nl{{ state_attr('person.alex', 'entity_picture')
-          }}
-        seconds: 10
-      message: Alex heeft Thuis verlaten!
-  mode: single
-- id: '1747721058683'
-  alias: Geofence - Deni leaves Home
-  description: ''
-  triggers:
-  - trigger: zone
-    entity_id: person.deni
-    zone: zone.home
-    event: leave
-  conditions: []
-  actions:
-  - action: notify.mobile_app_alex_phone
-    data:
-      message: Deni heeft thuis verlaten!
-    metadata: {}
-  - action: notify.tvoverlaynotify_woonkamer_tv
-    metadata: {}
-    data:
-      data:
-        largeIcon: https://ha.rc16.fpet.nl{{ state_attr('person.deni', 'entity_picture')
-          }}
-        seconds: 10
-      message: Deni heeft Thuis verlaten!
   mode: single
 - id: '1748759857960'
   alias: 00:00
@@ -5311,6 +5002,12 @@
       - input_select.sauna_raambekleding
       - input_select.slaapkamer_raambekleding
       - input_select.woonkamer_raambekleding
+  - action: automation.trigger
+    metadata: {}
+    data:
+      skip_condition: false
+    target:
+      entity_id: automation.badkamer_media_rejoin
   mode: single
 - id: '1748774139655'
   alias: '18:30'
@@ -5424,29 +5121,41 @@
   alias: Badkamer Media rejoin
   description: ''
   triggers:
-  - trigger: state
-    entity_id:
-    - media_player.badkamer_kef
-    to: idle
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
+  - trigger: time
+    at: 06:00:00
+  - trigger: time
+    at: '14:00:00'
+  - trigger: time
+    at: '22:00:00'
   conditions:
-  - condition: state
-    entity_id: media_player.groep
-    state: playing
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
   actions:
+  - action: unifi.reconnect_client
+    metadata: {}
+    data:
+      device_id: 7ff037c01f437519717d932cedd8bb25
   - action: media_player.unjoin
     metadata: {}
     data: {}
     target:
       entity_id: media_player.badkamer
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
   - action: media_player.join
     metadata: {}
     data:
       group_members:
       - media_player.badkamer
+    target:
+      entity_id: media_player.groep
+  - action: media_player.media_play
+    metadata: {}
+    data: {}
     target:
       entity_id: media_player.groep
   mode: single
@@ -5513,6 +5222,10 @@
       seconds: 0
     below: 50
     id: low power
+  - trigger: state
+    entity_id:
+    - switch.kantoor_bureau
+    to:
   conditions: []
   actions:
   - choose:
@@ -5526,100 +5239,29 @@
         data: {}
         target:
           entity_id: switch.kantoor_bureau
+  - if:
+    - condition: state
+      entity_id: switch.kantoor_bureau
+      state: 'on'
+    then:
+    - action: switch.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.usw_meterkast_port_6_poe
+    alias: switch on
+  - if:
+    - condition: state
+      entity_id: switch.kantoor_bureau
+      state: 'off'
+    then:
+    - action: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.usw_meterkast_port_6_poe
+    alias: switch off
   mode: restart
-- id: '1753535515702'
-  alias: Geofence - Notifications
-  description: Send dynamic notifications when tracked persons enter or leave zones
-  triggers:
-  - entity_id: person.alex
-    zone: zone.home
-    event: enter
-    trigger: zone
-  - entity_id: person.alex
-    zone: zone.home
-    event: leave
-    trigger: zone
-  - entity_id: person.alex
-    zone: zone.ascom
-    event: enter
-    trigger: zone
-  - entity_id: person.alex
-    zone: zone.ascom
-    event: leave
-    trigger: zone
-  - entity_id: person.alex
-    zone: zone.botenhuis
-    event: enter
-    trigger: zone
-  - entity_id: person.alex
-    zone: zone.botenhuis
-    event: leave
-    trigger: zone
-  - entity_id: person.deni
-    zone: zone.home
-    event: enter
-    trigger: zone
-  - entity_id: person.deni
-    zone: zone.home
-    event: leave
-    trigger: zone
-  - entity_id: person.deni
-    zone: zone.ascom
-    event: enter
-    trigger: zone
-  - entity_id: person.deni
-    zone: zone.ascom
-    event: leave
-    trigger: zone
-  - entity_id: person.deni
-    zone: zone.botenhuis
-    event: enter
-    trigger: zone
-  - entity_id: person.deni
-    zone: zone.botenhuis
-    event: leave
-    trigger: zone
-  actions:
-  - parallel:
-    - data:
-        message: '{{ person_name }} is {{ action_word }} bij {{ zone_name }}.'
-      action: notify.notify
-    - alias: Woonkamer TV
-      if:
-      - alias: Woonkamer TV not off
-        condition: not
-        conditions:
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv
-            state: 'off'
-          - condition: state
-            entity_id: media_player.woonkamer_tv
-            state: unavailable
-      then:
-      - action: notify.woonkamer_tv
-        metadata: {}
-        data:
-          message: '{{ person_name }} is {{ action_word }} bij {{ zone_name }}.'
-          data:
-            duration: 20
-            image: '{{ person_image }}'
-            fontsize: small
-            position: top-right
-            transparency: 50%
-  variables:
-    base_url_https: '{{ states(''input_text.base_url_https'') }}'
-    person_entity: '{{ trigger.entity_id }}'
-    person_name: '{{ state_attr(person_entity, ''friendly_name'') | default(''Iemand'')
-      }}'
-    person_image: http://{{ states('sensor.local_ip') }}:8123{{ state_attr(person_entity,'entity_picture')
-      | default('/local/anonymous.png') }}
-    zone_identity: '{{ trigger.zone }}'
-    zone_name: '{{ state_attr(zone_entity, ''friendly_name'') }}'
-    action_word: '{{ ''aangekomen'' if trigger.event == ''enter'' else ''vertrokken''
-      }}'
-  mode: single
 - id: '1753728969565'
   alias: Badkamer Klimaat
   description: ''
@@ -5634,7 +5276,6 @@
   - trigger: state
     entity_id: climate.badkamer_thermostaat
     id: thermostat
-    attribute: hvac_action
   conditions: []
   actions:
   - alias: schedule
@@ -6022,7 +5663,6 @@
   - trigger: state
     entity_id: climate.gameroom_thermostaat
     id: thermostat
-    attribute: hvac_action
   conditions: []
   actions:
   - alias: schedule
@@ -6284,6 +5924,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_high
           state: 20
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           data:
@@ -6307,6 +5958,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_high
           state: 21
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           data:
@@ -6330,6 +5992,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_high
           state: 22
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           data:
@@ -6353,6 +6026,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_high
           state: 23
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           data:
@@ -6376,6 +6060,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_high
           state: 24
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           data:
@@ -6399,6 +6094,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_high
           state: 25
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           data:
@@ -6422,6 +6128,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_high
           state: 26
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           data:
@@ -6445,6 +6162,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_high
           state: 27
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           data:
@@ -6508,6 +6236,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_low
           state: 17
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -6525,6 +6264,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_low
           state: 18
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -6542,6 +6292,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_low
           state: 19
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -6559,6 +6320,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_low
           state: 20
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -6576,6 +6348,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_low
           state: 21
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -6593,6 +6376,17 @@
           entity_id: climate.gameroom_thermostaat
           attribute: target_temp_low
           state: 22
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: switch.alex_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.deni_pc
+            state: 'on'
+          - condition: state
+            entity_id: switch.gameroom_bureau
+            state: 'on'
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -6617,7 +6411,24 @@
   - trigger: state
     entity_id: climate.kantoor_thermostaat
     id: thermostat
-    attribute: hvac_action
+  - trigger: numeric_state
+    entity_id:
+    - sensor.kantoor_bureau_power
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    above: 10
+    id: energy high
+  - trigger: numeric_state
+    entity_id:
+    - sensor.kantoor_bureau_power
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    below: 10
+    id: energy low
   conditions: []
   actions:
   - alias: schedule
@@ -6868,6 +6679,8 @@
     - condition: trigger
       id:
       - thermostat
+      - energy high
+      - energy low
     then:
     - choose:
       - alias: cooling, 20C
@@ -6879,6 +6692,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_high
           state: 20
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           data:
@@ -6902,6 +6718,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_high
           state: 21
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           data:
@@ -6925,6 +6744,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_high
           state: 22
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           data:
@@ -6948,6 +6770,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_high
           state: 23
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           data:
@@ -6971,6 +6796,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_high
           state: 24
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           data:
@@ -6994,6 +6822,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_high
           state: 25
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           data:
@@ -7017,6 +6848,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_high
           state: 26
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           data:
@@ -7040,6 +6874,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_high
           state: 27
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           data:
@@ -7059,10 +6896,6 @@
         - condition: state
           entity_id: climate.kantoor_thermostaat
           state: cool
-        - condition: state
-          entity_id: climate.kantoor_thermostaat
-          attribute: target_temp_high
-          state: 28
         sequence:
         - action: climate.set_temperature
           data:
@@ -7082,10 +6915,6 @@
         - condition: state
           entity_id: climate.kantoor_thermostaat
           state: heat
-        - condition: state
-          entity_id: climate.kantoor_thermostaat
-          attribute: target_temp_low
-          state: 16
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -7103,6 +6932,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_low
           state: 17
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -7120,6 +6952,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_low
           state: 18
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -7137,6 +6972,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_low
           state: 19
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -7154,6 +6992,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_low
           state: 20
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -7171,6 +7012,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_low
           state: 21
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -7188,6 +7032,9 @@
           entity_id: climate.kantoor_thermostaat
           attribute: target_temp_low
           state: 22
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_power
+          above: 10
         sequence:
         - action: climate.set_temperature
           metadata: {}
@@ -7212,7 +7059,6 @@
   - trigger: state
     entity_id: climate.sauna_thermostaat
     id: thermostat
-    attribute: hvac_action
   conditions: []
   actions:
   - alias: schedule
@@ -7598,9 +7444,9 @@
     entity_id: schedule.slaapkamer_klimaat
     id: schedule
   - trigger: state
-    entity_id: climate.slaapkamer_thermostaat
+    entity_id:
+    - climate.slaapkamer_thermostaat
     id: thermostat
-    attribute: hvac_action
   conditions: []
   actions:
   - alias: schedule
@@ -8181,3 +8027,190 @@
             entity_id: climate.slaapkamer_verwarming
   mode: parallel
   max: 10
+- id: '1755612715648'
+  alias: Geofence - Notifications extended
+  description: ''
+  use_blueprint:
+    path: panhans/zone_notification_extended.yaml
+    input:
+      persons:
+      - person.alex
+      - person.deni
+      zones: []
+      title_arriving: '{{ person }} arriveert'
+      message_arriving: '{{ person }} arriveert bij {{ zone }}.'
+      title_leaving: '{{ person }} vertrekt'
+      message_leaving: '{{ person }} vertrekt van {{ zone }}.'
+      notify_group: notify
+      duration:
+        hours: 0
+        minutes: 0
+        seconds: 5
+- id: '1755875588370'
+  alias: Toilet Knop
+  description: 'Single press = on/off with schedule brightness/kelvin; double‑tap
+    toggles automation.entree_beweging; hold brightens or dims until release, with
+    Philips Hue‑friendly 1 s fades and safety cap.
+
+    '
+  triggers:
+  - trigger: event
+    event_type: zha_event
+    event_data:
+      device_id: b5b016dbd25e4edc48cfe901343953e3
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ trigger.event.data.command in [''move'', ''move_with_on_off'']
+          and trigger.event.data.args[0] == 0 }}
+
+          '
+      sequence:
+      - parallel:
+        - sequence:
+          - wait_for_trigger:
+            - trigger: event
+              event_type: zha_event
+              event_data:
+                device_id: b5b016dbd25e4edc48cfe901343953e3
+                command: stop
+            - trigger: event
+              event_type: zha_event
+              event_data:
+                device_id: b5b016dbd25e4edc48cfe901343953e3
+                command: 'on'
+            - trigger: event
+              event_type: zha_event
+              event_data:
+                device_id: b5b016dbd25e4edc48cfe901343953e3
+                command: 'off'
+            timeout: '30'
+            continue_on_timeout: true
+          - variables:
+              stop_flag: true
+        - sequence:
+          - repeat:
+              count: 17
+              sequence:
+              - if:
+                - condition: template
+                  value_template: '{{ stop_flag | default(false) }}'
+                then:
+                - stop: Stop flag set — end brighten
+              - action: light.turn_on
+                target:
+                  entity_id: light.eettafel_lamp_boven
+                data:
+                  brightness_step: 15
+                  transition: 1
+                  color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+                    }}'
+      - stop: Handled brighten hold
+    - conditions:
+      - condition: template
+        value_template: '{{ trigger.event.data.command == ''move'' and trigger.event.data.args[0]
+          == 1 }}
+
+          '
+      sequence:
+      - parallel:
+        - sequence:
+          - wait_for_trigger:
+            - trigger: event
+              event_type: zha_event
+              event_data:
+                device_id: b5b016dbd25e4edc48cfe901343953e3
+                command: stop
+            - trigger: event
+              event_type: zha_event
+              event_data:
+                device_id: b5b016dbd25e4edc48cfe901343953e3
+                command: 'on'
+            - trigger: event
+              event_type: zha_event
+              event_data:
+                device_id: b5b016dbd25e4edc48cfe901343953e3
+                command: 'off'
+            timeout: '30'
+            continue_on_timeout: true
+          - variables:
+              stop_flag: true
+        - sequence:
+          - repeat:
+              count: 17
+              sequence:
+              - if:
+                - condition: template
+                  value_template: '{{ stop_flag | default(false) }}'
+                then:
+                - stop: Stop flag set — end dim
+              - action: light.turn_on
+                target:
+                  entity_id: light.eettafel_lamp_boven
+                data:
+                  brightness_step: -15
+                  transition: 1
+                  color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+                    }}'
+      - stop: Handled dim hold
+  - variables:
+      first_cmd: '{{ trigger.event.data.command }}'
+  - condition: template
+    value_template: '{{ first_cmd in [''on'',''off''] }}'
+  - wait_for_trigger:
+    - trigger: event
+      event_type: zha_event
+      event_data:
+        device_id: b5b016dbd25e4edc48cfe901343953e3
+    timeout: '0.30'
+    continue_on_timeout: true
+  - if:
+    - condition: template
+      value_template: '{{ wait.trigger is not none and wait.trigger.event.data.command
+        in [''on'',''off''] and wait.trigger.event.data.command != first_cmd }}'
+    then:
+    - action: automation.toggle
+      target:
+        entity_id: automation.entree_beweging
+      data: {}
+    - stop: Double‑tap detected — skip light control
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ first_cmd == ''on'' }}'
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id: light.eettafel_lamp_boven
+        data:
+          transition: 1
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+            }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ first_cmd == ''off'' }}'
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: light.eettafel_lamp_boven
+        data:
+          transition: 1
+  mode: single
+  variables:
+    stop_flag: false
+- id: '1755896860214'
+  alias: Entree Knop
+  description: ''
+  use_blueprint:
+    path: danielpetrovic/zha-niko-battery-switch-with-1-button.yaml
+    input:
+      remote_device: 9255ccd79b61c364a3a8319ded5a4447
+      button_1_on_action: []
+      button_1_off_action: []
+      button_1_double_tap_action: []
+      button_1_light:
+        entity_id: light.entree_lamp
+      button_1_light_schedule: schedule.lights_bright
