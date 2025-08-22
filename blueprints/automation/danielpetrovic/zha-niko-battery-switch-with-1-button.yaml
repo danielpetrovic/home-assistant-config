@@ -1,0 +1,293 @@
+blueprint:
+  name: ZHA - Niko Battery switch with 1 button (552-720X1)
+  author: danielpetrovic
+  source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/zha-niko-battery-switch-with-1-button.yaml
+  description: "# ZHA - Niko Battery switch with 1 button (552-720X1)\n\n
+    This blueprint enables comprehensive configuration of a Niko Battery switch with 1 button.\n
+    You can select different presets for the Light mode and control different things at the same time.\n
+    It can also utilize the built in dimming functionality of the switch.\n
+    Also implemented a custom Double tap command, which is not built into the switch itself.\n"
+  domain: automation
+  input:
+    remote_device:
+      name: Remote Device (NIKO)
+      selector:
+        device:
+          filter:
+            - integration: zha
+              manufacturer: NIKO NV
+    button_1_light:
+      name: Button 1 - Settings for Light Mode
+      icon: mdi:lightbulb
+      collapsed: true
+      input:
+        button_1_light:
+          name: Light
+          default: []
+          description: The Lights to control with this button.
+          selector:
+            target:
+              entity:
+                - domain:
+                    - light
+        button_1_light_schedule:
+          name: Light - Schedule
+          default: ""
+          description: >
+            Create a schedule helper within Home Assistant to set presets
+            for Light. This will facilitate implementing different brightness and
+            color temperatures across the day **Schedules can be reused between light**
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - schedule
+              multiple: false
+        button_1_light_brightness:
+          name: Light - Brightness
+          default: 100
+          description: The default brightness for the light, this value is only used if not set in the schedule.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_1_light_color:
+          name: Light - Color (Kelvin)
+          default: 3333
+          description: The default color temp in Kelvin for the light, this value is only used if not set in the schedule.
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_1_light_transition:
+          name: Light - Transition
+          default: 1
+          description: The default transition for the light, this value is only used if not set in the schedule.
+          selector:
+            number:
+              min: 0
+              max: 10
+              mode: slider
+        button_1_light_step_size:
+          name: Light - Step Size
+          default: 15
+          description: The default step size for the dimming feature of the light, this value is only used if not set in the schedule.
+          selector:
+            number:
+              min: 1
+              max: 50
+    button_1_custom:
+      name: Button 1 - Settings for Custom Actions
+      icon: mdi:numeric-1-circle-outline
+      collapsed: true
+      input:
+        button_1_on_action:
+          name: Button 1 - On Action
+          description: Action to run when the On command is detected (optional).
+          default: []
+          selector:
+            action: {}
+        button_1_off_action:
+          name: Button 1 - Off Action
+          description: Action to run when the Off command is detected (optional).
+          default: []
+          selector:
+            action: {}
+        button_1_double_tap_action:
+          name: Button 1 - Double Tap Action
+          description: Action to run when the Double tap is detected (optional).
+          default: []
+          selector:
+            action: {}
+
+mode: single
+variables:
+  stop_flag: false
+triggers:
+  - platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input remote_device
+actions:
+  - variables:
+      button_1_light: !input button_1_light
+      button_1_light_schedule: !input button_1_light_schedule
+      button_1_light_color: !input button_1_light_color
+      button_1_light_brightness: !input button_1_light_brightness
+      button_1_light_transition: !input button_1_light_transition
+      button_1_light_step_size: !input button_1_light_step_size
+      button_1_light_count: "{% set calc = (255 / button_1_light_step_size) | abs | round(0, 'ceil') %} {{ [calc, 3] | max }}"
+
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ button_1_light_schedule | default('') | string != '' }}"
+        sequence:
+          - variables:
+              color_temp_kelvin: "{{ state_attr(button_1_light_schedule, 'color_temp_kelvin') | default(button_1_light_color) }}"
+              brightness_pct: "{{ state_attr(button_1_light_schedule, 'brightness_pct') | default(button_1_light_brightness) }}"
+              transition: "{{ state_attr(button_1_light_schedule, 'transition') | default(button_1_light_transition, true) | float }}"
+      - conditions: []
+        sequence:
+          - variables:
+              color_temp_kelvin: "{{ button_1_light_color }}"
+              brightness_pct: "{{ button_1_light_brightness }}"
+              transition: "{{ button_1_light_transition | float }}"
+
+  # Dimmer functionality
+  - choose:
+      # Increase brightness
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.event.data.command in ['move','move_with_on_off'] and trigger.event.data.args[0] == 0 }}"
+        sequence:
+          if:
+            - condition: template
+              value_template: "{{ button_1_light.entity_id | length > 0 or button_1_light.device_id | length > 0 or button_1_light.area_id | length > 0 }}"
+          then:
+            - parallel:
+                - sequence:
+                    - wait_for_trigger:
+                        - platform: event
+                          event_type: zha_event
+                          event_data:
+                            device_id: !input remote_device
+                            command: stop
+                        - platform: event
+                          event_type: zha_event
+                          event_data:
+                            device_id: !input remote_device
+                            command: "on"
+                        - platform: event
+                          event_type: zha_event
+                          event_data:
+                            device_id: !input remote_device
+                            command: "off"
+                      timeout: "30"
+                      continue_on_timeout: true
+                    - variables:
+                        stop_flag: true
+                - sequence:
+                    - repeat:
+                        count: "{{ button_1_light_count }}"
+                        sequence:
+                          - if:
+                              - condition: template
+                                value_template: "{{ stop_flag }}"
+                            then:
+                              - stop: Stop flag set
+                          - service: light.turn_on
+                            target: "{{ button_1_light }}"
+                            data:
+                              brightness_step: "{{ button_1_light_step_size }}"
+                              transition: "{{ transition }}"
+                              color_temp_kelvin: "{{ color_temp_kelvin }}"
+            - stop: Done increase brightness
+
+      # Decrease brightness
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.event.data.command == 'move' and trigger.event.data.args[0] == 1 }}"
+        sequence:
+          if:
+            - condition: template
+              value_template: "{{ button_1_light.entity_id | length > 0 or button_1_light.device_id | length > 0 or button_1_light.area_id | length > 0 }}"
+          then:
+            - parallel:
+                - sequence:
+                    - wait_for_trigger:
+                        - platform: event
+                          event_type: zha_event
+                          event_data:
+                            device_id: !input remote_device
+                            command: stop
+                        - platform: event
+                          event_type: zha_event
+                          event_data:
+                            device_id: !input remote_device
+                            command: "on"
+                        - platform: event
+                          event_type: zha_event
+                          event_data:
+                            device_id: !input remote_device
+                            command: "off"
+                      timeout: "30"
+                      continue_on_timeout: true
+                    - variables:
+                        stop_flag: true
+                - sequence:
+                    - repeat:
+                        count: "{{ button_1_light_count }}"
+                        sequence:
+                          - if:
+                              - condition: template
+                                value_template: "{{ stop_flag }}"
+                            then:
+                              - stop: Stop flag set
+                          - service: light.turn_on
+                            target: "{{ button_1_light }}"
+                            data:
+                              brightness_step: "{{ 0 - button_1_light_step_size }}"
+                              transition: "{{ transition }}"
+                              color_temp_kelvin: "{{ color_temp_kelvin }}"
+            - stop: Done decrease brightness
+
+  # Double tap
+  - variables:
+      first_cmd: "{{ trigger.event.data.command }}"
+  - condition: template
+    value_template: "{{ first_cmd in ['on','off'] }}"
+  - wait_for_trigger:
+      - platform: event
+        event_type: zha_event
+        event_data:
+          device_id: !input remote_device
+    timeout: "0.30"
+    continue_on_timeout: true
+  - if:
+      - condition: template
+        value_template: >-
+          {{ wait.trigger is not none and wait.trigger.event.data.command in ['on','off'] and wait.trigger.event.data.command != first_cmd }}
+    then:
+      - choose:
+          - conditions: []
+            sequence: !input button_1_double_tap_action
+      - stop: Double‑tap detected
+
+  # Single press on/off
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ first_cmd == 'on' }}"
+        sequence:
+          - alias: Custom Action
+            sequence: !input button_1_on_action
+          - alias: Light Mode
+            if:
+              - condition: template
+                value_template: "{{ button_1_light.entity_id | length > 0 or button_1_light.device_id | length > 0 or button_1_light.area_id | length > 0 }}"
+            then:
+              service: light.turn_on
+              target: "{{ button_1_light }}"
+              data:
+                transition: "{{ transition }}"
+                brightness_pct: "{{ brightness_pct }}"
+                color_temp_kelvin: "{{ color_temp_kelvin }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ first_cmd == 'off' }}"
+        sequence:
+          - alias: Custom Action
+            sequence: !input button_1_off_action
+          - alias: Light Mode
+            if:
+              - condition: template
+                value_template: "{{ button_1_light.entity_id | length > 0 or button_1_light.device_id | length > 0 or button_1_light.area_id | length > 0 }}"
+            then:
+              service: light.turn_off
+              target: "{{ button_1_light }}"
+              data:
+                transition: "{{ transition }}"
