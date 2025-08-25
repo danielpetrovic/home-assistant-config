@@ -8030,7 +8030,7 @@
   use_blueprint:
     path: danielpetrovic/zha-niko-battery-switch-with-1-button.yaml
     input:
-      remote_device: 9255ccd79b61c364a3a8319ded5a4447
+      remote: 9255ccd79b61c364a3a8319ded5a4447
       button_1_double_press:
       - action: automation.toggle
         metadata: {}
@@ -8046,7 +8046,7 @@
   use_blueprint:
     path: danielpetrovic/zha-niko-battery-switch-with-1-button.yaml
     input:
-      remote_device: b5b016dbd25e4edc48cfe901343953e3
+      remote: b5b016dbd25e4edc48cfe901343953e3
       button_1_light:
         entity_id: light.toilet_lamp
       button_1_light_schedule: schedule.lights_bright
