@@ -28,7 +28,7 @@
         metadata: {}
         target:
           entity_id: media_player.slaapkamer
-        enabled: false
+        enabled: true
       - action: media_player.volume_set
         metadata: {}
         data:
@@ -46,19 +46,13 @@
           minutes: 0
           seconds: 6
           milliseconds: 0
-        enabled: false
+        enabled: true
       - action: media_player.turn_off
         metadata: {}
         data: {}
         target:
           entity_id: media_player.badkamer
-        enabled: false
-      - action: media_player.volume_set
-        metadata: {}
-        data:
-          volume_level: 0.15
-        target:
-          entity_id: media_player.badkamer
+        enabled: true
   mode: restart
 - id: '1704667361587'
   alias: Tuin Raambekleding
@@ -3371,7 +3365,7 @@
       button_1_light:
         entity_id: light.badkamer_lamp
       button_1_light_schedule: schedule.lights_bright
-      button_3_media_leader: media_player.groep
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -3430,7 +3424,7 @@
         entity_id: light.gameroom_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.groep
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -3482,7 +3476,7 @@
         entity_id: light.gameroom_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.groep
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -3582,7 +3576,7 @@
         target:
           entity_id: switch.kantoor_bureau
       button_3_media: media_player.kantoor
-      button_3_media_leader: media_player.groep
+      button_3_media_leader: media_player.slaapkamer
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -3627,7 +3621,7 @@
         entity_id: light.keuken_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.keuken
-      button_3_media_leader: media_player.groep
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -3717,10 +3711,6 @@
         - light.slaapkamer_lamp
       button_1_light_schedule: schedule.lights_dimmed
       button_3_media: media_player.slaapkamer
-      button_3_media_leader: media_player.groep
-      button_3_short_release_media_mode:
-      - turn_on
-      - join
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -4708,6 +4698,11 @@
       - tuin
       - wasruimte
       - woonkamer
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.keuken
   mode: single
 - id: '1748773429616'
   alias: 01:00
@@ -4736,6 +4731,11 @@
       - tuin
       - wasruimte
       - woonkamer
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.keuken
   mode: single
 - id: '1748773440064'
   alias: 06:00
@@ -4776,7 +4776,10 @@
   triggers:
   - trigger: time
     at: 08:00:00
-  conditions: []
+  conditions:
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
   actions:
   - choose:
     - conditions:
@@ -4805,17 +4808,16 @@
         target:
           entity_id:
           - input_select.slaapkamer_raambekleding
-      - alias: Disarm alarm if home
-        if:
-        - condition: numeric_state
-          entity_id: zone.home
-          above: 0
-        then:
-        - action: alarm_control_panel.alarm_disarm
-          metadata: {}
-          data: {}
-          target:
-            entity_id: alarm_control_panel.alarm
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.keuken
+      - action: alarm_control_panel.alarm_disarm
+        metadata: {}
+        data: {}
+        target:
+          entity_id: alarm_control_panel.alarm
   mode: single
 - id: '1748773460838'
   alias: 09:00
@@ -4823,7 +4825,10 @@
   triggers:
   - trigger: time
     at: 09:00:00
-  conditions: []
+  conditions:
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
   actions:
   - choose:
     - conditions:
@@ -4841,6 +4846,13 @@
         metadata: {}
         target:
           entity_id: input_select.slaapkamer_raambekleding
+      - action: media_player.join
+        metadata: {}
+        data:
+          group_members:
+          - media_player.sauna
+        target:
+          entity_id: media_player.slaapkamer
     - conditions:
       - condition: time
         weekday:
@@ -4864,17 +4876,16 @@
         target:
           entity_id:
           - input_select.slaapkamer_raambekleding
-      - alias: Disarm alarm if home
-        if:
-        - condition: numeric_state
-          entity_id: zone.home
-          above: 0
-        then:
-        - action: alarm_control_panel.alarm_disarm
-          metadata: {}
-          data: {}
-          target:
-            entity_id: alarm_control_panel.alarm
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.keuken
+      - action: alarm_control_panel.alarm_disarm
+        metadata: {}
+        data: {}
+        target:
+          entity_id: alarm_control_panel.alarm
   mode: single
 - id: '1748773472200'
   alias: '10:00'
@@ -5117,48 +5128,6 @@
   conditions: []
   actions: []
   mode: single
-- id: '1752212141760'
-  alias: Badkamer Media rejoin
-  description: ''
-  triggers:
-  - trigger: time
-    at: 06:00:00
-  - trigger: time
-    at: '14:00:00'
-  - trigger: time
-    at: '22:00:00'
-  conditions:
-  - condition: numeric_state
-    entity_id: zone.home
-    above: 0
-  actions:
-  - action: unifi.reconnect_client
-    metadata: {}
-    data:
-      device_id: 7ff037c01f437519717d932cedd8bb25
-  - action: media_player.unjoin
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.badkamer
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 10
-      milliseconds: 0
-  - action: media_player.join
-    metadata: {}
-    data:
-      group_members:
-      - media_player.badkamer
-    target:
-      entity_id: media_player.groep
-  - action: media_player.media_play
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.groep
-  mode: single
 - id: '1752212454918'
   alias: Sauna Media rejoin
   description: ''
@@ -5182,8 +5151,17 @@
     id: tv off
   conditions:
   - condition: state
-    entity_id: media_player.groep
+    entity_id: media_player.slaapkamer
     state: playing
+  - condition: time
+    after: 09:00:00
+    before: '18:00:00'
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
   actions:
   - choose:
     - conditions:
@@ -5207,7 +5185,7 @@
           group_members:
           - media_player.sauna
         target:
-          entity_id: media_player.groep
+          entity_id: media_player.slaapkamer
   mode: single
 - id: '1753111025679'
   alias: Kantoor Energie
@@ -8053,9 +8031,7 @@
     path: danielpetrovic/zha-niko-battery-switch-with-1-button.yaml
     input:
       remote_device: 9255ccd79b61c364a3a8319ded5a4447
-      button_1_on_action: []
-      button_1_off_action: []
-      button_1_double_tap_action:
+      button_1_double_press:
       - action: automation.toggle
         metadata: {}
         data: {}
@@ -8074,9 +8050,55 @@
       button_1_light:
         entity_id: light.toilet_lamp
       button_1_light_schedule: schedule.lights_bright
-      button_1_double_tap_action:
+      button_1_double_press:
       - action: automation.toggle
         metadata: {}
         data: {}
         target:
           entity_id: automation.toilet_deur
+      button_1_on_light_mode:
+      - toggle
+      button_1_off_light_mode:
+      - toggle
+- id: '1755965337801'
+  alias: Schuur Looppad Knop
+  description: ''
+  use_blueprint:
+    path: danielpetrovic/zha-philips-hue-tap-dial-switch.yaml
+    input:
+      remote: 26d5d55e4c3e3230789f8ad5a0638b5e
+      last_pressed: input_text.schuur_knop_last_pressed
+      button_1_light:
+        entity_id: light.schuur_lampen
+      button_1_light_schedule: schedule.lights_bright
+      button_3_light:
+        entity_id: light.tuin_lampen
+      button_3_light_schedule: schedule.lights_bright
+      button_2_short_release:
+      - action: input_select.select_option
+        data:
+          option: Looppad
+        metadata: {}
+        target:
+          entity_id: input_select.schuur_raambekleding
+      button_2_long_release:
+      - action: input_select.select_option
+        data:
+          option: Open
+        metadata: {}
+        target:
+          entity_id: input_select.schuur_raambekleding
+      button_4_short_release:
+      - action: input_select.select_option
+        data:
+          option: Tuin
+        metadata: {}
+        target:
+          entity_id: input_select.schuur_raambekleding
+      button_4_long_release:
+      - action: input_select.select_option
+        data:
+          option: Dicht
+        metadata: {}
+        target:
+          entity_id: input_select.schuur_raambekleding
