@@ -2,12 +2,13 @@ blueprint:
   name: ZHA - Niko Battery switch with 1 button (552-720X1)
   author: danielpetrovic
   source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/zha-niko-battery-switch-with-1-button.yaml
-  description: "# ZHA - Niko Battery switch with 1 button (552-720X1)\n\n
-    This blueprint enables comprehensive configuration of a Niko Battery switch with 1 button.\n
-    You can select different presets for the Light mode and control different things at the same time.\n
-    The button alternates the Short Press between an On and Off command.\n
-    It can also utilize the built in dimming functionality of the switch.\n
-    Also implemented a custom Double Press command, which is not built into the switch itself.\n"
+  description: "# ZHA - Niko Battery switch with 1 button (552-720X1)\n\n This blueprint
+    enables comprehensive configuration of a Niko Battery switch with 1 button.\n
+    You can select different presets for the Light mode and control different things
+    at the same time.\n The button alternates the Short Press between an On and Off
+    command.\n It can also utilize the built in dimming functionality of the switch.\n
+    Also implemented a custom Double Press command, which is not built into the switch
+    itself.\n"
   domain: automation
   input:
     remote:
@@ -15,9 +16,9 @@ blueprint:
       selector:
         device:
           filter:
-            - integration: zha
-              manufacturer: NIKO NV
-              model: Battery switch, 1 button
+          - integration: zha
+            manufacturer: NIKO NV
+            model: Battery switch, 1 button
           multiple: false
     button_1_custom:
       name: Button 1 - Settings for Custom Actions
@@ -44,7 +45,8 @@ blueprint:
             action: {}
         button_1_increase:
           name: Button 1 (Long Press Increase)
-          description: Action to run when long press is detected from off state or alternated when already on.
+          description: Action to run when long press is detected from off state or
+            alternated when already on.
           default: []
           selector:
             action: {}
@@ -72,36 +74,40 @@ blueprint:
           selector:
             target:
               entity:
-                - domain:
-                    - light
+              - domain:
+                - light
         button_1_light_schedule:
           name: Light - Schedule
-          default: ""
-          description: >
-            Create a schedule helper within Home Assistant to set presets
+          default: ''
+          description: 'Create a schedule helper within Home Assistant to set presets
             for Light. This will facilitate implementing different brightness and
             color temperatures across the day **Schedules can be reused between lights**.
+
+            '
           selector:
             entity:
               filter:
-                - domain:
-                    - schedule
+              - domain:
+                - schedule
               multiple: false
+              reorder: false
         button_1_light_brightness:
           name: Light - Brightness
           default: 100
-          description: The default brightness for the light, this value is only used if not set in the schedule.
+          description: The default brightness for the light, this value is only used
+            if not set in the schedule.
           selector:
             number:
-              min: 0
-              max: 100
-              step: 5
-              unit_of_measurement: "%"
+              min: 0.0
+              max: 100.0
+              step: 5.0
+              unit_of_measurement: '%'
               mode: slider
         button_1_light_color:
           name: Light - Color (Kelvin)
           default: 3333
-          description: The default color temp in Kelvin for the light, this value is only used if not set in the schedule.
+          description: The default color temp in Kelvin for the light, this value
+            is only used if not set in the schedule.
           selector:
             color_temp:
               unit: kelvin
@@ -109,329 +115,338 @@ blueprint:
         button_1_light_transition:
           name: Light - Transition
           default: 1
-          description: The default transition for the light, this value is only used if not set in the schedule.
+          description: The default transition for the light, this value is only used
+            if not set in the schedule.
           selector:
             number:
-              min: 0
-              max: 10
+              min: 0.0
+              max: 10.0
               mode: slider
+              step: 1.0
         button_1_light_step_size:
           name: Light - Step Size
           default: 15
-          description: The default step size for the dimming feature of the light, this value is only used if not set in the schedule.
+          description: The default step size for the dimming feature of the light,
+            this value is only used if not set in the schedule.
           selector:
             number:
-              min: 1
-              max: 50
+              min: 1.0
+              max: 50.0
+              step: 1.0
+              mode: slider
         button_1_on_light_mode:
           name: Button 1 (Short Press On) Mode
           default: turn_on
-          description: Here you can select if want to use one of the Light functions or stick with the default Custom option. Multiple options are possible, just select which you want to trigger at the same time.
+          description: Here you can select if want to use one of the Light functions
+            or stick with the default Custom option. Multiple options are possible,
+            just select which you want to trigger at the same time.
           selector:
             select:
               options:
-                - label: "Light: Turn on"
-                  value: turn_on
-                - label: "Light: Turn off"
-                  value: turn_off
-                - label: "Light: Toggle"
-                  value: toggle
+              - label: 'Light: Turn on'
+                value: turn_on
+              - label: 'Light: Turn off'
+                value: turn_off
+              - label: 'Light: Toggle'
+                value: toggle
               custom_value: false
               multiple: true
+              sort: false
         button_1_off_light_mode:
           name: Button 1 (Short Press Off) Mode
           default: turn_off
-          description: Here you can select if want to use one of the Light functions. Multiple options are possible, just select which you want to trigger at the same time.
+          description: Here you can select if want to use one of the Light functions.
+            Multiple options are possible, just select which you want to trigger at
+            the same time.
           selector:
             select:
               options:
-                - label: "Light: Turn on"
-                  value: turn_on
-                - label: "Light: Turn off"
-                  value: turn_off
-                - label: "Light: Toggle"
-                  value: toggle
+              - label: 'Light: Turn on'
+                value: turn_on
+              - label: 'Light: Turn off'
+                value: turn_off
+              - label: 'Light: Toggle'
+                value: toggle
               custom_value: false
               multiple: true
+              sort: false
         button_1_dimmer_light_mode:
           name: Button 1 (Long Press Dimmer) Mode
           default: dim
-          description: Here you can select if want to use one of the Light functions or stick with the default Custom option. Multiple options are possible, just select which you want to trigger at the same time.
+          description: Here you can select if want to use one of the Light functions
+            or stick with the default Custom option. Multiple options are possible,
+            just select which you want to trigger at the same time.
           selector:
             select:
               options:
-                - label: "Light: Dim"
-                  value: dim
+              - label: 'Light: Dim'
+                value: dim
               custom_value: false
               multiple: true
-
+              sort: false
 mode: single
 variables:
   stop_flag: false
 triggers:
+- trigger: event
+  event_type: zha_event
+  event_data:
+    device_id: !input remote
+actions:
+- variables:
+    button_1_light: !input button_1_light
+    button_1_light_schedule: !input button_1_light_schedule
+    button_1_light_color: !input button_1_light_color
+    button_1_light_brightness: !input button_1_light_brightness
+    button_1_light_transition: !input button_1_light_transition
+    button_1_light_step_size: !input button_1_light_step_size
+    button_1_light_count: '{% set calc = (255 / button_1_light_step_size) | abs |
+      round(0, ''ceil'') %} {{ [calc, 3] | max }}'
+    button_1_on_light_mode: !input button_1_on_light_mode
+    button_1_off_light_mode: !input button_1_off_light_mode
+    button_1_dimmer_light_mode: !input button_1_dimmer_light_mode
+- choose:
+  - conditions:
+    - condition: template
+      value_template: '{{ button_1_light_schedule | default('''') | string != ''''
+        }}'
+    sequence:
+    - variables:
+        button_1_color_temp_kelvin: '{{ state_attr(button_1_light_schedule, ''color_temp_kelvin'')
+          | default(button_1_light_color) }}'
+        button_1_brightness_pct: '{{ state_attr(button_1_light_schedule, ''brightness_pct'')
+          | default(button_1_light_brightness) }}'
+        button_1_transition: '{{ state_attr(button_1_light_schedule, ''transition'')
+          | default(button_1_light_transition, true) | float }}'
+  - conditions: []
+    sequence:
+    - variables:
+        button_1_color_temp_kelvin: '{{ button_1_light_color }}'
+        button_1_brightness_pct: '{{ button_1_light_brightness }}'
+        button_1_transition: '{{ button_1_light_transition | float }}'
+- choose:
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.command in [''move'',''move_with_on_off'']
+        and trigger.event.data.args[0] == 0 }}'
+    sequence:
+    - alias: Custom Action
+      sequence: !input button_1_increase
+    - alias: Light Mode
+      if:
+      - condition: template
+        value_template: '{{ ''dim'' in button_1_dimmer_light_mode }}'
+      then:
+        if:
+        - condition: template
+          value_template: '{{ button_1_light.entity_id | length > 0 or button_1_light.device_id
+            | length > 0 or button_1_light.area_id | length > 0 }}'
+        then:
+        - parallel:
+          - sequence:
+            - wait_for_trigger:
+              - trigger: event
+                event_type: zha_event
+                event_data:
+                  device_id: !input remote
+                  command: stop
+              - trigger: event
+                event_type: zha_event
+                event_data:
+                  device_id: !input remote
+                  command: 'on'
+              - trigger: event
+                event_type: zha_event
+                event_data:
+                  device_id: !input remote
+                  command: 'off'
+              timeout: '30'
+              continue_on_timeout: true
+            - variables:
+                stop_flag: true
+          - sequence:
+            - repeat:
+                count: '{{ button_1_light_count }}'
+                sequence:
+                - if:
+                  - condition: template
+                    value_template: '{{ stop_flag }}'
+                  then:
+                  - stop: Stop flag set
+                - action: light.turn_on
+                  target: '{{ button_1_light }}'
+                  data:
+                    brightness_step: '{{ button_1_light_step_size }}'
+                    transition: '{{ button_1_transition }}'
+                    color_temp_kelvin: '{{ button_1_color_temp_kelvin }}'
+        - stop: Done increase brightness
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.command == ''move'' and trigger.event.data.args[0]
+        == 1 }}'
+    sequence:
+    - alias: Custom Action
+      sequence: !input button_1_decrease
+    - alias: Light Mode
+      if:
+      - condition: template
+        value_template: '{{ ''dim'' in button_1_dimmer_light_mode }}'
+      then:
+        if:
+        - condition: template
+          value_template: '{{ button_1_light.entity_id | length > 0 or button_1_light.device_id
+            | length > 0 or button_1_light.area_id | length > 0 }}'
+        then:
+        - parallel:
+          - sequence:
+            - wait_for_trigger:
+              - trigger: event
+                event_type: zha_event
+                event_data:
+                  device_id: !input remote
+                  command: stop
+              - trigger: event
+                event_type: zha_event
+                event_data:
+                  device_id: !input remote
+                  command: 'on'
+              - trigger: event
+                event_type: zha_event
+                event_data:
+                  device_id: !input remote
+                  command: 'off'
+              timeout: '30'
+              continue_on_timeout: true
+            - variables:
+                stop_flag: true
+          - sequence:
+            - repeat:
+                count: '{{ button_1_light_count }}'
+                sequence:
+                - if:
+                  - condition: template
+                    value_template: '{{ stop_flag }}'
+                  then:
+                  - stop: Stop flag set
+                - action: light.turn_on
+                  target: '{{ button_1_light }}'
+                  data:
+                    brightness_step: '{{ 0 - button_1_light_step_size }}'
+                    transition: '{{ button_1_transition }}'
+                    color_temp_kelvin: '{{ button_1_color_temp_kelvin }}'
+        - stop: Done decrease brightness
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.command == ''stop'' }}'
+    sequence:
+    - alias: Custom Action
+      sequence: !input button_1_stop
+- variables:
+    first_cmd: '{{ trigger.event.data.command }}'
+- condition: template
+  value_template: '{{ first_cmd in [''on'',''off''] }}'
+- wait_for_trigger:
   - trigger: event
     event_type: zha_event
     event_data:
       device_id: !input remote
-actions:
-  - variables:
-      button_1_light: !input button_1_light
-      button_1_light_schedule: !input button_1_light_schedule
-      button_1_light_color: !input button_1_light_color
-      button_1_light_brightness: !input button_1_light_brightness
-      button_1_light_transition: !input button_1_light_transition
-      button_1_light_step_size: !input button_1_light_step_size
-      button_1_light_count: "{% set calc = (255 / button_1_light_step_size) | abs | round(0, 'ceil') %} {{ [calc, 3] | max }}"
-      button_1_on_light_mode: !input button_1_on_light_mode
-      button_1_off_light_mode: !input button_1_off_light_mode
-      button_1_dimmer_light_mode: !input button_1_dimmer_light_mode
-
-  - choose:
-      - conditions:
-          - condition: template
-            value_template: "{{ button_1_light_schedule | default('') | string != '' }}"
-        sequence:
-          - variables:
-              button_1_color_temp_kelvin: "{{ state_attr(button_1_light_schedule, 'color_temp_kelvin') | default(button_1_light_color) }}"
-              button_1_brightness_pct: "{{ state_attr(button_1_light_schedule, 'brightness_pct') | default(button_1_light_brightness) }}"
-              button_1_transition: "{{ state_attr(button_1_light_schedule, 'transition') | default(button_1_light_transition, true) | float }}"
-      - conditions: []
-        sequence:
-          - variables:
-              button_1_color_temp_kelvin: "{{ button_1_light_color }}"
-              button_1_brightness_pct: "{{ button_1_light_brightness }}"
-              button_1_transition: "{{ button_1_light_transition | float }}"
-
-  # Dimmer functionality
-  - choose:
-      # Dimmer Increase
-      - conditions:
-          - condition: template
-            value_template: "{{ trigger.event.data.command in ['move','move_with_on_off'] and trigger.event.data.args[0] == 0 }}"
-        sequence:
-          - alias: Custom Action
-            sequence: !input button_1_increase
-          - alias: Light Mode
-            if:
-              - condition: template
-                value_template: "{{ 'dim' in button_1_dimmer_light_mode }}"
-            then:
-              if:
-                - condition: template
-                  value_template: "{{ button_1_light.entity_id | length > 0 or button_1_light.device_id | length > 0 or button_1_light.area_id | length > 0 }}"
-              then:
-                - parallel:
-                    - sequence:
-                        - wait_for_trigger:
-                            - trigger: event
-                              event_type: zha_event
-                              event_data:
-                                device_id: !input remote
-                                command: stop
-                            - trigger: event
-                              event_type: zha_event
-                              event_data:
-                                device_id: !input remote
-                                command: "on"
-                            - trigger: event
-                              event_type: zha_event
-                              event_data:
-                                device_id: !input remote
-                                command: "off"
-                          timeout: "30"
-                          continue_on_timeout: true
-                        - variables:
-                            stop_flag: true
-                    - sequence:
-                        - repeat:
-                            count: "{{ button_1_light_count }}"
-                            sequence:
-                              - if:
-                                  - condition: template
-                                    value_template: "{{ stop_flag }}"
-                                then:
-                                  - stop: Stop flag set
-                              - action: light.turn_on
-                                target: "{{ button_1_light }}"
-                                data:
-                                  brightness_step: "{{ button_1_light_step_size }}"
-                                  transition: "{{ button_1_transition }}"
-                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                - stop: Done increase brightness
-
-      # Dimmer Decrease
-      - conditions:
-          - condition: template
-            value_template: "{{ trigger.event.data.command == 'move' and trigger.event.data.args[0] == 1 }}"
-        sequence:
-          - alias: Custom Action
-            sequence: !input button_1_decrease
-          - alias: Light Mode
-            if:
-              - condition: template
-                value_template: "{{ 'dim' in button_1_dimmer_light_mode }}"
-            then:
-              if:
-                - condition: template
-                  value_template: "{{ button_1_light.entity_id | length > 0 or button_1_light.device_id | length > 0 or button_1_light.area_id | length > 0 }}"
-              then:
-                - parallel:
-                    - sequence:
-                        - wait_for_trigger:
-                            - trigger: event
-                              event_type: zha_event
-                              event_data:
-                                device_id: !input remote
-                                command: stop
-                            - trigger: event
-                              event_type: zha_event
-                              event_data:
-                                device_id: !input remote
-                                command: "on"
-                            - trigger: event
-                              event_type: zha_event
-                              event_data:
-                                device_id: !input remote
-                                command: "off"
-                          timeout: "30"
-                          continue_on_timeout: true
-                        - variables:
-                            stop_flag: true
-                    - sequence:
-                        - repeat:
-                            count: "{{ button_1_light_count }}"
-                            sequence:
-                              - if:
-                                  - condition: template
-                                    value_template: "{{ stop_flag }}"
-                                then:
-                                  - stop: Stop flag set
-                              - action: light.turn_on
-                                target: "{{ button_1_light }}"
-                                data:
-                                  brightness_step: "{{ 0 - button_1_light_step_size }}"
-                                  transition: "{{ button_1_transition }}"
-                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                - stop: Done decrease brightness
-
-      # Dimmer Stop
-      - conditions:
-          - condition: template
-            value_template: "{{ trigger.event.data.command == 'stop' }}"
-        sequence:
-          - alias: Custom Action
-            sequence: !input button_1_stop
-
-  # Double Press
-  - variables:
-      first_cmd: "{{ trigger.event.data.command }}"
+  timeout: '0.30'
+  continue_on_timeout: true
+- if:
   - condition: template
-    value_template: "{{ first_cmd in ['on','off'] }}"
-  - wait_for_trigger:
-      - trigger: event
-        event_type: zha_event
-        event_data:
-          device_id: !input remote
-    timeout: "0.30"
-    continue_on_timeout: true
-  - if:
-      - condition: template
-        value_template: >-
-          {{ wait.trigger is not none and wait.trigger.event.data.command in ['on','off'] and wait.trigger.event.data.command != first_cmd }}
-    then:
-      - choose:
-          - conditions: []
-            sequence: !input button_1_double_press
-      - stop: Double Press detected
-
-  # Single Press On/Off
+    value_template: '{{ wait.trigger is not none and wait.trigger.event.data.command
+      in [''on'',''off''] and wait.trigger.event.data.command != first_cmd }}'
+  then:
   - choose:
-      # Single Press On
-      - conditions:
+    - conditions: []
+      sequence: !input button_1_double_press
+  - stop: Double Press detected
+- choose:
+  - conditions:
+    - condition: template
+      value_template: '{{ first_cmd == ''on'' }}'
+    sequence:
+    - alias: Custom Action
+      sequence: !input button_1_on
+    - alias: Light Mode
+      if:
+      - condition: template
+        value_template: '{{ button_1_light.entity_id | length > 0 or button_1_light.device_id
+          | length > 0 or button_1_light.area_id | length > 0 }}'
+      then:
+      - parallel:
+        - alias: turn_on
+          if:
           - condition: template
-            value_template: "{{ first_cmd == 'on' }}"
-        sequence:
-          - alias: Custom Action
-            sequence: !input button_1_on
-          - alias: Light Mode
-            if:
-              - condition: template
-                value_template: "{{ button_1_light.entity_id | length > 0 or button_1_light.device_id | length > 0 or button_1_light.area_id | length > 0 }}"
-            then:
-              - parallel:
-                  - alias: turn_on
-                    if:
-                      - condition: template
-                        value_template: "{{ 'turn_on' in button_1_on_light_mode }}"
-                    then:
-                      - action: light.turn_on
-                        data:
-                          brightness_pct: "{{ button_1_brightness_pct }}"
-                          color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                          transition: "{{ button_1_transition }}"
-                        target: "{{ button_1_light }}"
-                  - alias: turn_off
-                    if:
-                      - condition: template
-                        value_template: "{{ 'turn_off' in button_1_on_light_mode }}"
-                    then:
-                      - action: light.turn_off
-                        data:
-                          transition: "{{ button_1_transition }}"
-                        target: "{{ button_1_light }}"
-                  - alias: toggle
-                    if:
-                      - condition: template
-                        value_template: "{{ 'toggle' in button_1_on_light_mode }}"
-                    then:
-                      - action: light.toggle
-                        data:
-                          brightness_pct: "{{ button_1_brightness_pct }}"
-                          color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                          transition: "{{ button_1_transition }}"
-                        target: "{{ button_1_light }}"
-
-      # Single Press Off
-      - conditions:
+            value_template: '{{ ''turn_on'' in button_1_on_light_mode }}'
+          then:
+          - action: light.turn_on
+            data:
+              brightness_pct: '{{ button_1_brightness_pct }}'
+              color_temp_kelvin: '{{ button_1_color_temp_kelvin }}'
+              transition: '{{ button_1_transition }}'
+            target: '{{ button_1_light }}'
+        - alias: turn_off
+          if:
           - condition: template
-            value_template: "{{ first_cmd == 'off' }}"
-        sequence:
-          - alias: Custom Action
-            sequence: !input button_1_off
-          - alias: Light Mode
-            if:
-              - condition: template
-                value_template: "{{ button_1_light.entity_id | length > 0 or button_1_light.device_id | length > 0 or button_1_light.area_id | length > 0 }}"
-            then:
-              - parallel:
-                  - alias: turn_on
-                    if:
-                      - condition: template
-                        value_template: "{{ 'turn_on' in button_1_off_light_mode }}"
-                    then:
-                      - action: light.turn_on
-                        data:
-                          brightness_pct: "{{ button_1_brightness_pct }}"
-                          color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                          transition: "{{ button_1_transition }}"
-                        target: "{{ button_1_light }}"
-                  - alias: turn_off
-                    if:
-                      - condition: template
-                        value_template: "{{ 'turn_off' in button_1_off_light_mode }}"
-                    then:
-                      - action: light.turn_off
-                        data:
-                          transition: "{{ button_1_transition }}"
-                        target: "{{ button_1_light }}"
-                  - alias: toggle
-                    if:
-                      - condition: template
-                        value_template: "{{ 'toggle' in button_1_off_light_mode }}"
-                    then:
-                      - action: light.toggle
-                        data:
-                          brightness_pct: "{{ button_1_brightness_pct }}"
-                          color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                          transition: "{{ button_1_transition }}"
-                        target: "{{ button_1_light }}"
+            value_template: '{{ ''turn_off'' in button_1_on_light_mode }}'
+          then:
+          - action: light.turn_off
+            data:
+              transition: '{{ button_1_transition }}'
+            target: '{{ button_1_light }}'
+        - alias: toggle
+          if:
+          - condition: template
+            value_template: '{{ ''toggle'' in button_1_on_light_mode }}'
+          then:
+          - action: light.toggle
+            data:
+              brightness_pct: '{{ button_1_brightness_pct }}'
+              color_temp_kelvin: '{{ button_1_color_temp_kelvin }}'
+              transition: '{{ button_1_transition }}'
+            target: '{{ button_1_light }}'
+  - conditions:
+    - condition: template
+      value_template: '{{ first_cmd == ''off'' }}'
+    sequence:
+    - alias: Custom Action
+      sequence: !input button_1_off
+    - alias: Light Mode
+      if:
+      - condition: template
+        value_template: '{{ button_1_light.entity_id | length > 0 or button_1_light.device_id
+          | length > 0 or button_1_light.area_id | length > 0 }}'
+      then:
+      - parallel:
+        - alias: turn_on
+          if:
+          - condition: template
+            value_template: '{{ ''turn_on'' in button_1_off_light_mode }}'
+          then:
+          - action: light.turn_on
+            data:
+              brightness_pct: '{{ button_1_brightness_pct }}'
+              color_temp_kelvin: '{{ button_1_color_temp_kelvin }}'
+              transition: '{{ button_1_transition }}'
+            target: '{{ button_1_light }}'
+        - alias: turn_off
+          if:
+          - condition: template
+            value_template: '{{ ''turn_off'' in button_1_off_light_mode }}'
+          then:
+          - action: light.turn_off
+            data:
+              transition: '{{ button_1_transition }}'
+            target: '{{ button_1_light }}'
+        - alias: toggle
+          if:
+          - condition: template
+            value_template: '{{ ''toggle'' in button_1_off_light_mode }}'
+          then:
+          - action: light.toggle
+            data:
+              brightness_pct: '{{ button_1_brightness_pct }}'
+              color_temp_kelvin: '{{ button_1_color_temp_kelvin }}'
+              transition: '{{ button_1_transition }}'
+            target: '{{ button_1_light }}'
