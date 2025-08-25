@@ -10,13 +10,15 @@ blueprint:
     Also implemented a custom Double Press command, which is not built into the switch itself.\n"
   domain: automation
   input:
-    remote_device:
+    remote:
       name: Remote Device (NIKO)
       selector:
         device:
           filter:
             - integration: zha
               manufacturer: NIKO NV
+              model: Battery switch, 1 button
+          multiple: false
     button_1_custom:
       name: Button 1 - Settings for Custom Actions
       icon: mdi:numeric-1-circle-outline
@@ -170,7 +172,7 @@ triggers:
   - trigger: event
     event_type: zha_event
     event_data:
-      device_id: !input remote_device
+      device_id: !input remote
 actions:
   - variables:
       button_1_light: !input button_1_light
@@ -224,17 +226,17 @@ actions:
                             - trigger: event
                               event_type: zha_event
                               event_data:
-                                device_id: !input remote_device
+                                device_id: !input remote
                                 command: stop
                             - trigger: event
                               event_type: zha_event
                               event_data:
-                                device_id: !input remote_device
+                                device_id: !input remote
                                 command: "on"
                             - trigger: event
                               event_type: zha_event
                               event_data:
-                                device_id: !input remote_device
+                                device_id: !input remote
                                 command: "off"
                           timeout: "30"
                           continue_on_timeout: true
@@ -279,17 +281,17 @@ actions:
                             - trigger: event
                               event_type: zha_event
                               event_data:
-                                device_id: !input remote_device
+                                device_id: !input remote
                                 command: stop
                             - trigger: event
                               event_type: zha_event
                               event_data:
-                                device_id: !input remote_device
+                                device_id: !input remote
                                 command: "on"
                             - trigger: event
                               event_type: zha_event
                               event_data:
-                                device_id: !input remote_device
+                                device_id: !input remote
                                 command: "off"
                           timeout: "30"
                           continue_on_timeout: true
@@ -329,7 +331,7 @@ actions:
       - trigger: event
         event_type: zha_event
         event_data:
-          device_id: !input remote_device
+          device_id: !input remote
     timeout: "0.30"
     continue_on_timeout: true
   - if:
