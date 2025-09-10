@@ -149,7 +149,7 @@ rest:
     sensor:
       - name: Woonkamer temperature
         unique_id: woonkamer_temperature
-        value_template: "{{ value_json.temp-1.5 }}"
+        value_template: "{{ value_json.temp-0.8 }}"
         device_class: temperature
         state_class: measurement
         unit_of_measurement: "°C"
@@ -164,7 +164,7 @@ rest:
     sensor:
       - name: Slaapkamer temperature
         unique_id: slaapkamer_temperature
-        value_template: "{{ value_json.temp-0.8 }}"
+        value_template: "{{ value_json.temp-0.3 }}"
         device_class: temperature
         state_class: measurement
         unit_of_measurement: "°C"
@@ -179,7 +179,7 @@ rest:
     sensor:
       - name: Sauna temperature
         unique_id: sauna_temperature
-        value_template: "{{ value_json.temp-0.8 }}"
+        value_template: "{{ value_json.temp-0.4 }}"
         device_class: temperature
         state_class: measurement
         unit_of_measurement: "°C"
@@ -194,7 +194,7 @@ rest:
     sensor:
       - name: Kantoor temperature
         unique_id: kantoor_temperature
-        value_template: "{{ value_json.temp-1.0 }}"
+        value_template: "{{ value_json.temp }}"
         device_class: temperature
         state_class: measurement
         unit_of_measurement: "°C"
@@ -209,7 +209,7 @@ rest:
     sensor:
       - name: Gameroom temperature
         unique_id: gameroom_temperature
-        value_template: "{{ value_json.temp-0.3 }}"
+        value_template: "{{ value_json.temp }}"
         device_class: temperature
         state_class: measurement
         unit_of_measurement: "°C"
@@ -224,7 +224,7 @@ rest:
     sensor:
       - name: Badkamer temperature
         unique_id: badkamer_temperature
-        value_template: "{{ value_json.temp-1.5 }}"
+        value_template: "{{ value_json.temp-1 }}"
         device_class: temperature
         state_class: measurement
         unit_of_measurement: "°C"
