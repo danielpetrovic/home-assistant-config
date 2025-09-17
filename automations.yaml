@@ -2125,7 +2125,7 @@
     to:
   - trigger: numeric_state
     entity_id:
-    - sensor.gameroom_bureau_power
+    - sensor.gameroom_bureau_energiegebruik
     for:
       hours: 0
       minutes: 50
@@ -2190,7 +2190,7 @@
       data: {}
       target:
         entity_id: switch.usw_gameroom_port_1_poe
-    enabled: true
+    enabled: false
   - alias: wifi off
     if:
     - condition: state
@@ -2208,293 +2208,209 @@
       data: {}
       target:
         entity_id: switch.usw_gameroom_port_1_poe
-    enabled: true
+    enabled: false
   mode: restart
 - id: '1726665266579'
   alias: Sun luminosity
-  description: ''
+  description: Adjust window coverings and lights based on lux, climate mode, and
+    heat stress
   triggers:
-  - entity_id:
-    - sensor.outdoor_luminosity
+  - entity_id: sensor.outdoor_luminosity
+    above: 400
+    trigger: numeric_state
+  - entity_id: sensor.outdoor_luminosity
     below: 400
     trigger: numeric_state
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 0
-  - entity_id:
-    - sensor.outdoor_luminosity
-    above: 400
+  - entity_id: sensor.outdoor_luminosity
+    above: 4000
+    trigger: numeric_state
+  - entity_id: sensor.outdoor_luminosity
     below: 4000
     trigger: numeric_state
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 0
-  - entity_id:
-    - sensor.outdoor_luminosity
-    above: 4000
-    below: 40000
-    trigger: numeric_state
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 0
-  - entity_id:
-    - sensor.outdoor_luminosity
+  - entity_id: sensor.outdoor_luminosity
     above: 40000
-    below: 80000
     trigger: numeric_state
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 0
-  - entity_id:
-    - sensor.outdoor_luminosity
-    above: 80000
-    trigger: numeric_state
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 0
-  - trigger: numeric_state
-    entity_id:
-    - sensor.outdoor_temperature
-    above: 10
   - at: 09:00:00
     trigger: time
   conditions: []
   actions:
   - choose:
-    - conditions:
+    - alias: Cold Mode – Open wide to capture warmth
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: cold
+      - condition: numeric_state
+        entity_id: sensor.outdoor_luminosity
+        above: 4000
+      - condition: time
+        after: 09:00:00
+        before: '18:00:00'
+      sequence:
+      - data:
+          option: 080%
+        target:
+          entity_id:
+          - input_select.kantoor_raambekleding
+          - input_select.woonkamer_raambekleding
+          - input_select.keuken_raambekleding
+          - input_select.tuin_raambekleding
+        action: input_select.select_option
+      - delay:
+          seconds: 5
+      - data:
+          option: 080%
+        target:
+          entity_id:
+          - input_select.dakterras_raambekleding
+          - input_select.gameroom_raambekleding
+        action: input_select.select_option
+    - alias: Mild Mode – Moderate shading
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: mild
+      - condition: numeric_state
+        entity_id: sensor.outdoor_luminosity
+        above: 4000
+      - condition: time
+        after: 09:00:00
+        before: '18:00:00'
+      sequence:
+      - data:
+          option: 080%
+        target:
+          entity_id:
+          - input_select.kantoor_raambekleding
+          - input_select.woonkamer_raambekleding
+          - input_select.keuken_raambekleding
+          - input_select.tuin_raambekleding
+        action: input_select.select_option
+      - delay:
+          seconds: 5
+      - data:
+          option: 080%
+        target:
+          entity_id:
+          - input_select.dakterras_raambekleding
+          - input_select.gameroom_raambekleding
+        action: input_select.select_option
+    - alias: Warm Mode – Deep shading when heat stress is high
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: warm
+      - condition: numeric_state
+        entity_id: sensor.climate_heat_stress
+        above: 70
+      - condition: numeric_state
+        entity_id: sensor.outdoor_luminosity
+        above: 40000
+      - condition: time
+        after: 09:00:00
+        before: '18:00:00'
+      sequence:
+      - data:
+          option: 020%
+        target:
+          entity_id:
+          - input_select.kantoor_raambekleding
+          - input_select.woonkamer_raambekleding
+          - input_select.keuken_raambekleding
+          - input_select.tuin_raambekleding
+        action: input_select.select_option
+      - delay:
+          seconds: 5
+      - data:
+          option: 020%
+        target:
+          entity_id:
+          - input_select.dakterras_raambekleding
+          - input_select.gameroom_raambekleding
+        action: input_select.select_option
+    - alias: Nighttime – Full closure after sunset
+      conditions:
       - condition: numeric_state
         entity_id: sensor.outdoor_luminosity
         below: 400
       - condition: time
         after: '12:00:00'
       sequence:
-      - action: input_select.select_option
-        data:
+      - data:
           option: 000%
-        metadata: {}
         target:
           entity_id:
           - input_select.kantoor_raambekleding
           - input_select.sauna_raambekleding
           - input_select.slaapkamer_raambekleding
+        action: input_select.select_option
       - delay:
-          hours: 0
-          minutes: 0
           seconds: 5
-      - action: input_select.select_option
-        data:
+      - data:
           option: 000%
-        metadata: {}
         target:
           entity_id:
           - input_select.gang_raambekleding
           - input_select.keuken_raambekleding
           - input_select.tuin_raambekleding
           - input_select.woonkamer_raambekleding
+        action: input_select.select_option
       - delay:
-          hours: 0
-          minutes: 0
           seconds: 5
-      - action: input_select.select_option
-        data:
+      - data:
           option: 000%
-        metadata: {}
         target:
           entity_id:
           - input_select.dakterras_raambekleding
           - input_select.gameroom_raambekleding
-    - conditions:
+        action: input_select.select_option
+    - alias: Light Control – Adjust lighting based on lux and time
+      conditions:
       - condition: numeric_state
         entity_id: sensor.outdoor_luminosity
         above: 400
         below: 4000
       sequence:
       - choose:
-        - conditions:
+        - alias: Morning – Turn off outdoor lights
+          conditions:
           - condition: time
             before: '12:00:00'
           sequence:
-          - action: light.turn_off
-            data:
+          - data:
               transition: 300
-            metadata: {}
             target:
               entity_id:
               - light.looppad_lampen
               - light.voordeur_lampen
-        - conditions:
+            action: light.turn_off
+        - alias: Afternoon – Turn on indoor lights
+          conditions:
           - condition: time
             after: '12:00:00'
           sequence:
-          - action: light.turn_on
-            data:
+          - data:
               brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
                 }}'
               color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
                 }}'
               transition: 900
-            metadata: {}
             target:
               entity_id:
               - light.eettafel_lamp_boven
               - light.voordeur_lampen
               - light.woonkamer_lamp_boven
-          - action: light.turn_on
-            data:
+            action: light.turn_on
+          - data:
               brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
                 }}'
               color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
                 }}'
               transition: 900
-            metadata: {}
             target:
               entity_id:
               - light.looppad_lampen
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.outdoor_luminosity
-        above: 4000
-        below: 40000
-      - condition: time
-        after: 09:00:00
-        before: '18:00:00'
-      sequence:
-      - action: input_select.select_option
-        data:
-          option: 080%
-        metadata: {}
-        target:
-          entity_id:
-          - input_select.kantoor_raambekleding
-          - input_select.keuken_raambekleding
-          - input_select.tuin_raambekleding
-          - input_select.woonkamer_raambekleding
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 5
-      - action: input_select.select_option
-        data:
-          option: 080%
-        metadata: {}
-        target:
-          entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.outdoor_luminosity
-        above: 40000
-        below: 80000
-      - condition: time
-        after: 09:00:00
-        before: '18:00:00'
-      sequence:
-      - choose:
-        - conditions:
-          - condition: numeric_state
-            entity_id: sensor.outdoor_temperature
-            below: 10
-          sequence:
-          - action: input_select.select_option
-            data:
-              option: 060%
-            metadata: {}
-            target:
-              entity_id:
-              - input_select.kantoor_raambekleding
-              - input_select.woonkamer_raambekleding
-          - action: input_select.select_option
-            data:
-              option: 080%
-            metadata: {}
-            target:
-              entity_id:
-              - input_select.keuken_raambekleding
-              - input_select.tuin_raambekleding
-          - delay:
-              hours: 0
-              minutes: 0
-              seconds: 5
-          - action: input_select.select_option
-            data:
-              option: 060%
-            metadata: {}
-            target:
-              entity_id:
-              - input_select.gameroom_raambekleding
-        - conditions:
-          - condition: numeric_state
-            entity_id: sensor.outdoor_temperature
-            above: 10
-          sequence:
-          - action: input_select.select_option
-            data:
-              option: 040%
-            metadata: {}
-            target:
-              entity_id:
-              - input_select.kantoor_raambekleding
-              - input_select.woonkamer_raambekleding
-          - action: input_select.select_option
-            data:
-              option: 080%
-            metadata: {}
-            target:
-              entity_id:
-              - input_select.keuken_raambekleding
-              - input_select.tuin_raambekleding
-          - delay:
-              hours: 0
-              minutes: 0
-              seconds: 5
-          - action: input_select.select_option
-            data:
-              option: 040%
-            metadata: {}
-            target:
-              entity_id:
-              - input_select.gameroom_raambekleding
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.outdoor_luminosity
-        above: 80000
-      - condition: time
-        after: 09:00:00
-        before: '18:00:00'
-      sequence:
-      - action: input_select.select_option
-        data:
-          option: 020%
-        metadata: {}
-        target:
-          entity_id:
-          - input_select.kantoor_raambekleding
-          - input_select.woonkamer_raambekleding
-      - action: input_select.select_option
-        data:
-          option: 060%
-        metadata: {}
-        target:
-          entity_id:
-          - input_select.keuken_raambekleding
-          - input_select.tuin_raambekleding
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 5
-      - action: input_select.select_option
-        data:
-          option: 020%
-        metadata: {}
-        target:
-          entity_id:
-          - input_select.gameroom_raambekleding
+            action: light.turn_on
   mode: single
 - id: '1735631910600'
   alias: Lights Dimmed
@@ -3628,6 +3544,7 @@
               entity_id: media_player.keuken
             action: media_player.volume_set
       alias: YouTube
+    enabled: true
   mode: restart
 - id: '1745758491686'
   alias: Voordeur
@@ -4405,7 +4322,7 @@
   triggers:
   - trigger: numeric_state
     entity_id:
-    - sensor.kantoor_bureau_power
+    - sensor.kantoor_bureau_energiegebruik
     for:
       hours: 0
       minutes: 50
@@ -4575,6 +4492,12 @@
           entity_id:
           - input_select.dakterras_raambekleding
           - input_select.gameroom_raambekleding
+      button_3_double:
+      - action: switch.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.gameroom_media
 - id: '1757451715340'
   alias: Woonkamer Klimaat
   description: ''
