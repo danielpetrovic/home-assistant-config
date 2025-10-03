@@ -56,16 +56,26 @@ music_night:
     data:
       group_members:
       - media_player.keuken
+      - media_player.sauna
     target:
       entity_id: media_player.slaapkamer
+  - action: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0.25
+    target:
+      entity_id:
+      - media_player.keuken
+      - media_player.sauna
+      - media_player.slaapkamer
 music_home:
   alias: Music - Home
   description: ''
   icon: mdi:music-note
   sequence:
   - action: media_player.turn_on
-    data: {}
     metadata: {}
+    data: {}
     target:
       entity_id: media_player.slaapkamer
   - choose:
@@ -160,8 +170,18 @@ music_home:
     data:
       group_members:
       - media_player.keuken
+      - media_player.sauna
     target:
       entity_id: media_player.slaapkamer
+  - action: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0.25
+    target:
+      entity_id:
+      - media_player.keuken
+      - media_player.sauna
+      - media_player.slaapkamer
 lights_green:
   sequence:
   - alias: Scene, create

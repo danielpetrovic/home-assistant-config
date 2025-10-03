@@ -1692,6 +1692,24 @@
     - light.sauna_lamp
     to: 'off'
     id: lights off
+  - trigger: state
+    entity_id:
+    - media_player.sauna_kef
+    attribute: source
+    to: tv
+    alias: tv on
+    id: tv on
+  - alias: tv off
+    trigger: state
+    entity_id:
+    - media_player.sauna_kef
+    attribute: source
+    from: tv
+    id: tv off
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
   conditions: []
   actions:
   - choose:
@@ -1717,6 +1735,28 @@
           entity_id:
           - media_player.sauna
         action: media_player.volume_set
+    - conditions:
+      - condition: trigger
+        id:
+        - tv on
+      sequence:
+      - action: media_player.unjoin
+        metadata: {}
+        data: {}
+        target:
+          entity_id: media_player.sauna
+    - conditions:
+      - condition: trigger
+        id:
+        - tv off
+      sequence:
+      - action: media_player.join
+        metadata: {}
+        data:
+          group_members:
+          - media_player.sauna
+        target:
+          entity_id: media_player.slaapkamer
   mode: parallel
 - id: '1706168546378'
   alias: Gang Beweging
@@ -3303,6 +3343,19 @@
       - condition: state
         entity_id: remote.woonkamer_tv
         attribute: current_activity
+        state: com.spauldhaliwal.dispatch
+      sequence:
+      - alias: Keuken volume omhoog
+        data:
+          volume_level: 0.35
+        target:
+          entity_id: media_player.keuken
+        action: media_player.volume_set
+      alias: Launcher Dispatch
+    - conditions:
+      - condition: state
+        entity_id: remote.woonkamer_tv
+        attribute: current_activity
         state: com.google.android.apps.tv.launcherx
       sequence:
       - alias: Keuken volume omhoog
@@ -3580,6 +3633,7 @@
           importance: high
           priority: high
           ttl: 0
+      enabled: false
     - alias: Notify TV
       if:
       - alias: Woonkamer TV not off
@@ -3629,8 +3683,8 @@
       - input_text.alarm_code_user_3
       alarm_keypad: Alarm Paneel
       alarm_notifications_target:
-      - 27e5bea4b625d80ff66fc5e7cb90de59
-      - d980b0b81ebeb884eb3a67e60d26eb41
+      - d8b754522624b04aa43198422d03f9ba
+      - 9740967395d5075943601616baa9c821
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
       - media_player.meterkast
@@ -3846,25 +3900,6 @@
       preset_mode: Manual 2 Forced
     target:
       entity_id: fan.ducobox
-  - if:
-    - condition: time
-      weekday:
-      - mon
-      - tue
-      - wed
-      - thu
-      - fri
-    then:
-    - action: media_player.unjoin
-      metadata: {}
-      data: {}
-      target:
-        entity_id: media_player.keuken
-    - action: media_player.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: media_player.keuken
   mode: single
 - id: '1748773429616'
   alias: 01:00
@@ -3897,12 +3932,16 @@
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.keuken
+      entity_id:
+      - media_player.keuken
+      - media_player.sauna
   - action: media_player.turn_off
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.keuken
+      entity_id:
+      - media_player.keuken
+      - media_player.sauna
   mode: single
 - id: '1748773440064'
   alias: 06:00
@@ -3936,6 +3975,10 @@
       - input_select.gang_raambekleding
       - input_select.kantoor_raambekleding
       - input_select.sauna_raambekleding
+  - action: unifi.reconnect_client
+    metadata: {}
+    data:
+      device_id: 7ff037c01f437519717d932cedd8bb25
   mode: single
 - id: '1748773451561'
   alias: 08:00
@@ -3943,70 +3986,80 @@
   triggers:
   - trigger: time
     at: 08:00:00
-  conditions: []
+  conditions:
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
   actions:
   - choose:
     - conditions:
-      - condition: numeric_state
-        entity_id: zone.home
-        above: 0
+      - condition: time
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
       sequence:
-      - action: fan.set_preset_mode
+      - action: light.turn_on
         metadata: {}
         data:
-          preset_mode: Auto
+          brightness_pct: 30
+          color_temp_kelvin: 3333
+          transition: 300
         target:
-          entity_id: fan.ducobox
+          entity_id:
+          - light.slaapkamer_alex_lamp_bed
+          - light.slaapkamer_deni_lamp_bed
+      - action: input_select.select_option
+        data:
+          option: 020%
+        metadata: {}
+        target:
+          entity_id:
+          - input_select.slaapkamer_raambekleding
+      - action: alarm_control_panel.alarm_disarm
+        metadata: {}
+        data: {}
+        target:
+          entity_id: alarm_control_panel.alarm
+    - conditions:
+      - condition: time
+        weekday:
+        - sat
+        - sun
+      sequence:
       - choose:
         - conditions:
-          - condition: time
-            weekday:
-            - mon
-            - tue
-            - wed
-            - thu
-            - fri
+          - condition: numeric_state
+            entity_id: zone.home
+            above: 0
           sequence:
-          - action: light.turn_on
+          - action: fan.set_preset_mode
             metadata: {}
             data:
-              brightness_pct: 30
-              color_temp_kelvin: 3333
-              transition: 300
+              preset_mode: Auto
             target:
-              entity_id:
-              - light.slaapkamer_alex_lamp_bed
-              - light.slaapkamer_deni_lamp_bed
-          - action: input_select.select_option
+              entity_id: fan.ducobox
+          - action: media_player.join
+            metadata: {}
             data:
-              option: 020%
-            metadata: {}
+              group_members:
+              - media_player.keuken
+              - media_player.sauna
             target:
-              entity_id:
-              - input_select.slaapkamer_raambekleding
-          - action: alarm_control_panel.alarm_disarm
+              entity_id: media_player.slaapkamer
+        - conditions:
+          - condition: numeric_state
+            entity_id: zone.home
+            below: 1
+          sequence:
+          - action: fan.set_preset_mode
             metadata: {}
-            data: {}
+            data:
+              preset_mode: Away
             target:
-              entity_id: alarm_control_panel.alarm
-      - action: media_player.join
-        metadata: {}
-        data:
-          group_members:
-          - media_player.keuken
-        target:
-          entity_id: media_player.slaapkamer
-    - conditions:
-      - condition: numeric_state
-        entity_id: zone.home
-        below: 1
-      sequence:
-      - action: fan.set_preset_mode
-        metadata: {}
-        data:
-          preset_mode: Away
-        target:
-          entity_id: fan.ducobox
+              entity_id: fan.ducobox
   mode: single
 - id: '1748773460838'
   alias: 09:00
@@ -4172,7 +4225,6 @@
     target:
       entity_id:
       - light.eettafel_lamp_onder
-      - light.woonkamer_lamp_onder
   - action: input_select.select_option
     data:
       option: 000%
@@ -4197,16 +4249,6 @@
       - input_select.sauna_raambekleding
       - input_select.slaapkamer_raambekleding
       - input_select.woonkamer_raambekleding
-  - action: media_player.unjoin
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.sauna
-  - action: media_player.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.sauna
   mode: single
 - id: '1748774139655'
   alias: '18:30'
@@ -4307,15 +4349,6 @@
         action: media_player.volume_set
       alias: shower off - volume down
   mode: restart
-- id: '1752068850852'
-  alias: '16:00'
-  description: ''
-  triggers:
-  - trigger: time
-    at: '16:00:00'
-  conditions: []
-  actions: []
-  mode: single
 - id: '1753111025679'
   alias: Kantoor Energie
   description: ''
@@ -5610,3 +5643,50 @@
                   entity_id: switch.badkamer_verwarming
   mode: parallel
   max: 5
+- id: '1758136116807'
+  alias: 07:00
+  description: ''
+  triggers:
+  - trigger: time
+    at: 07:00:00
+  conditions:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  actions:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
+      sequence:
+      - action: fan.set_preset_mode
+        metadata: {}
+        data:
+          preset_mode: Auto
+        target:
+          entity_id: fan.ducobox
+      - action: media_player.join
+        metadata: {}
+        data:
+          group_members:
+          - media_player.keuken
+          - media_player.sauna
+        target:
+          entity_id: media_player.slaapkamer
+    - conditions:
+      - condition: numeric_state
+        entity_id: zone.home
+        below: 1
+      sequence:
+      - action: fan.set_preset_mode
+        metadata: {}
+        data:
+          preset_mode: Away
+        target:
+          entity_id: fan.ducobox
+  mode: single
