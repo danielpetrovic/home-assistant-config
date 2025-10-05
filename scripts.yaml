@@ -432,11 +432,11 @@ lights_orange:
   icon: mdi:alarm-light
 alarm_pending:
   sequence:
-  - action: switch.turn_on
-    data: {}
+  - action: button.press
     metadata: {}
+    data: {}
     target:
-      entity_id: switch.alarm_sirene_alarm_state
+      entity_id: button.alarm_sirene_trigger_alarm
   alias: Alarm - Pending
   description: ''
   icon: mdi:shield-outline
@@ -447,31 +447,31 @@ alarm_away:
   icon: mdi:shield-lock
 alarm_home:
   sequence:
-  - action: switch.turn_off
-    data: {}
+  - action: button.press
     metadata: {}
+    data: {}
     target:
-      entity_id: switch.alarm_sirene_alarm_state
+      entity_id: button.alarm_sirene_stop_alarm
   alias: Alarm - Home
   description: ''
   icon: mdi:shield-home
 alarm_night:
   sequence:
-  - action: switch.turn_off
-    data: {}
+  - action: button.press
     metadata: {}
+    data: {}
     target:
-      entity_id: switch.alarm_sirene_alarm_state
+      entity_id: button.alarm_sirene_stop_alarm
   alias: Alarm - Night
   description: ''
   icon: mdi:shield-moon
 alarm_disarmed:
   sequence:
-  - action: switch.turn_off
-    data: {}
+  - action: button.press
     metadata: {}
+    data: {}
     target:
-      entity_id: switch.alarm_sirene_alarm_state
+      entity_id: button.alarm_sirene_stop_alarm
   alias: Alarm - Disarmed
   description: ''
   icon: mdi:shield-off

@@ -91,6 +91,46 @@
     - conditions:
       - condition: state
         entity_id: input_select.tuin_raambekleding
+        state: 090%
+      sequence:
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.tuin_gordijn_my_position
+      - alias: Deur open?
+        choose:
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.tuin_deursensor
+            state: 'off'
+          sequence:
+          - action: cover.set_cover_position
+            data:
+              position: 90
+            metadata: {}
+            target:
+              entity_id: cover.tuin_rolluik
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.tuin_deursensor
+            state: 'on'
+          sequence:
+          - wait_for_trigger:
+            - entity_id:
+              - binary_sensor.tuin_deursensor
+              to: 'off'
+              trigger: state
+            continue_on_timeout: true
+          - action: cover.set_cover_position
+            data:
+              position: 90
+            metadata: {}
+            target:
+              entity_id: cover.tuin_rolluik
+    - conditions:
+      - condition: state
+        entity_id: input_select.tuin_raambekleding
         state: 080%
       sequence:
       - action: button.press
@@ -312,6 +352,46 @@
           entity_id:
           - cover.dakterras_gordijn
           - cover.dakterras_rolluik
+    - conditions:
+      - condition: state
+        entity_id: input_select.dakterras_raambekleding
+        state: 090%
+      sequence:
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.dakterras_gordijn_my_position
+      - alias: Deur open?
+        choose:
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.dakterras_deursensor
+            state: 'off'
+          sequence:
+          - action: cover.set_cover_position
+            data:
+              position: 90
+            metadata: {}
+            target:
+              entity_id: cover.dakterras_rolluik
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.dakterras_deursensor
+            state: 'on'
+          sequence:
+          - wait_for_trigger:
+            - entity_id:
+              - binary_sensor.dakterras_deursensor
+              to: 'off'
+              trigger: state
+            continue_on_timeout: true
+          - action: cover.set_cover_position
+            data:
+              position: 90
+            metadata: {}
+            target:
+              entity_id: cover.dakterras_rolluik
     - conditions:
       - condition: state
         entity_id: input_select.dakterras_raambekleding
@@ -537,6 +617,22 @@
     - conditions:
       - condition: state
         entity_id: input_select.keuken_raambekleding
+        state: 090%
+      sequence:
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.keuken_gordijn_my_position
+      - action: cover.set_cover_position
+        data:
+          position: 90
+        metadata: {}
+        target:
+          entity_id: cover.keuken_rolluik
+    - conditions:
+      - condition: state
+        entity_id: input_select.keuken_raambekleding
         state: 080%
       sequence:
       - action: button.press
@@ -638,6 +734,22 @@
           entity_id:
           - cover.woonkamer_gordijn
           - cover.woonkamer_rolluik
+    - conditions:
+      - condition: state
+        entity_id: input_select.woonkamer_raambekleding
+        state: 090%
+      sequence:
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.woonkamer_gordijn_my_position
+      - action: cover.set_cover_position
+        data:
+          position: 90
+        metadata: {}
+        target:
+          entity_id: cover.woonkamer_rolluik
     - conditions:
       - condition: state
         entity_id: input_select.woonkamer_raambekleding
@@ -745,6 +857,34 @@
           - cover.gameroom_rolluik_links
           - cover.gameroom_gordijn_rechts1
           - cover.gameroom_gordijn_rechts2
+          - cover.gameroom_rolluik_rechts
+    - conditions:
+      - condition: state
+        entity_id: input_select.gameroom_raambekleding
+        state: 090%
+      sequence:
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - button.gameroom_gordijn_links1_my_position
+          - button.gameroom_gordijn_links2_my_position
+          - button.gameroom_gordijn_rechts1_my_position
+          - button.gameroom_gordijn_rechts2_my_position
+      - action: cover.set_cover_position
+        data:
+          position: 60
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gameroom_rolluik_links
+      - action: cover.set_cover_position
+        data:
+          position: 90
+        metadata: {}
+        target:
+          entity_id:
           - cover.gameroom_rolluik_rechts
     - conditions:
       - condition: state
@@ -900,6 +1040,22 @@
     - conditions:
       - condition: state
         entity_id: input_select.gang_raambekleding
+        state: 090%
+      sequence:
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.gang_gordijn_my_position
+      - action: cover.set_cover_position
+        data:
+          position: 90
+        metadata: {}
+        target:
+          entity_id: cover.gang_rolluik
+    - conditions:
+      - condition: state
+        entity_id: input_select.gang_raambekleding
         state: 080%
       sequence:
       - action: button.press
@@ -1000,6 +1156,22 @@
     - conditions:
       - condition: state
         entity_id: input_select.sauna_raambekleding
+        state: 090%
+      sequence:
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id: button.sauna_gordijn_my_position
+      - action: cover.set_cover_position
+        data:
+          position: 90
+        metadata: {}
+        target:
+          entity_id: cover.sauna_rolluik
+    - conditions:
+      - condition: state
+        entity_id: input_select.sauna_raambekleding
         state: 080%
       sequence:
       - action: button.press
@@ -1097,6 +1269,25 @@
           entity_id:
           - cover.kantoor_gordijn_links
           - cover.kantoor_gordijn_rechts
+          - cover.kantoor_rolluik
+    - conditions:
+      - condition: state
+        entity_id: input_select.kantoor_raambekleding
+        state: 090%
+      sequence:
+      - action: button.press
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - button.kantoor_gordijn_links_my_position
+          - button.kantoor_gordijn_rechts_my_position
+      - action: cover.set_cover_position
+        data:
+          position: 90
+        metadata: {}
+        target:
+          entity_id:
           - cover.kantoor_rolluik
     - conditions:
       - condition: state
@@ -2288,7 +2479,7 @@
         before: '18:00:00'
       sequence:
       - data:
-          option: 080%
+          option: 090%
         target:
           entity_id:
           - input_select.kantoor_raambekleding
@@ -2299,7 +2490,7 @@
       - delay:
           seconds: 5
       - data:
-          option: 080%
+          option: 090%
         target:
           entity_id:
           - input_select.dakterras_raambekleding
@@ -3664,6 +3855,7 @@
               }}
             position: top-right
             transparency: 50%
+        enabled: false
   variables:
     base_url_https: '{{ states(''input_text.base_url_https'') }}'
     base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
@@ -3683,7 +3875,7 @@
       - input_text.alarm_code_user_3
       alarm_keypad: Alarm Paneel
       alarm_notifications_target:
-      - d8b754522624b04aa43198422d03f9ba
+      - 1b49bd1284b5afb6e9f5f081024a600c
       - 9740967395d5075943601616baa9c821
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
@@ -4376,25 +4568,6 @@
         target:
           entity_id: switch.kantoor_bureau
   mode: restart
-- id: '1755612715648'
-  alias: Geofence - Notifications extended
-  description: ''
-  use_blueprint:
-    path: panhans/zone_notification_extended.yaml
-    input:
-      persons:
-      - person.alex
-      - person.deni
-      zones: []
-      title_arriving: '{{ person }} arriveert'
-      message_arriving: '{{ person }} arriveert bij {{ zone }}.'
-      title_leaving: '{{ person }} vertrekt'
-      message_leaving: '{{ person }} vertrekt van {{ zone }}.'
-      notify_group: notify
-      duration:
-        hours: 0
-        minutes: 0
-        seconds: 5
 - id: '1755896860214'
   alias: Entree Knop
   description: ''
@@ -4541,192 +4714,127 @@
   - trigger: state
     entity_id: schedule.woonkamer_klimaat
     id: schedule
-  - trigger: state
-    entity_id: climate.woonkamer_thermostaat
-    attribute: hvac_action
-    id: thermostat
   conditions: []
   actions:
   - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
+    - alias: Schedule on and at home
+      conditions:
+      - condition: state
+        entity_id: schedule.woonkamer_klimaat
+        state: 'on'
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
       sequence:
       - choose:
         - conditions:
           - condition: state
-            entity_id: schedule.woonkamer_klimaat
-            state: 'on'
-          - condition: numeric_state
-            entity_id: zone.home
-            above: 0
+            entity_id: sensor.climate_mode
+            state: cold
           sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: cold
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 21
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.woonkamer_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: mild
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 20
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.woonkamer_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: warm
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: cool
-                  target_temp_low: 19
-                  target_temp_high: 24
-                target:
-                  entity_id: climate.woonkamer_thermostaat
-        - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: schedule.woonkamer_klimaat
-              state: 'off'
-            - condition: numeric_state
-              entity_id: zone.home
-              below: 1
-          sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: cold
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 18
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.woonkamer_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: mild
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 17
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.woonkamer_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: warm
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: cool
-                  target_temp_low: 16
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.woonkamer_thermostaat
-    - conditions:
-      - condition: trigger
-        id:
-        - thermostat
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: climate.woonkamer_thermostaat
-            state: cool
-          sequence:
-          - action: switch.turn_off
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 21
             target:
-              entity_id: switch.woonkamer_verwarming
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: climate.woonkamer_thermostaat
-                attribute: hvac_action
-                state: cooling
-              sequence:
-              - action: climate.set_hvac_mode
-                data:
-                  hvac_mode: cool
-                target:
-                  entity_id: climate.woonkamer_airco
-              - action: climate.set_temperature
-                data:
-                  temperature: 22
-                target:
-                  entity_id: climate.woonkamer_airco
-            - conditions:
-              - condition: state
-                entity_id: climate.woonkamer_thermostaat
-                attribute: hvac_action
-                state: idle
-              sequence:
-              - action: climate.set_hvac_mode
-                data:
-                  hvac_mode: cool
-                target:
-                  entity_id: climate.woonkamer_airco
-              - action: climate.set_temperature
-                data:
-                  temperature: 28
-                target:
-                  entity_id: climate.woonkamer_airco
-        - conditions:
-          - condition: state
-            entity_id: climate.woonkamer_thermostaat
-            state: heat
-          sequence:
-          - action: climate.set_hvac_mode
+              entity_id: climate.woonkamer_verwarming
+          - action: climate.set_temperature
             data:
               hvac_mode: 'off'
             target:
               entity_id: climate.woonkamer_airco
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: climate.woonkamer_thermostaat
-                attribute: hvac_action
-                state: heating
-              sequence:
-              - action: switch.turn_on
-                target:
-                  entity_id: switch.woonkamer_verwarming
-            - conditions:
-              - condition: state
-                entity_id: climate.woonkamer_thermostaat
-                attribute: hvac_action
-                state: idle
-                for:
-                  hours: 1
-                  minutes: 0
-                  seconds: 0
-              sequence:
-              - action: switch.turn_off
-                target:
-                  entity_id: switch.woonkamer_verwarming
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: mild
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 20
+            target:
+              entity_id: climate.woonkamer_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.woonkamer_airco
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: warm
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.woonkamer_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: cool
+              temperature: 22
+            target:
+              entity_id: climate.woonkamer_airco
+    - alias: Schedule off or not at home
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: schedule.woonkamer_klimaat
+          state: 'off'
+        - condition: numeric_state
+          entity_id: zone.home
+          below: 1
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: cold
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 18
+            target:
+              entity_id: climate.woonkamer_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.woonkamer_airco
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: mild
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 17
+            target:
+              entity_id: climate.woonkamer_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.woonkamer_airco
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: warm
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.woonkamer_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: cool
+              temperature: 28
+            target:
+              entity_id: climate.woonkamer_airco
   mode: parallel
   max: 5
 - id: '1757451909221'
@@ -4739,192 +4847,127 @@
   - trigger: state
     entity_id: schedule.slaapkamer_klimaat
     id: schedule
-  - trigger: state
-    entity_id: climate.slaapkamer_thermostaat
-    attribute: hvac_action
-    id: thermostat
   conditions: []
   actions:
   - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
+    - alias: Schedule on and at home
+      conditions:
+      - condition: state
+        entity_id: schedule.slaapkamer_klimaat
+        state: 'on'
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
       sequence:
       - choose:
         - conditions:
           - condition: state
-            entity_id: schedule.slaapkamer_klimaat
-            state: 'on'
-          - condition: numeric_state
-            entity_id: zone.home
-            above: 0
+            entity_id: sensor.climate_mode
+            state: cold
           sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: cold
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 21
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.slaapkamer_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: mild
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 20
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.slaapkamer_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: warm
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: cool
-                  target_temp_low: 19
-                  target_temp_high: 24
-                target:
-                  entity_id: climate.slaapkamer_thermostaat
-        - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: schedule.slaapkamer_klimaat
-              state: 'off'
-            - condition: numeric_state
-              entity_id: zone.home
-              below: 1
-          sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: cold
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 18
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.slaapkamer_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: mild
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 17
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.slaapkamer_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: warm
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: cool
-                  target_temp_low: 16
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.slaapkamer_thermostaat
-    - conditions:
-      - condition: trigger
-        id:
-        - thermostat
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: climate.slaapkamer_thermostaat
-            state: cool
-          sequence:
-          - action: switch.turn_off
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 21
             target:
-              entity_id: switch.slaapkamer_verwarming
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: climate.slaapkamer_thermostaat
-                attribute: hvac_action
-                state: cooling
-              sequence:
-              - action: climate.set_hvac_mode
-                data:
-                  hvac_mode: cool
-                target:
-                  entity_id: climate.slaapkamer_airco
-              - action: climate.set_temperature
-                data:
-                  temperature: 22
-                target:
-                  entity_id: climate.slaapkamer_airco
-            - conditions:
-              - condition: state
-                entity_id: climate.slaapkamer_thermostaat
-                attribute: hvac_action
-                state: idle
-              sequence:
-              - action: climate.set_hvac_mode
-                data:
-                  hvac_mode: cool
-                target:
-                  entity_id: climate.slaapkamer_airco
-              - action: climate.set_temperature
-                data:
-                  temperature: 28
-                target:
-                  entity_id: climate.slaapkamer_airco
-        - conditions:
-          - condition: state
-            entity_id: climate.slaapkamer_thermostaat
-            state: heat
-          sequence:
-          - action: climate.set_hvac_mode
+              entity_id: climate.slaapkamer_verwarming
+          - action: climate.set_temperature
             data:
               hvac_mode: 'off'
             target:
               entity_id: climate.slaapkamer_airco
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: climate.slaapkamer_thermostaat
-                attribute: hvac_action
-                state: heating
-              sequence:
-              - action: switch.turn_on
-                target:
-                  entity_id: switch.slaapkamer_verwarming
-            - conditions:
-              - condition: state
-                entity_id: climate.slaapkamer_thermostaat
-                attribute: hvac_action
-                state: idle
-                for:
-                  hours: 1
-                  minutes: 0
-                  seconds: 0
-              sequence:
-              - action: switch.turn_off
-                target:
-                  entity_id: switch.slaapkamer_verwarming
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: mild
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 20
+            target:
+              entity_id: climate.slaapkamer_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.slaapkamer_airco
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: warm
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.slaapkamer_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: cool
+              temperature: 22
+            target:
+              entity_id: climate.slaapkamer_airco
+    - alias: Schedule off or not at home
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: schedule.slaapkamer_klimaat
+          state: 'off'
+        - condition: numeric_state
+          entity_id: zone.home
+          below: 1
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: cold
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 18
+            target:
+              entity_id: climate.slaapkamer_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.slaapkamer_airco
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: mild
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 17
+            target:
+              entity_id: climate.slaapkamer_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.slaapkamer_airco
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: warm
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.slaapkamer_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: cool
+              temperature: 28
+            target:
+              entity_id: climate.slaapkamer_airco
   mode: parallel
   max: 5
 - id: '1757451939527'
@@ -4937,192 +4980,127 @@
   - trigger: state
     entity_id: schedule.kantoor_klimaat
     id: schedule
-  - trigger: state
-    entity_id: climate.kantoor_thermostaat
-    attribute: hvac_action
-    id: thermostat
   conditions: []
   actions:
   - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
+    - alias: Schedule on and at home
+      conditions:
+      - condition: state
+        entity_id: schedule.kantoor_klimaat
+        state: 'on'
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
       sequence:
       - choose:
         - conditions:
           - condition: state
-            entity_id: schedule.kantoor_klimaat
-            state: 'on'
-          - condition: numeric_state
-            entity_id: zone.home
-            above: 0
+            entity_id: sensor.climate_mode
+            state: cold
           sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: cold
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 21
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.kantoor_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: mild
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 20
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.kantoor_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: warm
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: cool
-                  target_temp_low: 19
-                  target_temp_high: 24
-                target:
-                  entity_id: climate.kantoor_thermostaat
-        - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: schedule.kantoor_klimaat
-              state: 'off'
-            - condition: numeric_state
-              entity_id: zone.home
-              below: 1
-          sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: cold
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 18
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.kantoor_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: mild
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 17
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.kantoor_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: warm
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: cool
-                  target_temp_low: 16
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.kantoor_thermostaat
-    - conditions:
-      - condition: trigger
-        id:
-        - thermostat
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: climate.kantoor_thermostaat
-            state: cool
-          sequence:
-          - action: switch.turn_off
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 21
             target:
-              entity_id: switch.kantoor_verwarming
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: climate.kantoor_thermostaat
-                attribute: hvac_action
-                state: cooling
-              sequence:
-              - action: climate.set_hvac_mode
-                data:
-                  hvac_mode: cool
-                target:
-                  entity_id: climate.kantoor_airco
-              - action: climate.set_temperature
-                data:
-                  temperature: 22
-                target:
-                  entity_id: climate.kantoor_airco
-            - conditions:
-              - condition: state
-                entity_id: climate.kantoor_thermostaat
-                attribute: hvac_action
-                state: idle
-              sequence:
-              - action: climate.set_hvac_mode
-                data:
-                  hvac_mode: cool
-                target:
-                  entity_id: climate.kantoor_airco
-              - action: climate.set_temperature
-                data:
-                  temperature: 28
-                target:
-                  entity_id: climate.kantoor_airco
-        - conditions:
-          - condition: state
-            entity_id: climate.kantoor_thermostaat
-            state: heat
-          sequence:
-          - action: climate.set_hvac_mode
+              entity_id: climate.kantoor_verwarming
+          - action: climate.set_temperature
             data:
               hvac_mode: 'off'
             target:
               entity_id: climate.kantoor_airco
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: climate.kantoor_thermostaat
-                attribute: hvac_action
-                state: heating
-              sequence:
-              - action: switch.turn_on
-                target:
-                  entity_id: switch.kantoor_verwarming
-            - conditions:
-              - condition: state
-                entity_id: climate.kantoor_thermostaat
-                attribute: hvac_action
-                state: idle
-                for:
-                  hours: 1
-                  minutes: 0
-                  seconds: 0
-              sequence:
-              - action: switch.turn_off
-                target:
-                  entity_id: switch.kantoor_verwarming
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: mild
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 20
+            target:
+              entity_id: climate.kantoor_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.kantoor_airco
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: warm
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.kantoor_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: cool
+              temperature: 22
+            target:
+              entity_id: climate.kantoor_airco
+    - alias: Schedule off or not at home
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: schedule.kantoor_klimaat
+          state: 'off'
+        - condition: numeric_state
+          entity_id: zone.home
+          below: 1
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: cold
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 18
+            target:
+              entity_id: climate.kantoor_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.kantoor_airco
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: mild
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 17
+            target:
+              entity_id: climate.kantoor_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.kantoor_airco
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: warm
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.kantoor_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: cool
+              temperature: 28
+            target:
+              entity_id: climate.kantoor_airco
   mode: parallel
   max: 5
 - id: '1757451987268'
@@ -5135,192 +5113,127 @@
   - trigger: state
     entity_id: schedule.gameroom_klimaat
     id: schedule
-  - trigger: state
-    entity_id: climate.gameroom_thermostaat
-    attribute: hvac_action
-    id: thermostat
   conditions: []
   actions:
   - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
+    - alias: Schedule on and at home
+      conditions:
+      - condition: state
+        entity_id: schedule.gameroom_klimaat
+        state: 'on'
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
       sequence:
       - choose:
         - conditions:
           - condition: state
-            entity_id: schedule.gameroom_klimaat
-            state: 'on'
-          - condition: numeric_state
-            entity_id: zone.home
-            above: 0
+            entity_id: sensor.climate_mode
+            state: cold
           sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: cold
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 21
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.gameroom_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: mild
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 20
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.gameroom_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: warm
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: cool
-                  target_temp_low: 19
-                  target_temp_high: 24
-                target:
-                  entity_id: climate.gameroom_thermostaat
-        - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: schedule.gameroom_klimaat
-              state: 'off'
-            - condition: numeric_state
-              entity_id: zone.home
-              below: 1
-          sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: cold
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 18
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.gameroom_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: mild
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 17
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.gameroom_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: warm
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: cool
-                  target_temp_low: 16
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.gameroom_thermostaat
-    - conditions:
-      - condition: trigger
-        id:
-        - thermostat
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: climate.gameroom_thermostaat
-            state: cool
-          sequence:
-          - action: switch.turn_off
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 21
             target:
-              entity_id: switch.gameroom_verwarming
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: climate.gameroom_thermostaat
-                attribute: hvac_action
-                state: cooling
-              sequence:
-              - action: climate.set_hvac_mode
-                data:
-                  hvac_mode: cool
-                target:
-                  entity_id: climate.gameroom_airco
-              - action: climate.set_temperature
-                data:
-                  temperature: 22
-                target:
-                  entity_id: climate.gameroom_airco
-            - conditions:
-              - condition: state
-                entity_id: climate.gameroom_thermostaat
-                attribute: hvac_action
-                state: idle
-              sequence:
-              - action: climate.set_hvac_mode
-                data:
-                  hvac_mode: cool
-                target:
-                  entity_id: climate.gameroom_airco
-              - action: climate.set_temperature
-                data:
-                  temperature: 28
-                target:
-                  entity_id: climate.gameroom_airco
-        - conditions:
-          - condition: state
-            entity_id: climate.gameroom_thermostaat
-            state: heat
-          sequence:
-          - action: climate.set_hvac_mode
+              entity_id: climate.gameroom_verwarming
+          - action: climate.set_temperature
             data:
               hvac_mode: 'off'
             target:
               entity_id: climate.gameroom_airco
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: climate.gameroom_thermostaat
-                attribute: hvac_action
-                state: heating
-              sequence:
-              - action: switch.turn_on
-                target:
-                  entity_id: switch.gameroom_verwarming
-            - conditions:
-              - condition: state
-                entity_id: climate.gameroom_thermostaat
-                attribute: hvac_action
-                state: idle
-                for:
-                  hours: 1
-                  minutes: 0
-                  seconds: 0
-              sequence:
-              - action: switch.turn_off
-                target:
-                  entity_id: switch.gameroom_verwarming
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: mild
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 20
+            target:
+              entity_id: climate.gameroom_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.gameroom_airco
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: warm
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.gameroom_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: cool
+              temperature: 22
+            target:
+              entity_id: climate.gameroom_airco
+    - alias: Schedule off or not at home
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: schedule.gameroom_klimaat
+          state: 'off'
+        - condition: numeric_state
+          entity_id: zone.home
+          below: 1
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: cold
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 18
+            target:
+              entity_id: climate.gameroom_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.gameroom_airco
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: mild
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 17
+            target:
+              entity_id: climate.gameroom_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.gameroom_airco
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: warm
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: 'off'
+            target:
+              entity_id: climate.gameroom_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: cool
+              temperature: 28
+            target:
+              entity_id: climate.gameroom_airco
   mode: parallel
   max: 5
 - id: '1757452017459'
@@ -5333,154 +5246,95 @@
   - trigger: state
     entity_id: schedule.sauna_klimaat
     id: schedule
-  - trigger: state
-    entity_id: climate.sauna_thermostaat
-    attribute: hvac_action
-    id: thermostat
   conditions: []
   actions:
   - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
+    - alias: Schedule on and at home
+      conditions:
+      - condition: state
+        entity_id: schedule.sauna_klimaat
+        state: 'on'
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
       sequence:
       - choose:
         - conditions:
           - condition: state
-            entity_id: schedule.sauna_klimaat
-            state: 'on'
-          - condition: numeric_state
-            entity_id: zone.home
-            above: 0
+            entity_id: sensor.climate_mode
+            state: cold
           sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: cold
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 21
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.sauna_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: mild
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 20
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.sauna_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: warm
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: cool
-                  target_temp_low: 19
-                  target_temp_high: 24
-                target:
-                  entity_id: climate.sauna_thermostaat
-        - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: schedule.sauna_klimaat
-              state: 'off'
-            - condition: numeric_state
-              entity_id: zone.home
-              below: 1
-          sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: cold
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 18
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.sauna_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: mild
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 17
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.sauna_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: warm
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: cool
-                  target_temp_low: 16
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.sauna_thermostaat
-    - conditions:
-      - condition: trigger
-        id:
-        - thermostat
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: climate.sauna_thermostaat
-            state: cool
-          sequence:
-          - action: switch.turn_off
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 21
             target:
-              entity_id: switch.sauna_verwarming
+              entity_id: climate.sauna_verwarming
         - conditions:
           - condition: state
-            entity_id: climate.sauna_thermostaat
-            state: heat
+            entity_id: sensor.climate_mode
+            state: mild
           sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: climate.sauna_thermostaat
-                attribute: hvac_action
-                state: heating
-              sequence:
-              - action: switch.turn_on
-                target:
-                  entity_id: switch.sauna_verwarming
-            - conditions:
-              - condition: state
-                entity_id: climate.sauna_thermostaat
-                attribute: hvac_action
-                state: idle
-                for:
-                  hours: 1
-                  minutes: 0
-                  seconds: 0
-              sequence:
-              - action: switch.turn_off
-                target:
-                  entity_id: switch.sauna_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 20
+            target:
+              entity_id: climate.sauna_verwarming
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: warm
+          sequence:
+          - action: climate.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id: climate.sauna_verwarming
+    - alias: Schedule off or not at home
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: schedule.sauna_klimaat
+          state: 'off'
+        - condition: numeric_state
+          entity_id: zone.home
+          below: 1
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: cold
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 18
+            target:
+              entity_id: climate.sauna_verwarming
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: mild
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 17
+            target:
+              entity_id: climate.sauna_verwarming
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: warm
+          sequence:
+          - action: climate.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id: climate.sauna_verwarming
   mode: parallel
   max: 5
 - id: '1757452116318'
@@ -5493,154 +5347,95 @@
   - trigger: state
     entity_id: schedule.badkamer_klimaat
     id: schedule
-  - trigger: state
-    entity_id: climate.badkamer_thermostaat
-    attribute: hvac_action
-    id: thermostat
   conditions: []
   actions:
   - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
+    - alias: Schedule on and at home
+      conditions:
+      - condition: state
+        entity_id: schedule.badkamer_klimaat
+        state: 'on'
+      - condition: numeric_state
+        entity_id: zone.home
+        above: 0
       sequence:
       - choose:
         - conditions:
           - condition: state
-            entity_id: schedule.badkamer_klimaat
-            state: 'on'
-          - condition: numeric_state
-            entity_id: zone.home
-            above: 0
+            entity_id: sensor.climate_mode
+            state: cold
           sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: cold
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 21
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.badkamer_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: mild
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 20
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.badkamer_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: warm
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: cool
-                  target_temp_low: 19
-                  target_temp_high: 24
-                target:
-                  entity_id: climate.badkamer_thermostaat
-        - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: schedule.badkamer_klimaat
-              state: 'off'
-            - condition: numeric_state
-              entity_id: zone.home
-              below: 1
-          sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: cold
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 18
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.badkamer_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: mild
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: heat
-                  target_temp_low: 17
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.badkamer_thermostaat
-            - conditions:
-              - condition: state
-                entity_id: sensor.climate_mode
-                state: warm
-              sequence:
-              - action: climate.set_temperature
-                data:
-                  hvac_mode: cool
-                  target_temp_low: 16
-                  target_temp_high: 28
-                target:
-                  entity_id: climate.badkamer_thermostaat
-    - conditions:
-      - condition: trigger
-        id:
-        - thermostat
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: climate.badkamer_thermostaat
-            state: cool
-          sequence:
-          - action: switch.turn_off
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 21
             target:
-              entity_id: switch.badkamer_verwarming
+              entity_id: climate.badkamer_verwarming
         - conditions:
           - condition: state
-            entity_id: climate.badkamer_thermostaat
-            state: heat
+            entity_id: sensor.climate_mode
+            state: mild
           sequence:
-          - choose:
-            - conditions:
-              - condition: state
-                entity_id: climate.badkamer_thermostaat
-                attribute: hvac_action
-                state: heating
-              sequence:
-              - action: switch.turn_on
-                target:
-                  entity_id: switch.badkamer_verwarming
-            - conditions:
-              - condition: state
-                entity_id: climate.badkamer_thermostaat
-                attribute: hvac_action
-                state: idle
-                for:
-                  hours: 1
-                  minutes: 0
-                  seconds: 0
-              sequence:
-              - action: switch.turn_off
-                target:
-                  entity_id: switch.badkamer_verwarming
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 20
+            target:
+              entity_id: climate.badkamer_verwarming
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: warm
+          sequence:
+          - action: climate.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id: climate.badkamer_verwarming
+    - alias: Schedule off or not at home
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: schedule.badkamer_klimaat
+          state: 'off'
+        - condition: numeric_state
+          entity_id: zone.home
+          below: 1
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: cold
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 18
+            target:
+              entity_id: climate.badkamer_verwarming
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: mild
+          sequence:
+          - action: climate.set_temperature
+            data:
+              hvac_mode: heat
+              temperature: 17
+            target:
+              entity_id: climate.badkamer_verwarming
+        - conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: warm
+          sequence:
+          - action: climate.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id: climate.badkamer_verwarming
   mode: parallel
   max: 5
 - id: '1758136116807'
@@ -5690,3 +5485,22 @@
         target:
           entity_id: fan.ducobox
   mode: single
+- id: '1759521293992'
+  alias: Geofence - Notification Extended
+  description: ''
+  use_blueprint:
+    path: panhans/zone_notification_extended.yaml
+    input:
+      persons:
+      - person.alex
+      - person.deni
+      duration:
+        hours: 0
+        minutes: 0
+        seconds: 5
+      title_arriving: '{{ person }} arriveert'
+      message_arriving: '{{ person }} arriveert bij {{ zone }}.'
+      title_leaving: '{{ person }} vertrekt'
+      message_leaving: '{{ person }} vertrekt van {{ zone }}.'
+      group: Geofence
+      notify_group: notify
