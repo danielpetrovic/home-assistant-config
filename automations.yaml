@@ -3812,19 +3812,6 @@
       target:
         entity_id: tts.home_assistant_cloud
       action: tts.speak
-    - alias: Notify Phone
-      action: notify.notify
-      metadata: {}
-      data:
-        message: Er heeft iemand aangebeld!
-        data:
-          channel: Doorbell
-          image: https://{{ states('input_text.base_url') }}{{ state_attr('camera.voordeur','entity_picture')
-            }}
-          importance: high
-          priority: high
-          ttl: 0
-      enabled: false
     - alias: Notify TV
       if:
       - alias: Woonkamer TV not off
@@ -3839,23 +3826,12 @@
             entity_id: media_player.woonkamer_tv
             state: unavailable
       then:
-      - target:
-          entity_id: media_player.woonkamer_tv_adb
-        action: media_player.media_play_pause
-        data: {}
-        enabled: true
-      - action: notify.woonkamer_tv
+      - action: remote.send_command
         metadata: {}
         data:
-          message: Er heeft iemand aangebeld!
-          data:
-            duration: 20
-            fontsize: small
-            image: http://{{ states('sensor.local_ip') }}:8123{{ state_attr('camera.voordeur','entity_picture')
-              }}
-            position: top-right
-            transparency: 50%
-        enabled: false
+          command: HOME
+        target:
+          entity_id: remote.woonkamer_tv
   variables:
     base_url_https: '{{ states(''input_text.base_url_https'') }}'
     base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
@@ -3920,16 +3896,16 @@
       - critical_android
       alarm_notifications_always: geactiveerd!
       alarm_sensor_fire:
-      - binary_sensor.entree_brandmelder_smoke
-      - binary_sensor.gang_brandmelder_smoke
-      - binary_sensor.gameroom_brandmelder_smoke
+      - binary_sensor.entree_brandmelder
+      - binary_sensor.gang_brandmelder
+      - binary_sensor.gameroom_brandmelder
       - binary_sensor.schuur_brandmelder_smoke
       alarm_notifications_fire: heeft vuur gedetecteerd!
       alarm_notifications_priority_fire:
       - critical_android
       alarm_sensor_moisture:
-      - binary_sensor.keuken_vochtmelder_water_leak
-      - binary_sensor.wasruimte_vochtmelder_water_leak
+      - binary_sensor.keuken_vochtmelder
+      - binary_sensor.wasruimte_vochtmelder
       alarm_notifications_moisture: heeft vocht gedetecteerd!
       alarm_notifications_priority_moisture:
       - critical_android
