@@ -176,10 +176,16 @@ music_home:
   - action: media_player.volume_set
     metadata: {}
     data:
-      volume_level: 0.25
+      volume_level: 0.35
     target:
       entity_id:
       - media_player.keuken
+  - action: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0.25
+    target:
+      entity_id:
       - media_player.sauna
       - media_player.slaapkamer
 lights_green:
