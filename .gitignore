@@ -3,10 +3,10 @@
 /.storage
 /@eaDir
 /addons_config
+/backups
 /custom_components/kef_connector
 /image
 /tts
-/zigbee2mqtt
 .ha_run.lock
 go2rtc.yaml
 home-assistant_v2.db

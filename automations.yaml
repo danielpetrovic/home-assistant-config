@@ -4708,49 +4708,52 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 21
-            target:
-              entity_id: climate.woonkamer_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.woonkamer_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.woonkamer_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 21
+              target:
+                entity_id: climate.woonkamer_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 20
-            target:
-              entity_id: climate.woonkamer_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.woonkamer_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.woonkamer_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 20
+              target:
+                entity_id: climate.woonkamer_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.woonkamer_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: cool
-              temperature: 22
-            target:
-              entity_id: climate.woonkamer_airco
+          - parallel:
+            - action: climate.set_temperature
+              data:
+                hvac_mode: cool
+                temperature: 22
+              target:
+                entity_id: climate.woonkamer_airco
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.woonkamer_verwarming
     - alias: Schedule off or not at home
       conditions:
       - condition: or
@@ -4768,51 +4771,53 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 18
-            target:
-              entity_id: climate.woonkamer_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.woonkamer_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.woonkamer_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 18
+              target:
+                entity_id: climate.woonkamer_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 17
-            target:
-              entity_id: climate.woonkamer_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.woonkamer_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.woonkamer_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 17
+              target:
+                entity_id: climate.woonkamer_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.woonkamer_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: cool
-              temperature: 28
-            target:
-              entity_id: climate.woonkamer_airco
-  mode: parallel
-  max: 5
+          - parallel:
+            - action: climate.set_temperature
+              data:
+                hvac_mode: cool
+                temperature: 28
+              target:
+                entity_id: climate.woonkamer_airco
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.woonkamer_verwarming
+  mode: restart
 - id: '1757451909221'
   alias: Slaapkamer Klimaat
   description: ''
@@ -4841,49 +4846,52 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 21
-            target:
-              entity_id: climate.slaapkamer_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.slaapkamer_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.slaapkamer_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 21
+              target:
+                entity_id: climate.slaapkamer_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 20
-            target:
-              entity_id: climate.slaapkamer_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.slaapkamer_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.slaapkamer_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 20
+              target:
+                entity_id: climate.slaapkamer_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.slaapkamer_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: cool
-              temperature: 22
-            target:
-              entity_id: climate.slaapkamer_airco
+          - parallel:
+            - action: climate.set_temperature
+              data:
+                hvac_mode: cool
+                temperature: 22
+              target:
+                entity_id: climate.slaapkamer_airco
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.slaapkamer_verwarming
     - alias: Schedule off or not at home
       conditions:
       - condition: or
@@ -4901,51 +4909,53 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 18
-            target:
-              entity_id: climate.slaapkamer_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.slaapkamer_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.slaapkamer_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 18
+              target:
+                entity_id: climate.slaapkamer_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 17
-            target:
-              entity_id: climate.slaapkamer_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.slaapkamer_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.slaapkamer_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 17
+              target:
+                entity_id: climate.slaapkamer_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.slaapkamer_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: cool
-              temperature: 28
-            target:
-              entity_id: climate.slaapkamer_airco
-  mode: parallel
-  max: 5
+          - parallel:
+            - action: climate.set_temperature
+              data:
+                hvac_mode: cool
+                temperature: 28
+              target:
+                entity_id: climate.slaapkamer_airco
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.slaapkamer_verwarming
+  mode: restart
 - id: '1757451939527'
   alias: Kantoor Klimaat
   description: ''
@@ -4974,49 +4984,52 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 21
-            target:
-              entity_id: climate.kantoor_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.kantoor_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.kantoor_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 21
+              target:
+                entity_id: climate.kantoor_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 20
-            target:
-              entity_id: climate.kantoor_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.kantoor_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.kantoor_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 20
+              target:
+                entity_id: climate.kantoor_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.kantoor_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: cool
-              temperature: 22
-            target:
-              entity_id: climate.kantoor_airco
+          - parallel:
+            - action: climate.set_temperature
+              data:
+                hvac_mode: cool
+                temperature: 22
+              target:
+                entity_id: climate.kantoor_airco
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.kantoor_verwarming
     - alias: Schedule off or not at home
       conditions:
       - condition: or
@@ -5034,51 +5047,53 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 18
-            target:
-              entity_id: climate.kantoor_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.kantoor_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.kantoor_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 18
+              target:
+                entity_id: climate.kantoor_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 17
-            target:
-              entity_id: climate.kantoor_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.kantoor_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.kantoor_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 17
+              target:
+                entity_id: climate.kantoor_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.kantoor_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: cool
-              temperature: 28
-            target:
-              entity_id: climate.kantoor_airco
-  mode: parallel
-  max: 5
+          - parallel:
+            - action: climate.set_temperature
+              data:
+                hvac_mode: cool
+                temperature: 28
+              target:
+                entity_id: climate.kantoor_airco
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.kantoor_verwarming
+  mode: restart
 - id: '1757451987268'
   alias: Gameroom Klimaat
   description: ''
@@ -5107,49 +5122,52 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 21
-            target:
-              entity_id: climate.gameroom_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.gameroom_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.gameroom_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 21
+              target:
+                entity_id: climate.gameroom_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 20
-            target:
-              entity_id: climate.gameroom_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.gameroom_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.gameroom_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 20
+              target:
+                entity_id: climate.gameroom_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.gameroom_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: cool
-              temperature: 22
-            target:
-              entity_id: climate.gameroom_airco
+          - parallel:
+            - action: climate.set_temperature
+              data:
+                hvac_mode: cool
+                temperature: 22
+              target:
+                entity_id: climate.gameroom_airco
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.gameroom_verwarming
     - alias: Schedule off or not at home
       conditions:
       - condition: or
@@ -5167,51 +5185,53 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 18
-            target:
-              entity_id: climate.gameroom_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.gameroom_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.gameroom_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 18
+              target:
+                entity_id: climate.gameroom_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: heat
-              temperature: 17
-            target:
-              entity_id: climate.gameroom_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.gameroom_airco
+          - parallel:
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.gameroom_airco
+            - action: climate.set_temperature
+              data:
+                hvac_mode: heat
+                temperature: 17
+              target:
+                entity_id: climate.gameroom_verwarming
         - conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              hvac_mode: 'off'
-            target:
-              entity_id: climate.gameroom_verwarming
-          - action: climate.set_temperature
-            data:
-              hvac_mode: cool
-              temperature: 28
-            target:
-              entity_id: climate.gameroom_airco
-  mode: parallel
-  max: 5
+          - parallel:
+            - action: climate.set_temperature
+              data:
+                hvac_mode: cool
+                temperature: 28
+              target:
+                entity_id: climate.gameroom_airco
+            - action: climate.turn_off
+              metadata: {}
+              data: {}
+              target:
+                entity_id: climate.gameroom_verwarming
+  mode: restart
 - id: '1757452017459'
   alias: Sauna Klimaat
   description: ''
@@ -5311,8 +5331,7 @@
             data: {}
             target:
               entity_id: climate.sauna_verwarming
-  mode: parallel
-  max: 5
+  mode: restart
 - id: '1757452116318'
   alias: Badkamer Klimaat
   description: ''
@@ -5412,8 +5431,7 @@
             data: {}
             target:
               entity_id: climate.badkamer_verwarming
-  mode: parallel
-  max: 5
+  mode: restart
 - id: '1758136116807'
   alias: 07:00
   description: ''
