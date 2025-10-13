@@ -2421,7 +2421,7 @@
       data: {}
       target:
         entity_id: switch.usw_gameroom_port_1_poe
-    enabled: false
+    enabled: true
   - alias: wifi off
     if:
     - condition: state
@@ -2439,7 +2439,7 @@
       data: {}
       target:
         entity_id: switch.usw_gameroom_port_1_poe
-    enabled: false
+    enabled: true
   mode: restart
 - id: '1726665266579'
   alias: Sun luminosity
