@@ -2421,7 +2421,7 @@
       data: {}
       target:
         entity_id: switch.usw_gameroom_port_1_poe
-    enabled: true
+    enabled: false
   - alias: wifi off
     if:
     - condition: state
@@ -2439,7 +2439,7 @@
       data: {}
       target:
         entity_id: switch.usw_gameroom_port_1_poe
-    enabled: true
+    enabled: false
   mode: restart
 - id: '1726665266579'
   alias: Sun luminosity
@@ -3826,12 +3826,18 @@
             entity_id: media_player.woonkamer_tv
             state: unavailable
       then:
-      - action: remote.send_command
+      - action: media_player.media_pause
+        metadata: {}
+        data: {}
+        target:
+          entity_id: media_player.woonkamer_tv
+      - action: androidtv.adb_command
         metadata: {}
         data:
-          command: HOME
+          command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
+            rtsp://192.168.16.1:7447/nW89EmoHxiJ4koVD
         target:
-          entity_id: remote.woonkamer_tv
+          entity_id: media_player.woonkamer_tv_adb
   variables:
     base_url_https: '{{ states(''input_text.base_url_https'') }}'
     base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
@@ -3852,7 +3858,7 @@
       alarm_keypad: Alarm Paneel
       alarm_notifications_target:
       - 1b49bd1284b5afb6e9f5f081024a600c
-      - 9740967395d5075943601616baa9c821
+      - 82ee695b8997aad9cfe181503a8d8f52
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
       - media_player.meterkast
