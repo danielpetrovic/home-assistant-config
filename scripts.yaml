@@ -65,7 +65,6 @@ music_night:
       volume_level: 0.25
     target:
       entity_id:
-      - media_player.keuken
       - media_player.sauna
       - media_player.slaapkamer
 music_home:
