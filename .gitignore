@@ -3,7 +3,6 @@
 /.storage
 /@eaDir
 /backups
-/custom_components
 /glances
 /image
 /tmp_backups
