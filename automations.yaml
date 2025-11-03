@@ -3456,8 +3456,8 @@
       alarm_notifications_priority_fire:
       - critical_android
       alarm_sensor_moisture:
-      - binary_sensor.keuken_vochtmelder
-      - binary_sensor.wasruimte_vochtmelder
+      - binary_sensor.keuken_vochtmelder_water_leak
+      - binary_sensor.wasruimte_vochtmelder_water_leak
       alarm_notifications_moisture: heeft vocht gedetecteerd!
       alarm_notifications_priority_moisture:
       - critical_android
@@ -3787,19 +3787,19 @@
   alias: Woonkamer Klimaat
   description: ''
   triggers:
-  - trigger: state
-    entity_id: sensor.presence
+  - entity_id: binary_sensor.presence
     id: presence
-  - trigger: state
-    entity_id: schedule.woonkamer_klimaat
+    trigger: state
+  - entity_id: schedule.woonkamer_klimaat
     id: schedule
-  - trigger: state
-    entity_id: sensor.climate_mode
+    trigger: state
+  - entity_id: sensor.climate_mode
     id: climate_mode
-  - trigger: state
-    entity_id: climate.woonkamer_thermostaat
+    trigger: state
+  - entity_id: climate.woonkamer_thermostaat
     attribute: hvac_action
     id: thermostat
+    trigger: state
   conditions: []
   actions:
   - alias: presence or schedule
@@ -3815,8 +3815,8 @@
         entity_id: schedule.woonkamer_klimaat
         state: 'on'
       - condition: state
-        entity_id: sensor.presence
-        state: home
+        entity_id: binary_sensor.presence
+        state: 'on'
       sequence:
       - choose:
         - alias: cold
@@ -3825,39 +3825,48 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.woonkamer_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.woonkamer_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 21
+              temperature: 21
+            action: climate.set_temperature
         - alias: mild
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.woonkamer_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.woonkamer_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 20
+              temperature: 20
+            action: climate.set_temperature
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.woonkamer_thermostaat_custom_system_mode
+            data:
+              option: cool
+            action: select.select_option
+          - target:
               entity_id: climate.woonkamer_thermostaat
             data:
-              hvac_mode: cool
-              target_temp_high: 24
-              target_temp_low: 16
+              temperature: 24
+            action: climate.set_temperature
     - alias: schedule off or away
       conditions:
       - condition: trigger
@@ -3871,8 +3880,8 @@
           entity_id: schedule.woonkamer_klimaat
           state: 'off'
         - condition: state
-          entity_id: sensor.presence
-          state: away
+          entity_id: binary_sensor.presence
+          state: 'off'
       sequence:
       - choose:
         - alias: cold
@@ -3881,39 +3890,48 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.woonkamer_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.woonkamer_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 17
+              temperature: 18
+            action: climate.set_temperature
         - alias: mild
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.woonkamer_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.woonkamer_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 16
+              temperature: 17
+            action: climate.set_temperature
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.woonkamer_thermostaat_custom_system_mode
+            data:
+              option: cool
+            action: select.select_option
+          - target:
               entity_id: climate.woonkamer_thermostaat
             data:
-              hvac_mode: cool
-              target_temp_high: 30
-              target_temp_low: 16
+              temperature: 30
+            action: climate.set_temperature
   - alias: thermostat
     choose:
     - alias: heating
@@ -3925,9 +3943,9 @@
         attribute: hvac_action
         state: heating
       sequence:
-      - action: switch.turn_on
-        target:
+      - target:
           entity_id: switch.woonkamer_verwarming
+        action: switch.turn_on
     - alias: idle
       conditions:
       - condition: trigger
@@ -3939,17 +3957,17 @@
       sequence:
       - if:
         - condition: state
-          entity_id: sensor.presence
-          state: home
+          entity_id: binary_sensor.presence
+          state: 'on'
         then:
         - delay: 00:30:00
-        - action: switch.turn_off
-          target:
+        - target:
             entity_id: switch.woonkamer_verwarming
+          action: switch.turn_off
         else:
-        - action: switch.turn_off
-          target:
+        - target:
             entity_id: switch.woonkamer_verwarming
+          action: switch.turn_off
     - alias: 'off'
       conditions:
       - condition: trigger
@@ -3959,27 +3977,27 @@
         attribute: hvac_action
         state: 'off'
       sequence:
-      - action: switch.turn_off
-        target:
+      - target:
           entity_id: switch.woonkamer_verwarming
+        action: switch.turn_off
   mode: restart
 - id: '1757451909221'
   alias: Slaapkamer Klimaat
   description: ''
   triggers:
-  - trigger: state
-    entity_id: sensor.presence
+  - entity_id: binary_sensor.presence
     id: presence
-  - trigger: state
-    entity_id: schedule.slaapkamer_klimaat
+    trigger: state
+  - entity_id: schedule.slaapkamer_klimaat
     id: schedule
-  - trigger: state
-    entity_id: sensor.climate_mode
+    trigger: state
+  - entity_id: sensor.climate_mode
     id: climate_mode
-  - trigger: state
-    entity_id: climate.slaapkamer_thermostaat
+    trigger: state
+  - entity_id: climate.slaapkamer_thermostaat
     attribute: hvac_action
     id: thermostat
+    trigger: state
   conditions: []
   actions:
   - alias: presence or schedule
@@ -3995,8 +4013,8 @@
         entity_id: schedule.slaapkamer_klimaat
         state: 'on'
       - condition: state
-        entity_id: sensor.presence
-        state: home
+        entity_id: binary_sensor.presence
+        state: 'on'
       sequence:
       - choose:
         - alias: cold
@@ -4005,39 +4023,48 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.slaapkamer_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.slaapkamer_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 21
+              temperature: 21
+            action: climate.set_temperature
         - alias: mild
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.slaapkamer_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.slaapkamer_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 20
+              temperature: 20
+            action: climate.set_temperature
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.slaapkamer_thermostaat_custom_system_mode
+            data:
+              option: cool
+            action: select.select_option
+          - target:
               entity_id: climate.slaapkamer_thermostaat
             data:
-              hvac_mode: cool
-              target_temp_high: 24
-              target_temp_low: 16
+              temperature: 24
+            action: climate.set_temperature
     - alias: schedule off or away
       conditions:
       - condition: trigger
@@ -4051,8 +4078,8 @@
           entity_id: schedule.slaapkamer_klimaat
           state: 'off'
         - condition: state
-          entity_id: sensor.presence
-          state: away
+          entity_id: binary_sensor.presence
+          state: 'off'
       sequence:
       - choose:
         - alias: cold
@@ -4061,39 +4088,48 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.slaapkamer_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.slaapkamer_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 17
+              temperature: 18
+            action: climate.set_temperature
         - alias: mild
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.slaapkamer_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.slaapkamer_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 16
+              temperature: 17
+            action: climate.set_temperature
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.slaapkamer_thermostaat_custom_system_mode
+            data:
+              option: cool
+            action: select.select_option
+          - target:
               entity_id: climate.slaapkamer_thermostaat
             data:
-              hvac_mode: cool
-              target_temp_high: 30
-              target_temp_low: 16
+              temperature: 30
+            action: climate.set_temperature
   - alias: thermostat
     choose:
     - alias: heating
@@ -4105,9 +4141,9 @@
         attribute: hvac_action
         state: heating
       sequence:
-      - action: switch.turn_on
-        target:
+      - target:
           entity_id: switch.slaapkamer_verwarming
+        action: switch.turn_on
     - alias: idle
       conditions:
       - condition: trigger
@@ -4119,17 +4155,17 @@
       sequence:
       - if:
         - condition: state
-          entity_id: sensor.presence
-          state: home
+          entity_id: binary_sensor.presence
+          state: 'on'
         then:
         - delay: 00:30:00
-        - action: switch.turn_off
-          target:
+        - target:
             entity_id: switch.slaapkamer_verwarming
+          action: switch.turn_off
         else:
-        - action: switch.turn_off
-          target:
+        - target:
             entity_id: switch.slaapkamer_verwarming
+          action: switch.turn_off
     - alias: 'off'
       conditions:
       - condition: trigger
@@ -4139,27 +4175,27 @@
         attribute: hvac_action
         state: 'off'
       sequence:
-      - action: switch.turn_off
-        target:
+      - target:
           entity_id: switch.slaapkamer_verwarming
+        action: switch.turn_off
   mode: restart
 - id: '1757451939527'
   alias: Kantoor Klimaat
   description: ''
   triggers:
-  - trigger: state
-    entity_id: sensor.presence
+  - entity_id: binary_sensor.presence
     id: presence
-  - trigger: state
-    entity_id: schedule.kantoor_klimaat
+    trigger: state
+  - entity_id: schedule.kantoor_klimaat
     id: schedule
-  - trigger: state
-    entity_id: sensor.climate_mode
+    trigger: state
+  - entity_id: sensor.climate_mode
     id: climate_mode
-  - trigger: state
-    entity_id: climate.kantoor_thermostaat
+    trigger: state
+  - entity_id: climate.kantoor_thermostaat
     attribute: hvac_action
     id: thermostat
+    trigger: state
   conditions: []
   actions:
   - alias: presence or schedule
@@ -4175,8 +4211,8 @@
         entity_id: schedule.kantoor_klimaat
         state: 'on'
       - condition: state
-        entity_id: sensor.presence
-        state: home
+        entity_id: binary_sensor.presence
+        state: 'on'
       sequence:
       - choose:
         - alias: cold
@@ -4185,39 +4221,48 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.kantoor_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.kantoor_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 20
+              temperature: 20
+            action: climate.set_temperature
         - alias: mild
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.kantoor_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.kantoor_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 19
+              temperature: 19
+            action: climate.set_temperature
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.kantoor_thermostaat_custom_system_mode
+            data:
+              option: cool
+            action: select.select_option
+          - target:
               entity_id: climate.kantoor_thermostaat
             data:
-              hvac_mode: cool
-              target_temp_high: 24
-              target_temp_low: 16
+              temperature: 25
+            action: climate.set_temperature
     - alias: schedule off or away
       conditions:
       - condition: trigger
@@ -4231,8 +4276,8 @@
           entity_id: schedule.kantoor_klimaat
           state: 'off'
         - condition: state
-          entity_id: sensor.presence
-          state: away
+          entity_id: binary_sensor.presence
+          state: 'off'
       sequence:
       - choose:
         - alias: cold
@@ -4241,39 +4286,48 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.kantoor_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.kantoor_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 16
+              temperature: 18
+            action: climate.set_temperature
         - alias: mild
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.kantoor_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.kantoor_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 15
+              temperature: 17
+            action: climate.set_temperature
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.kantoor_thermostaat_custom_system_mode
+            data:
+              option: cool
+            action: select.select_option
+          - target:
               entity_id: climate.kantoor_thermostaat
             data:
-              hvac_mode: cool
-              target_temp_high: 30
-              target_temp_low: 16
+              temperature: 30
+            action: climate.set_temperature
   - alias: thermostat
     choose:
     - alias: heating
@@ -4285,9 +4339,9 @@
         attribute: hvac_action
         state: heating
       sequence:
-      - action: switch.turn_on
-        target:
+      - target:
           entity_id: switch.kantoor_verwarming
+        action: switch.turn_on
     - alias: idle
       conditions:
       - condition: trigger
@@ -4299,17 +4353,17 @@
       sequence:
       - if:
         - condition: state
-          entity_id: sensor.presence
-          state: home
+          entity_id: binary_sensor.presence
+          state: 'on'
         then:
         - delay: 00:30:00
-        - action: switch.turn_off
-          target:
+        - target:
             entity_id: switch.kantoor_verwarming
+          action: switch.turn_off
         else:
-        - action: switch.turn_off
-          target:
+        - target:
             entity_id: switch.kantoor_verwarming
+          action: switch.turn_off
     - alias: 'off'
       conditions:
       - condition: trigger
@@ -4319,27 +4373,27 @@
         attribute: hvac_action
         state: 'off'
       sequence:
-      - action: switch.turn_off
-        target:
+      - target:
           entity_id: switch.kantoor_verwarming
+        action: switch.turn_off
   mode: restart
 - id: '1757451987268'
   alias: Gameroom Klimaat
   description: ''
   triggers:
-  - trigger: state
-    entity_id: sensor.presence
+  - entity_id: binary_sensor.presence
     id: presence
-  - trigger: state
-    entity_id: schedule.gameroom_klimaat
+    trigger: state
+  - entity_id: schedule.gameroom_klimaat
     id: schedule
-  - trigger: state
-    entity_id: sensor.climate_mode
+    trigger: state
+  - entity_id: sensor.climate_mode
     id: climate_mode
-  - trigger: state
-    entity_id: climate.gameroom_thermostaat
+    trigger: state
+  - entity_id: climate.gameroom_thermostaat
     attribute: hvac_action
     id: thermostat
+    trigger: state
   conditions: []
   actions:
   - alias: presence or schedule
@@ -4355,8 +4409,8 @@
         entity_id: schedule.gameroom_klimaat
         state: 'on'
       - condition: state
-        entity_id: sensor.presence
-        state: home
+        entity_id: binary_sensor.presence
+        state: 'on'
       sequence:
       - choose:
         - alias: cold
@@ -4365,39 +4419,48 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.gameroom_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.gameroom_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 20
+              temperature: 20
+            action: climate.set_temperature
         - alias: mild
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.gameroom_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.gameroom_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 19
+              temperature: 19
+            action: climate.set_temperature
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.gameroom_thermostaat_custom_system_mode
+            data:
+              option: cool
+            action: select.select_option
+          - target:
               entity_id: climate.gameroom_thermostaat
             data:
-              hvac_mode: cool
-              target_temp_high: 24
-              target_temp_low: 16
+              temperature: 25
+            action: climate.set_temperature
     - alias: schedule off or away
       conditions:
       - condition: trigger
@@ -4411,8 +4474,8 @@
           entity_id: schedule.gameroom_klimaat
           state: 'off'
         - condition: state
-          entity_id: sensor.presence
-          state: away
+          entity_id: binary_sensor.presence
+          state: 'off'
       sequence:
       - choose:
         - alias: cold
@@ -4421,39 +4484,48 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.gameroom_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.gameroom_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 16
+              temperature: 18
+            action: climate.set_temperature
         - alias: mild
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.gameroom_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.gameroom_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 15
+              temperature: 17
+            action: climate.set_temperature
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.gameroom_thermostaat_custom_system_mode
+            data:
+              option: cool
+            action: select.select_option
+          - target:
               entity_id: climate.gameroom_thermostaat
             data:
-              hvac_mode: cool
-              target_temp_high: 30
-              target_temp_low: 16
+              temperature: 30
+            action: climate.set_temperature
   - alias: thermostat
     choose:
     - alias: heating
@@ -4465,9 +4537,9 @@
         attribute: hvac_action
         state: heating
       sequence:
-      - action: switch.turn_on
-        target:
+      - target:
           entity_id: switch.gameroom_verwarming
+        action: switch.turn_on
     - alias: idle
       conditions:
       - condition: trigger
@@ -4479,17 +4551,17 @@
       sequence:
       - if:
         - condition: state
-          entity_id: sensor.presence
-          state: home
+          entity_id: binary_sensor.presence
+          state: 'on'
         then:
         - delay: 00:30:00
-        - action: switch.turn_off
-          target:
+        - target:
             entity_id: switch.gameroom_verwarming
+          action: switch.turn_off
         else:
-        - action: switch.turn_off
-          target:
+        - target:
             entity_id: switch.gameroom_verwarming
+          action: switch.turn_off
     - alias: 'off'
       conditions:
       - condition: trigger
@@ -4499,27 +4571,27 @@
         attribute: hvac_action
         state: 'off'
       sequence:
-      - action: switch.turn_off
-        target:
+      - target:
           entity_id: switch.gameroom_verwarming
+        action: switch.turn_off
   mode: restart
 - id: '1757452017459'
   alias: Sauna Klimaat
   description: ''
   triggers:
-  - trigger: state
-    entity_id: sensor.presence
+  - entity_id: binary_sensor.presence
     id: presence
-  - trigger: state
-    entity_id: schedule.sauna_klimaat
+    trigger: state
+  - entity_id: schedule.sauna_klimaat
     id: schedule
-  - trigger: state
-    entity_id: sensor.climate_mode
+    trigger: state
+  - entity_id: sensor.climate_mode
     id: climate_mode
-  - trigger: state
-    entity_id: climate.sauna_thermostaat
+    trigger: state
+  - entity_id: climate.sauna_thermostaat
     attribute: hvac_action
     id: thermostat
+    trigger: state
   conditions: []
   actions:
   - alias: presence or schedule
@@ -4535,8 +4607,8 @@
         entity_id: schedule.sauna_klimaat
         state: 'on'
       - condition: state
-        entity_id: sensor.presence
-        state: home
+        entity_id: binary_sensor.presence
+        state: 'on'
       sequence:
       - choose:
         - alias: cold
@@ -4545,39 +4617,48 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.sauna_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.sauna_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 22
+              temperature: 22
+            action: climate.set_temperature
         - alias: mild
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.sauna_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.sauna_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 21
+              temperature: 21
+            action: climate.set_temperature
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.sauna_thermostaat_custom_system_mode
+            data:
+              option: cool
+            action: select.select_option
+          - target:
               entity_id: climate.sauna_thermostaat
             data:
-              hvac_mode: cool
-              target_temp_high: 24
-              target_temp_low: 16
+              temperature: 24
+            action: climate.set_temperature
     - alias: schedule off or away
       conditions:
       - condition: trigger
@@ -4591,8 +4672,8 @@
           entity_id: schedule.sauna_klimaat
           state: 'off'
         - condition: state
-          entity_id: sensor.presence
-          state: away
+          entity_id: binary_sensor.presence
+          state: 'off'
       sequence:
       - choose:
         - alias: cold
@@ -4601,39 +4682,48 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.sauna_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.sauna_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 18
+              temperature: 18
+            action: climate.set_temperature
         - alias: mild
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.sauna_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.sauna_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 17
+              temperature: 17
+            action: climate.set_temperature
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.sauna_thermostaat_custom_system_mode
+            data:
+              option: cool
+            action: select.select_option
+          - target:
               entity_id: climate.sauna_thermostaat
             data:
-              hvac_mode: cool
-              target_temp_high: 30
-              target_temp_low: 16
+              temperature: 30
+            action: climate.set_temperature
   - alias: thermostat
     choose:
     - alias: heating
@@ -4645,9 +4735,9 @@
         attribute: hvac_action
         state: heating
       sequence:
-      - action: switch.turn_on
-        target:
+      - target:
           entity_id: switch.sauna_verwarming
+        action: switch.turn_on
     - alias: idle
       conditions:
       - condition: trigger
@@ -4659,17 +4749,17 @@
       sequence:
       - if:
         - condition: state
-          entity_id: sensor.presence
-          state: home
+          entity_id: binary_sensor.presence
+          state: 'on'
         then:
         - delay: 00:30:00
-        - action: switch.turn_off
-          target:
+        - target:
             entity_id: switch.sauna_verwarming
+          action: switch.turn_off
         else:
-        - action: switch.turn_off
-          target:
+        - target:
             entity_id: switch.sauna_verwarming
+          action: switch.turn_off
     - alias: 'off'
       conditions:
       - condition: trigger
@@ -4679,27 +4769,27 @@
         attribute: hvac_action
         state: 'off'
       sequence:
-      - action: switch.turn_off
-        target:
+      - target:
           entity_id: switch.sauna_verwarming
+        action: switch.turn_off
   mode: restart
 - id: '1757452116318'
   alias: Badkamer Klimaat
   description: ''
   triggers:
-  - trigger: state
-    entity_id: sensor.presence
+  - entity_id: binary_sensor.presence
     id: presence
-  - trigger: state
-    entity_id: schedule.badkamer_klimaat
+    trigger: state
+  - entity_id: schedule.badkamer_klimaat
     id: schedule
-  - trigger: state
-    entity_id: sensor.climate_mode
+    trigger: state
+  - entity_id: sensor.climate_mode
     id: climate_mode
-  - trigger: state
-    entity_id: climate.badkamer_thermostaat
+    trigger: state
+  - entity_id: climate.badkamer_thermostaat
     attribute: hvac_action
     id: thermostat
+    trigger: state
   conditions: []
   actions:
   - alias: presence or schedule
@@ -4715,8 +4805,8 @@
         entity_id: schedule.badkamer_klimaat
         state: 'on'
       - condition: state
-        entity_id: sensor.presence
-        state: home
+        entity_id: binary_sensor.presence
+        state: 'on'
       sequence:
       - choose:
         - alias: cold
@@ -4725,39 +4815,48 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.badkamer_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.badkamer_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 22
+              temperature: 22
+            action: climate.set_temperature
         - alias: mild
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.badkamer_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.badkamer_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 21
+              temperature: 21
+            action: climate.set_temperature
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.badkamer_thermostaat_custom_system_mode
+            data:
+              option: cool
+            action: select.select_option
+          - target:
               entity_id: climate.badkamer_thermostaat
             data:
-              hvac_mode: cool
-              target_temp_high: 24
-              target_temp_low: 16
+              temperature: 24
+            action: climate.set_temperature
     - alias: schedule off or away
       conditions:
       - condition: trigger
@@ -4771,8 +4870,8 @@
           entity_id: schedule.badkamer_klimaat
           state: 'off'
         - condition: state
-          entity_id: sensor.presence
-          state: away
+          entity_id: binary_sensor.presence
+          state: 'off'
       sequence:
       - choose:
         - alias: cold
@@ -4781,39 +4880,48 @@
             entity_id: sensor.climate_mode
             state: cold
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.badkamer_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.badkamer_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 18
+              temperature: 18
+            action: climate.set_temperature
         - alias: mild
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: mild
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.badkamer_thermostaat_custom_system_mode
+            data:
+              option: heat
+            action: select.select_option
+          - target:
               entity_id: climate.badkamer_thermostaat
             data:
-              hvac_mode: heat
-              target_temp_high: 30
-              target_temp_low: 17
+              temperature: 17
+            action: climate.set_temperature
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            target:
+          - target:
+              entity_id: select.badkamer_thermostaat_custom_system_mode
+            data:
+              option: cool
+            action: select.select_option
+          - target:
               entity_id: climate.badkamer_thermostaat
             data:
-              hvac_mode: cool
-              target_temp_high: 30
-              target_temp_low: 16
+              temperature: 30
+            action: climate.set_temperature
   - alias: thermostat
     choose:
     - alias: heating
@@ -4825,9 +4933,9 @@
         attribute: hvac_action
         state: heating
       sequence:
-      - action: switch.turn_on
-        target:
+      - target:
           entity_id: switch.badkamer_verwarming
+        action: switch.turn_on
     - alias: idle
       conditions:
       - condition: trigger
@@ -4839,17 +4947,17 @@
       sequence:
       - if:
         - condition: state
-          entity_id: sensor.presence
-          state: home
+          entity_id: binary_sensor.presence
+          state: 'on'
         then:
         - delay: 00:30:00
-        - action: switch.turn_off
-          target:
+        - target:
             entity_id: switch.badkamer_verwarming
+          action: switch.turn_off
         else:
-        - action: switch.turn_off
-          target:
+        - target:
             entity_id: switch.badkamer_verwarming
+          action: switch.turn_off
     - alias: 'off'
       conditions:
       - condition: trigger
@@ -4859,9 +4967,9 @@
         attribute: hvac_action
         state: 'off'
       sequence:
-      - action: switch.turn_off
-        target:
+      - target:
           entity_id: switch.badkamer_verwarming
+        action: switch.turn_off
   mode: restart
 - id: '1759521293992'
   alias: Geofence - Notification Extended
@@ -4875,22 +4983,22 @@
       duration:
         hours: 0
         minutes: 0
-        seconds: 10
-      title_arriving: '{{ person }} arriveert'
+        seconds: 15
+      title_arriving: Geofence
       message_arriving: '{{ person }} arriveert bij {{ zone }}.'
-      title_leaving: '{{ person }} vertrekt'
+      title_leaving: Geofence
       message_leaving: '{{ person }} vertrekt van {{ zone }}.'
-      group: Geofence
       notify_group: notify
+      channel: Geofence
 - id: '1761738156612'
   alias: Raambekleding
-  description: Alle logica voor raambekleding
+  description: All logic for window coverings (time + climate)
   triggers:
-  - at: 07:00:00
-    id: 07:00
+  - at: 07:30:00
+    id: 07:30
     trigger: time
-  - at: 08:00:00
-    id: 08:00
+  - at: 08:30:00
+    id: 08:30
     trigger: time
   - at: 09:00:00
     id: 09:00
@@ -4907,38 +5015,13 @@
   - entity_id: sensor.climate_luminosity
     id: luminosity
     trigger: state
-  conditions: []
   actions:
-  - alias: Time
+  - alias: Time-based logic
     choose:
-    - alias: Time 07:00
+    - alias: 07:30
       conditions:
       - condition: trigger
-        id: 07:00
-      sequence:
-      - target:
-          entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.keuken_raambekleding
-          - input_select.tuin_raambekleding
-          - input_select.woonkamer_raambekleding
-        data:
-          option: 090%
-        action: input_select.select_option
-      - delay:
-          seconds: 5
-      - target:
-          entity_id:
-          - input_select.gang_raambekleding
-          - input_select.kantoor_raambekleding
-          - input_select.sauna_raambekleding
-        data:
-          option: 020%
-        action: input_select.select_option
-    - alias: Time 08:00
-      conditions:
-      - condition: trigger
-        id: 08:00
+        id: 07:30
       - condition: time
         weekday:
         - mon
@@ -4947,12 +5030,66 @@
         - thu
         - fri
       sequence:
-      - target:
-          entity_id: input_select.slaapkamer_raambekleding
-        data:
-          option: 020%
-        action: input_select.select_option
-    - alias: Time 10:00
+      - repeat:
+          for_each:
+          - entities:
+            - input_select.gang_raambekleding
+            - input_select.sauna_raambekleding
+            - input_select.slaapkamer_raambekleding
+            preset: 020%
+          - entities:
+            - input_select.gameroom_raambekleding
+            - input_select.kantoor_raambekleding
+            - input_select.woonkamer_raambekleding
+            preset: 020%
+          - entities:
+            - input_select.dakterras_raambekleding
+            - input_select.keuken_raambekleding
+            - input_select.tuin_raambekleding
+            preset: 090%
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item.entities }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+    - alias: 08:30
+      conditions:
+      - condition: trigger
+        id: 08:30
+      - condition: time
+        weekday:
+        - sat
+        - sun
+      sequence:
+      - repeat:
+          for_each:
+          - entities:
+            - input_select.gang_raambekleding
+            - input_select.sauna_raambekleding
+            - input_select.slaapkamer_raambekleding
+            preset: 020%
+          - entities:
+            - input_select.gameroom_raambekleding
+            - input_select.kantoor_raambekleding
+            - input_select.woonkamer_raambekleding
+            preset: 020%
+          - entities:
+            - input_select.dakterras_raambekleding
+            - input_select.keuken_raambekleding
+            - input_select.tuin_raambekleding
+            preset: 090%
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item.entities }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+    - alias: '10:00'
       conditions:
       - condition: trigger
         id: '10:00'
@@ -4972,10 +5109,14 @@
         data:
           option: 100%
         action: input_select.select_option
-    - alias: Time 11:00
+    - alias: '11:00'
       conditions:
       - condition: trigger
         id: '11:00'
+      - condition: time
+        weekday:
+        - sat
+        - sun
       sequence:
       - target:
           entity_id:
@@ -4985,77 +5126,53 @@
         data:
           option: 100%
         action: input_select.select_option
-    - alias: Time 18:00
+    - alias: '18:00'
       conditions:
       - condition: trigger
         id: '18:00'
       sequence:
-      - target:
-          entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
-          - input_select.kantoor_raambekleding
-        data:
-          option: 000%
-        action: input_select.select_option
-      - delay:
-          seconds: 5
-      - choose:
-        - alias: Time 18:00 long day
-          conditions:
-          - condition: numeric_state
-            entity_id: sensor.daylight_duration
-            above: 12
-          sequence:
-          - target:
-              entity_id:
+      - if:
+        - condition: state
+          entity_id: sensor.climate_luminosity
+          state: dark
+        then:
+        - repeat:
+            for_each:
+            - entities:
+              - input_select.gameroom_raambekleding
+              - input_select.kantoor_raambekleding
               - input_select.woonkamer_raambekleding
-            data:
-              option: 020%
-            action: input_select.select_option
-          - delay:
-              hours: 0
-              minutes: 0
-              seconds: 5
-              milliseconds: 0
-          - target:
-              entity_id:
+              preset: 000%
+            - entities:
               - input_select.gang_raambekleding
               - input_select.sauna_raambekleding
               - input_select.slaapkamer_raambekleding
-            data:
-              option: 020%
-            action: input_select.select_option
-        - alias: Time 18:00 short day
-          conditions:
-          - condition: numeric_state
-            entity_id: sensor.daylight_duration
-            below: 12
-          sequence:
-          - target:
-              entity_id:
+              preset: 000%
+            - entities:
+              - input_select.dakterras_raambekleding
               - input_select.keuken_raambekleding
               - input_select.tuin_raambekleding
-              - input_select.woonkamer_raambekleding
-            data:
-              option: 000%
-            action: input_select.select_option
-          - delay:
-              hours: 0
-              minutes: 0
-              seconds: 5
-              milliseconds: 0
-          - target:
-              entity_id:
-              - input_select.gang_raambekleding
-              - input_select.sauna_raambekleding
-              - input_select.slaapkamer_raambekleding
-            data:
-              option: 000%
-            action: input_select.select_option
-  - alias: Climate
+              preset: 000%
+            sequence:
+            - target:
+                entity_id: '{{ repeat.item.entities }}'
+              data:
+                option: '{{ repeat.item.preset }}'
+              action: input_select.select_option
+            - delay:
+                seconds: 5
+        else:
+        - target:
+            entity_id:
+            - input_select.gang_raambekleding
+            - input_select.sauna_raambekleding
+            - input_select.slaapkamer_raambekleding
+          data:
+            option: 000%
+          action: input_select.select_option
+  - alias: Climate-based logic
     choose:
-    - alias: Climate Cold + Luminosity not dark
+    - alias: cold during day
       conditions:
       - condition: trigger
         id:
@@ -5067,33 +5184,28 @@
       - condition: time
         after: 09:00:00
         before: '18:00:00'
-      - condition: state
-        entity_id: sensor.climate_luminosity
-        state:
-        - high
-        - low
-        - mid
-        - peak
       sequence:
-      - target:
-          entity_id:
-          - input_select.keuken_raambekleding
-          - input_select.kantoor_raambekleding
-          - input_select.tuin_raambekleding
-          - input_select.woonkamer_raambekleding
-        data:
-          option: 090%
-        action: input_select.select_option
-      - delay:
-          seconds: 5
-      - target:
-          entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
-        data:
-          option: 090%
-        action: input_select.select_option
-    - alias: Climate Mild + Luminosity High
+      - repeat:
+          for_each:
+          - entities:
+            - input_select.gameroom_raambekleding
+            - input_select.kantoor_raambekleding
+            - input_select.woonkamer_raambekleding
+            preset: 090%
+          - entities:
+            - input_select.dakterras_raambekleding
+            - input_select.keuken_raambekleding
+            - input_select.tuin_raambekleding
+            preset: 090%
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item.entities }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+    - alias: mild during day
       conditions:
       - condition: trigger
         id:
@@ -5102,32 +5214,116 @@
       - condition: state
         entity_id: sensor.climate_mode
         state: mild
-      - condition: state
-        entity_id: sensor.climate_luminosity
-        state: high
       - condition: time
         after: 09:00:00
         before: '18:00:00'
       sequence:
-      - target:
-          entity_id:
-          - input_select.keuken_raambekleding
-          - input_select.kantoor_raambekleding
-          - input_select.tuin_raambekleding
-          - input_select.woonkamer_raambekleding
-        data:
-          option: 080%
-        action: input_select.select_option
-      - delay:
-          seconds: 5
-      - target:
-          entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
-        data:
-          option: 080%
-        action: input_select.select_option
-    - alias: Climate Warm + Luminosity High
+      - choose:
+        - alias: low
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_luminosity
+            state: low
+          sequence:
+          - repeat:
+              for_each:
+              - entities:
+                - input_select.gameroom_raambekleding
+                - input_select.kantoor_raambekleding
+                - input_select.woonkamer_raambekleding
+                preset: 090%
+              - entities:
+                - input_select.dakterras_raambekleding
+                - input_select.keuken_raambekleding
+                - input_select.tuin_raambekleding
+                preset: 090%
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entities }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+        - alias: mid
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_luminosity
+            state: mid
+          sequence:
+          - repeat:
+              for_each:
+              - entities:
+                - input_select.gameroom_raambekleding
+                - input_select.kantoor_raambekleding
+                - input_select.woonkamer_raambekleding
+                preset: 080%
+              - entities:
+                - input_select.dakterras_raambekleding
+                - input_select.keuken_raambekleding
+                - input_select.tuin_raambekleding
+                preset: 090%
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entities }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+        - alias: high
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_luminosity
+            state: high
+          sequence:
+          - repeat:
+              for_each:
+              - entities:
+                - input_select.gameroom_raambekleding
+                - input_select.kantoor_raambekleding
+                - input_select.woonkamer_raambekleding
+                preset: 060%
+              - entities:
+                - input_select.dakterras_raambekleding
+                - input_select.keuken_raambekleding
+                - input_select.tuin_raambekleding
+                preset: 080%
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entities }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+        - alias: peak
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_luminosity
+            state: peak
+          sequence:
+          - repeat:
+              for_each:
+              - entities:
+                - input_select.gameroom_raambekleding
+                - input_select.kantoor_raambekleding
+                - input_select.woonkamer_raambekleding
+                preset: 060%
+              - entities:
+                - input_select.dakterras_raambekleding
+                - input_select.keuken_raambekleding
+                - input_select.tuin_raambekleding
+                preset: 080%
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entities }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+    - alias: warm during day
       conditions:
       - condition: trigger
         id:
@@ -5136,116 +5332,151 @@
       - condition: state
         entity_id: sensor.climate_mode
         state: warm
-      - condition: state
-        entity_id: sensor.climate_luminosity
-        state: high
-      - condition: numeric_state
-        entity_id: sensor.climate_heat_stress
-        below: 70
       - condition: time
         after: 09:00:00
         before: '18:00:00'
       sequence:
-      - target:
-          entity_id:
-          - input_select.keuken_raambekleding
-          - input_select.kantoor_raambekleding
-          - input_select.tuin_raambekleding
-          - input_select.woonkamer_raambekleding
-        data:
-          option: 060%
-        action: input_select.select_option
-      - delay:
-          seconds: 5
-      - target:
-          entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
-        data:
-          option: 060%
-        action: input_select.select_option
-    - alias: Climate Warm + Luminosity Peak + Heat Stress
+      - choose:
+        - alias: low
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_luminosity
+            state: low
+          sequence:
+          - repeat:
+              for_each:
+              - entities:
+                - input_select.gameroom_raambekleding
+                - input_select.kantoor_raambekleding
+                - input_select.woonkamer_raambekleding
+                preset: 080%
+              - entities:
+                - input_select.dakterras_raambekleding
+                - input_select.keuken_raambekleding
+                - input_select.tuin_raambekleding
+                preset: 090%
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entities }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+        - alias: mid
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_luminosity
+            state: mid
+          sequence:
+          - repeat:
+              for_each:
+              - entities:
+                - input_select.gameroom_raambekleding
+                - input_select.kantoor_raambekleding
+                - input_select.woonkamer_raambekleding
+                preset: 060%
+              - entities:
+                - input_select.dakterras_raambekleding
+                - input_select.keuken_raambekleding
+                - input_select.tuin_raambekleding
+                preset: 080%
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entities }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+        - alias: high
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_luminosity
+            state: high
+          sequence:
+          - repeat:
+              for_each:
+              - entities:
+                - input_select.gameroom_raambekleding
+                - input_select.kantoor_raambekleding
+                - input_select.woonkamer_raambekleding
+                preset: 040%
+              - entities:
+                - input_select.dakterras_raambekleding
+                - input_select.keuken_raambekleding
+                - input_select.tuin_raambekleding
+                preset: 080%
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entities }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+        - alias: peak
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_luminosity
+            state: peak
+          sequence:
+          - repeat:
+              for_each:
+              - entities:
+                - input_select.gameroom_raambekleding
+                - input_select.kantoor_raambekleding
+                - input_select.woonkamer_raambekleding
+                preset: 020%
+              - entities:
+                - input_select.dakterras_raambekleding
+                - input_select.keuken_raambekleding
+                - input_select.tuin_raambekleding
+                preset: 060%
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entities }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+    - alias: any during night
       conditions:
       - condition: trigger
         id:
         - luminosity
         - 09:00
-      - condition: state
-        entity_id: sensor.climate_mode
-        state: warm
-      - condition: state
-        entity_id: sensor.climate_luminosity
-        state: peak
-      - condition: numeric_state
-        entity_id: sensor.climate_heat_stress
-        above: 70
-      - condition: time
-        after: 09:00:00
-        before: '18:00:00'
-      sequence:
-      - target:
-          entity_id:
-          - input_select.keuken_raambekleding
-          - input_select.kantoor_raambekleding
-          - input_select.tuin_raambekleding
-          - input_select.woonkamer_raambekleding
-        data:
-          option: 020%
-        action: input_select.select_option
-      - delay:
-          seconds: 5
-      - target:
-          entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
-        data:
-          option: 020%
-        action: input_select.select_option
-    - alias: Luminosity Low
-      conditions:
-      - condition: trigger
-        id: luminosity
-      - condition: state
-        entity_id: sensor.climate_luminosity
-        state: low
       - condition: time
         after: '18:00:00'
       sequence:
-      - action: input_select.select_option
-        data:
-          option: 000%
-        target:
-          entity_id:
-          - input_select.kantoor_raambekleding
-          - input_select.sauna_raambekleding
-          - input_select.slaapkamer_raambekleding
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 5
-          milliseconds: 0
-      - action: input_select.select_option
-        data:
-          option: 000%
-        target:
-          entity_id:
-          - input_select.gang_raambekleding
-          - input_select.keuken_raambekleding
-          - input_select.tuin_raambekleding
-          - input_select.woonkamer_raambekleding
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 5
-          milliseconds: 0
-      - action: input_select.select_option
-        data:
-          option: 000%
-        target:
-          entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
-  mode: single
+      - if:
+        - condition: state
+          entity_id: sensor.climate_luminosity
+          state: dark
+        then:
+        - repeat:
+            for_each:
+            - entities:
+              - input_select.gameroom_raambekleding
+              - input_select.kantoor_raambekleding
+              - input_select.woonkamer_raambekleding
+              preset: 000%
+            - entities:
+              - input_select.dakterras_raambekleding
+              - input_select.keuken_raambekleding
+              - input_select.tuin_raambekleding
+              preset: 000%
+            sequence:
+            - target:
+                entity_id: '{{ repeat.item.entities }}'
+              data:
+                option: '{{ repeat.item.preset }}'
+              action: input_select.select_option
+            - delay:
+                seconds: 5
+  mode: queued
+  max: 3
 - id: '1761750325973'
   alias: Verlichting
   description: Alle logica voor verlichting
@@ -5332,11 +5563,11 @@
         id: '10:00'
       - condition: time
         weekday:
-        - fri
         - mon
-        - thu
         - tue
         - wed
+        - thu
+        - fri
       sequence:
       - action: light.turn_off
         target:
@@ -5517,184 +5748,160 @@
   description: Ventilatie logica op basis van tijd en aanwezigheid
   triggers:
   - at: 00:00:00
-    id: 00:00
     trigger: time
-  - at: 08:00:00
-    id: 08:00
+  - at: 07:30:00
     trigger: time
-  - entity_id: sensor.presence
-    id: presence
+  - at: 08:30:00
+    trigger: time
+  - entity_id: binary_sensor.presence
     trigger: state
   conditions: []
   actions:
-  - alias: Time
-    choose:
-    - alias: 00:00 – Nachtstand
+  - choose:
+    - alias: Away
       conditions:
-      - condition: trigger
-        id: 00:00
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'off'
       sequence:
-      - alias: Home or Away
-        choose:
-        - alias: If home
-          conditions:
-          - condition: state
-            entity_id: sensor.presence
-            state: home
-          sequence:
-          - alias: Set fan to Manual 2 Forced
-            target:
-              entity_id: fan.ducobox
-            data:
-              preset_mode: Manual 2 Forced
-            action: fan.set_preset_mode
-        - alias: If away
-          conditions:
-          - condition: state
-            entity_id: sensor.presence
-            state: away
-          sequence:
-          - alias: Set fan to Away
-            target:
-              entity_id: fan.ducobox
-            data:
-              preset_mode: Away
-            action: fan.set_preset_mode
-    - alias: 08:00 – Dagstand
+      - action: fan.set_preset_mode
+        data:
+          preset_mode: Away
+        target:
+          entity_id: fan.ducobox
+    - alias: Home
       conditions:
-      - condition: trigger
-        id: 08:00
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'on'
       sequence:
-      - alias: Home or Away
-        choose:
-        - alias: If home
+      - choose:
+        - alias: weekday
           conditions:
-          - condition: state
-            entity_id: sensor.presence
-            state: home
-          sequence:
-          - alias: Set fan to Auto
-            target:
-              entity_id: fan.ducobox
-            data:
-              preset_mode: Auto
-            action: fan.set_preset_mode
-        - alias: If away
-          conditions:
-          - condition: state
-            entity_id: sensor.presence
-            state: away
-          sequence:
-          - alias: Set fan to Away
-            target:
-              entity_id: fan.ducobox
-            data:
-              preset_mode: Away
-            action: fan.set_preset_mode
-  - alias: Presence
-    choose:
-    - alias: Presence change
-      conditions:
-      - condition: trigger
-        id: presence
-      sequence:
-      - alias: Home or Away with Time Awareness
-        choose:
-        - alias: If Home at Night
-          conditions:
-          - condition: state
-            entity_id: sensor.presence
-            state: home
           - condition: time
-            after: 00:00:00
-            before: 08:00:00
+            weekday:
+            - mon
+            - tue
+            - wed
+            - thu
+            - fri
           sequence:
-          - alias: Set fan to Manual 2 Forced
-            target:
-              entity_id: fan.ducobox
-            data:
-              preset_mode: Manual 2 Forced
-            action: fan.set_preset_mode
-        - alias: If Home at Day
+          - choose:
+            - alias: night
+              conditions:
+              - condition: time
+                before: 07:30:00
+              sequence:
+              - action: fan.set_preset_mode
+                data:
+                  preset_mode: Manual 2 Forced
+                target:
+                  entity_id: fan.ducobox
+            - alias: day
+              conditions:
+              - condition: time
+                after: 07:30:00
+              sequence:
+              - action: fan.set_preset_mode
+                data:
+                  preset_mode: Auto
+                target:
+                  entity_id: fan.ducobox
+        - alias: weekend
           conditions:
-          - condition: state
-            entity_id: sensor.presence
-            state: home
           - condition: time
-            after: 08:00:00
-            before: '23:59:59'
+            weekday:
+            - sat
+            - sun
           sequence:
-          - alias: Set fan to Auto
-            target:
-              entity_id: fan.ducobox
-            data:
-              preset_mode: Auto
-            action: fan.set_preset_mode
-        - alias: If Away
-          conditions:
-          - condition: state
-            entity_id: sensor.presence
-            state: away
-          sequence:
-          - alias: Set fan to Away
-            target:
-              entity_id: fan.ducobox
-            data:
-              preset_mode: Away
-            action: fan.set_preset_mode
+          - choose:
+            - alias: night
+              conditions:
+              - condition: time
+                before: 08:30:00
+              sequence:
+              - action: fan.set_preset_mode
+                data:
+                  preset_mode: Manual 2 Forced
+                target:
+                  entity_id: fan.ducobox
+            - alias: day
+              conditions:
+              - condition: time
+                after: 08:30:00
+              sequence:
+              - action: fan.set_preset_mode
+                data:
+                  preset_mode: Auto
+                target:
+                  entity_id: fan.ducobox
   mode: single
 - id: '1761754670623'
   alias: Alarm Logica
   description: ''
   triggers:
-  - at: 08:00:00
-    id: 08:00
+  - at: 07:30:00
+    trigger: time
+  - at: 08:30:00
     trigger: time
   - at: '23:00:00'
-    id: '23:00'
     trigger: time
-  - entity_id: sensor.presence
-    id: presence
+  - entity_id: binary_sensor.presence
     trigger: state
   conditions: []
   actions:
   - choose:
-    - alias: 08:00
+    - alias: Away
       conditions:
-      - condition: trigger
-        id: 08:00
       - condition: state
-        entity_id: sensor.presence
-        state: home
+        entity_id: binary_sensor.presence
+        state: 'off'
       sequence:
-      - alias: Disarm alarm
+      - action: alarm_control_panel.alarm_arm_away
         target:
           entity_id: alarm_control_panel.alarm
-        action: alarm_control_panel.alarm_disarm
-    - alias: '23:00'
+    - alias: Home
       conditions:
-      - condition: trigger
-        id: '23:00'
       - condition: state
-        entity_id: sensor.presence
-        state: home
+        entity_id: binary_sensor.presence
+        state: 'on'
       sequence:
-      - alias: Arm alarm night
-        target:
-          entity_id: alarm_control_panel.alarm
-        action: alarm_control_panel.alarm_arm_night
-    - alias: Presence
-      conditions:
-      - condition: trigger
-        id: presence
-      - condition: state
-        entity_id: sensor.presence
-        state: away
-      sequence:
-      - alias: Arm alarm away
-        target:
-          entity_id: alarm_control_panel.alarm
-        action: alarm_control_panel.alarm_arm_away
+      - choose:
+        - alias: weekday
+          conditions:
+          - condition: time
+            after: 07:30:00
+            before: '23:00:00'
+            weekday:
+            - mon
+            - tue
+            - wed
+            - thu
+            - fri
+          sequence:
+          - action: alarm_control_panel.alarm_disarm
+            target:
+              entity_id: alarm_control_panel.alarm
+        - alias: weekend
+          conditions:
+          - condition: time
+            after: 08:30:00
+            before: '23:00:00'
+            weekday:
+            - sat
+            - sun
+          sequence:
+          - action: alarm_control_panel.alarm_disarm
+            target:
+              entity_id: alarm_control_panel.alarm
+        - alias: night
+          conditions:
+          - condition: time
+            after: '23:00:00'
+          sequence:
+          - action: alarm_control_panel.alarm_arm_night
+            target:
+              entity_id: alarm_control_panel.alarm
   mode: single
 - id: '1761894045234'
   alias: Keuken Media
