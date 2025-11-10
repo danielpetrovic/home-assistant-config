@@ -149,3 +149,10 @@ schedule:
         to: "24:00:00"
         data:
           state: armed_night
+template:
+  - binary_sensor:
+      - name: "Presence"
+        unique_id: presence
+        device_class: presence
+        state: >
+          {{ (states('zone.home') | int) > 0 }}
