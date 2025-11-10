@@ -28,16 +28,26 @@ music_night:
   - action: music_assistant.play_media
     metadata: {}
     data:
-      media_type: playlist
+      media_type: artist
       radio_mode: false
       enqueue: replace_next
       media_id:
-      - Classical
+      - Dan Lambert
+      - Elliot Jack Sansom
+      - Max Richter
+      - Sofiane Pamart
+      - Stephan Moccio
     target:
       entity_id: media_player.slaapkamer
   - action: media_player.media_play
     metadata: {}
     data: {}
+    target:
+      entity_id: media_player.slaapkamer
+  - action: media_player.repeat_set
+    metadata: {}
+    data:
+      repeat: all
     target:
       entity_id: media_player.slaapkamer
   - action: media_player.shuffle_set
@@ -77,80 +87,24 @@ music_home:
     data: {}
     target:
       entity_id: media_player.slaapkamer
-  - choose:
-    - conditions:
-      - condition: time
-        weekday:
-        - mon
-        - wed
-        - fri
-      sequence:
-      - action: music_assistant.play_media
-        metadata: {}
-        data:
-          media_type: playlist
-          radio_mode: false
-          enqueue: replace_next
-          media_id:
-          - 80s Hits
-          - 90s Hits
-          - 00s Hits
-          - 2010s party hits
-          - Alternative
-          - Eurovision
-          - Fresh Pop
-          - Power Ballads
-          - Rock
-        target:
-          entity_id: media_player.slaapkamer
-    - conditions:
-      - condition: time
-        weekday:
-        - tue
-        - thu
-      sequence:
-      - action: music_assistant.play_media
-        metadata: {}
-        data:
-          media_type: playlist
-          radio_mode: false
-          enqueue: replace_next
-          media_id:
-          - 80s Hits
-          - 90s Hits
-          - 00s Hits
-          - 2010s party hits
-          - Alternative
-          - Eurovision
-          - Fresh Pop
-          - Power Ballads
-        target:
-          entity_id: media_player.slaapkamer
-    - conditions:
-      - condition: time
-        weekday:
-        - sat
-        - sun
-      sequence:
-      - action: music_assistant.play_media
-        metadata: {}
-        data:
-          media_type: playlist
-          radio_mode: false
-          enqueue: replace_next
-          media_id:
-          - 80s Hits
-          - 90s Hits
-          - 00s Hits
-          - 2010s party hits
-          - Alternative
-          - Eurovision
-          - Power Ballads
-        target:
-          entity_id: media_player.slaapkamer
+  - action: music_assistant.play_media
+    metadata: {}
+    data:
+      enqueue: replace_next
+      media_type: playlist
+      media_id:
+      - 500 Random tracks (from library)
+    target:
+      entity_id: media_player.slaapkamer
   - action: media_player.media_play
     metadata: {}
     data: {}
+    target:
+      entity_id: media_player.slaapkamer
+  - action: media_player.repeat_set
+    metadata: {}
+    data:
+      repeat: all
     target:
       entity_id: media_player.slaapkamer
   - action: media_player.shuffle_set
