@@ -240,9 +240,8 @@ template:
         unique_id: koeling
         state: >
           {% set climates = [
-            states('climate.alex_airco'),
-            states('climate.deni_airco'),
-            states('climate.sauna_verwarming'),
+            states('climate.gameroom_airco'),
+            states('climate.kantoor_airco'),
             states('climate.slaapkamer_airco'),
             states('climate.woonkamer_airco'),
           ] %}

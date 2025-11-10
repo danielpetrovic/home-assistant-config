@@ -3469,8 +3469,8 @@
       alarm_notifications_priority_fire:
       - critical_android
       alarm_sensor_moisture:
-      - binary_sensor.keuken_vochtmelder_water_leak
-      - binary_sensor.wasruimte_vochtmelder_water_leak
+      - binary_sensor.keuken_vochtmelder
+      - binary_sensor.wasruimte_vochtmelder
       alarm_notifications_moisture: heeft vocht gedetecteerd!
       alarm_notifications_priority_moisture:
       - critical_android
@@ -5383,8 +5383,11 @@
     trigger: time
   - at: '23:00:00'
     trigger: time
-  - entity_id: binary_sensor.presence
+  - entity_id:
+    - binary_sensor.presence
     trigger: state
+    to:
+    - 'off'
   conditions: []
   actions:
   - choose:
