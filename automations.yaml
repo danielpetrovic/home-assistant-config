@@ -2380,6 +2380,7 @@
     entity_id:
     - switch.alex_pc
     to:
+    enabled: true
   - trigger: numeric_state
     entity_id:
     - sensor.deni_pc_energiegebruik
@@ -2393,6 +2394,7 @@
     entity_id:
     - switch.deni_pc
     to:
+    enabled: true
   - trigger: numeric_state
     entity_id:
     - sensor.gameroom_bureau_energiegebruik
@@ -2406,6 +2408,7 @@
     entity_id:
     - switch.gameroom_bureau
     to:
+    enabled: true
   conditions: []
   actions:
   - choose:
@@ -4504,7 +4507,7 @@
       duration:
         hours: 0
         minutes: 0
-        seconds: 15
+        seconds: 30
       title_arriving: Geofence
       message_arriving: '{{ person }} arriveert bij {{ zone }}.'
       title_leaving: Geofence
@@ -4515,6 +4518,9 @@
   alias: Raambekleding
   description: All logic for window coverings (time + climate)
   triggers:
+  - at: 07:00:00
+    id: 07:00
+    trigger: time
   - at: 07:30:00
     id: 07:30
     trigger: time
@@ -4539,6 +4545,43 @@
   actions:
   - alias: Time-based logic
     choose:
+    - alias: 07:00
+      conditions:
+      - condition: trigger
+        id:
+        - 07:00
+      - condition: time
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+      sequence:
+      - repeat:
+          for_each:
+          - entities:
+            - input_select.gang_raambekleding
+            - input_select.sauna_raambekleding
+            preset: 020%
+          - entities:
+            - input_select.gameroom_raambekleding
+            - input_select.kantoor_raambekleding
+            - input_select.woonkamer_raambekleding
+            preset: 020%
+          - entities:
+            - input_select.dakterras_raambekleding
+            - input_select.keuken_raambekleding
+            - input_select.tuin_raambekleding
+            preset: 090%
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item.entities }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
     - alias: 07:30
       conditions:
       - condition: trigger
@@ -5286,9 +5329,9 @@
   triggers:
   - at: 00:00:00
     trigger: time
-  - at: 07:30:00
+  - at: 07:00:00
     trigger: time
-  - at: 08:30:00
+  - at: 08:00:00
     trigger: time
   - entity_id: binary_sensor.presence
     trigger: state
@@ -5327,7 +5370,7 @@
             - alias: night
               conditions:
               - condition: time
-                before: 07:30:00
+                before: 07:00:00
               sequence:
               - action: fan.set_preset_mode
                 data:
@@ -5337,7 +5380,7 @@
             - alias: day
               conditions:
               - condition: time
-                after: 07:30:00
+                after: 07:00:00
               sequence:
               - action: fan.set_preset_mode
                 data:
@@ -5355,7 +5398,7 @@
             - alias: night
               conditions:
               - condition: time
-                before: 08:30:00
+                before: 08:00:00
               sequence:
               - action: fan.set_preset_mode
                 data:
@@ -5365,7 +5408,7 @@
             - alias: day
               conditions:
               - condition: time
-                after: 08:30:00
+                after: 08:00:00
               sequence:
               - action: fan.set_preset_mode
                 data:
@@ -5485,3 +5528,24 @@
         target:
           entity_id: media_player.slaapkamer
   mode: parallel
+- id: '1763754961829'
+  alias: Robotstofzuiger
+  description: ''
+  triggers:
+  - trigger: time
+    at: 06:30:00
+  conditions: []
+  actions:
+  - action: select.select_option
+    metadata: {}
+    data:
+      option: consumer_products_cleaning_robot_enum_type_cleaning_mode_intelligent_mode
+    target:
+      entity_id: select.bg_robot_stofzuiger_schoonmaakmodus
+  - action: select.select_option
+    metadata: {}
+    data:
+      option: consumer_products_cleaning_robot_program_cleaning_clean_all
+    target:
+      entity_id: select.bg_robot_stofzuiger_actieve_programma
+  mode: single

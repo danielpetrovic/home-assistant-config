@@ -28,15 +28,10 @@ music_night:
   - action: music_assistant.play_media
     metadata: {}
     data:
-      media_type: artist
-      radio_mode: false
+      media_type: playlist
       enqueue: replace_next
       media_id:
-      - Dan Lambert
-      - Elliot Jack Sansom
-      - Max Richter
-      - Sofiane Pamart
-      - Stephan Moccio
+      - Classical
     target:
       entity_id: media_player.slaapkamer
   - action: media_player.media_play
@@ -90,10 +85,17 @@ music_home:
   - action: music_assistant.play_media
     metadata: {}
     data:
-      enqueue: replace_next
       media_type: playlist
+      enqueue: replace_next
       media_id:
-      - 500 Random tracks (from library)
+      - Alternative
+      - Dance
+      - Eurovision
+      - Hip Hop
+      - K-Pop
+      - Pop
+      - R&B
+      - Rock
     target:
       entity_id: media_player.slaapkamer
   - action: media_player.media_play
