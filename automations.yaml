@@ -4977,7 +4977,7 @@
   actions:
   - alias: Time
     choose:
-    - alias: 00:00 – Most indoor lights off
+    - alias: 00:00
       conditions:
       - condition: trigger
         id: 00:00
@@ -4999,7 +4999,7 @@
           - woonkamer
         data:
           transition: 60
-    - alias: 01:00 – All indoor lights off
+    - alias: 01:00
       conditions:
       - condition: trigger
         id: 01:00
@@ -5022,7 +5022,7 @@
           - woonkamer
         data:
           transition: 60
-    - alias: 10:00 – Weekday bedroom lights off
+    - alias: '10:00'
       conditions:
       - condition: trigger
         id: '10:00'
@@ -5039,7 +5039,7 @@
           entity_id: light.slaapkamer_lampen
         data:
           transition: 30
-    - alias: 11:00 – Bedroom lights off
+    - alias: '11:00'
       conditions:
       - condition: trigger
         id: '11:00'
@@ -5049,7 +5049,7 @@
           entity_id: light.slaapkamer_lampen
         data:
           transition: 30
-    - alias: 18:00 – Indoor evening lights
+    - alias: '18:00'
       conditions:
       - condition: trigger
         id: '18:00'
@@ -5075,7 +5075,7 @@
           color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'',''color_temp_kelvin'')
             }}'
           transition: 90
-    - alias: 18:30 – Evening adjustment
+    - alias: '18:30'
       conditions:
       - condition: trigger
         id: '18:30'
