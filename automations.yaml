@@ -1746,13 +1746,13 @@
   description: ''
   triggers:
   - entity_id:
-    - binary_sensor.entree_bewegingssensor_occupancy
+    - binary_sensor.entree_bewegingssensor
     to: 'on'
     id: motion detected
     alias: motion detected
     trigger: state
   - entity_id:
-    - binary_sensor.entree_bewegingssensor_occupancy
+    - binary_sensor.entree_bewegingssensor
     to: 'off'
     id: motion clear
     alias: motion clear
@@ -1772,7 +1772,7 @@
             }}'
           color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
             }}'
-          transition: 9
+          transition: 10
         target:
           entity_id: light.entree_lampen
       alias: motion detected
@@ -1784,7 +1784,7 @@
       - action: light.turn_off
         metadata: {}
         data:
-          transition: 9
+          transition: 10
         target:
           entity_id: light.entree_lampen
       alias: motion clear
@@ -1794,13 +1794,13 @@
   description: ''
   triggers:
   - entity_id:
-    - binary_sensor.looppad_bewegingssensor_occupancy
+    - binary_sensor.looppad_bewegingssensor
     to: 'on'
     id: motion detected
     alias: motion detected
     trigger: state
   - entity_id:
-    - binary_sensor.looppad_bewegingssensor_occupancy
+    - binary_sensor.looppad_bewegingssensor
     to: 'off'
     id: motion clear
     alias: motion clear
@@ -1824,7 +1824,7 @@
             data:
               brightness_pct: 90
               color_temp_kelvin: 3333
-              transition: 9
+              transition: 10
             target:
               entity_id: light.looppad_lampen
           alias: sunrise-sunset
@@ -1838,7 +1838,7 @@
             data:
               brightness_pct: 60
               color_temp_kelvin: 3333
-              transition: 9
+              transition: 10
             target:
               entity_id: light.looppad_lampen
           alias: sunset-sunrise
@@ -1851,7 +1851,7 @@
       - action: light.turn_off
         metadata: {}
         data:
-          transition: 9
+          transition: 10
         target:
           entity_id: light.looppad_lampen
       alias: motion clear
@@ -1904,9 +1904,6 @@
   - trigger: time
     at: 07:00:00
     id: 07:00
-  - trigger: time
-    at: 09:00:00
-    id: 09:00
   conditions: []
   actions:
   - alias: Lights
@@ -1968,24 +1965,6 @@
         metadata: {}
         target:
           entity_id: media_player.sauna
-    - conditions:
-      - condition: trigger
-        id:
-        - 09:00
-      sequence:
-      - action: media_player.join
-        metadata: {}
-        data:
-          group_members:
-          - media_player.sauna
-        target:
-          entity_id: media_player.slaapkamer
-      - action: media_player.volume_set
-        data:
-          volume_level: 0.25
-        metadata: {}
-        target:
-          entity_id: media_player.sauna
   mode: queued
   max: 10
 - id: '1706168546378'
@@ -1994,13 +1973,13 @@
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.gang_bewegingssensor_occupancy
+    - binary_sensor.gang_bewegingssensor
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.gang_bewegingssensor_occupancy
+    - binary_sensor.gang_bewegingssensor
     to: 'off'
     id: motion clear
     trigger: state
@@ -2018,7 +1997,7 @@
             }}'
           color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
             }}'
-          transition: 9
+          transition: 10
         metadata: {}
         target:
           entity_id: light.gang_lampen
@@ -2030,7 +2009,7 @@
       sequence:
       - action: light.turn_off
         data:
-          transition: 9
+          transition: 10
         metadata: {}
         target:
           entity_id: light.gang_lampen
@@ -2463,7 +2442,7 @@
       data: {}
       target:
         entity_id: switch.usw_gameroom_port_1_poe
-    enabled: true
+    enabled: false
   - alias: wifi off
     if:
     - condition: state
@@ -2481,7 +2460,7 @@
       data: {}
       target:
         entity_id: switch.usw_gameroom_port_1_poe
-    enabled: true
+    enabled: false
   mode: restart
 - id: '1736811833071'
   alias: Badkamer Knop
@@ -3406,77 +3385,6 @@
     image_url: '{{ base_url_https }}{{state_attr(''camera.voordeur'',''entity_picture'')+''&time=''}}{{as_timestamp(now())}}'
     video_url: '{{ base_url_rtsp }}/voordeur'
   mode: restart
-- id: '1746031379136'
-  alias: Alarm
-  description: ''
-  use_blueprint:
-    path: danielpetrovic/z2m-alarm-system-with-keypad.yaml
-    input:
-      alarm_main: alarm_control_panel.alarm
-      alarm_code_user:
-      - input_text.alarm_code_user_1
-      - input_text.alarm_code_user_2
-      - input_text.alarm_code_user_3
-      alarm_keypad: Alarm Paneel
-      alarm_notifications_target:
-      - 1b49bd1284b5afb6e9f5f081024a600c
-      - 0654bae851c3e493e4f82eebbd80c4b6
-      alarm_announcements_engine: tts.home_assistant_cloud
-      alarm_announcements_player:
-      - media_player.meterkast
-      alarm_sensor_away:
-      - binary_sensor.dakterras_deursensor
-      - binary_sensor.entree_deursensor
-      - binary_sensor.tuin_deursensor
-      - binary_sensor.woonkamer_raamsensor
-      alarm_notifications_armed_away: Het alarm is nu ingesteld op Afwezig modus.
-      alarm_scripts_away:
-      - script.alarm_away
-      - script.music_away
-      alarm_notifications_armed_home: Het alarm is nu ingesteld op Thuis modus.
-      alarm_scripts_home:
-      - script.alarm_home
-      - script.music_home
-      alarm_sensor_night:
-      - binary_sensor.dakterras_deursensor
-      - binary_sensor.entree_deursensor
-      - binary_sensor.tuin_deursensor
-      - binary_sensor.woonkamer_raamsensor
-      alarm_notifications_armed_night: Het alarm is nu ingesteld op Nacht modus.
-      alarm_scripts_night:
-      - script.alarm_night
-      - script.music_night
-      alarm_camera_night: camera.entree
-      alarm_notifications_arming: Het alarm wordt ingeschakeld. Verlaat het huis zo
-        snel mogelijk!
-      alarm_notifications_pending: heeft het alarm geactiveerd! Schakel het alarm
-        uit om te voorkomen dat het afgaat!
-      alarm_notifications_priority_pending:
-      - critical_android
-      alarm_scripts_pending:
-      - script.alarm_pending
-      alarm_notifications_disarmed: Het alarm is nu uitgeschakeld.
-      alarm_scripts_disarmed:
-      - script.music_home
-      - script.alarm_disarmed
-      alarm_notifications_triggered: heeft het alarm geactiveerd! Het alarm gaat af!
-      alarm_notifications_priority_triggered:
-      - critical_android
-      alarm_notifications_always: geactiveerd!
-      alarm_sensor_fire:
-      - binary_sensor.entree_brandmelder
-      - binary_sensor.gang_brandmelder
-      - binary_sensor.gameroom_brandmelder
-      - binary_sensor.schuur_brandmelder_smoke
-      alarm_notifications_fire: heeft vuur gedetecteerd!
-      alarm_notifications_priority_fire:
-      - critical_android
-      alarm_sensor_moisture:
-      - binary_sensor.keuken_vochtmelder
-      - binary_sensor.wasruimte_vochtmelder
-      alarm_notifications_moisture: heeft vocht gedetecteerd!
-      alarm_notifications_priority_moisture:
-      - critical_android
 - id: '1746611445373'
   alias: Slaapkamer Alex Beweging
   description: ''
@@ -3511,7 +3419,7 @@
             }}'
           color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
             }}'
-          transition: 9
+          transition: 10
         metadata: {}
         target:
           entity_id:
@@ -3524,7 +3432,7 @@
       sequence:
       - action: light.turn_off
         data:
-          transition: 9
+          transition: 30
         metadata: {}
         target:
           entity_id:
@@ -3565,7 +3473,7 @@
             }}'
           color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
             }}'
-          transition: 9
+          transition: 10
         metadata: {}
         target:
           entity_id:
@@ -3578,7 +3486,7 @@
       sequence:
       - action: light.turn_off
         data:
-          transition: 9
+          transition: 30
         metadata: {}
         target:
           entity_id:
@@ -3644,24 +3552,17 @@
     entity_id:
     - sensor.kantoor_bureau_energiegebruik
     for:
-      hours: 0
-      minutes: 50
+      hours: 1
+      minutes: 0
       seconds: 0
-    below: 50
-    id: low power
+    below: 40
   conditions: []
   actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - low power
-      sequence:
-      - action: switch.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id: switch.kantoor_bureau
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.kantoor_bureau
   mode: restart
 - id: '1755896860214'
   alias: Entree Knop
@@ -5528,24 +5429,226 @@
         target:
           entity_id: media_player.slaapkamer
   mode: parallel
-- id: '1763754961829'
+- id: '1764237963995'
+  alias: Kantoor Beweging
+  description: ''
+  triggers:
+  - alias: motion detected
+    entity_id:
+    - binary_sensor.kantoor_bewegingssensor
+    to: 'on'
+    id: motion detected
+    trigger: state
+  - alias: motion clear
+    entity_id:
+    - binary_sensor.kantoor_bewegingssensor
+    to:
+    - 'off'
+    id: motion clear
+    trigger: state
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  conditions:
+  - condition: or
+    conditions:
+    - condition: time
+      after: 09:00:00
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+    - condition: time
+      after: '10:00:00'
+      weekday:
+      - sat
+      - sun
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - motion detected
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+            }}'
+          transition: 10
+        metadata: {}
+        target:
+          entity_id: light.kantoor_lampen
+      alias: motion detected
+    - conditions:
+      - condition: trigger
+        id:
+        - motion clear
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: sensor.kantoor_bureau_energiegebruik
+          above: 40
+        then: []
+        else:
+        - action: light.turn_off
+          data:
+            transition: 30
+          metadata: {}
+          target:
+            entity_id: light.kantoor_lampen
+      alias: motion clear
+  mode: restart
+- id: '1764268766514'
+  alias: Keuken Beweging
+  description: ''
+  triggers:
+  - alias: motion detected
+    entity_id:
+    - binary_sensor.keuken_bewegingssensor
+    to: 'on'
+    id: motion detected
+    trigger: state
+  - alias: motion clear
+    entity_id:
+    - binary_sensor.keuken_bewegingssensor
+    to:
+    - 'off'
+    id: motion clear
+    trigger: state
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - motion detected
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+            }}'
+          transition: 10
+        metadata: {}
+        target:
+          entity_id: light.keuken_lampen
+      alias: motion detected
+    - conditions:
+      - condition: trigger
+        id:
+        - motion clear
+      sequence:
+      - action: light.turn_off
+        data:
+          transition: 30
+        metadata: {}
+        target:
+          entity_id: light.keuken_lampen
+      alias: motion clear
+  mode: restart
+- id: '1764313480952'
   alias: Robotstofzuiger
   description: ''
   triggers:
   - trigger: time
-    at: 06:30:00
+    at: 06:00:00
   conditions: []
   actions:
-  - action: select.select_option
-    metadata: {}
-    data:
-      option: consumer_products_cleaning_robot_enum_type_cleaning_mode_intelligent_mode
-    target:
-      entity_id: select.bg_robot_stofzuiger_schoonmaakmodus
   - action: select.select_option
     metadata: {}
     data:
       option: consumer_products_cleaning_robot_program_cleaning_clean_all
     target:
       entity_id: select.bg_robot_stofzuiger_actieve_programma
+  - action: select.select_option
+    metadata: {}
+    data:
+      option: consumer_products_cleaning_robot_enum_type_cleaning_mode_intelligent_mode
+    target:
+      entity_id: select.bg_robot_stofzuiger_schoonmaakmodus
   mode: single
+- id: '1764358061837'
+  alias: Alarm
+  description: ''
+  use_blueprint:
+    path: danielpetrovic/zha-alarm-system-with-keypad.yaml
+    input:
+      alarm_main: alarm_control_panel.alarm
+      alarm_code_user:
+      - input_text.alarm_code_user_1
+      - input_text.alarm_code_user_2
+      - input_text.alarm_code_user_3
+      alarm_keypad_device: a435712f3dbc11c7dfa9e34c5b6cbc20
+      alarm_keypad: alarm_control_panel.alarmpaneel_keypad
+      alarm_code_keypad: input_text.alarm_code_keypad
+      alarm_notifications_target:
+      - 1b49bd1284b5afb6e9f5f081024a600c
+      - 0654bae851c3e493e4f82eebbd80c4b6
+      alarm_announcements_engine: tts.home_assistant_cloud
+      alarm_announcements_player:
+      - media_player.meterkast
+      alarm_sensor_away:
+      - binary_sensor.dakterras_deursensor
+      - binary_sensor.entree_deursensor
+      - binary_sensor.tuin_deursensor
+      - binary_sensor.woonkamer_raamsensor
+      alarm_notifications_armed_away: Het alarm is nu ingesteld op Afwezig modus.
+      alarm_scripts_away:
+      - script.alarm_away
+      - script.music_away
+      alarm_notifications_armed_home: Het alarm is nu ingesteld op Thuis modus.
+      alarm_scripts_home:
+      - script.alarm_home
+      - script.music_home
+      alarm_sensor_night:
+      - binary_sensor.dakterras_deursensor
+      - binary_sensor.entree_deursensor
+      - binary_sensor.tuin_deursensor
+      - binary_sensor.woonkamer_raamsensor
+      alarm_notifications_armed_night: Het alarm is nu ingesteld op Nacht modus.
+      alarm_scripts_night:
+      - script.alarm_night
+      - script.music_night
+      alarm_camera_night: camera.entree
+      alarm_notifications_arming: Het alarm wordt ingeschakeld. Verlaat het huis zo
+        snel mogelijk!
+      alarm_notifications_pending: heeft het alarm geactiveerd! Schakel het alarm
+        uit om te voorkomen dat het afgaat!
+      alarm_notifications_priority_pending:
+      - critical_android
+      alarm_scripts_pending:
+      - script.alarm_pending
+      alarm_notifications_disarmed: Het alarm is nu uitgeschakeld.
+      alarm_scripts_disarmed:
+      - script.music_home
+      - script.alarm_disarmed
+      alarm_notifications_triggered: heeft het alarm geactiveerd! Het alarm gaat af!
+      alarm_notifications_priority_triggered:
+      - critical_android
+      alarm_notifications_always: geactiveerd!
+      alarm_sensor_fire:
+      - binary_sensor.entree_brandmelder
+      - binary_sensor.gang_brandmelder
+      - binary_sensor.gameroom_brandmelder
+      - binary_sensor.schuur_brandmelder_smoke
+      alarm_notifications_fire: heeft vuur gedetecteerd!
+      alarm_notifications_priority_fire:
+      - critical_android
+      alarm_sensor_moisture:
+      - binary_sensor.keuken_vochtmelder
+      - binary_sensor.wasruimte_vochtmelder
+      alarm_notifications_moisture: heeft vocht gedetecteerd!
+      alarm_notifications_priority_moisture:
+      - critical_android
+      alarm_scripts_moisture:
+      - script.lights_blue
