@@ -1,0 +1,36 @@
+media_player:
+  - platform: kef_connector
+    host: 192.168.16.20
+    name: "Badkamer KEF"
+    speaker_model: LSX2LT
+    volume_step: 0.05
+  - platform: kef_connector
+    host: 192.168.16.21
+    name: "Gameroom KEF"
+    speaker_model: LSX2
+    volume_step: 0.05
+  - platform: kef_connector
+    host: 192.168.16.22
+    name: "Kantoor KEF"
+    speaker_model: LSX2
+    volume_step: 0.05
+  - platform: kef_connector
+    host: 192.168.16.23
+    name: "Keuken KEF"
+    speaker_model: LSX2
+    volume_step: 0.05
+  - platform: kef_connector
+    host: 192.168.16.24
+    name: "Sauna KEF"
+    speaker_model: LSX2
+    volume_step: 0.05
+  - platform: kef_connector
+    host: 192.168.16.25
+    name: "Slaapkamer KEF"
+    speaker_model: LSX2
+    volume_step: 0.05
+  - platform: kef_connector
+    host: 192.168.16.26
+    name: "Woonkamer KEF"
+    speaker_model: XIO
+    volume_step: 0.05
