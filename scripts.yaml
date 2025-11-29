@@ -12,6 +12,7 @@ music_away:
       - media_player.sauna
       - media_player.slaapkamer
       - media_player.woonkamer
+      - media_player.music_assistant
   alias: Music - Away
   description: ''
   icon: mdi:music-note-off-outline
@@ -24,7 +25,7 @@ music_night:
     data: {}
     metadata: {}
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.music_assistant
   - action: music_assistant.play_media
     metadata: {}
     data:
@@ -33,24 +34,24 @@ music_night:
       media_id:
       - Classical
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.music_assistant
   - action: media_player.media_play
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.music_assistant
   - action: media_player.repeat_set
     metadata: {}
     data:
       repeat: all
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.music_assistant
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.music_assistant
   - delay:
       hours: 0
       minutes: 0
@@ -63,7 +64,7 @@ music_night:
       - media_player.keuken
       - media_player.sauna
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.music_assistant
   - action: media_player.volume_set
     metadata: {}
     data:
@@ -81,7 +82,7 @@ music_home:
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.music_assistant
   - action: music_assistant.play_media
     metadata: {}
     data:
@@ -97,24 +98,24 @@ music_home:
       - R&B
       - Rock
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.music_assistant
   - action: media_player.media_play
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.music_assistant
   - action: media_player.repeat_set
     metadata: {}
     data:
       repeat: all
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.music_assistant
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.music_assistant
   - delay:
       hours: 0
       minutes: 0
@@ -127,7 +128,7 @@ music_home:
       - media_player.keuken
       - media_player.sauna
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.music_assistant
   - action: media_player.volume_set
     metadata: {}
     data:
