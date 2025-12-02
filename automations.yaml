@@ -1772,7 +1772,7 @@
             }}'
           color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
             }}'
-          transition: 10
+          transition: 3
         target:
           entity_id: light.entree_lampen
       alias: motion detected
@@ -1784,7 +1784,7 @@
       - action: light.turn_off
         metadata: {}
         data:
-          transition: 10
+          transition: 9
         target:
           entity_id: light.entree_lampen
       alias: motion clear
@@ -1997,7 +1997,7 @@
             }}'
           color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
             }}'
-          transition: 10
+          transition: 3
         metadata: {}
         target:
           entity_id: light.gang_lampen
@@ -2009,7 +2009,7 @@
       sequence:
       - action: light.turn_off
         data:
-          transition: 10
+          transition: 9
         metadata: {}
         target:
           entity_id: light.gang_lampen
@@ -3379,6 +3379,11 @@
             rtsp://192.168.16.1:7447/nW89EmoHxiJ4koVD
         target:
           entity_id: media_player.woonkamer_tv_adb
+      enabled: false
+    - action: notify.notify
+      data:
+        message: Er heeft iemand aangebeld!
+      metadata: {}
   variables:
     base_url_https: '{{ states(''input_text.base_url_https'') }}'
     base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
@@ -5538,7 +5543,7 @@
             }}'
           color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
             }}'
-          transition: 10
+          transition: 3
         metadata: {}
         target:
           entity_id: light.keuken_lampen
@@ -5577,78 +5582,95 @@
     target:
       entity_id: select.bg_robot_stofzuiger_schoonmaakmodus
   mode: single
-- id: '1764358061837'
+- id: '1764429546417'
+  alias: Gameroom Beweging
+  description: ''
+  triggers:
+  - alias: motion detected
+    entity_id:
+    - binary_sensor.gameroom_bewegingssensor
+    to: 'on'
+    id: motion detected
+    trigger: state
+  - alias: motion clear
+    entity_id:
+    - binary_sensor.gameroom_bewegingssensor
+    to:
+    - 'off'
+    id: motion clear
+    trigger: state
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  conditions:
+  - condition: or
+    conditions:
+    - condition: time
+      after: 09:00:00
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+    - condition: time
+      after: '10:00:00'
+      weekday:
+      - sat
+      - sun
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - motion detected
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+            }}'
+          transition: 3
+        metadata: {}
+        target:
+          entity_id: light.gameroom_lampen
+      alias: motion detected
+    - conditions:
+      - condition: trigger
+        id:
+        - motion clear
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: sensor.gameroom_bureau_energiegebruik
+          above: 40
+        then: []
+        else:
+        - action: light.turn_off
+          data:
+            transition: 30
+          metadata: {}
+          target:
+            entity_id: light.gameroom_lampen
+      alias: motion clear
+  mode: restart
+- id: '1764684866906'
   alias: Alarm
   description: ''
   use_blueprint:
-    path: danielpetrovic/zha-alarm-system-with-keypad.yaml
+    path: danielpetrovic/alarm-system-with-keypad.yaml
     input:
-      alarm_main: alarm_control_panel.alarm
+      alarm_control_panel_main: alarm_control_panel.alarm
       alarm_code_user:
       - input_text.alarm_code_user_1
       - input_text.alarm_code_user_2
       - input_text.alarm_code_user_3
-      alarm_keypad_device: a435712f3dbc11c7dfa9e34c5b6cbc20
-      alarm_keypad: alarm_control_panel.alarmpaneel_keypad
-      alarm_code_keypad: input_text.alarm_code_keypad
+      integration_type:
+      - zha
       alarm_notifications_target:
-      - 1b49bd1284b5afb6e9f5f081024a600c
       - 0654bae851c3e493e4f82eebbd80c4b6
-      alarm_announcements_engine: tts.home_assistant_cloud
-      alarm_announcements_player:
-      - media_player.meterkast
-      alarm_sensor_away:
-      - binary_sensor.dakterras_deursensor
-      - binary_sensor.entree_deursensor
-      - binary_sensor.tuin_deursensor
-      - binary_sensor.woonkamer_raamsensor
-      alarm_notifications_armed_away: Het alarm is nu ingesteld op Afwezig modus.
-      alarm_scripts_away:
-      - script.alarm_away
-      - script.music_away
-      alarm_notifications_armed_home: Het alarm is nu ingesteld op Thuis modus.
-      alarm_scripts_home:
-      - script.alarm_home
-      - script.music_home
-      alarm_sensor_night:
-      - binary_sensor.dakterras_deursensor
-      - binary_sensor.entree_deursensor
-      - binary_sensor.tuin_deursensor
-      - binary_sensor.woonkamer_raamsensor
-      alarm_notifications_armed_night: Het alarm is nu ingesteld op Nacht modus.
-      alarm_scripts_night:
-      - script.alarm_night
-      - script.music_night
-      alarm_camera_night: camera.entree
-      alarm_notifications_arming: Het alarm wordt ingeschakeld. Verlaat het huis zo
-        snel mogelijk!
-      alarm_notifications_pending: heeft het alarm geactiveerd! Schakel het alarm
-        uit om te voorkomen dat het afgaat!
-      alarm_notifications_priority_pending:
-      - critical_android
-      alarm_scripts_pending:
-      - script.alarm_pending
-      alarm_notifications_disarmed: Het alarm is nu uitgeschakeld.
-      alarm_scripts_disarmed:
-      - script.music_home
-      - script.alarm_disarmed
-      alarm_notifications_triggered: heeft het alarm geactiveerd! Het alarm gaat af!
-      alarm_notifications_priority_triggered:
-      - critical_android
-      alarm_notifications_always: geactiveerd!
-      alarm_sensor_fire:
-      - binary_sensor.entree_brandmelder
-      - binary_sensor.gang_brandmelder
-      - binary_sensor.gameroom_brandmelder
-      - binary_sensor.schuur_brandmelder_smoke
-      alarm_notifications_fire: heeft vuur gedetecteerd!
-      alarm_notifications_priority_fire:
-      - critical_android
-      alarm_sensor_moisture:
-      - binary_sensor.keuken_vochtmelder
-      - binary_sensor.wasruimte_vochtmelder
-      alarm_notifications_moisture: heeft vocht gedetecteerd!
-      alarm_notifications_priority_moisture:
-      - critical_android
-      alarm_scripts_moisture:
-      - script.lights_blue
+      zha_alarm_keypad_device: a435712f3dbc11c7dfa9e34c5b6cbc20
+      zha_alarm_control_panel_keypad: alarm_control_panel.alarmpaneel_keypad
+      zha_alarm_code_keypad: input_text.alarm_code_keypad
