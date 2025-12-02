@@ -5322,76 +5322,6 @@
                 target:
                   entity_id: fan.ducobox
   mode: single
-- id: '1761754670623'
-  alias: Alarm Logica
-  description: ''
-  triggers:
-  - at: 07:30:00
-    trigger: time
-  - at: 08:30:00
-    trigger: time
-  - at: '23:00:00'
-    trigger: time
-  - entity_id:
-    - binary_sensor.presence
-    trigger: state
-    to:
-    - 'off'
-  conditions: []
-  actions:
-  - choose:
-    - alias: Away
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.presence
-        state: 'off'
-      sequence:
-      - action: alarm_control_panel.alarm_arm_away
-        target:
-          entity_id: alarm_control_panel.alarm
-    - alias: Home
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.presence
-        state: 'on'
-      sequence:
-      - choose:
-        - alias: weekday
-          conditions:
-          - condition: time
-            after: 07:30:00
-            before: '23:00:00'
-            weekday:
-            - mon
-            - tue
-            - wed
-            - thu
-            - fri
-          sequence:
-          - action: alarm_control_panel.alarm_disarm
-            target:
-              entity_id: alarm_control_panel.alarm
-        - alias: weekend
-          conditions:
-          - condition: time
-            after: 08:30:00
-            before: '23:00:00'
-            weekday:
-            - sat
-            - sun
-          sequence:
-          - action: alarm_control_panel.alarm_disarm
-            target:
-              entity_id: alarm_control_panel.alarm
-        - alias: night
-          conditions:
-          - condition: time
-            after: '23:00:00'
-          sequence:
-          - action: alarm_control_panel.alarm_arm_night
-            target:
-              entity_id: alarm_control_panel.alarm
-  mode: single
 - id: '1761894045234'
   alias: Keuken Media
   description: ''
@@ -5656,7 +5586,7 @@
             entity_id: light.gameroom_lampen
       alias: motion clear
   mode: restart
-- id: '1764684866906'
+- id: '1764712921094'
   alias: Alarm
   description: ''
   use_blueprint:
@@ -5668,9 +5598,60 @@
       - input_text.alarm_code_user_2
       - input_text.alarm_code_user_3
       integration_type:
-      - zha
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_alarm_keypad: Alarm Paneel
+      alarm_presence_sensor: binary_sensor.presence
+      alarm_auto_arm_away: true
+      alarm_auto_arm_night: true
       alarm_notifications_target:
+      - 1b49bd1284b5afb6e9f5f081024a600c
       - 0654bae851c3e493e4f82eebbd80c4b6
-      zha_alarm_keypad_device: a435712f3dbc11c7dfa9e34c5b6cbc20
-      zha_alarm_control_panel_keypad: alarm_control_panel.alarmpaneel_keypad
-      zha_alarm_code_keypad: input_text.alarm_code_keypad
+      alarm_announcements_engine: tts.home_assistant_cloud
+      alarm_announcements_player:
+      - media_player.meterkast
+      alarm_sensor_away:
+      - binary_sensor.dakterras_deursensor
+      - binary_sensor.entree_deursensor
+      - binary_sensor.tuin_deursensor
+      - binary_sensor.woonkamer_raamsensor
+      alarm_notifications_armed_away: Het alarm is nu ingesteld op Afwezig modus.
+      alarm_scripts_away:
+      - script.alarm_away
+      alarm_notifications_armed_home: Het alarm is nu ingesteld op Thuis modus.
+      alarm_scripts_home:
+      - script.alarm_home
+      - script.music_home
+      alarm_sensor_night:
+      - binary_sensor.dakterras_deursensor
+      - binary_sensor.entree_deursensor
+      - binary_sensor.tuin_deursensor
+      - binary_sensor.woonkamer_raamsensor
+      alarm_notifications_armed_night: Het alarm is nu ingesteld op Nacht modus.
+      alarm_scripts_night:
+      - script.alarm_night
+      - script.music_night
+      alarm_camera_night: camera.entree
+      alarm_notifications_arming: Het alarm wordt ingeschakeld. Verlaat het huis zo
+        snel mogelijk!
+      alarm_notifications_pending: heeft het alarm geactiveerd! Schakel het alarm
+        uit om te voorkomen dat het afgaat!
+      alarm_scripts_pending:
+      - script.alarm_pending
+      alarm_notifications_disarmed: Het alarm is nu uitgeschakeld.
+      alarm_scripts_disarmed:
+      - script.music_home
+      - script.alarm_disarmed
+      alarm_notifications_triggered: heeft het alarm geactiveerd! Het alarm gaat af!
+      alarm_notifications_always: geactiveerd!
+      alarm_sensor_fire:
+      - binary_sensor.entree_brandmelder
+      - binary_sensor.gang_brandmelder
+      - binary_sensor.gameroom_brandmelder
+      - binary_sensor.schuur_brandmelder_smoke
+      alarm_notifications_fire: heeft vuur gedetecteerd!
+      alarm_sensor_moisture:
+      - binary_sensor.wasruimte_vochtmelder
+      alarm_notifications_moisture: heeft vocht gedetecteerd!
+      alarm_scripts_moisture:
+      - script.lights_blue
