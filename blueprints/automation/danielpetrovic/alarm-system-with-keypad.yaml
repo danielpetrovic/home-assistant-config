@@ -421,12 +421,52 @@ blueprint:
           description: Here you can set the notification to be sent when the alarm is set to this mode.
           selector:
             text:
+        alarm_notifications_title_armed_away:
+          name: Notification Title
+          description: "`optional`
+
+
+            Title for the notification. If empty, uses the device name."
+          default: ""
+          selector:
+            text:
         alarm_notifications_critical_armed_away:
           name: Critical Notification
-          description: If enabled, notifications will appear no matter phone state (works for both Android and iOS).
+          description: "`Android` `iOS`
+
+
+            If enabled, notifications will appear no matter phone state."
           default: false
           selector:
             boolean:
+        alarm_notifications_status_bar_icon_armed_away:
+          name: Status Bar Icon
+          description: "`Android` `optional`
+
+
+            Sets the status bar icon."
+          default: "mdi:shield-lock"
+          selector:
+            icon:
+              placeholder: mdi:shield-lock
+        alarm_notifications_channel_armed_away:
+          name: Notification Channel
+          description: "`Android` `optional`
+
+
+            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+          default: "Alarm"
+          selector:
+            text:
+        alarm_notifications_group_armed_away:
+          name: Notification Group
+          description: "`Android` `optional`
+
+
+            Group notifications together."
+          default: "Alarm"
+          selector:
+            text:
         alarm_scripts_away:
           name: Scripts
           default: []
@@ -476,12 +516,52 @@ blueprint:
           description: Here you can set the notification to be sent when the alarm is set to this mode.
           selector:
             text:
+        alarm_notifications_title_armed_home:
+          name: Notification Title
+          description: "`optional`
+
+
+            Title for the notification. If empty, uses the device name."
+          default: ""
+          selector:
+            text:
         alarm_notifications_critical_armed_home:
           name: Critical Notification
-          description: If enabled, notifications will appear no matter phone state (works for both Android and iOS).
+          description: "`Android` `iOS`
+
+
+            If enabled, notifications will appear no matter phone state."
           default: false
           selector:
             boolean:
+        alarm_notifications_status_bar_icon_armed_home:
+          name: Status Bar Icon
+          description: "`Android` `optional`
+
+
+            Sets the status bar icon."
+          default: "mdi:shield-home"
+          selector:
+            icon:
+              placeholder: mdi:shield-home
+        alarm_notifications_channel_armed_home:
+          name: Notification Channel
+          description: "`Android` `optional`
+
+
+            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+          default: "Alarm"
+          selector:
+            text:
+        alarm_notifications_group_armed_home:
+          name: Notification Group
+          description: "`Android` `optional`
+
+
+            Group notifications together."
+          default: "Alarm"
+          selector:
+            text:
         alarm_scripts_home:
           name: Scripts
           default: []
@@ -531,12 +611,52 @@ blueprint:
           description: Here you can set the notification to be sent when the alarm is set to this mode.
           selector:
             text:
+        alarm_notifications_title_armed_night:
+          name: Notification Title
+          description: "`optional`
+
+
+            Title for the notification. If empty, uses the device name."
+          default: ""
+          selector:
+            text:
         alarm_notifications_critical_armed_night:
           name: Critical Notification
-          description: If enabled, notifications will appear no matter phone state (works for both Android and iOS).
+          description: "`Android` `iOS`
+
+
+            If enabled, notifications will appear no matter phone state."
           default: false
           selector:
             boolean:
+        alarm_notifications_status_bar_icon_armed_night:
+          name: Status Bar Icon
+          description: "`Android` `optional`
+
+
+            Sets the status bar icon."
+          default: "mdi:shield-moon"
+          selector:
+            icon:
+              placeholder: mdi:shield-moon
+        alarm_notifications_channel_armed_night:
+          name: Notification Channel
+          description: "`Android` `optional`
+
+
+            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+          default: "Alarm"
+          selector:
+            text:
+        alarm_notifications_group_armed_night:
+          name: Notification Group
+          description: "`Android` `optional`
+
+
+            Group notifications together."
+          default: "Alarm"
+          selector:
+            text:
         alarm_scripts_night:
           name: Scripts
           default: []
@@ -569,12 +689,52 @@ blueprint:
           description: Here you can set the notification to be sent when the alarm is Arming.
           selector:
             text:
+        alarm_notifications_title_arming:
+          name: Notification Title
+          description: "`optional`
+
+
+            Title for the notification. If empty, uses the device name."
+          default: ""
+          selector:
+            text:
         alarm_notifications_critical_arming:
           name: Critical Notification
-          description: If enabled, notifications will appear no matter phone state (works for both Android and iOS).
+          description: "`Android` `iOS`
+
+
+            If enabled, notifications will appear no matter phone state."
           default: false
           selector:
             boolean:
+        alarm_notifications_status_bar_icon_arming:
+          name: Status Bar Icon
+          description: "`Android` `optional`
+
+
+            Sets the status bar icon."
+          default: "mdi:shield-half-full"
+          selector:
+            icon:
+              placeholder: mdi:shield-half-full
+        alarm_notifications_channel_arming:
+          name: Notification Channel
+          description: "`Android` `optional`
+
+
+            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+          default: "Alarm"
+          selector:
+            text:
+        alarm_notifications_group_arming:
+          name: Notification Group
+          description: "`Android` `optional`
+
+
+            Group notifications together."
+          default: "Alarm"
+          selector:
+            text:
         alarm_scripts_arming:
           name: Scripts
           default: []
@@ -597,12 +757,52 @@ blueprint:
           description: Here you can set the notification to be sent when the alarm is Pending. It starts with the name of the entity that caused the state change, this cannot be changed. This is the state which is entered before triggering the alarm, if you have set a delay_time for the Alarm, otherwise it will directly go to triggered.
           selector:
             text:
+        alarm_notifications_title_pending:
+          name: Notification Title
+          description: "`optional`
+
+
+            Title for the notification. If empty, uses the device name."
+          default: ""
+          selector:
+            text:
         alarm_notifications_critical_pending:
           name: Critical Notification
-          description: If enabled, notifications will appear no matter phone state (works for both Android and iOS).
+          description: "`Android` `iOS`
+
+
+            If enabled, notifications will appear no matter phone state."
           default: false
           selector:
             boolean:
+        alarm_notifications_status_bar_icon_pending:
+          name: Status Bar Icon
+          description: "`Android` `optional`
+
+
+            Sets the status bar icon."
+          default: "mdi:shield-outline"
+          selector:
+            icon:
+              placeholder: mdi:shield-outline
+        alarm_notifications_channel_pending:
+          name: Notification Channel
+          description: "`Android` `optional`
+
+
+            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+          default: "Alarm"
+          selector:
+            text:
+        alarm_notifications_group_pending:
+          name: Notification Group
+          description: "`Android` `optional`
+
+
+            Group notifications together."
+          default: "Alarm"
+          selector:
+            text:
         alarm_scripts_pending:
           name: Scripts
           default: []
@@ -625,12 +825,52 @@ blueprint:
           description: Here you can set the notification to be sent when the alarm is Disarmed.
           selector:
             text:
+        alarm_notifications_title_disarmed:
+          name: Notification Title
+          description: "`optional`
+
+
+            Title for the notification. If empty, uses the device name."
+          default: ""
+          selector:
+            text:
         alarm_notifications_critical_disarmed:
           name: Critical Notification
-          description: If enabled, notifications will appear no matter phone state (works for both Android and iOS).
+          description: "`Android` `iOS`
+
+
+            If enabled, notifications will appear no matter phone state."
           default: false
           selector:
             boolean:
+        alarm_notifications_status_bar_icon_disarmed:
+          name: Status Bar Icon
+          description: "`Android` `optional`
+
+
+            Sets the status bar icon."
+          default: "mdi:shield-off"
+          selector:
+            icon:
+              placeholder: mdi:shield-off
+        alarm_notifications_channel_disarmed:
+          name: Notification Channel
+          description: "`Android` `optional`
+
+
+            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+          default: "Alarm"
+          selector:
+            text:
+        alarm_notifications_group_disarmed:
+          name: Notification Group
+          description: "`Android` `optional`
+
+
+            Group notifications together."
+          default: "Alarm"
+          selector:
+            text:
         alarm_scripts_disarmed:
           name: Scripts
           default: []
@@ -653,12 +893,52 @@ blueprint:
           description: Here you can set the notification to be sent when the alarm is Triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
           selector:
             text:
+        alarm_notifications_title_triggered:
+          name: Notification Title
+          description: "`optional`
+
+
+            Title for the notification. If empty, uses the device name."
+          default: ""
+          selector:
+            text:
         alarm_notifications_critical_triggered:
           name: Critical Notification
-          description: If enabled, notifications will appear no matter phone state (works for both Android and iOS).
+          description: "`Android` `iOS`
+
+
+            If enabled, notifications will appear no matter phone state."
           default: true
           selector:
             boolean:
+        alarm_notifications_status_bar_icon_triggered:
+          name: Status Bar Icon
+          description: "`Android` `optional`
+
+
+            Sets the status bar icon."
+          default: "mdi:shield-alert"
+          selector:
+            icon:
+              placeholder: mdi:shield-alert
+        alarm_notifications_channel_triggered:
+          name: Notification Channel
+          description: "`Android` `optional`
+
+
+            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+          default: "Alarm"
+          selector:
+            text:
+        alarm_notifications_group_triggered:
+          name: Notification Group
+          description: "`Android` `optional`
+
+
+            Group notifications together."
+          default: "Alarm"
+          selector:
+            text:
         alarm_scripts_triggered:
           name: Scripts
           default: []
@@ -692,12 +972,52 @@ blueprint:
           description: Here you can set the notification to be sent when the Emergency mode is activated.
           selector:
             text:
+        alarm_notifications_title_emergency:
+          name: Notification Title
+          description: "`optional`
+
+
+            Title for the notification. If empty, uses the device name."
+          default: ""
+          selector:
+            text:
         alarm_notifications_critical_emergency:
           name: Critical Notification
-          description: If enabled, notifications will appear no matter phone state (works for both Android and iOS).
+          description: "`Android` `iOS`
+
+
+            If enabled, notifications will appear no matter phone state."
           default: true
           selector:
             boolean:
+        alarm_notifications_status_bar_icon_emergency:
+          name: Status Bar Icon
+          description: "`Android` `optional`
+
+
+            Sets the status bar icon."
+          default: "mdi:shield-star"
+          selector:
+            icon:
+              placeholder: mdi:shield-star
+        alarm_notifications_channel_emergency:
+          name: Notification Channel
+          description: "`Android` `optional`
+
+
+            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+          default: "Emergency"
+          selector:
+            text:
+        alarm_notifications_group_emergency:
+          name: Notification Group
+          description: "`Android` `optional`
+
+
+            Group notifications together."
+          default: "Alarm"
+          selector:
+            text:
         alarm_scripts_emergency:
           name: Scripts
           default: []
@@ -747,12 +1067,52 @@ blueprint:
           description: Here you can set the notification to be sent when the above sensors are triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
           selector:
             text:
+        alarm_notifications_title_always:
+          name: Notification Title
+          description: "`optional`
+
+
+            Title for the notification. If empty, uses the device name."
+          default: ""
+          selector:
+            text:
         alarm_notifications_critical_always:
           name: Critical Notification
-          description: If enabled, notifications will appear no matter phone state (works for both Android and iOS).
+          description: "`Android` `iOS`
+
+
+            If enabled, notifications will appear no matter phone state."
           default: false
           selector:
             boolean:
+        alarm_notifications_status_bar_icon_always:
+          name: Status Bar Icon
+          description: "`Android` `optional`
+
+
+            Sets the status bar icon."
+          default: "mdi:shield"
+          selector:
+            icon:
+              placeholder: mdi:shield
+        alarm_notifications_channel_always:
+          name: Notification Channel
+          description: "`Android` `optional`
+
+
+            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+          default: "General"
+          selector:
+            text:
+        alarm_notifications_group_always:
+          name: Notification Group
+          description: "`Android` `optional`
+
+
+            Group notifications together."
+          default: "Alarm"
+          selector:
+            text:
         alarm_scripts_always:
           name: Scripts
           default: []
@@ -798,12 +1158,52 @@ blueprint:
           description: Here you can set the notification to be sent when the above sensors are triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
           selector:
             text:
+        alarm_notifications_title_fire:
+          name: Notification Title
+          description: "`optional`
+
+
+            Title for the notification. If empty, uses the device name."
+          default: ""
+          selector:
+            text:
         alarm_notifications_critical_fire:
           name: Critical Notification
-          description: If enabled, notifications will appear no matter phone state (works for both Android and iOS).
+          description: "`Android` `iOS`
+
+
+            If enabled, notifications will appear no matter phone state."
           default: true
           selector:
             boolean:
+        alarm_notifications_status_bar_icon_fire:
+          name: Status Bar Icon
+          description: "`Android` `optional`
+
+
+            Sets the status bar icon."
+          default: "mdi:fire-alert"
+          selector:
+            icon:
+              placeholder: mdi:fire-alert
+        alarm_notifications_channel_fire:
+          name: Notification Channel
+          description: "`Android` `optional`
+
+
+            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+          default: "Emergency"
+          selector:
+            text:
+        alarm_notifications_group_fire:
+          name: Notification Group
+          description: "`Android` `optional`
+
+
+            Group notifications together."
+          default: "Alarm"
+          selector:
+            text:
         alarm_scripts_fire:
           name: Scripts
           default: []
@@ -849,12 +1249,52 @@ blueprint:
           description: Here you can set the notification to be sent when the above sensors are triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
           selector:
             text:
+        alarm_notifications_title_gas:
+          name: Notification Title
+          description: "`optional`
+
+
+            Title for the notification. If empty, uses the device name."
+          default: ""
+          selector:
+            text:
         alarm_notifications_critical_gas:
           name: Critical Notification
-          description: If enabled, notifications will appear no matter phone state (works for both Android and iOS).
+          description: "`Android` `iOS`
+
+
+            If enabled, notifications will appear no matter phone state."
           default: true
           selector:
             boolean:
+        alarm_notifications_status_bar_icon_gas:
+          name: Status Bar Icon
+          description: "`Android` `optional`
+
+
+            Sets the status bar icon."
+          default: "mdi:smoke-detector-alert"
+          selector:
+            icon:
+              placeholder: mdi:smoke-detector-alert
+        alarm_notifications_channel_gas:
+          name: Notification Channel
+          description: "`Android` `optional`
+
+
+            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+          default: "Emergency"
+          selector:
+            text:
+        alarm_notifications_group_gas:
+          name: Notification Group
+          description: "`Android` `optional`
+
+
+            Group notifications together."
+          default: "Alarm"
+          selector:
+            text:
         alarm_scripts_gas:
           name: Scripts
           default: []
@@ -899,12 +1339,52 @@ blueprint:
           description: Here you can set the notification to be sent when the above sensors are triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
           selector:
             text:
+        alarm_notifications_title_moisture:
+          name: Notification Title
+          description: "`optional`
+
+
+            Title for the notification. If empty, uses the device name."
+          default: ""
+          selector:
+            text:
         alarm_notifications_critical_moisture:
           name: Critical Notification
-          description: If enabled, notifications will appear no matter phone state (works for both Android and iOS).
+          description: "`Android` `iOS`
+
+
+            If enabled, notifications will appear no matter phone state."
           default: true
           selector:
             boolean:
+        alarm_notifications_status_bar_icon_moisture:
+          name: Status Bar Icon
+          description: "`Android` `optional`
+
+
+            Sets the status bar icon."
+          default: "mdi:water-alert"
+          selector:
+            icon:
+              placeholder: mdi:water-alert
+        alarm_notifications_channel_moisture:
+          name: Notification Channel
+          description: "`Android` `optional`
+
+
+            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+          default: "Emergency"
+          selector:
+            text:
+        alarm_notifications_group_moisture:
+          name: Notification Group
+          description: "`Android` `optional`
+
+
+            Group notifications together."
+          default: "Alarm"
+          selector:
+            text:
         alarm_scripts_moisture:
           name: Scripts
           default: []
@@ -933,6 +1413,16 @@ trigger_variables:
   integration_type: !input integration_type
   z2m_base_topic: !input z2m_base_topic
   z2m_alarm_keypad: !input z2m_alarm_keypad
+  notification_actions:
+    - action: disarm
+      title: Alarm Disarm
+      icon: "sfsymbols:bell.slash"
+    - action: arm_home
+      title: Alarm Home
+      icon: "sfsymbols:bell.fill"
+    - action: arm_night
+      title: Alarm Night
+      icon: "sfsymbols:bell"
 
 triggers:
   - trigger: state
@@ -1051,29 +1541,77 @@ variables:
   alarm_announcements_player: !input alarm_announcements_player
   alarm_notifications_target: !input alarm_notifications_target
   alarm_notifications_armed_away: !input alarm_notifications_armed_away
+  alarm_notifications_title_armed_away: !input alarm_notifications_title_armed_away
   alarm_notifications_critical_armed_away: !input alarm_notifications_critical_armed_away
+  alarm_notifications_status_bar_icon_armed_away: !input alarm_notifications_status_bar_icon_armed_away
+  alarm_notifications_channel_armed_away: !input alarm_notifications_channel_armed_away
+  alarm_notifications_group_armed_away: !input alarm_notifications_group_armed_away
   alarm_notifications_armed_home: !input alarm_notifications_armed_home
+  alarm_notifications_title_armed_home: !input alarm_notifications_title_armed_home
   alarm_notifications_critical_armed_home: !input alarm_notifications_critical_armed_home
+  alarm_notifications_status_bar_icon_armed_home: !input alarm_notifications_status_bar_icon_armed_home
+  alarm_notifications_channel_armed_home: !input alarm_notifications_channel_armed_home
+  alarm_notifications_group_armed_home: !input alarm_notifications_group_armed_home
   alarm_notifications_armed_night: !input alarm_notifications_armed_night
+  alarm_notifications_title_armed_night: !input alarm_notifications_title_armed_night
   alarm_notifications_critical_armed_night: !input alarm_notifications_critical_armed_night
+  alarm_notifications_status_bar_icon_armed_night: !input alarm_notifications_status_bar_icon_armed_night
+  alarm_notifications_channel_armed_night: !input alarm_notifications_channel_armed_night
+  alarm_notifications_group_armed_night: !input alarm_notifications_group_armed_night
   alarm_notifications_arming: !input alarm_notifications_arming
+  alarm_notifications_title_arming: !input alarm_notifications_title_arming
   alarm_notifications_critical_arming: !input alarm_notifications_critical_arming
+  alarm_notifications_status_bar_icon_arming: !input alarm_notifications_status_bar_icon_arming
+  alarm_notifications_channel_arming: !input alarm_notifications_channel_arming
+  alarm_notifications_group_arming: !input alarm_notifications_group_arming
   alarm_notifications_pending: !input alarm_notifications_pending
+  alarm_notifications_title_pending: !input alarm_notifications_title_pending
   alarm_notifications_critical_pending: !input alarm_notifications_critical_pending
+  alarm_notifications_status_bar_icon_pending: !input alarm_notifications_status_bar_icon_pending
+  alarm_notifications_channel_pending: !input alarm_notifications_channel_pending
+  alarm_notifications_group_pending: !input alarm_notifications_group_pending
   alarm_notifications_triggered: !input alarm_notifications_triggered
+  alarm_notifications_title_triggered: !input alarm_notifications_title_triggered
   alarm_notifications_critical_triggered: !input alarm_notifications_critical_triggered
+  alarm_notifications_status_bar_icon_triggered: !input alarm_notifications_status_bar_icon_triggered
+  alarm_notifications_channel_triggered: !input alarm_notifications_channel_triggered
+  alarm_notifications_group_triggered: !input alarm_notifications_group_triggered
   alarm_notifications_disarmed: !input alarm_notifications_disarmed
+  alarm_notifications_title_disarmed: !input alarm_notifications_title_disarmed
   alarm_notifications_critical_disarmed: !input alarm_notifications_critical_disarmed
+  alarm_notifications_status_bar_icon_disarmed: !input alarm_notifications_status_bar_icon_disarmed
+  alarm_notifications_channel_disarmed: !input alarm_notifications_channel_disarmed
+  alarm_notifications_group_disarmed: !input alarm_notifications_group_disarmed
   alarm_notifications_emergency: !input alarm_notifications_emergency
+  alarm_notifications_title_emergency: !input alarm_notifications_title_emergency
   alarm_notifications_critical_emergency: !input alarm_notifications_critical_emergency
+  alarm_notifications_status_bar_icon_emergency: !input alarm_notifications_status_bar_icon_emergency
+  alarm_notifications_channel_emergency: !input alarm_notifications_channel_emergency
+  alarm_notifications_group_emergency: !input alarm_notifications_group_emergency
   alarm_notifications_always: !input alarm_notifications_always
+  alarm_notifications_title_always: !input alarm_notifications_title_always
   alarm_notifications_critical_always: !input alarm_notifications_critical_always
+  alarm_notifications_status_bar_icon_always: !input alarm_notifications_status_bar_icon_always
+  alarm_notifications_channel_always: !input alarm_notifications_channel_always
+  alarm_notifications_group_always: !input alarm_notifications_group_always
   alarm_notifications_fire: !input alarm_notifications_fire
+  alarm_notifications_title_fire: !input alarm_notifications_title_fire
   alarm_notifications_critical_fire: !input alarm_notifications_critical_fire
+  alarm_notifications_status_bar_icon_fire: !input alarm_notifications_status_bar_icon_fire
+  alarm_notifications_channel_fire: !input alarm_notifications_channel_fire
+  alarm_notifications_group_fire: !input alarm_notifications_group_fire
   alarm_notifications_gas: !input alarm_notifications_gas
+  alarm_notifications_title_gas: !input alarm_notifications_title_gas
   alarm_notifications_critical_gas: !input alarm_notifications_critical_gas
+  alarm_notifications_status_bar_icon_gas: !input alarm_notifications_status_bar_icon_gas
+  alarm_notifications_channel_gas: !input alarm_notifications_channel_gas
+  alarm_notifications_group_gas: !input alarm_notifications_group_gas
   alarm_notifications_moisture: !input alarm_notifications_moisture
+  alarm_notifications_title_moisture: !input alarm_notifications_title_moisture
   alarm_notifications_critical_moisture: !input alarm_notifications_critical_moisture
+  alarm_notifications_status_bar_icon_moisture: !input alarm_notifications_status_bar_icon_moisture
+  alarm_notifications_channel_moisture: !input alarm_notifications_channel_moisture
+  alarm_notifications_group_moisture: !input alarm_notifications_group_moisture
   alarm_sensor_fire: !input alarm_sensor_fire
   alarm_sensor_gas: !input alarm_sensor_gas
   alarm_sensor_moisture: !input alarm_sensor_moisture
@@ -1325,28 +1863,24 @@ actions:
                 value_template: "{{ alarm_notifications_target | count > 0 }}"
             then:
               - parallel:
-                  - if:
+                  - alias: Notify Critical
+                    if:
                       - condition: template
-                        value_template: "{{ alarm_notifications_critical_armed_away }}"
+                        value_template: "{{ alarm_notifications_critical_armed_away == true }}"
                     then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_armed_away }}"
                               message: "{{ alarm_notifications_armed_away }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_armed_away }}"
                                 channel: alarm_stream
+                                group: "{{ alarm_notifications_group_armed_away }}"
+                                importance: high
                                 priority: high
                                 ttl: 0
                                 push:
@@ -1354,24 +1888,23 @@ actions:
                                     name: default
                                     critical: 1
                                     volume: 1
-                    else:
+                  - alias: Notify Normal
+                    if:
+                      - condition: template
+                        value_template: "{{ alarm_notifications_critical_armed_away == false }}"
+                    then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_armed_away }}"
                               message: "{{ alarm_notifications_armed_away }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_armed_away }}"
+                                channel: "{{ alarm_notifications_channel_armed_away }}"
+                                group: "{{ alarm_notifications_group_armed_away }}"
                   - alias: Announce
                     if:
                       - condition: template
@@ -1398,28 +1931,24 @@ actions:
                 value_template: "{{ alarm_notifications_target | count > 0 }}"
             then:
               - parallel:
-                  - if:
+                  - alias: Notify Critical
+                    if:
                       - condition: template
-                        value_template: "{{ alarm_notifications_critical_armed_home }}"
+                        value_template: "{{ alarm_notifications_critical_armed_home == true }}"
                     then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_armed_home }}"
                               message: "{{ alarm_notifications_armed_home }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_armed_home }}"
                                 channel: alarm_stream
+                                group: "{{ alarm_notifications_group_armed_home }}"
+                                importance: high
                                 priority: high
                                 ttl: 0
                                 push:
@@ -1427,24 +1956,23 @@ actions:
                                     name: default
                                     critical: 1
                                     volume: 1
-                    else:
+                  - alias: Notify Normal
+                    if:
+                      - condition: template
+                        value_template: "{{ alarm_notifications_critical_armed_home == false }}"
+                    then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_armed_home }}"
                               message: "{{ alarm_notifications_armed_home }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_armed_home }}"
+                                channel: "{{ alarm_notifications_channel_armed_home }}"
+                                group: "{{ alarm_notifications_group_armed_home }}"
                   - alias: Announce
                     if:
                       - condition: template
@@ -1471,28 +1999,24 @@ actions:
                 value_template: "{{ alarm_notifications_target | count > 0 }}"
             then:
               - parallel:
-                  - if:
+                  - alias: Notify Critical
+                    if:
                       - condition: template
-                        value_template: "{{ alarm_notifications_critical_armed_night }}"
+                        value_template: "{{ alarm_notifications_critical_armed_night == true }}"
                     then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_armed_night }}"
                               message: "{{ alarm_notifications_armed_night }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_armed_night }}"
                                 channel: alarm_stream
+                                group: "{{ alarm_notifications_group_armed_night }}"
+                                importance: high
                                 priority: high
                                 ttl: 0
                                 push:
@@ -1500,24 +2024,23 @@ actions:
                                     name: default
                                     critical: 1
                                     volume: 1
-                    else:
+                  - alias: Notify Normal
+                    if:
+                      - condition: template
+                        value_template: "{{ alarm_notifications_critical_armed_night == false }}"
+                    then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_armed_night }}"
                               message: "{{ alarm_notifications_armed_night }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_armed_night }}"
+                                channel: "{{ alarm_notifications_channel_armed_night }}"
+                                group: "{{ alarm_notifications_group_armed_night }}"
                   - alias: Announce
                     if:
                       - condition: template
@@ -1544,28 +2067,24 @@ actions:
                 value_template: "{{ alarm_notifications_target | count > 0 }}"
             then:
               - parallel:
-                  - if:
+                  - alias: Notify Critical
+                    if:
                       - condition: template
-                        value_template: "{{ alarm_notifications_critical_disarmed }}"
+                        value_template: "{{ alarm_notifications_critical_disarmed == true }}"
                     then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_disarmed }}"
                               message: "{{ alarm_notifications_disarmed }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_disarmed }}"
                                 channel: alarm_stream
+                                group: "{{ alarm_notifications_group_disarmed }}"
+                                importance: high
                                 priority: high
                                 ttl: 0
                                 push:
@@ -1573,24 +2092,23 @@ actions:
                                     name: default
                                     critical: 1
                                     volume: 1
-                    else:
+                  - alias: Notify Normal
+                    if:
+                      - condition: template
+                        value_template: "{{ alarm_notifications_critical_disarmed == false }}"
+                    then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_disarmed }}"
                               message: "{{ alarm_notifications_disarmed }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_disarmed }}"
+                                channel: "{{ alarm_notifications_channel_disarmed }}"
+                                group: "{{ alarm_notifications_group_disarmed }}"
                   - alias: Announce
                     if:
                       - condition: template
@@ -1617,29 +2135,25 @@ actions:
                 value_template: "{{ alarm_notifications_target | count > 0 }}"
             then:
               - parallel:
-                  - if:
+                  - alias: Notify Critical
+                    if:
                       - condition: template
-                        value_template: "{{ alarm_notifications_critical_triggered }}"
+                        value_template: "{{ alarm_notifications_critical_triggered == true }}"
                     then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_triggered }}"
                               message: "{{ trigger.to_state.name }} {{ alarm_notifications_triggered }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
                                 entity_id: !input alarm_camera_triggered
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_triggered }}"
                                 channel: alarm_stream
+                                group: "{{ alarm_notifications_group_triggered }}"
+                                importance: high
                                 priority: high
                                 ttl: 0
                                 push:
@@ -1647,25 +2161,24 @@ actions:
                                     name: default
                                     critical: 1
                                     volume: 1
-                    else:
+                  - alias: Notify Normal
+                    if:
+                      - condition: template
+                        value_template: "{{ alarm_notifications_critical_triggered == false }}"
+                    then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_triggered }}"
                               message: "{{ trigger.to_state.name }} {{ alarm_notifications_triggered }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
                                 entity_id: !input alarm_camera_triggered
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_triggered }}"
+                                channel: "{{ alarm_notifications_channel_triggered }}"
+                                group: "{{ alarm_notifications_group_triggered }}"
                   - alias: Announce
                     if:
                       - condition: template
@@ -1692,28 +2205,24 @@ actions:
                 value_template: "{{ alarm_notifications_target | count > 0 }}"
             then:
               - parallel:
-                  - if:
+                  - alias: Notify Critical
+                    if:
                       - condition: template
-                        value_template: "{{ alarm_notifications_critical_arming }}"
+                        value_template: "{{ alarm_notifications_critical_arming == true }}"
                     then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_arming }}"
                               message: "{{ alarm_notifications_arming }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_arming }}"
                                 channel: alarm_stream
+                                group: "{{ alarm_notifications_group_arming }}"
+                                importance: high
                                 priority: high
                                 ttl: 0
                                 push:
@@ -1721,24 +2230,23 @@ actions:
                                     name: default
                                     critical: 1
                                     volume: 1
-                    else:
+                  - alias: Notify Normal
+                    if:
+                      - condition: template
+                        value_template: "{{ alarm_notifications_critical_arming == false }}"
+                    then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_arming }}"
                               message: "{{ alarm_notifications_arming }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_arming }}"
+                                channel: "{{ alarm_notifications_channel_arming }}"
+                                group: "{{ alarm_notifications_group_arming }}"
                   - alias: Announce
                     if:
                       - condition: template
@@ -1852,29 +2360,25 @@ actions:
                 value_template: "{{ alarm_notifications_target | count > 0 }}"
             then:
               - parallel:
-                  - if:
+                  - alias: Notify Critical
+                    if:
                       - condition: template
-                        value_template: "{{ alarm_notifications_critical_always }}"
+                        value_template: "{{ alarm_notifications_critical_always == true }}"
                     then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_always }}"
                               message: "{{ trigger.to_state.name }} {{ alarm_notifications_always }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
                                 entity_id: !input alarm_camera_always
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_always }}"
                                 channel: alarm_stream
+                                group: "{{ alarm_notifications_group_always }}"
+                                importance: high
                                 priority: high
                                 ttl: 0
                                 push:
@@ -1882,25 +2386,24 @@ actions:
                                     name: default
                                     critical: 1
                                     volume: 1
-                    else:
+                  - alias: Notify Normal
+                    if:
+                      - condition: template
+                        value_template: "{{ alarm_notifications_critical_always == false }}"
+                    then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_always }}"
                               message: "{{ trigger.to_state.name }} {{ alarm_notifications_always }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
                                 entity_id: !input alarm_camera_always
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_always }}"
+                                channel: "{{ alarm_notifications_channel_always }}"
+                                group: "{{ alarm_notifications_group_always }}"
       - alias: alarm_sensor_fire
         conditions:
           - condition: trigger
@@ -1912,29 +2415,25 @@ actions:
                 value_template: "{{ alarm_notifications_target | count > 0 }}"
             then:
               - parallel:
-                  - if:
+                  - alias: Notify Critical
+                    if:
                       - condition: template
-                        value_template: "{{ alarm_notifications_critical_fire }}"
+                        value_template: "{{ alarm_notifications_critical_fire == true }}"
                     then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_fire }}"
                               message: "{{ trigger.to_state.name }} {{ alarm_notifications_fire }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
                                 entity_id: !input alarm_camera_fire
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_fire }}"
                                 channel: alarm_stream
+                                group: "{{ alarm_notifications_group_fire }}"
+                                importance: high
                                 priority: high
                                 ttl: 0
                                 push:
@@ -1942,25 +2441,24 @@ actions:
                                     name: default
                                     critical: 1
                                     volume: 1
-                    else:
+                  - alias: Notify Normal
+                    if:
+                      - condition: template
+                        value_template: "{{ alarm_notifications_critical_fire == false }}"
+                    then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_fire }}"
                               message: "{{ trigger.to_state.name }} {{ alarm_notifications_fire }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
                                 entity_id: !input alarm_camera_fire
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_fire }}"
+                                channel: "{{ alarm_notifications_channel_fire }}"
+                                group: "{{ alarm_notifications_group_fire }}"
       - alias: alarm_sensor_gas
         conditions:
           - condition: trigger
@@ -1972,29 +2470,25 @@ actions:
                 value_template: "{{ alarm_notifications_target | count > 0 }}"
             then:
               - parallel:
-                  - if:
+                  - alias: Notify Critical
+                    if:
                       - condition: template
-                        value_template: "{{ alarm_notifications_critical_gas }}"
+                        value_template: "{{ alarm_notifications_critical_gas == true }}"
                     then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_gas }}"
                               message: "{{ trigger.to_state.name }} {{ alarm_notifications_gas }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
                                 entity_id: !input alarm_camera_gas
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_gas }}"
                                 channel: alarm_stream
+                                group: "{{ alarm_notifications_group_gas }}"
+                                importance: high
                                 priority: high
                                 ttl: 0
                                 push:
@@ -2002,25 +2496,24 @@ actions:
                                     name: default
                                     critical: 1
                                     volume: 1
-                    else:
+                  - alias: Notify Normal
+                    if:
+                      - condition: template
+                        value_template: "{{ alarm_notifications_critical_gas == false }}"
+                    then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_gas }}"
                               message: "{{ trigger.to_state.name }} {{ alarm_notifications_gas }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
                                 entity_id: !input alarm_camera_gas
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_gas }}"
+                                channel: "{{ alarm_notifications_channel_gas }}"
+                                group: "{{ alarm_notifications_group_gas }}"
       - alias: alarm_sensor_moisture
         conditions:
           - condition: trigger
@@ -2032,29 +2525,25 @@ actions:
                 value_template: "{{ alarm_notifications_target | count > 0 }}"
             then:
               - parallel:
-                  - if:
+                  - alias: Notify Critical
+                    if:
                       - condition: template
-                        value_template: "{{ alarm_notifications_critical_moisture }}"
+                        value_template: "{{ alarm_notifications_critical_moisture == true }}"
                     then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_moisture }}"
                               message: "{{ trigger.to_state.name }} {{ alarm_notifications_moisture }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
                                 entity_id: !input alarm_camera_moisture
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_moisture }}"
                                 channel: alarm_stream
+                                group: "{{ alarm_notifications_group_moisture }}"
+                                importance: high
                                 priority: high
                                 ttl: 0
                                 push:
@@ -2062,25 +2551,24 @@ actions:
                                     name: default
                                     critical: 1
                                     volume: 1
-                    else:
+                  - alias: Notify Normal
+                    if:
+                      - condition: template
+                        value_template: "{{ alarm_notifications_critical_moisture == false }}"
+                    then:
                       repeat:
                         for_each: !input alarm_notifications_target
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
+                              title: "{{ alarm_notifications_title_moisture }}"
                               message: "{{ trigger.to_state.name }} {{ alarm_notifications_moisture }}"
                               data:
-                                actions:
-                                  - action: disarm
-                                    title: Alarm Disarm
-                                    icon: "sfsymbols:bell.slash"
-                                  - action: arm_home
-                                    title: Alarm Home
-                                    icon: "sfsymbols:bell.fill"
-                                  - action: arm_night
-                                    title: Alarm Night
-                                    icon: "sfsymbols:bell"
+                                actions: "{{ notification_actions }}"
                                 entity_id: !input alarm_camera_moisture
+                                notification_icon: "{{ alarm_notifications_status_bar_icon_moisture }}"
+                                channel: "{{ alarm_notifications_channel_moisture }}"
+                                group: "{{ alarm_notifications_group_moisture }}"
 
   - alias: Notification Actions
     choose:
