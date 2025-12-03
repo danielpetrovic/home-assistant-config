@@ -1,6 +1,7 @@
 blueprint:
   name: Alarm System with Zigbee Keypad support (Z2M / ZHA)
   author: danielpetrovic
+  version: 2025.12.6
   description: "# Alarm System with Zigbee (Z2M / ZHA) Keypad support (KEPZB-110)\n\n
     This blueprint enables a custom Alarm system without the needs of any custom_component.\n\n
     It can sync the states with a physical keypad connected to Z2M or ZHA. I'm using it with the frient Intelligent Keypad.\n\n
@@ -19,22 +20,54 @@ blueprint:
       input:
         alarm_control_panel_main:
           name: Alarm Control Panel (Main)
-          description: Here you need to set the primary Alarm control panel. I've set it up with a Manual Alarm Panel, see instructions below how to create through YAML. Don't select a ZHA keypad here, as it doesn't support all states.
+          description: "`required`
+
+
+            Here you need to set the primary Alarm control panel. I've set it up with a Manual Alarm Panel, see instructions below how to create through YAML. Don't select a ZHA keypad here, as it doesn't support all states."
           selector:
             entity:
               filter:
                 - domain:
                     - alarm_control_panel
               multiple: false
+        alarm_code_main:
+          name: Alarm Code Main (Text Helper)
+          description: "Create a Text helper to contain the master code for the main alarm panel. If not set, the alarm panel will work without requiring a code. The format supported is 1-16 digits."
+          default: null
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_text
+              multiple: false
         alarm_code_user:
           name: Alarm Code User (Text Helper)
-          description: Create a Text helper within Home Assistant to contain the Alarm Code per user. You can set as many as you want, just make sure each code has it's own helper. The format supported is 1-16 digits including Hexadecimals for RFID tags.
+          description: "`required`
+
+
+            Create a Text helper within Home Assistant to contain the Alarm Code per user. You can set as many as you want, just make sure each code has it's own helper. The format supported is 1-16 digits including Hexadecimals for RFID tags. The friendly name of each helper will be used as the user name in notifications."
           selector:
             entity:
               filter:
                 - domain:
                     - input_text
               multiple: true
+        alarm_code_user_name:
+          name: Alarm Code User Name (Text Helper)
+          description: "Create a Text helper to temporarily store the last user's name. The blueprint will automatically update this with the friendly name of the code helper entity when someone uses the keypad. If not set, all notifications will use the Default User Name."
+          default: null
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_text
+              multiple: false
+        alarm_default_user_name:
+          name: Default User Name
+          description: "The name to use when the user is unknown (e.g., when triggered by automations). Use {user_name} in notification messages to include the user name."
+          default: "Home Assistant"
+          selector:
+            text:
     integration_type:
       name: Keypad integration
       description: Select which integration your keypad uses.
@@ -288,7 +321,7 @@ blueprint:
 
     alarm_automation_custom:
       name: Alarm Automation - Custom Schedule
-      description: Optional additional schedule for special days or patterns
+      description: Additional schedule for special days or patterns
       icon: mdi:calendar-edit
       collapsed: true
       input:
@@ -400,7 +433,7 @@ blueprint:
         alarm_sensor_away:
           name: Sensors
           default: []
-          description: Here you can set the Sensors that should trigger the alarm when it is set to Away mode. If you don't set any sensors here, the alarm will not trigger when set to this mode.
+          description: Sensors that trigger the alarm in Away mode.
           selector:
             entity:
               filter:
@@ -416,17 +449,8 @@ blueprint:
               multiple: true
         alarm_notifications_armed_away:
           name: Notification
-          default: The alarm is now in Away mode.
-          description: Here you can set the notification to be sent when the alarm is set to this mode.
-          selector:
-            text:
-        alarm_notifications_title_armed_away:
-          name: Notification Title
-          description: "`optional`
-
-
-            Title for the notification. If empty, uses the device name."
-          default: ""
+          default: "{user_name} armed the alarm in Away mode."
+          description: Notification message sent when entering this state. Use {user_name} to include the user name.
           selector:
             text:
         alarm_notifications_critical_armed_away:
@@ -440,7 +464,7 @@ blueprint:
             boolean:
         alarm_notifications_status_bar_icon_armed_away:
           name: Status Bar Icon
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Sets the status bar icon."
@@ -450,7 +474,7 @@ blueprint:
               placeholder: mdi:shield-lock
         alarm_notifications_channel_armed_away:
           name: Notification Channel
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
@@ -459,7 +483,7 @@ blueprint:
             text:
         alarm_notifications_group_armed_away:
           name: Notification Group
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Group notifications together."
@@ -469,7 +493,7 @@ blueprint:
         alarm_scripts_away:
           name: Scripts
           default: []
-          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
+          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -479,13 +503,25 @@ blueprint:
         alarm_camera_away:
           name: Camera
           default: []
-          description: Camera to show in notification when it is triggered in this mode. If not set it will just show the notification with the actions.
+          description: "`iOS` `Android`
+
+
+            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
                 - domain:
                     - camera
               multiple: false
+        alarm_camera_away_click_action:
+          name: Camera Click Action
+          default: ""
+          description: "`Android`
+
+
+            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
+          selector:
+            text:
 
     alarm_mode_home:
       name: Settings for when the alarm is set to Home mode
@@ -495,7 +531,7 @@ blueprint:
         alarm_sensor_home:
           name: Sensors
           default: []
-          description: Here you can set the Sensors that should trigger the alarm when it is set to Home mode. If you don't set any sensors here, the alarm will not trigger when set to this mode.
+          description: Sensors that trigger the alarm in Home mode.
           selector:
             entity:
               filter:
@@ -511,17 +547,8 @@ blueprint:
               multiple: true
         alarm_notifications_armed_home:
           name: Notification
-          default: The alarm is now in Home mode.
-          description: Here you can set the notification to be sent when the alarm is set to this mode.
-          selector:
-            text:
-        alarm_notifications_title_armed_home:
-          name: Notification Title
-          description: "`optional`
-
-
-            Title for the notification. If empty, uses the device name."
-          default: ""
+          default: "{user_name} armed the alarm in Home mode."
+          description: Notification message sent when entering this state. Use {user_name} to include the user name.
           selector:
             text:
         alarm_notifications_critical_armed_home:
@@ -535,7 +562,7 @@ blueprint:
             boolean:
         alarm_notifications_status_bar_icon_armed_home:
           name: Status Bar Icon
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Sets the status bar icon."
@@ -545,7 +572,7 @@ blueprint:
               placeholder: mdi:shield-home
         alarm_notifications_channel_armed_home:
           name: Notification Channel
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
@@ -554,7 +581,7 @@ blueprint:
             text:
         alarm_notifications_group_armed_home:
           name: Notification Group
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Group notifications together."
@@ -564,7 +591,7 @@ blueprint:
         alarm_scripts_home:
           name: Scripts
           default: []
-          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
+          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -574,13 +601,25 @@ blueprint:
         alarm_camera_home:
           name: Camera
           default: []
-          description: Camera to show in notification when it is triggered in this mode. If not set it will just show the notification with the actions.
+          description: "`iOS` `Android`
+
+
+            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
                 - domain:
                     - camera
               multiple: false
+        alarm_camera_home_click_action:
+          name: Camera Click Action
+          default: ""
+          description: "`Android`
+
+
+            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
+          selector:
+            text:
 
     alarm_mode_night:
       name: Settings for when the alarm is set to Night mode
@@ -590,7 +629,7 @@ blueprint:
         alarm_sensor_night:
           name: Sensors
           default: []
-          description: Here you can set the Sensors that should trigger the alarm when it is set to Night mode. If you don't set any sensors here, the alarm will not trigger when set to this mode.
+          description: Sensors that trigger the alarm in Night mode.
           selector:
             entity:
               filter:
@@ -606,17 +645,8 @@ blueprint:
               multiple: true
         alarm_notifications_armed_night:
           name: Notification
-          default: The alarm is now in Night mode.
-          description: Here you can set the notification to be sent when the alarm is set to this mode.
-          selector:
-            text:
-        alarm_notifications_title_armed_night:
-          name: Notification Title
-          description: "`optional`
-
-
-            Title for the notification. If empty, uses the device name."
-          default: ""
+          default: "{user_name} armed the alarm in Night mode."
+          description: Notification message sent when entering this state. Use {user_name} to include the user name.
           selector:
             text:
         alarm_notifications_critical_armed_night:
@@ -630,7 +660,7 @@ blueprint:
             boolean:
         alarm_notifications_status_bar_icon_armed_night:
           name: Status Bar Icon
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Sets the status bar icon."
@@ -640,7 +670,7 @@ blueprint:
               placeholder: mdi:shield-moon
         alarm_notifications_channel_armed_night:
           name: Notification Channel
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
@@ -649,7 +679,7 @@ blueprint:
             text:
         alarm_notifications_group_armed_night:
           name: Notification Group
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Group notifications together."
@@ -659,7 +689,7 @@ blueprint:
         alarm_scripts_night:
           name: Scripts
           default: []
-          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
+          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -669,13 +699,25 @@ blueprint:
         alarm_camera_night:
           name: Camera
           default: []
-          description: Camera to show in notification when it is triggered in this mode. If not set it will just show the notification with the actions.
+          description: "`iOS` `Android`
+
+
+            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
                 - domain:
                     - camera
               multiple: false
+        alarm_camera_night_click_action:
+          name: Camera Click Action
+          default: ""
+          description: "`Android`
+
+
+            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
+          selector:
+            text:
 
     alarm_mode_arming:
       name: Settings for when the alarm is Arming
@@ -684,17 +726,8 @@ blueprint:
       input:
         alarm_notifications_arming:
           name: Notification
-          default: The alarm is being set. Please exit the house promptly!
-          description: Here you can set the notification to be sent when the alarm is Arming.
-          selector:
-            text:
-        alarm_notifications_title_arming:
-          name: Notification Title
-          description: "`optional`
-
-
-            Title for the notification. If empty, uses the device name."
-          default: ""
+          default: "{user_name} is arming the alarm. Please exit the house promptly!"
+          description: Notification message sent when entering this state. Use {user_name} to include the user name.
           selector:
             text:
         alarm_notifications_critical_arming:
@@ -708,7 +741,7 @@ blueprint:
             boolean:
         alarm_notifications_status_bar_icon_arming:
           name: Status Bar Icon
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Sets the status bar icon."
@@ -718,7 +751,7 @@ blueprint:
               placeholder: mdi:shield-half-full
         alarm_notifications_channel_arming:
           name: Notification Channel
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
@@ -727,7 +760,7 @@ blueprint:
             text:
         alarm_notifications_group_arming:
           name: Notification Group
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Group notifications together."
@@ -737,7 +770,7 @@ blueprint:
         alarm_scripts_arming:
           name: Scripts
           default: []
-          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
+          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -752,17 +785,8 @@ blueprint:
       input:
         alarm_notifications_pending:
           name: Notification
-          default: triggered the alarm! Please disarm the alarm to prevent it from activating!
-          description: Here you can set the notification to be sent when the alarm is Pending. It starts with the name of the entity that caused the state change, this cannot be changed. This is the state which is entered before triggering the alarm, if you have set a delay_time for the Alarm, otherwise it will directly go to triggered.
-          selector:
-            text:
-        alarm_notifications_title_pending:
-          name: Notification Title
-          description: "`optional`
-
-
-            Title for the notification. If empty, uses the device name."
-          default: ""
+          default: "{trigger_name} triggered the alarm! Please disarm the alarm to prevent it from activating!"
+          description: Notification message sent when entering this state. Use {trigger_name} to include the entity name that triggered the alarm. This state is entered before triggering if a delay is configured.
           selector:
             text:
         alarm_notifications_critical_pending:
@@ -776,7 +800,7 @@ blueprint:
             boolean:
         alarm_notifications_status_bar_icon_pending:
           name: Status Bar Icon
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Sets the status bar icon."
@@ -786,7 +810,7 @@ blueprint:
               placeholder: mdi:shield-outline
         alarm_notifications_channel_pending:
           name: Notification Channel
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
@@ -795,7 +819,7 @@ blueprint:
             text:
         alarm_notifications_group_pending:
           name: Notification Group
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Group notifications together."
@@ -805,7 +829,7 @@ blueprint:
         alarm_scripts_pending:
           name: Scripts
           default: []
-          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
+          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -820,17 +844,8 @@ blueprint:
       input:
         alarm_notifications_disarmed:
           name: Notification
-          default: The alarm is now disarmed.
-          description: Here you can set the notification to be sent when the alarm is Disarmed.
-          selector:
-            text:
-        alarm_notifications_title_disarmed:
-          name: Notification Title
-          description: "`optional`
-
-
-            Title for the notification. If empty, uses the device name."
-          default: ""
+          default: "{user_name} disarmed the alarm."
+          description: Notification message sent when entering this state. Use {user_name} to include the user name.
           selector:
             text:
         alarm_notifications_critical_disarmed:
@@ -844,7 +859,7 @@ blueprint:
             boolean:
         alarm_notifications_status_bar_icon_disarmed:
           name: Status Bar Icon
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Sets the status bar icon."
@@ -854,7 +869,7 @@ blueprint:
               placeholder: mdi:shield-off
         alarm_notifications_channel_disarmed:
           name: Notification Channel
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
@@ -863,7 +878,7 @@ blueprint:
             text:
         alarm_notifications_group_disarmed:
           name: Notification Group
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Group notifications together."
@@ -873,7 +888,7 @@ blueprint:
         alarm_scripts_disarmed:
           name: Scripts
           default: []
-          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
+          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -888,17 +903,8 @@ blueprint:
       input:
         alarm_notifications_triggered:
           name: Notification
-          default: triggered the alarm! The alarm has been activated!
-          description: Here you can set the notification to be sent when the alarm is Triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
-          selector:
-            text:
-        alarm_notifications_title_triggered:
-          name: Notification Title
-          description: "`optional`
-
-
-            Title for the notification. If empty, uses the device name."
-          default: ""
+          default: "{trigger_name} triggered the alarm! The alarm has been activated!"
+          description: Notification message sent when entering this state. Use {trigger_name} to include the entity name that triggered the alarm.
           selector:
             text:
         alarm_notifications_critical_triggered:
@@ -912,7 +918,7 @@ blueprint:
             boolean:
         alarm_notifications_status_bar_icon_triggered:
           name: Status Bar Icon
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Sets the status bar icon."
@@ -922,7 +928,7 @@ blueprint:
               placeholder: mdi:shield-alert
         alarm_notifications_channel_triggered:
           name: Notification Channel
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
@@ -931,7 +937,7 @@ blueprint:
             text:
         alarm_notifications_group_triggered:
           name: Notification Group
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Group notifications together."
@@ -941,7 +947,7 @@ blueprint:
         alarm_scripts_triggered:
           name: Scripts
           default: []
-          description: Scripts to run when alarm changes to this mode. They will run at the same time, so the order doesn't matter.
+          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -951,13 +957,25 @@ blueprint:
         alarm_camera_triggered:
           name: Camera
           default: []
-          description: Camera to show in notification when it is triggered in this mode. If not set it will just show the notification with the actions.
+          description: "`iOS` `Android`
+
+
+            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
                 - domain:
                     - camera
               multiple: false
+        alarm_camera_triggered_click_action:
+          name: Camera Click Action
+          default: ""
+          description: "`Android`
+
+
+            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
+          selector:
+            text:
 
     alarm_mode_emergency:
       name: Settings for when Emergency mode of the Keypad is activated
@@ -968,16 +986,7 @@ blueprint:
         alarm_notifications_emergency:
           name: Notification
           default: Emergency mode activated!
-          description: Here you can set the notification to be sent when the Emergency mode is activated.
-          selector:
-            text:
-        alarm_notifications_title_emergency:
-          name: Notification Title
-          description: "`optional`
-
-
-            Title for the notification. If empty, uses the device name."
-          default: ""
+          description: Notification message sent when Emergency mode is activated on the keypad.
           selector:
             text:
         alarm_notifications_critical_emergency:
@@ -991,7 +1000,7 @@ blueprint:
             boolean:
         alarm_notifications_status_bar_icon_emergency:
           name: Status Bar Icon
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Sets the status bar icon."
@@ -1001,7 +1010,7 @@ blueprint:
               placeholder: mdi:shield-star
         alarm_notifications_channel_emergency:
           name: Notification Channel
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
@@ -1010,7 +1019,7 @@ blueprint:
             text:
         alarm_notifications_group_emergency:
           name: Notification Group
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Group notifications together."
@@ -1020,7 +1029,7 @@ blueprint:
         alarm_scripts_emergency:
           name: Scripts
           default: []
-          description: Scripts to run when the Emergency mode is activated. They will run at the same time, so the order doesn't matter.
+          description: Scripts to execute when Emergency mode is activated. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -1030,13 +1039,25 @@ blueprint:
         alarm_camera_emergency:
           name: Camera
           default: []
-          description: Camera to show in notification when the Emergency mode is activated. If not set it will just show the notification with the actions.
+          description: "`iOS` `Android`
+
+
+            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
                 - domain:
                     - camera
               multiple: false
+        alarm_camera_emergency_click_action:
+          name: Camera Click Action
+          default: ""
+          description: "`Android`
+
+
+            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
+          selector:
+            text:
 
     alarm_mode_always:
       name: Settings for actions not tied to the alarm status
@@ -1046,7 +1067,7 @@ blueprint:
         alarm_sensor_always:
           name: Sensors
           default: []
-          description: Here you can set the Sensors that should trigger a normal notification. It doesn't trigger the alarm.
+          description: Sensors that trigger notifications regardless of alarm state. Does not trigger the alarm itself.
           selector:
             entity:
               filter:
@@ -1062,17 +1083,8 @@ blueprint:
               multiple: true
         alarm_notifications_always:
           name: Notification
-          default: triggered!
-          description: Here you can set the notification to be sent when the above sensors are triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
-          selector:
-            text:
-        alarm_notifications_title_always:
-          name: Notification Title
-          description: "`optional`
-
-
-            Title for the notification. If empty, uses the device name."
-          default: ""
+          default: "{trigger_name} triggered!"
+          description: Notification message sent when a sensor is triggered. Use {trigger_name} to include the entity name.
           selector:
             text:
         alarm_notifications_critical_always:
@@ -1086,7 +1098,7 @@ blueprint:
             boolean:
         alarm_notifications_status_bar_icon_always:
           name: Status Bar Icon
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Sets the status bar icon."
@@ -1096,7 +1108,7 @@ blueprint:
               placeholder: mdi:shield
         alarm_notifications_channel_always:
           name: Notification Channel
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
@@ -1105,7 +1117,7 @@ blueprint:
             text:
         alarm_notifications_group_always:
           name: Notification Group
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Group notifications together."
@@ -1115,7 +1127,7 @@ blueprint:
         alarm_scripts_always:
           name: Scripts
           default: []
-          description: Scripts to run when the above sensors are triggered. They will run at the same time, so the order doesn't matter.
+          description: Scripts to execute when sensors are triggered. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -1125,13 +1137,25 @@ blueprint:
         alarm_camera_always:
           name: Camera
           default: []
-          description: Camera to show in notification when the above sensors are triggered. If not set it will just show the notification with the actions.
+          description: "`iOS` `Android`
+
+
+            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
                 - domain:
                     - camera
               multiple: false
+        alarm_camera_always_click_action:
+          name: Camera Click Action
+          default: ""
+          description: "`Android`
+
+
+            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
+          selector:
+            text:
 
     alarm_mode_fire:
       name: Settings for Fire, Smoke and Heat detections
@@ -1141,7 +1165,7 @@ blueprint:
         alarm_sensor_fire:
           name: Sensors
           default: []
-          description: Here you can set the Sensors that should trigger an alert. It doesn't trigger the alarm.
+          description: Fire, smoke, and heat sensors that trigger emergency notifications. Does not trigger the alarm itself.
           selector:
             entity:
               filter:
@@ -1153,17 +1177,8 @@ blueprint:
               multiple: true
         alarm_notifications_fire:
           name: Notification
-          default: detected a fire!
-          description: Here you can set the notification to be sent when the above sensors are triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
-          selector:
-            text:
-        alarm_notifications_title_fire:
-          name: Notification Title
-          description: "`optional`
-
-
-            Title for the notification. If empty, uses the device name."
-          default: ""
+          default: "{trigger_name} detected a fire!"
+          description: Notification message sent when a sensor is triggered. Use {trigger_name} to include the entity name.
           selector:
             text:
         alarm_notifications_critical_fire:
@@ -1177,7 +1192,7 @@ blueprint:
             boolean:
         alarm_notifications_status_bar_icon_fire:
           name: Status Bar Icon
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Sets the status bar icon."
@@ -1187,7 +1202,7 @@ blueprint:
               placeholder: mdi:fire-alert
         alarm_notifications_channel_fire:
           name: Notification Channel
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
@@ -1196,7 +1211,7 @@ blueprint:
             text:
         alarm_notifications_group_fire:
           name: Notification Group
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Group notifications together."
@@ -1206,7 +1221,7 @@ blueprint:
         alarm_scripts_fire:
           name: Scripts
           default: []
-          description: Scripts to run when the above sensors are triggered. They will run at the same time, so the order doesn't matter.
+          description: Scripts to execute when sensors are triggered. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -1216,13 +1231,25 @@ blueprint:
         alarm_camera_fire:
           name: Camera
           default: []
-          description: Camera to show in notification when the above sensors are triggered. If not set it will just show the notification with the actions.
+          description: "`iOS` `Android`
+
+
+            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
                 - domain:
                     - camera
               multiple: false
+        alarm_camera_fire_click_action:
+          name: Camera Click Action
+          default: ""
+          description: "`Android`
+
+
+            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
+          selector:
+            text:
 
     alarm_mode_gas:
       name: Settings for Carbon Monoxide and Gas detections
@@ -1232,7 +1259,7 @@ blueprint:
         alarm_sensor_gas:
           name: Sensors
           default: []
-          description: Here you can set the Sensors that should trigger an alert. It doesn't trigger the alarm.
+          description: Carbon monoxide and gas sensors that trigger emergency notifications. Does not trigger the alarm itself.
           selector:
             entity:
               filter:
@@ -1244,17 +1271,8 @@ blueprint:
               multiple: true
         alarm_notifications_gas:
           name: Notification
-          default: detected gas!
-          description: Here you can set the notification to be sent when the above sensors are triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
-          selector:
-            text:
-        alarm_notifications_title_gas:
-          name: Notification Title
-          description: "`optional`
-
-
-            Title for the notification. If empty, uses the device name."
-          default: ""
+          default: "{trigger_name} detected gas!"
+          description: Notification message sent when a sensor is triggered. Use {trigger_name} to include the entity name.
           selector:
             text:
         alarm_notifications_critical_gas:
@@ -1268,7 +1286,7 @@ blueprint:
             boolean:
         alarm_notifications_status_bar_icon_gas:
           name: Status Bar Icon
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Sets the status bar icon."
@@ -1278,7 +1296,7 @@ blueprint:
               placeholder: mdi:smoke-detector-alert
         alarm_notifications_channel_gas:
           name: Notification Channel
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
@@ -1287,7 +1305,7 @@ blueprint:
             text:
         alarm_notifications_group_gas:
           name: Notification Group
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Group notifications together."
@@ -1297,7 +1315,7 @@ blueprint:
         alarm_scripts_gas:
           name: Scripts
           default: []
-          description: Scripts to run when the above sensors are triggered. They will run at the same time, so the order doesn't matter.
+          description: Scripts to execute when sensors are triggered. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -1307,13 +1325,25 @@ blueprint:
         alarm_camera_gas:
           name: Camera
           default: []
-          description: Camera to show in notification when the above sensors are triggered. If not set it will just show the notification with the actions.
+          description: "`iOS` `Android`
+
+
+            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
                 - domain:
                     - camera
               multiple: false
+        alarm_camera_gas_click_action:
+          name: Camera Click Action
+          default: ""
+          description: "`Android`
+
+
+            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
+          selector:
+            text:
 
     alarm_mode_moisture:
       name: Settings for Moisture detections
@@ -1323,7 +1353,7 @@ blueprint:
         alarm_sensor_moisture:
           name: Sensors
           default: []
-          description: Here you can set the Sensors that should trigger an alert. It doesn't trigger the alarm.
+          description: Moisture sensors that trigger emergency notifications. Does not trigger the alarm itself.
           selector:
             entity:
               filter:
@@ -1334,17 +1364,8 @@ blueprint:
               multiple: true
         alarm_notifications_moisture:
           name: Notification
-          default: detected moisture!
-          description: Here you can set the notification to be sent when the above sensors are triggered. It starts with the name of the entity that caused the state change, this cannot be changed.
-          selector:
-            text:
-        alarm_notifications_title_moisture:
-          name: Notification Title
-          description: "`optional`
-
-
-            Title for the notification. If empty, uses the device name."
-          default: ""
+          default: "{trigger_name} detected moisture!"
+          description: Notification message sent when a sensor is triggered. Use {trigger_name} to include the entity name.
           selector:
             text:
         alarm_notifications_critical_moisture:
@@ -1358,7 +1379,7 @@ blueprint:
             boolean:
         alarm_notifications_status_bar_icon_moisture:
           name: Status Bar Icon
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Sets the status bar icon."
@@ -1368,7 +1389,7 @@ blueprint:
               placeholder: mdi:water-alert
         alarm_notifications_channel_moisture:
           name: Notification Channel
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
@@ -1377,7 +1398,7 @@ blueprint:
             text:
         alarm_notifications_group_moisture:
           name: Notification Group
-          description: "`Android` `optional`
+          description: "`Android`
 
 
             Group notifications together."
@@ -1387,7 +1408,7 @@ blueprint:
         alarm_scripts_moisture:
           name: Scripts
           default: []
-          description: Scripts to run when the above sensors are triggered. They will run at the same time, so the order doesn't matter.
+          description: Scripts to execute when sensors are triggered. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -1397,13 +1418,25 @@ blueprint:
         alarm_camera_moisture:
           name: Camera
           default: []
-          description: Camera to show in notification when the above sensors are triggered. If not set it will just show the notification with the actions.
+          description: "`iOS` `Android`
+
+
+            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
                 - domain:
                     - camera
               multiple: false
+        alarm_camera_moisture_click_action:
+          name: Camera Click Action
+          default: ""
+          description: "`Android`
+
+
+            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
+          selector:
+            text:
 
 mode: parallel
 max_exceeded: silent
@@ -1528,8 +1561,12 @@ triggers:
 
 variables:
   alarm_main: !input alarm_control_panel_main
+  alarm_code_main: !input alarm_code_main
+  alarm_code_main_state: "{{ states(alarm_code_main) if alarm_code_main != none else '' }}"
   alarm_codes: !input alarm_code_user
   alarm_codes_state: "{{ alarm_codes | map('states') | list }}"
+  alarm_code_user_name: !input alarm_code_user_name
+  alarm_default_user_name: !input alarm_default_user_name
   integration_type: !input integration_type
   z2m_base_topic: !input z2m_base_topic
   z2m_alarm_keypad: !input z2m_alarm_keypad
@@ -1540,73 +1577,61 @@ variables:
   alarm_announcements_player: !input alarm_announcements_player
   alarm_notifications_target: !input alarm_notifications_target
   alarm_notifications_armed_away: !input alarm_notifications_armed_away
-  alarm_notifications_title_armed_away: !input alarm_notifications_title_armed_away
   alarm_notifications_critical_armed_away: !input alarm_notifications_critical_armed_away
   alarm_notifications_status_bar_icon_armed_away: !input alarm_notifications_status_bar_icon_armed_away
   alarm_notifications_channel_armed_away: !input alarm_notifications_channel_armed_away
   alarm_notifications_group_armed_away: !input alarm_notifications_group_armed_away
   alarm_notifications_armed_home: !input alarm_notifications_armed_home
-  alarm_notifications_title_armed_home: !input alarm_notifications_title_armed_home
   alarm_notifications_critical_armed_home: !input alarm_notifications_critical_armed_home
   alarm_notifications_status_bar_icon_armed_home: !input alarm_notifications_status_bar_icon_armed_home
   alarm_notifications_channel_armed_home: !input alarm_notifications_channel_armed_home
   alarm_notifications_group_armed_home: !input alarm_notifications_group_armed_home
   alarm_notifications_armed_night: !input alarm_notifications_armed_night
-  alarm_notifications_title_armed_night: !input alarm_notifications_title_armed_night
   alarm_notifications_critical_armed_night: !input alarm_notifications_critical_armed_night
   alarm_notifications_status_bar_icon_armed_night: !input alarm_notifications_status_bar_icon_armed_night
   alarm_notifications_channel_armed_night: !input alarm_notifications_channel_armed_night
   alarm_notifications_group_armed_night: !input alarm_notifications_group_armed_night
   alarm_notifications_arming: !input alarm_notifications_arming
-  alarm_notifications_title_arming: !input alarm_notifications_title_arming
   alarm_notifications_critical_arming: !input alarm_notifications_critical_arming
   alarm_notifications_status_bar_icon_arming: !input alarm_notifications_status_bar_icon_arming
   alarm_notifications_channel_arming: !input alarm_notifications_channel_arming
   alarm_notifications_group_arming: !input alarm_notifications_group_arming
   alarm_notifications_pending: !input alarm_notifications_pending
-  alarm_notifications_title_pending: !input alarm_notifications_title_pending
   alarm_notifications_critical_pending: !input alarm_notifications_critical_pending
   alarm_notifications_status_bar_icon_pending: !input alarm_notifications_status_bar_icon_pending
   alarm_notifications_channel_pending: !input alarm_notifications_channel_pending
   alarm_notifications_group_pending: !input alarm_notifications_group_pending
   alarm_notifications_triggered: !input alarm_notifications_triggered
-  alarm_notifications_title_triggered: !input alarm_notifications_title_triggered
   alarm_notifications_critical_triggered: !input alarm_notifications_critical_triggered
   alarm_notifications_status_bar_icon_triggered: !input alarm_notifications_status_bar_icon_triggered
   alarm_notifications_channel_triggered: !input alarm_notifications_channel_triggered
   alarm_notifications_group_triggered: !input alarm_notifications_group_triggered
   alarm_notifications_disarmed: !input alarm_notifications_disarmed
-  alarm_notifications_title_disarmed: !input alarm_notifications_title_disarmed
   alarm_notifications_critical_disarmed: !input alarm_notifications_critical_disarmed
   alarm_notifications_status_bar_icon_disarmed: !input alarm_notifications_status_bar_icon_disarmed
   alarm_notifications_channel_disarmed: !input alarm_notifications_channel_disarmed
   alarm_notifications_group_disarmed: !input alarm_notifications_group_disarmed
   alarm_notifications_emergency: !input alarm_notifications_emergency
-  alarm_notifications_title_emergency: !input alarm_notifications_title_emergency
   alarm_notifications_critical_emergency: !input alarm_notifications_critical_emergency
   alarm_notifications_status_bar_icon_emergency: !input alarm_notifications_status_bar_icon_emergency
   alarm_notifications_channel_emergency: !input alarm_notifications_channel_emergency
   alarm_notifications_group_emergency: !input alarm_notifications_group_emergency
   alarm_notifications_always: !input alarm_notifications_always
-  alarm_notifications_title_always: !input alarm_notifications_title_always
   alarm_notifications_critical_always: !input alarm_notifications_critical_always
   alarm_notifications_status_bar_icon_always: !input alarm_notifications_status_bar_icon_always
   alarm_notifications_channel_always: !input alarm_notifications_channel_always
   alarm_notifications_group_always: !input alarm_notifications_group_always
   alarm_notifications_fire: !input alarm_notifications_fire
-  alarm_notifications_title_fire: !input alarm_notifications_title_fire
   alarm_notifications_critical_fire: !input alarm_notifications_critical_fire
   alarm_notifications_status_bar_icon_fire: !input alarm_notifications_status_bar_icon_fire
   alarm_notifications_channel_fire: !input alarm_notifications_channel_fire
   alarm_notifications_group_fire: !input alarm_notifications_group_fire
   alarm_notifications_gas: !input alarm_notifications_gas
-  alarm_notifications_title_gas: !input alarm_notifications_title_gas
   alarm_notifications_critical_gas: !input alarm_notifications_critical_gas
   alarm_notifications_status_bar_icon_gas: !input alarm_notifications_status_bar_icon_gas
   alarm_notifications_channel_gas: !input alarm_notifications_channel_gas
   alarm_notifications_group_gas: !input alarm_notifications_group_gas
   alarm_notifications_moisture: !input alarm_notifications_moisture
-  alarm_notifications_title_moisture: !input alarm_notifications_title_moisture
   alarm_notifications_critical_moisture: !input alarm_notifications_critical_moisture
   alarm_notifications_status_bar_icon_moisture: !input alarm_notifications_status_bar_icon_moisture
   alarm_notifications_channel_moisture: !input alarm_notifications_channel_moisture
@@ -1736,9 +1761,28 @@ actions:
                 {% elif trigger.payload_json.action == "disarm" %}
                   alarm_control_panel.alarm_disarm
                 {% endif %}
+              triggered_code: "{{ trigger.payload_json.action_code }}"
+              triggered_user_name: >
+                {% set code_to_match = trigger.payload_json.action_code | string %}
+                {% set ns = namespace(name=none) %}
+                {% for code_entity in alarm_codes %}
+                  {% if states(code_entity) | string == code_to_match %}
+                    {% set ns.name = state_attr(code_entity, 'friendly_name') or code_entity.split('.')[1].replace('_', ' ').title() %}
+                  {% endif %}
+                {% endfor %}
+                {{ ns.name if ns.name != none else alarm_default_user_name }}
+          - if:
+              - condition: template
+                value_template: "{{ alarm_code_user_name != none }}"
+            then:
+              - action: input_text.set_value
+                target:
+                  entity_id: "{{ alarm_code_user_name }}"
+                data:
+                  value: "{{ triggered_user_name }}"
           - action: "{{ z2m_arm_action }}"
             data:
-              code: "{{ alarm_codes_state }}"
+              code: "{{ alarm_code_main_state if alarm_code_main_state != '' else triggered_code }}"
             target:
               entity_id: "{{ alarm_main }}"
             continue_on_error: true
@@ -1761,215 +1805,203 @@ actions:
                 {% elif trigger.event.data.args.arm_mode == 0 %}
                   alarm_control_panel.alarm_disarm
                 {% endif %}
+              triggered_code: "{{ trigger.event.data.args.code }}"
+              triggered_user_name: >
+                {% set code_to_match = trigger.event.data.args.code | string %}
+                {% set ns = namespace(name=none) %}
+                {% for code_entity in alarm_codes %}
+                  {% if states(code_entity) | string == code_to_match %}
+                    {% set ns.name = state_attr(code_entity, 'friendly_name') or code_entity.split('.')[1].replace('_', ' ').title() %}
+                  {% endif %}
+                {% endfor %}
+                {{ ns.name if ns.name != none else alarm_default_user_name }}
+          - if:
+              - condition: template
+                value_template: "{{ alarm_code_user_name != none }}"
+            then:
+              - action: input_text.set_value
+                target:
+                  entity_id: "{{ alarm_code_user_name }}"
+                data:
+                  value: "{{ triggered_user_name }}"
           - action: "{{ zha_arm_action }}"
             data:
-              code: "{{ alarm_codes_state }}"
+              code: "{{ alarm_code_main_state if alarm_code_main_state != '' else triggered_code }}"
             target:
               entity_id: "{{ alarm_main }}"
             continue_on_error: true
 
-  - alias: Alarm Scripts
-    choose:
-      - alias: armed_away
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: armed_away
-        sequence:
-          - action: script.turn_on
-            target:
-              entity_id: "{{ alarm_scripts_away }}"
-      - alias: armed_home
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: armed_home
-        sequence:
-          - action: script.turn_on
-            target:
-              entity_id: "{{ alarm_scripts_home }}"
-      - alias: armed_night
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: armed_night
-        sequence:
-          - action: script.turn_on
-            target:
-              entity_id: "{{ alarm_scripts_night }}"
-      - alias: arming
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: arming
-        sequence:
-          - action: script.turn_on
-            target:
-              entity_id: "{{ alarm_scripts_arming }}"
-      - alias: pending
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: pending
-        sequence:
-          - action: script.turn_on
-            target:
-              entity_id: "{{ alarm_scripts_pending }}"
-      - alias: disarmed
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: disarmed
-        sequence:
-          - action: script.turn_on
-            target:
-              entity_id: "{{ alarm_scripts_disarmed }}"
-      - alias: triggered
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: triggered
-        sequence:
-          - action: script.turn_on
-            target:
-              entity_id: "{{ alarm_scripts_triggered }}"
-
-  - alias: Alarm Notifications
+  - alias: Alarm State Change Handler
     if:
       - condition: trigger
         id: alarm_main
-      - condition: template
-        value_template: "{{ alarm_notifications_target | count > 0 }}"
     then:
       - variables:
+          # Get the user name from the storage helper (updated by keypad actions)
+          triggered_user: >
+            {% if alarm_code_user_name != none %}
+              {% set user = states(alarm_code_user_name) %}
+              {{ user if user not in ['', 'unknown', 'unavailable', 'none'] else alarm_default_user_name }}
+            {% else %}
+              {{ alarm_default_user_name }}
+            {% endif %}
+          # Entity name that triggered the alarm (for pending/triggered states)
+          triggered_entity_name: "{{ trigger.to_state.name }}"
+          # Scripts configuration per state
+          scripts_config:
+            armed_away: "{{ alarm_scripts_away }}"
+            armed_home: "{{ alarm_scripts_home }}"
+            armed_night: "{{ alarm_scripts_night }}"
+            arming: "{{ alarm_scripts_arming }}"
+            pending: "{{ alarm_scripts_pending }}"
+            disarmed: "{{ alarm_scripts_disarmed }}"
+            triggered: "{{ alarm_scripts_triggered }}"
+          # Notification configuration per state  
           state_config:
             armed_away:
-              message: "{{ alarm_notifications_armed_away }}"
-              title: "{{ alarm_notifications_title_armed_away }}"
+              message: "{{ alarm_notifications_armed_away | replace('{user_name}', triggered_user) }}"
               critical: "{{ alarm_notifications_critical_armed_away }}"
               icon: "{{ alarm_notifications_status_bar_icon_armed_away }}"
               channel: "{{ alarm_notifications_channel_armed_away }}"
               group: "{{ alarm_notifications_group_armed_away }}"
-              camera: null
+              tag: "alarm-armed-away"
+              camera: !input alarm_camera_away
+              clickAction: !input alarm_camera_away_click_action
             armed_home:
-              message: "{{ alarm_notifications_armed_home }}"
-              title: "{{ alarm_notifications_title_armed_home }}"
+              message: "{{ alarm_notifications_armed_home | replace('{user_name}', triggered_user) }}"
               critical: "{{ alarm_notifications_critical_armed_home }}"
               icon: "{{ alarm_notifications_status_bar_icon_armed_home }}"
               channel: "{{ alarm_notifications_channel_armed_home }}"
               group: "{{ alarm_notifications_group_armed_home }}"
-              camera: null
+              tag: "alarm-armed-home"
+              camera: !input alarm_camera_home
+              clickAction: !input alarm_camera_home_click_action
             armed_night:
-              message: "{{ alarm_notifications_armed_night }}"
-              title: "{{ alarm_notifications_title_armed_night }}"
+              message: "{{ alarm_notifications_armed_night | replace('{user_name}', triggered_user) }}"
               critical: "{{ alarm_notifications_critical_armed_night }}"
               icon: "{{ alarm_notifications_status_bar_icon_armed_night }}"
               channel: "{{ alarm_notifications_channel_armed_night }}"
               group: "{{ alarm_notifications_group_armed_night }}"
-              camera: null
+              tag: "alarm-armed-night"
+              camera: !input alarm_camera_night
+              clickAction: !input alarm_camera_night_click_action
             arming:
-              message: "{{ alarm_notifications_arming }}"
-              title: "{{ alarm_notifications_title_arming }}"
+              message: "{{ alarm_notifications_arming | replace('{user_name}', triggered_user) }}"
               critical: "{{ alarm_notifications_critical_arming }}"
               icon: "{{ alarm_notifications_status_bar_icon_arming }}"
               channel: "{{ alarm_notifications_channel_arming }}"
               group: "{{ alarm_notifications_group_arming }}"
+              tag: "alarm-arming"
               camera: null
-            pending:
-              message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
-              title: "{{ alarm_notifications_title_pending }}"
-              critical: "{{ alarm_notifications_critical_pending }}"
-              icon: "{{ alarm_notifications_status_bar_icon_pending }}"
-              channel: "{{ alarm_notifications_channel_pending }}"
-              group: "{{ alarm_notifications_group_pending }}"
-              camera: null
+              clickAction: ""
             disarmed:
-              message: "{{ alarm_notifications_disarmed }}"
-              title: "{{ alarm_notifications_title_disarmed }}"
+              message: "{{ alarm_notifications_disarmed | replace('{user_name}', triggered_user) }}"
               critical: "{{ alarm_notifications_critical_disarmed }}"
               icon: "{{ alarm_notifications_status_bar_icon_disarmed }}"
               channel: "{{ alarm_notifications_channel_disarmed }}"
               group: "{{ alarm_notifications_group_disarmed }}"
+              tag: "alarm-disarmed"
               camera: null
+              clickAction: ""
             triggered:
-              message: "{{ trigger.to_state.name }} {{ alarm_notifications_triggered }}"
-              title: "{{ alarm_notifications_title_triggered }}"
+              message: "{{ alarm_notifications_triggered | replace('{trigger_name}', triggered_entity_name) }}"
               critical: "{{ alarm_notifications_critical_triggered }}"
               icon: "{{ alarm_notifications_status_bar_icon_triggered }}"
               channel: "{{ alarm_notifications_channel_triggered }}"
               group: "{{ alarm_notifications_group_triggered }}"
-              camera: "{{ alarm_camera_triggered }}"
+              tag: "alarm-triggered"
+              camera: !input alarm_camera_triggered
+              clickAction: !input alarm_camera_triggered_click_action
           current_state: "{{ states(alarm_main) }}"
-          config: "{{ state_config[current_state] }}"
-      - if:
-          - condition: template
-            value_template: "{{ config is not none }}"
-        then:
-          - parallel:
-              - if:
-                  - condition: template
-                    value_template: "{{ config.critical == true }}"
-                then:
-                  repeat:
-                    for_each: !input alarm_notifications_target
-                    sequence:
-                      - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                        data:
-                          title: "{{ config.title }}"
-                          message: "{{ config.message }}"
-                          data:
-                            actions: "{{ notification_actions }}"
-                            entity_id: "{{ config.camera if config.camera else none }}"
-                            notification_icon: "{{ config.icon }}"
-                            channel: alarm_stream
-                            group: "{{ config.group }}"
-                            importance: high
-                            priority: high
-                            ttl: 0
-                            push:
-                              sound:
-                                name: default
-                                critical: 1
-                                volume: 1
-                else:
-                  repeat:
-                    for_each: !input alarm_notifications_target
-                    sequence:
-                      - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                        data:
-                          title: "{{ config.title }}"
-                          message: "{{ config.message }}"
-                          data:
-                            actions: "{{ notification_actions }}"
-                            entity_id: "{{ config.camera if config.camera else none }}"
-                            notification_icon: "{{ config.icon }}"
-                            channel: "{{ config.channel }}"
-                            group: "{{ config.group }}"
-              - if:
-                  - condition: template
-                    value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
-                then:
-                  action: tts.speak
-                  data:
-                    cache: true
-                    media_player_entity_id: "{{ alarm_announcements_player }}"
-                    message: "{{ config.message }}"
-                  target:
-                    entity_id: "{{ alarm_announcements_engine }}"
+          current_scripts: "{{ scripts_config.get(current_state, []) }}"
+          config: "{{ state_config.get(current_state) if current_state not in ['pending', 'triggered'] else none }}"
+      - parallel:
+          # Run scripts for this state
+          - if:
+              - condition: template
+                value_template: "{{ current_scripts | count > 0 }}"
+            then:
+              - action: script.turn_on
+                target:
+                  entity_id: "{{ current_scripts }}"
+          # Send notifications
+          - if:
+              - condition: template
+                value_template: "{{ alarm_notifications_target | count > 0 and config is not none }}"
+            then:
+              - parallel:
+                  - if:
+                      - condition: template
+                        value_template: "{{ config.critical == true }}"
+                    then:
+                      repeat:
+                        for_each: !input alarm_notifications_target
+                        sequence:
+                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                            data:
+                              title: "{{ config.title }}"
+                              message: "{{ config.message }}"
+                              data:
+                                actions: "{{ notification_actions }}"
+                                entity_id: "{{ config.camera if config.camera else none }}"
+                                image: >-
+                                  {% if config.camera %}
+                                    /api/camera_proxy/{{ config.camera }}
+                                  {% endif %}
+                                clickAction: "{{ config.clickAction if config.clickAction else '' }}"
+                                notification_icon: "{{ config.icon }}"
+                                channel: alarm_stream
+                                group: "{{ config.group }}"
+                                tag: "{{ config.tag }}"
+                                importance: high
+                                priority: high
+                                ttl: 0
+                                push:
+                                  sound:
+                                    name: default
+                                    critical: 1
+                                    volume: 1
+                    else:
+                      repeat:
+                        for_each: !input alarm_notifications_target
+                        sequence:
+                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                            data:
+                              title: "{{ config.title }}"
+                              message: "{{ config.message }}"
+                              data:
+                                actions: "{{ notification_actions }}"
+                                entity_id: "{{ config.camera if config.camera else none }}"
+                                image: >-
+                                  {% if config.camera %}
+                                    /api/camera_proxy/{{ config.camera }}
+                                  {% endif %}
+                                clickAction: "{{ config.clickAction if config.clickAction else '' }}"
+                                notification_icon: "{{ config.icon }}"
+                                channel: "{{ config.channel }}"
+                                group: "{{ config.group }}"
+                                tag: "{{ config.tag }}"
+                  - if:
+                      - condition: template
+                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
+                    then:
+                      action: tts.speak
+                      data:
+                        cache: true
+                        media_player_entity_id: "{{ alarm_announcements_player }}"
+                        message: "{{ config.message }}"
+                      target:
+                        entity_id: "{{ alarm_announcements_engine }}"
+          # Reset user name to default after notifications are sent
+          - if:
+              - condition: template
+                value_template: "{{ alarm_code_user_name != none and config is not none }}"
+            then:
+              - action: input_text.set_value
+                target:
+                  entity_id: "{{ alarm_code_user_name }}"
+                data:
+                  value: "{{ alarm_default_user_name }}"
 
   - alias: Alarm Triggers
     choose:
@@ -1985,6 +2017,81 @@ actions:
             action: alarm_control_panel.alarm_trigger
             target:
               entity_id: !input alarm_control_panel_main
+          - alias: Send pending/triggered notification
+            if:
+              - condition: template
+                value_template: "{{ alarm_notifications_target | count > 0 }}"
+            then:
+              - variables:
+                  notification_message: "{{ (alarm_notifications_pending if is_state(alarm_main, 'pending') else alarm_notifications_triggered) | replace('{trigger_name}', trigger.to_state.name) }}"
+                  notification_critical: "{{ alarm_notifications_critical_pending if is_state(alarm_main, 'pending') else alarm_notifications_critical_triggered }}"
+                  notification_icon: "{{ alarm_notifications_status_bar_icon_pending if is_state(alarm_main, 'pending') else alarm_notifications_status_bar_icon_triggered }}"
+                  notification_channel: "{{ alarm_notifications_channel_pending if is_state(alarm_main, 'pending') else alarm_notifications_channel_triggered }}"
+                  notification_group: "{{ alarm_notifications_group_pending if is_state(alarm_main, 'pending') else alarm_notifications_group_triggered }}"
+                  notification_tag: "{{ 'alarm-pending' if is_state(alarm_main, 'pending') else 'alarm-triggered' }}"
+                  notification_camera: "{{ none if is_state(alarm_main, 'pending') else alarm_camera_triggered }}"
+                  notification_click_action: "{{ '' if is_state(alarm_main, 'pending') else alarm_camera_triggered_click_action }}"
+              - parallel:
+                  - if:
+                      - condition: template
+                        value_template: "{{ notification_critical == true }}"
+                    then:
+                      repeat:
+                        for_each: !input alarm_notifications_target
+                        sequence:
+                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                            data:
+                              message: "{{ notification_message }}"
+                              data:
+                                actions: "{{ notification_actions }}"
+                                entity_id: "{{ notification_camera if notification_camera else none }}"
+                                image: >-
+                                  {% if notification_camera %}
+                                    /api/camera_proxy/{{ notification_camera }}
+                                  {% endif %}
+                                clickAction: "{{ notification_click_action }}"
+                                notification_icon: "{{ notification_icon }}"
+                                channel: alarm_stream
+                                group: "{{ notification_group }}"
+                                tag: "{{ notification_tag }}"
+                                importance: high
+                                priority: high
+                                ttl: 0
+                                push:
+                                  sound:
+                                    name: default
+                                    critical: 1
+                                    volume: 1
+                    else:
+                      repeat:
+                        for_each: !input alarm_notifications_target
+                        sequence:
+                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                            data:
+                              message: "{{ notification_message }}"
+                              data:
+                                actions: "{{ notification_actions }}"
+                                entity_id: "{{ notification_camera if notification_camera else none }}"
+                                image: >-
+                                  {% if notification_camera %}
+                                    /api/camera_proxy/{{ notification_camera }}
+                                  {% endif %}
+                                clickAction: "{{ notification_click_action }}"
+                                notification_icon: "{{ notification_icon }}"
+                                channel: "{{ notification_channel }}"
+                                group: "{{ notification_group }}"
+                                tag: "{{ notification_tag }}"
+                  - if:
+                      - condition: template
+                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
+                    then:
+                      action: tts.speak
+                      data:
+                        cache: true
+                        media_player_entity_id: "{{ alarm_announcements_player }}"
+                        message: "{{ notification_message }}"
+                      target:
+                        entity_id: "{{ alarm_announcements_engine }}"
       - alias: alarm_sensor_home
         conditions:
           - condition: trigger
@@ -1997,6 +2104,81 @@ actions:
             action: alarm_control_panel.alarm_trigger
             target:
               entity_id: !input alarm_control_panel_main
+          - alias: Send pending/triggered notification
+            if:
+              - condition: template
+                value_template: "{{ alarm_notifications_target | count > 0 }}"
+            then:
+              - variables:
+                  notification_message: "{{ (alarm_notifications_pending if is_state(alarm_main, 'pending') else alarm_notifications_triggered) | replace('{trigger_name}', trigger.to_state.name) }}"
+                  notification_critical: "{{ alarm_notifications_critical_pending if is_state(alarm_main, 'pending') else alarm_notifications_critical_triggered }}"
+                  notification_icon: "{{ alarm_notifications_status_bar_icon_pending if is_state(alarm_main, 'pending') else alarm_notifications_status_bar_icon_triggered }}"
+                  notification_channel: "{{ alarm_notifications_channel_pending if is_state(alarm_main, 'pending') else alarm_notifications_channel_triggered }}"
+                  notification_group: "{{ alarm_notifications_group_pending if is_state(alarm_main, 'pending') else alarm_notifications_group_triggered }}"
+                  notification_tag: "{{ 'alarm-pending' if is_state(alarm_main, 'pending') else 'alarm-triggered' }}"
+                  notification_camera: "{{ none if is_state(alarm_main, 'pending') else alarm_camera_triggered }}"
+                  notification_click_action: "{{ '' if is_state(alarm_main, 'pending') else alarm_camera_triggered_click_action }}"
+              - parallel:
+                  - if:
+                      - condition: template
+                        value_template: "{{ notification_critical == true }}"
+                    then:
+                      repeat:
+                        for_each: !input alarm_notifications_target
+                        sequence:
+                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                            data:
+                              message: "{{ notification_message }}"
+                              data:
+                                actions: "{{ notification_actions }}"
+                                entity_id: "{{ notification_camera if notification_camera else none }}"
+                                image: >-
+                                  {% if notification_camera %}
+                                    /api/camera_proxy/{{ notification_camera }}
+                                  {% endif %}
+                                clickAction: "{{ notification_click_action }}"
+                                notification_icon: "{{ notification_icon }}"
+                                channel: alarm_stream
+                                group: "{{ notification_group }}"
+                                tag: "{{ notification_tag }}"
+                                importance: high
+                                priority: high
+                                ttl: 0
+                                push:
+                                  sound:
+                                    name: default
+                                    critical: 1
+                                    volume: 1
+                    else:
+                      repeat:
+                        for_each: !input alarm_notifications_target
+                        sequence:
+                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                            data:
+                              message: "{{ notification_message }}"
+                              data:
+                                actions: "{{ notification_actions }}"
+                                entity_id: "{{ notification_camera if notification_camera else none }}"
+                                image: >-
+                                  {% if notification_camera %}
+                                    /api/camera_proxy/{{ notification_camera }}
+                                  {% endif %}
+                                clickAction: "{{ notification_click_action }}"
+                                notification_icon: "{{ notification_icon }}"
+                                channel: "{{ notification_channel }}"
+                                group: "{{ notification_group }}"
+                                tag: "{{ notification_tag }}"
+                  - if:
+                      - condition: template
+                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
+                    then:
+                      action: tts.speak
+                      data:
+                        cache: true
+                        media_player_entity_id: "{{ alarm_announcements_player }}"
+                        message: "{{ notification_message }}"
+                      target:
+                        entity_id: "{{ alarm_announcements_engine }}"
       - alias: alarm_sensor_night
         conditions:
           - condition: trigger
@@ -2009,6 +2191,81 @@ actions:
             action: alarm_control_panel.alarm_trigger
             target:
               entity_id: !input alarm_control_panel_main
+          - alias: Send pending/triggered notification
+            if:
+              - condition: template
+                value_template: "{{ alarm_notifications_target | count > 0 }}"
+            then:
+              - variables:
+                  notification_message: "{{ (alarm_notifications_pending if is_state(alarm_main, 'pending') else alarm_notifications_triggered) | replace('{trigger_name}', trigger.to_state.name) }}"
+                  notification_critical: "{{ alarm_notifications_critical_pending if is_state(alarm_main, 'pending') else alarm_notifications_critical_triggered }}"
+                  notification_icon: "{{ alarm_notifications_status_bar_icon_pending if is_state(alarm_main, 'pending') else alarm_notifications_status_bar_icon_triggered }}"
+                  notification_channel: "{{ alarm_notifications_channel_pending if is_state(alarm_main, 'pending') else alarm_notifications_channel_triggered }}"
+                  notification_group: "{{ alarm_notifications_group_pending if is_state(alarm_main, 'pending') else alarm_notifications_group_triggered }}"
+                  notification_tag: "{{ 'alarm-pending' if is_state(alarm_main, 'pending') else 'alarm-triggered' }}"
+                  notification_camera: "{{ none if is_state(alarm_main, 'pending') else alarm_camera_triggered }}"
+                  notification_click_action: "{{ '' if is_state(alarm_main, 'pending') else alarm_camera_triggered_click_action }}"
+              - parallel:
+                  - if:
+                      - condition: template
+                        value_template: "{{ notification_critical == true }}"
+                    then:
+                      repeat:
+                        for_each: !input alarm_notifications_target
+                        sequence:
+                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                            data:
+                              message: "{{ notification_message }}"
+                              data:
+                                actions: "{{ notification_actions }}"
+                                entity_id: "{{ notification_camera if notification_camera else none }}"
+                                image: >-
+                                  {% if notification_camera %}
+                                    /api/camera_proxy/{{ notification_camera }}
+                                  {% endif %}
+                                clickAction: "{{ notification_click_action }}"
+                                notification_icon: "{{ notification_icon }}"
+                                channel: alarm_stream
+                                group: "{{ notification_group }}"
+                                tag: "{{ notification_tag }}"
+                                importance: high
+                                priority: high
+                                ttl: 0
+                                push:
+                                  sound:
+                                    name: default
+                                    critical: 1
+                                    volume: 1
+                    else:
+                      repeat:
+                        for_each: !input alarm_notifications_target
+                        sequence:
+                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                            data:
+                              message: "{{ notification_message }}"
+                              data:
+                                actions: "{{ notification_actions }}"
+                                entity_id: "{{ notification_camera if notification_camera else none }}"
+                                image: >-
+                                  {% if notification_camera %}
+                                    /api/camera_proxy/{{ notification_camera }}
+                                  {% endif %}
+                                clickAction: "{{ notification_click_action }}"
+                                notification_icon: "{{ notification_icon }}"
+                                channel: "{{ notification_channel }}"
+                                group: "{{ notification_group }}"
+                                tag: "{{ notification_tag }}"
+                  - if:
+                      - condition: template
+                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
+                    then:
+                      action: tts.speak
+                      data:
+                        cache: true
+                        media_player_entity_id: "{{ alarm_announcements_player }}"
+                        message: "{{ notification_message }}"
+                      target:
+                        entity_id: "{{ alarm_announcements_engine }}"
 
   - alias: Keypad Emergency Mode
     choose:
@@ -2065,6 +2322,16 @@ actions:
           - condition: trigger
             id: alarm_sensor_always
         sequence:
+          - variables:
+              sensor_camera: !input alarm_camera_always
+              sensor_camera_image: >-
+                {% set cam = sensor_camera %}
+                {% if cam %}
+                  /api/camera_proxy/{{ cam }}
+                {% else %}
+                  
+                {% endif %}
+              sensor_click_action: !input alarm_camera_always_click_action
           - alias: Notify
             if:
               - condition: template
@@ -2081,14 +2348,16 @@ actions:
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
-                              title: "{{ alarm_notifications_title_always }}"
-                              message: "{{ trigger.to_state.name }} {{ alarm_notifications_always }}"
+                              message: "{{ alarm_notifications_always | replace('{trigger_name}', trigger.to_state.name) }}"
                               data:
                                 actions: "{{ notification_actions }}"
-                                entity_id: !input alarm_camera_always
+                                entity_id: "{{ sensor_camera if sensor_camera else none }}"
+                                image: "{{ sensor_camera_image }}"
+                                clickAction: "{{ sensor_click_action }}"
                                 notification_icon: "{{ alarm_notifications_status_bar_icon_always }}"
                                 channel: alarm_stream
                                 group: "{{ alarm_notifications_group_always }}"
+                                tag: "sensor-always"
                                 importance: high
                                 priority: high
                                 ttl: 0
@@ -2107,19 +2376,42 @@ actions:
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
-                              title: "{{ alarm_notifications_title_always }}"
-                              message: "{{ trigger.to_state.name }} {{ alarm_notifications_always }}"
+                              message: "{{ alarm_notifications_always | replace('{trigger_name}', trigger.to_state.name) }}"
                               data:
                                 actions: "{{ notification_actions }}"
-                                entity_id: !input alarm_camera_always
+                                entity_id: "{{ sensor_camera if sensor_camera else none }}"
+                                image: "{{ sensor_camera_image }}"
+                                clickAction: "{{ sensor_click_action }}"
                                 notification_icon: "{{ alarm_notifications_status_bar_icon_always }}"
                                 channel: "{{ alarm_notifications_channel_always }}"
                                 group: "{{ alarm_notifications_group_always }}"
+                                tag: "sensor-always"
+                  - if:
+                      - condition: template
+                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
+                    then:
+                      action: tts.speak
+                      data:
+                        cache: true
+                        media_player_entity_id: "{{ alarm_announcements_player }}"
+                        message: "{{ alarm_notifications_always | replace('{trigger_name}', trigger.to_state.name) }}"
+                      target:
+                        entity_id: "{{ alarm_announcements_engine }}"
       - alias: alarm_sensor_fire
         conditions:
           - condition: trigger
             id: alarm_sensor_fire
         sequence:
+          - variables:
+              sensor_camera: !input alarm_camera_fire
+              sensor_camera_image: >-
+                {% set cam = sensor_camera %}
+                {% if cam %}
+                  /api/camera_proxy/{{ cam }}
+                {% else %}
+                  
+                {% endif %}
+              sensor_click_action: !input alarm_camera_fire_click_action
           - alias: Notify
             if:
               - condition: template
@@ -2136,14 +2428,16 @@ actions:
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
-                              title: "{{ alarm_notifications_title_fire }}"
-                              message: "{{ trigger.to_state.name }} {{ alarm_notifications_fire }}"
+                              message: "{{ alarm_notifications_fire | replace('{trigger_name}', trigger.to_state.name) }}"
                               data:
                                 actions: "{{ notification_actions }}"
-                                entity_id: !input alarm_camera_fire
+                                entity_id: "{{ sensor_camera if sensor_camera else none }}"
+                                image: "{{ sensor_camera_image }}"
+                                clickAction: "{{ sensor_click_action }}"
                                 notification_icon: "{{ alarm_notifications_status_bar_icon_fire }}"
                                 channel: alarm_stream
                                 group: "{{ alarm_notifications_group_fire }}"
+                                tag: "sensor-fire"
                                 importance: high
                                 priority: high
                                 ttl: 0
@@ -2162,19 +2456,42 @@ actions:
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
-                              title: "{{ alarm_notifications_title_fire }}"
-                              message: "{{ trigger.to_state.name }} {{ alarm_notifications_fire }}"
+                              message: "{{ alarm_notifications_fire | replace('{trigger_name}', trigger.to_state.name) }}"
                               data:
                                 actions: "{{ notification_actions }}"
-                                entity_id: !input alarm_camera_fire
+                                entity_id: "{{ sensor_camera if sensor_camera else none }}"
+                                image: "{{ sensor_camera_image }}"
+                                clickAction: "{{ sensor_click_action }}"
                                 notification_icon: "{{ alarm_notifications_status_bar_icon_fire }}"
                                 channel: "{{ alarm_notifications_channel_fire }}"
                                 group: "{{ alarm_notifications_group_fire }}"
+                                tag: "sensor-fire"
+                  - if:
+                      - condition: template
+                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
+                    then:
+                      action: tts.speak
+                      data:
+                        cache: true
+                        media_player_entity_id: "{{ alarm_announcements_player }}"
+                        message: "{{ alarm_notifications_fire | replace('{trigger_name}', trigger.to_state.name) }}"
+                      target:
+                        entity_id: "{{ alarm_announcements_engine }}"
       - alias: alarm_sensor_gas
         conditions:
           - condition: trigger
             id: alarm_sensor_gas
         sequence:
+          - variables:
+              sensor_camera: !input alarm_camera_gas
+              sensor_camera_image: >-
+                {% set cam = sensor_camera %}
+                {% if cam %}
+                  /api/camera_proxy/{{ cam }}
+                {% else %}
+                  
+                {% endif %}
+              sensor_click_action: !input alarm_camera_gas_click_action
           - alias: Notify
             if:
               - condition: template
@@ -2191,14 +2508,16 @@ actions:
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
-                              title: "{{ alarm_notifications_title_gas }}"
-                              message: "{{ trigger.to_state.name }} {{ alarm_notifications_gas }}"
+                              message: "{{ alarm_notifications_gas | replace('{trigger_name}', trigger.to_state.name) }}"
                               data:
                                 actions: "{{ notification_actions }}"
-                                entity_id: !input alarm_camera_gas
+                                entity_id: "{{ sensor_camera if sensor_camera else none }}"
+                                image: "{{ sensor_camera_image }}"
+                                clickAction: "{{ sensor_click_action }}"
                                 notification_icon: "{{ alarm_notifications_status_bar_icon_gas }}"
                                 channel: alarm_stream
                                 group: "{{ alarm_notifications_group_gas }}"
+                                tag: "sensor-gas"
                                 importance: high
                                 priority: high
                                 ttl: 0
@@ -2217,19 +2536,42 @@ actions:
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
-                              title: "{{ alarm_notifications_title_gas }}"
-                              message: "{{ trigger.to_state.name }} {{ alarm_notifications_gas }}"
+                              message: "{{ alarm_notifications_gas | replace('{trigger_name}', trigger.to_state.name) }}"
                               data:
                                 actions: "{{ notification_actions }}"
-                                entity_id: !input alarm_camera_gas
+                                entity_id: "{{ sensor_camera if sensor_camera else none }}"
+                                image: "{{ sensor_camera_image }}"
+                                clickAction: "{{ sensor_click_action }}"
                                 notification_icon: "{{ alarm_notifications_status_bar_icon_gas }}"
                                 channel: "{{ alarm_notifications_channel_gas }}"
                                 group: "{{ alarm_notifications_group_gas }}"
+                                tag: "sensor-gas"
+                  - if:
+                      - condition: template
+                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
+                    then:
+                      action: tts.speak
+                      data:
+                        cache: true
+                        media_player_entity_id: "{{ alarm_announcements_player }}"
+                        message: "{{ alarm_notifications_gas | replace('{trigger_name}', trigger.to_state.name) }}"
+                      target:
+                        entity_id: "{{ alarm_announcements_engine }}"
       - alias: alarm_sensor_moisture
         conditions:
           - condition: trigger
             id: alarm_sensor_moisture
         sequence:
+          - variables:
+              sensor_camera: !input alarm_camera_moisture
+              sensor_camera_image: >-
+                {% set cam = sensor_camera %}
+                {% if cam %}
+                  /api/camera_proxy/{{ cam }}
+                {% else %}
+                  
+                {% endif %}
+              sensor_click_action: !input alarm_camera_moisture_click_action
           - alias: Notify
             if:
               - condition: template
@@ -2246,14 +2588,16 @@ actions:
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
-                              title: "{{ alarm_notifications_title_moisture }}"
-                              message: "{{ trigger.to_state.name }} {{ alarm_notifications_moisture }}"
+                              message: "{{ alarm_notifications_moisture | replace('{trigger_name}', trigger.to_state.name) }}"
                               data:
                                 actions: "{{ notification_actions }}"
-                                entity_id: !input alarm_camera_moisture
+                                entity_id: "{{ sensor_camera if sensor_camera else none }}"
+                                image: "{{ sensor_camera_image }}"
+                                clickAction: "{{ sensor_click_action }}"
                                 notification_icon: "{{ alarm_notifications_status_bar_icon_moisture }}"
                                 channel: alarm_stream
                                 group: "{{ alarm_notifications_group_moisture }}"
+                                tag: "sensor-moisture"
                                 importance: high
                                 priority: high
                                 ttl: 0
@@ -2272,14 +2616,27 @@ actions:
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
-                              title: "{{ alarm_notifications_title_moisture }}"
-                              message: "{{ trigger.to_state.name }} {{ alarm_notifications_moisture }}"
+                              message: "{{ alarm_notifications_moisture | replace('{trigger_name}', trigger.to_state.name) }}"
                               data:
                                 actions: "{{ notification_actions }}"
-                                entity_id: !input alarm_camera_moisture
+                                entity_id: "{{ sensor_camera if sensor_camera else none }}"
+                                image: "{{ sensor_camera_image }}"
+                                clickAction: "{{ sensor_click_action }}"
                                 notification_icon: "{{ alarm_notifications_status_bar_icon_moisture }}"
                                 channel: "{{ alarm_notifications_channel_moisture }}"
                                 group: "{{ alarm_notifications_group_moisture }}"
+                                tag: "sensor-moisture"
+                  - if:
+                      - condition: template
+                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
+                    then:
+                      action: tts.speak
+                      data:
+                        cache: true
+                        media_player_entity_id: "{{ alarm_announcements_player }}"
+                        message: "{{ alarm_notifications_moisture | replace('{trigger_name}', trigger.to_state.name) }}"
+                      target:
+                        entity_id: "{{ alarm_announcements_engine }}"
 
   - alias: Notification Actions
     choose:
@@ -2289,6 +2646,8 @@ actions:
             id: action_arm_home
         sequence:
           - action: alarm_control_panel.alarm_arm_home
+            data:
+              code: "{{ alarm_code_main_state }}"
             target:
               entity_id: !input alarm_control_panel_main
       - alias: action_arm_night
@@ -2297,6 +2656,8 @@ actions:
             id: action_arm_night
         sequence:
           - action: alarm_control_panel.alarm_arm_night
+            data:
+              code: "{{ alarm_code_main_state }}"
             target:
               entity_id: !input alarm_control_panel_main
       - alias: action_disarm
@@ -2305,6 +2666,8 @@ actions:
             id: action_disarm
         sequence:
           - action: alarm_control_panel.alarm_disarm
+            data:
+              code: "{{ alarm_code_main_state }}"
             target:
               entity_id: !input alarm_control_panel_main
 
@@ -2321,6 +2684,8 @@ actions:
             state: "off"
         sequence:
           - action: alarm_control_panel.alarm_arm_away
+            data:
+              code: "{{ alarm_code_main_state }}"
             target:
               entity_id: !input alarm_control_panel_main
       - alias: Auto-Disarm When Arriving Home
@@ -2371,6 +2736,8 @@ actions:
           - condition: template
             value_template: "{{ matching_schedule != none }}"
           - action: "alarm_control_panel.alarm_{{ matching_schedule.mode }}"
+            data:
+              code: "{{ alarm_code_main_state }}"
             target:
               entity_id: !input alarm_control_panel_main
       - alias: Scheduled Mode Change - Start Time
@@ -2407,6 +2774,8 @@ actions:
           - condition: template
             value_template: "{{ current_schedule.enabled and current_schedule.days_count > 0 }}"
           - action: "alarm_control_panel.alarm_{{ current_schedule.mode }}"
+            data:
+              code: "{{ alarm_code_main_state }}"
             target:
               entity_id: !input alarm_control_panel_main
       - alias: Scheduled Mode Change - End Time
@@ -2443,5 +2812,7 @@ actions:
           - condition: template
             value_template: "{{ current_schedule.enabled and current_schedule.days_count > 0 }}"
           - action: "alarm_control_panel.alarm_{{ current_schedule.mode }}"
+            data:
+              code: "{{ alarm_code_main_state }}"
             target:
               entity_id: !input alarm_control_panel_main
