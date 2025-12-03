@@ -26,34 +26,32 @@ input_text:
     max: 16
     mode: password
     pattern: "^[0-9A-F+]+$"
-  alarm_code_user_1:
-    name: Alarm Code User 1
+  alarm_code_alex:
+    name: Alex
     icon: mdi:dialpad
     min: 1
     max: 16
     mode: password
     pattern: "^[0-9A-F+]+$"
-  alarm_code_user_2:
-    name: Alarm Code User 2
+  alarm_code_arjen_en_yuni:
+    name: Arjen en Yuni
     icon: mdi:dialpad
     min: 1
     max: 16
     mode: password
     pattern: "^[0-9A-F+]+$"
-  alarm_code_user_3:
-    name: Alarm Code User 3
+  alarm_code_deni:
+    name: Deni
     icon: mdi:dialpad
     min: 1
     max: 16
     mode: password
     pattern: "^[0-9A-F+]+$"
-  alarm_code_custom_1:
-    name: Alarm Code Custom 1
-    icon: mdi:dialpad
-    min: 1
-    max: 16
-    mode: password
-    pattern: "^[0-9A-F+]+$"
+  alarm_code_user_name:
+    name: Alarm Code User Name
+    icon: mdi:account
+    min: 0
+    max: 100
 template:
   - binary_sensor:
       - name: "Presence"
