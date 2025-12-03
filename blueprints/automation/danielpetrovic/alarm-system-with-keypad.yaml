@@ -1,7 +1,6 @@
 blueprint:
   name: Alarm System with Zigbee Keypad support (Z2M / ZHA)
   author: danielpetrovic
-  version: 2025.12.6
   description: "# Alarm System with Zigbee (Z2M / ZHA) Keypad support (KEPZB-110)\n\n
     This blueprint enables a custom Alarm system without the needs of any custom_component.\n\n
     It can sync the states with a physical keypad connected to Z2M or ZHA. I'm using it with the frient Intelligent Keypad.\n\n
