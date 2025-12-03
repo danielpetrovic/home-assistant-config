@@ -1849,417 +1849,127 @@ actions:
               entity_id: "{{ alarm_scripts_triggered }}"
 
   - alias: Alarm Notifications
-    choose:
-      - alias: armed_away
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: armed_away
-        sequence:
-          - alias: Notify
-            if:
-              - condition: template
-                value_template: "{{ alarm_notifications_target | count > 0 }}"
-            then:
-              - parallel:
-                  - alias: Notify Critical
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_notifications_critical_armed_away == true }}"
-                    then:
-                      repeat:
-                        for_each: !input alarm_notifications_target
-                        sequence:
-                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                            data:
-                              title: "{{ alarm_notifications_title_armed_away }}"
-                              message: "{{ alarm_notifications_armed_away }}"
-                              data:
-                                actions: "{{ notification_actions }}"
-                                notification_icon: "{{ alarm_notifications_status_bar_icon_armed_away }}"
-                                channel: alarm_stream
-                                group: "{{ alarm_notifications_group_armed_away }}"
-                                importance: high
-                                priority: high
-                                ttl: 0
-                                push:
-                                  sound:
-                                    name: default
-                                    critical: 1
-                                    volume: 1
-                  - alias: Notify Normal
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_notifications_critical_armed_away == false }}"
-                    then:
-                      repeat:
-                        for_each: !input alarm_notifications_target
-                        sequence:
-                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                            data:
-                              title: "{{ alarm_notifications_title_armed_away }}"
-                              message: "{{ alarm_notifications_armed_away }}"
-                              data:
-                                actions: "{{ notification_actions }}"
-                                notification_icon: "{{ alarm_notifications_status_bar_icon_armed_away }}"
-                                channel: "{{ alarm_notifications_channel_armed_away }}"
-                                group: "{{ alarm_notifications_group_armed_away }}"
-                  - alias: Announce
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
-                    then:
-                      action: tts.speak
-                      data:
-                        cache: true
-                        media_player_entity_id: "{{ alarm_announcements_player }}"
-                        message: "{{ alarm_notifications_armed_away }}"
-                      target:
-                        entity_id: "{{ alarm_announcements_engine }}"
-      - alias: armed_home
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: armed_home
-        sequence:
-          - alias: Notify
-            if:
-              - condition: template
-                value_template: "{{ alarm_notifications_target | count > 0 }}"
-            then:
-              - parallel:
-                  - alias: Notify Critical
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_notifications_critical_armed_home == true }}"
-                    then:
-                      repeat:
-                        for_each: !input alarm_notifications_target
-                        sequence:
-                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                            data:
-                              title: "{{ alarm_notifications_title_armed_home }}"
-                              message: "{{ alarm_notifications_armed_home }}"
-                              data:
-                                actions: "{{ notification_actions }}"
-                                notification_icon: "{{ alarm_notifications_status_bar_icon_armed_home }}"
-                                channel: alarm_stream
-                                group: "{{ alarm_notifications_group_armed_home }}"
-                                importance: high
-                                priority: high
-                                ttl: 0
-                                push:
-                                  sound:
-                                    name: default
-                                    critical: 1
-                                    volume: 1
-                  - alias: Notify Normal
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_notifications_critical_armed_home == false }}"
-                    then:
-                      repeat:
-                        for_each: !input alarm_notifications_target
-                        sequence:
-                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                            data:
-                              title: "{{ alarm_notifications_title_armed_home }}"
-                              message: "{{ alarm_notifications_armed_home }}"
-                              data:
-                                actions: "{{ notification_actions }}"
-                                notification_icon: "{{ alarm_notifications_status_bar_icon_armed_home }}"
-                                channel: "{{ alarm_notifications_channel_armed_home }}"
-                                group: "{{ alarm_notifications_group_armed_home }}"
-                  - alias: Announce
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
-                    then:
-                      action: tts.speak
-                      data:
-                        cache: true
-                        media_player_entity_id: "{{ alarm_announcements_player }}"
-                        message: "{{ alarm_notifications_armed_home }}"
-                      target:
-                        entity_id: "{{ alarm_announcements_engine }}"
-      - alias: armed_night
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: armed_night
-        sequence:
-          - alias: Notify
-            if:
-              - condition: template
-                value_template: "{{ alarm_notifications_target | count > 0 }}"
-            then:
-              - parallel:
-                  - alias: Notify Critical
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_notifications_critical_armed_night == true }}"
-                    then:
-                      repeat:
-                        for_each: !input alarm_notifications_target
-                        sequence:
-                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                            data:
-                              title: "{{ alarm_notifications_title_armed_night }}"
-                              message: "{{ alarm_notifications_armed_night }}"
-                              data:
-                                actions: "{{ notification_actions }}"
-                                notification_icon: "{{ alarm_notifications_status_bar_icon_armed_night }}"
-                                channel: alarm_stream
-                                group: "{{ alarm_notifications_group_armed_night }}"
-                                importance: high
-                                priority: high
-                                ttl: 0
-                                push:
-                                  sound:
-                                    name: default
-                                    critical: 1
-                                    volume: 1
-                  - alias: Notify Normal
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_notifications_critical_armed_night == false }}"
-                    then:
-                      repeat:
-                        for_each: !input alarm_notifications_target
-                        sequence:
-                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                            data:
-                              title: "{{ alarm_notifications_title_armed_night }}"
-                              message: "{{ alarm_notifications_armed_night }}"
-                              data:
-                                actions: "{{ notification_actions }}"
-                                notification_icon: "{{ alarm_notifications_status_bar_icon_armed_night }}"
-                                channel: "{{ alarm_notifications_channel_armed_night }}"
-                                group: "{{ alarm_notifications_group_armed_night }}"
-                  - alias: Announce
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
-                    then:
-                      action: tts.speak
-                      data:
-                        cache: true
-                        media_player_entity_id: "{{ alarm_announcements_player }}"
-                        message: "{{ alarm_notifications_armed_night }}"
-                      target:
-                        entity_id: "{{ alarm_announcements_engine }}"
-      - alias: disarmed
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: disarmed
-        sequence:
-          - alias: Notify
-            if:
-              - condition: template
-                value_template: "{{ alarm_notifications_target | count > 0 }}"
-            then:
-              - parallel:
-                  - alias: Notify Critical
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_notifications_critical_disarmed == true }}"
-                    then:
-                      repeat:
-                        for_each: !input alarm_notifications_target
-                        sequence:
-                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                            data:
-                              title: "{{ alarm_notifications_title_disarmed }}"
-                              message: "{{ alarm_notifications_disarmed }}"
-                              data:
-                                actions: "{{ notification_actions }}"
-                                notification_icon: "{{ alarm_notifications_status_bar_icon_disarmed }}"
-                                channel: alarm_stream
-                                group: "{{ alarm_notifications_group_disarmed }}"
-                                importance: high
-                                priority: high
-                                ttl: 0
-                                push:
-                                  sound:
-                                    name: default
-                                    critical: 1
-                                    volume: 1
-                  - alias: Notify Normal
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_notifications_critical_disarmed == false }}"
-                    then:
-                      repeat:
-                        for_each: !input alarm_notifications_target
-                        sequence:
-                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                            data:
-                              title: "{{ alarm_notifications_title_disarmed }}"
-                              message: "{{ alarm_notifications_disarmed }}"
-                              data:
-                                actions: "{{ notification_actions }}"
-                                notification_icon: "{{ alarm_notifications_status_bar_icon_disarmed }}"
-                                channel: "{{ alarm_notifications_channel_disarmed }}"
-                                group: "{{ alarm_notifications_group_disarmed }}"
-                  - alias: Announce
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
-                    then:
-                      action: tts.speak
-                      data:
-                        cache: true
-                        media_player_entity_id: "{{ alarm_announcements_player }}"
-                        message: "{{ alarm_notifications_disarmed }}"
-                      target:
-                        entity_id: "{{ alarm_announcements_engine }}"
-      - alias: triggered
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: triggered
-        sequence:
-          - alias: Notify
-            if:
-              - condition: template
-                value_template: "{{ alarm_notifications_target | count > 0 }}"
-            then:
-              - parallel:
-                  - alias: Notify Critical
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_notifications_critical_triggered == true }}"
-                    then:
-                      repeat:
-                        for_each: !input alarm_notifications_target
-                        sequence:
-                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                            data:
-                              title: "{{ alarm_notifications_title_triggered }}"
-                              message: "{{ trigger.to_state.name }} {{ alarm_notifications_triggered }}"
-                              data:
-                                actions: "{{ notification_actions }}"
-                                entity_id: !input alarm_camera_triggered
-                                notification_icon: "{{ alarm_notifications_status_bar_icon_triggered }}"
-                                channel: alarm_stream
-                                group: "{{ alarm_notifications_group_triggered }}"
-                                importance: high
-                                priority: high
-                                ttl: 0
-                                push:
-                                  sound:
-                                    name: default
-                                    critical: 1
-                                    volume: 1
-                  - alias: Notify Normal
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_notifications_critical_triggered == false }}"
-                    then:
-                      repeat:
-                        for_each: !input alarm_notifications_target
-                        sequence:
-                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                            data:
-                              title: "{{ alarm_notifications_title_triggered }}"
-                              message: "{{ trigger.to_state.name }} {{ alarm_notifications_triggered }}"
-                              data:
-                                actions: "{{ notification_actions }}"
-                                entity_id: !input alarm_camera_triggered
-                                notification_icon: "{{ alarm_notifications_status_bar_icon_triggered }}"
-                                channel: "{{ alarm_notifications_channel_triggered }}"
-                                group: "{{ alarm_notifications_group_triggered }}"
-                  - alias: Announce
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
-                    then:
-                      action: tts.speak
-                      data:
-                        cache: true
-                        media_player_entity_id: "{{ alarm_announcements_player }}"
-                        message: "{{ trigger.to_state.name }} {{ alarm_notifications_triggered }}"
-                      target:
-                        entity_id: "{{ alarm_announcements_engine }}"
-      - alias: arming
-        conditions:
-          - condition: trigger
-            id: alarm_main
-          - condition: state
-            entity_id: !input alarm_control_panel_main
-            state: arming
-        sequence:
-          - alias: Notify
-            if:
-              - condition: template
-                value_template: "{{ alarm_notifications_target | count > 0 }}"
-            then:
-              - parallel:
-                  - alias: Notify Critical
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_notifications_critical_arming == true }}"
-                    then:
-                      repeat:
-                        for_each: !input alarm_notifications_target
-                        sequence:
-                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                            data:
-                              title: "{{ alarm_notifications_title_arming }}"
-                              message: "{{ alarm_notifications_arming }}"
-                              data:
-                                actions: "{{ notification_actions }}"
-                                notification_icon: "{{ alarm_notifications_status_bar_icon_arming }}"
-                                channel: alarm_stream
-                                group: "{{ alarm_notifications_group_arming }}"
-                                importance: high
-                                priority: high
-                                ttl: 0
-                                push:
-                                  sound:
-                                    name: default
-                                    critical: 1
-                                    volume: 1
-                  - alias: Notify Normal
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_notifications_critical_arming == false }}"
-                    then:
-                      repeat:
-                        for_each: !input alarm_notifications_target
-                        sequence:
-                          - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
-                            data:
-                              title: "{{ alarm_notifications_title_arming }}"
-                              message: "{{ alarm_notifications_arming }}"
-                              data:
-                                actions: "{{ notification_actions }}"
-                                notification_icon: "{{ alarm_notifications_status_bar_icon_arming }}"
-                                channel: "{{ alarm_notifications_channel_arming }}"
-                                group: "{{ alarm_notifications_group_arming }}"
-                  - alias: Announce
-                    if:
-                      - condition: template
-                        value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
-                    then:
-                      action: tts.speak
-                      data:
-                        cache: true
-                        media_player_entity_id: "{{ alarm_announcements_player }}"
-                        message: "{{ alarm_notifications_arming }}"
-                      target:
-                        entity_id: "{{ alarm_announcements_engine }}"
+    if:
+      - condition: trigger
+        id: alarm_main
+      - condition: template
+        value_template: "{{ alarm_notifications_target | count > 0 }}"
+    then:
+      - variables:
+          state_config:
+            armed_away:
+              message: "{{ alarm_notifications_armed_away }}"
+              title: "{{ alarm_notifications_title_armed_away }}"
+              critical: "{{ alarm_notifications_critical_armed_away }}"
+              icon: "{{ alarm_notifications_status_bar_icon_armed_away }}"
+              channel: "{{ alarm_notifications_channel_armed_away }}"
+              group: "{{ alarm_notifications_group_armed_away }}"
+              camera: null
+            armed_home:
+              message: "{{ alarm_notifications_armed_home }}"
+              title: "{{ alarm_notifications_title_armed_home }}"
+              critical: "{{ alarm_notifications_critical_armed_home }}"
+              icon: "{{ alarm_notifications_status_bar_icon_armed_home }}"
+              channel: "{{ alarm_notifications_channel_armed_home }}"
+              group: "{{ alarm_notifications_group_armed_home }}"
+              camera: null
+            armed_night:
+              message: "{{ alarm_notifications_armed_night }}"
+              title: "{{ alarm_notifications_title_armed_night }}"
+              critical: "{{ alarm_notifications_critical_armed_night }}"
+              icon: "{{ alarm_notifications_status_bar_icon_armed_night }}"
+              channel: "{{ alarm_notifications_channel_armed_night }}"
+              group: "{{ alarm_notifications_group_armed_night }}"
+              camera: null
+            arming:
+              message: "{{ alarm_notifications_arming }}"
+              title: "{{ alarm_notifications_title_arming }}"
+              critical: "{{ alarm_notifications_critical_arming }}"
+              icon: "{{ alarm_notifications_status_bar_icon_arming }}"
+              channel: "{{ alarm_notifications_channel_arming }}"
+              group: "{{ alarm_notifications_group_arming }}"
+              camera: null
+            pending:
+              message: "{{ trigger.to_state.name }} {{ alarm_notifications_pending }}"
+              title: "{{ alarm_notifications_title_pending }}"
+              critical: "{{ alarm_notifications_critical_pending }}"
+              icon: "{{ alarm_notifications_status_bar_icon_pending }}"
+              channel: "{{ alarm_notifications_channel_pending }}"
+              group: "{{ alarm_notifications_group_pending }}"
+              camera: null
+            disarmed:
+              message: "{{ alarm_notifications_disarmed }}"
+              title: "{{ alarm_notifications_title_disarmed }}"
+              critical: "{{ alarm_notifications_critical_disarmed }}"
+              icon: "{{ alarm_notifications_status_bar_icon_disarmed }}"
+              channel: "{{ alarm_notifications_channel_disarmed }}"
+              group: "{{ alarm_notifications_group_disarmed }}"
+              camera: null
+            triggered:
+              message: "{{ trigger.to_state.name }} {{ alarm_notifications_triggered }}"
+              title: "{{ alarm_notifications_title_triggered }}"
+              critical: "{{ alarm_notifications_critical_triggered }}"
+              icon: "{{ alarm_notifications_status_bar_icon_triggered }}"
+              channel: "{{ alarm_notifications_channel_triggered }}"
+              group: "{{ alarm_notifications_group_triggered }}"
+              camera: "{{ alarm_camera_triggered }}"
+          current_state: "{{ states(alarm_main) }}"
+          config: "{{ state_config[current_state] }}"
+      - if:
+          - condition: template
+            value_template: "{{ config is not none }}"
+        then:
+          - parallel:
+              - if:
+                  - condition: template
+                    value_template: "{{ config.critical == true }}"
+                then:
+                  repeat:
+                    for_each: !input alarm_notifications_target
+                    sequence:
+                      - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                        data:
+                          title: "{{ config.title }}"
+                          message: "{{ config.message }}"
+                          data:
+                            actions: "{{ notification_actions }}"
+                            entity_id: "{{ config.camera if config.camera else none }}"
+                            notification_icon: "{{ config.icon }}"
+                            channel: alarm_stream
+                            group: "{{ config.group }}"
+                            importance: high
+                            priority: high
+                            ttl: 0
+                            push:
+                              sound:
+                                name: default
+                                critical: 1
+                                volume: 1
+                else:
+                  repeat:
+                    for_each: !input alarm_notifications_target
+                    sequence:
+                      - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                        data:
+                          title: "{{ config.title }}"
+                          message: "{{ config.message }}"
+                          data:
+                            actions: "{{ notification_actions }}"
+                            entity_id: "{{ config.camera if config.camera else none }}"
+                            notification_icon: "{{ config.icon }}"
+                            channel: "{{ config.channel }}"
+                            group: "{{ config.group }}"
+              - if:
+                  - condition: template
+                    value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
+                then:
+                  action: tts.speak
+                  data:
+                    cache: true
+                    media_player_entity_id: "{{ alarm_announcements_player }}"
+                    message: "{{ config.message }}"
+                  target:
+                    entity_id: "{{ alarm_announcements_engine }}"
 
   - alias: Alarm Triggers
     choose:
@@ -2623,43 +2333,46 @@ actions:
             entity_id: !input alarm_presence_sensor
             state: "on"
         sequence:
-          - choose:
-              - alias: Weekdays Schedule
-                conditions:
-                  - condition: template
-                    value_template: "{{ alarm_schedule_weekdays_enabled and alarm_schedule_weekdays_days | count > 0 }}"
-                  - condition: time
-                    after: !input alarm_schedule_weekdays_start_time
-                    before: !input alarm_schedule_weekdays_end_time
-                    weekday: !input alarm_schedule_weekdays_days
-                sequence:
-                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_weekdays_start_mode }}"
-                    target:
-                      entity_id: !input alarm_control_panel_main
-              - alias: Weekends Schedule
-                conditions:
-                  - condition: template
-                    value_template: "{{ alarm_schedule_weekends_enabled and alarm_schedule_weekends_days | count > 0 }}"
-                  - condition: time
-                    after: !input alarm_schedule_weekends_start_time
-                    before: !input alarm_schedule_weekends_end_time
-                    weekday: !input alarm_schedule_weekends_days
-                sequence:
-                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_weekends_start_mode }}"
-                    target:
-                      entity_id: !input alarm_control_panel_main
-              - alias: Custom Schedule
-                conditions:
-                  - condition: template
-                    value_template: "{{ alarm_schedule_custom_enabled and alarm_schedule_custom_days | count > 0 }}"
-                  - condition: time
-                    after: !input alarm_schedule_custom_start_time
-                    before: !input alarm_schedule_custom_end_time
-                    weekday: !input alarm_schedule_custom_days
-                sequence:
-                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_custom_start_mode }}"
-                    target:
-                      entity_id: !input alarm_control_panel_main
+          - variables:
+              schedules:
+                - name: weekdays
+                  enabled: "{{ alarm_schedule_weekdays_enabled }}"
+                  days_count: "{{ alarm_schedule_weekdays_days | count }}"
+                  start_time: "{{ alarm_schedule_weekdays_start_time }}"
+                  end_time: "{{ alarm_schedule_weekdays_end_time }}"
+                  days: "{{ alarm_schedule_weekdays_days }}"
+                  mode: "{{ alarm_schedule_weekdays_start_mode }}"
+                - name: weekends
+                  enabled: "{{ alarm_schedule_weekends_enabled }}"
+                  days_count: "{{ alarm_schedule_weekends_days | count }}"
+                  start_time: "{{ alarm_schedule_weekends_start_time }}"
+                  end_time: "{{ alarm_schedule_weekends_end_time }}"
+                  days: "{{ alarm_schedule_weekends_days }}"
+                  mode: "{{ alarm_schedule_weekends_start_mode }}"
+                - name: custom
+                  enabled: "{{ alarm_schedule_custom_enabled }}"
+                  days_count: "{{ alarm_schedule_custom_days | count }}"
+                  start_time: "{{ alarm_schedule_custom_start_time }}"
+                  end_time: "{{ alarm_schedule_custom_end_time }}"
+                  days: "{{ alarm_schedule_custom_days }}"
+                  mode: "{{ alarm_schedule_custom_start_mode }}"
+              matching_schedule: >
+                {% set ns = namespace(schedule=none) %}
+                {% for s in schedules %}
+                  {% if s.enabled and s.days_count > 0 %}
+                    {% set current_time = now().strftime('%H:%M:%S') %}
+                    {% set current_day = now().strftime('%a').lower() %}
+                    {% if current_day in s.days and s.start_time <= current_time < s.end_time %}
+                      {% set ns.schedule = s %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+                {{ ns.schedule }}
+          - condition: template
+            value_template: "{{ matching_schedule != none }}"
+          - action: "alarm_control_panel.alarm_{{ matching_schedule.mode }}"
+            target:
+              entity_id: !input alarm_control_panel_main
       - alias: Scheduled Mode Change - Start Time
         conditions:
           - condition: or
@@ -2676,37 +2389,26 @@ actions:
             entity_id: !input alarm_presence_sensor
             state: "on"
         sequence:
-          - choose:
-              - alias: Weekdays Start Mode
-                conditions:
-                  - condition: trigger
-                    id: time_weekdays_start
-                  - condition: template
-                    value_template: "{{ alarm_schedule_weekdays_enabled and alarm_schedule_weekdays_days | count > 0 }}"
-                sequence:
-                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_weekdays_start_mode }}"
-                    target:
-                      entity_id: !input alarm_control_panel_main
-              - alias: Weekends Start Mode
-                conditions:
-                  - condition: trigger
-                    id: time_weekends_start
-                  - condition: template
-                    value_template: "{{ alarm_schedule_weekends_enabled and alarm_schedule_weekends_days | count > 0 }}"
-                sequence:
-                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_weekends_start_mode }}"
-                    target:
-                      entity_id: !input alarm_control_panel_main
-              - alias: Custom Start Mode
-                conditions:
-                  - condition: trigger
-                    id: time_custom_start
-                  - condition: template
-                    value_template: "{{ alarm_schedule_custom_enabled and alarm_schedule_custom_days | count > 0 }}"
-                sequence:
-                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_custom_start_mode }}"
-                    target:
-                      entity_id: !input alarm_control_panel_main
+          - variables:
+              schedule_map:
+                time_weekdays_start:
+                  enabled: "{{ alarm_schedule_weekdays_enabled }}"
+                  days_count: "{{ alarm_schedule_weekdays_days | count }}"
+                  mode: "{{ alarm_schedule_weekdays_start_mode }}"
+                time_weekends_start:
+                  enabled: "{{ alarm_schedule_weekends_enabled }}"
+                  days_count: "{{ alarm_schedule_weekends_days | count }}"
+                  mode: "{{ alarm_schedule_weekends_start_mode }}"
+                time_custom_start:
+                  enabled: "{{ alarm_schedule_custom_enabled }}"
+                  days_count: "{{ alarm_schedule_custom_days | count }}"
+                  mode: "{{ alarm_schedule_custom_start_mode }}"
+              current_schedule: "{{ schedule_map[trigger.id] }}"
+          - condition: template
+            value_template: "{{ current_schedule.enabled and current_schedule.days_count > 0 }}"
+          - action: "alarm_control_panel.alarm_{{ current_schedule.mode }}"
+            target:
+              entity_id: !input alarm_control_panel_main
       - alias: Scheduled Mode Change - End Time
         conditions:
           - condition: or
@@ -2723,34 +2425,23 @@ actions:
             entity_id: !input alarm_presence_sensor
             state: "on"
         sequence:
-          - choose:
-              - alias: Weekdays End Mode
-                conditions:
-                  - condition: trigger
-                    id: time_weekdays_end
-                  - condition: template
-                    value_template: "{{ alarm_schedule_weekdays_enabled and alarm_schedule_weekdays_days | count > 0 }}"
-                sequence:
-                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_weekdays_end_mode }}"
-                    target:
-                      entity_id: !input alarm_control_panel_main
-              - alias: Weekends End Mode
-                conditions:
-                  - condition: trigger
-                    id: time_weekends_end
-                  - condition: template
-                    value_template: "{{ alarm_schedule_weekends_enabled and alarm_schedule_weekends_days | count > 0 }}"
-                sequence:
-                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_weekends_end_mode }}"
-                    target:
-                      entity_id: !input alarm_control_panel_main
-              - alias: Custom End Mode
-                conditions:
-                  - condition: trigger
-                    id: time_custom_end
-                  - condition: template
-                    value_template: "{{ alarm_schedule_custom_enabled and alarm_schedule_custom_days | count > 0 }}"
-                sequence:
-                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_custom_end_mode }}"
-                    target:
-                      entity_id: !input alarm_control_panel_main
+          - variables:
+              schedule_map:
+                time_weekdays_end:
+                  enabled: "{{ alarm_schedule_weekdays_enabled }}"
+                  days_count: "{{ alarm_schedule_weekdays_days | count }}"
+                  mode: "{{ alarm_schedule_weekdays_end_mode }}"
+                time_weekends_end:
+                  enabled: "{{ alarm_schedule_weekends_enabled }}"
+                  days_count: "{{ alarm_schedule_weekends_days | count }}"
+                  mode: "{{ alarm_schedule_weekends_end_mode }}"
+                time_custom_end:
+                  enabled: "{{ alarm_schedule_custom_enabled }}"
+                  days_count: "{{ alarm_schedule_custom_days | count }}"
+                  mode: "{{ alarm_schedule_custom_end_mode }}"
+              current_schedule: "{{ schedule_map[trigger.id] }}"
+          - condition: template
+            value_template: "{{ current_schedule.enabled and current_schedule.days_count > 0 }}"
+          - action: "alarm_control_panel.alarm_{{ current_schedule.mode }}"
+            target:
+              entity_id: !input alarm_control_panel_main
