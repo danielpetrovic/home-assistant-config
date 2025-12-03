@@ -1,72 +1,44 @@
-fan:
-  - platform: template
-    fans:
-      ducobox:
-        unique_id: "ducobox"
-        friendly_name: "DucoBox"
-        value_template: >
-          {% if states('sensor.ducobox') is defined %}
-            on
-          {% else %}
-            off
-          {% endif %}
-        turn_on:
-          action: rest_command.set_ducobox_mode
-          data:
-            state: "AUTO"
-        turn_off:
-          action: rest_command.set_ducobox_mode
-          data:
-            state: "AUTO"
-        preset_modes:
-          - "Auto"
-          - "Away"
-          - "Manual 1"
-          - "Manual 1 Forced"
-          - "Manual 2"
-          - "Manual 2 Forced"
-          - "Manual 3"
-          - "Manual 3 Forced"
-        preset_mode_template: >
-          {% if states('sensor.ducobox') == "MAN1" %}
-            Manual 1
-          {% elif states('sensor.ducobox') == "CNT1" %}
-            Manual 1 Forced
-          {% elif states('sensor.ducobox') == "MAN2" %}
-            Manual 2
-          {% elif states('sensor.ducobox') == "CNT2" %}
-            Manual 2 Forced
-          {% elif states('sensor.ducobox') == "MAN3" %}
-            Manual 3
-          {% elif states('sensor.ducobox') == "CNT3" %}
-            Manual 3 Forced
-          {% elif states('sensor.ducobox') == "EMPT" %}
-            Away
-          {% else %}
-            Auto
-          {% endif %}
-        set_preset_mode:
-          - action: rest_command.set_ducobox_mode
-            data:
-              state: >
-                {% if preset_mode ==  "Manual 1" %}
-                  MAN1
-                {% elif preset_mode == "Manual 1 Forced" %}
-                  CNT1
-                {% elif preset_mode == "Manual 2" %}
-                  MAN2
-                {% elif preset_mode ==  "Manual 2 Forced" %}
-                  CNT2
-                {% elif preset_mode ==  "Manual 3" %}
-                  MAN3
-                {% elif preset_mode == "Manual 3 Forced" %}
-                  CNT3
-                {% elif preset_mode == "Away" %}
-                  EMPT
-                {% else %}
-                  AUTO
-                {% endif %}
-        percentage_template: "{{ states('sensor.ducobox_target') }}"
+template:
+- fan:
+  - unique_id: ducobox
+    turn_on:
+    - action: rest_command.set_ducobox_mode
+      data:
+        state: AUTO
+    turn_off:
+    - action: rest_command.set_ducobox_mode
+      data:
+        state: AUTO
+    preset_modes:
+    - Auto
+    - Away
+    - Manual 1
+    - Manual 1 Forced
+    - Manual 2
+    - Manual 2 Forced
+    - Manual 3
+    - Manual 3 Forced
+    set_preset_mode:
+    - action: rest_command.set_ducobox_mode
+      data:
+        state: "{% if preset_mode ==  \"Manual 1\" %}\n  MAN1\n{% elif preset_mode
+          == \"Manual 1 Forced\" %}\n  CNT1\n{% elif preset_mode == \"Manual 2\" %}\n
+          \ MAN2\n{% elif preset_mode ==  \"Manual 2 Forced\" %}\n  CNT2\n{% elif
+          preset_mode ==  \"Manual 3\" %}\n  MAN3\n{% elif preset_mode == \"Manual
+          3 Forced\" %}\n  CNT3\n{% elif preset_mode == \"Away\" %}\n  EMPT\n{% else
+          %}\n  AUTO\n{% endif %}"
+    default_entity_id: fan.ducobox
+    name: DucoBox
+    percentage: '{{ states(''sensor.ducobox_target'') }}'
+    preset_mode: "{% if states('sensor.ducobox') == \"MAN1\" %}\n  Manual 1\n{% elif
+      states('sensor.ducobox') == \"CNT1\" %}\n  Manual 1 Forced\n{% elif states('sensor.ducobox')
+      == \"MAN2\" %}\n  Manual 2\n{% elif states('sensor.ducobox') == \"CNT2\" %}\n
+      \ Manual 2 Forced\n{% elif states('sensor.ducobox') == \"MAN3\" %}\n  Manual
+      3\n{% elif states('sensor.ducobox') == \"CNT3\" %}\n  Manual 3 Forced\n{% elif
+      states('sensor.ducobox') == \"EMPT\" %}\n  Away\n{% else %}\n  Auto\n{% endif
+      %}"
+    state: "{% if states('sensor.ducobox') is defined %}\n  on\n{% else %}\n  off\n{%
+      endif %}"
 
 rest:
   - resource: http://192.168.16.18/nodeinfoget?node=1
