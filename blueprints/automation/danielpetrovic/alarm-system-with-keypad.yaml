@@ -128,24 +128,24 @@ blueprint:
             boolean:
         alarm_auto_disarm_arriving:
           name: Auto-Disarm When Arriving
-          description: Automatically disarm the alarm when someone arrives home during daytime hours.
-          default: false
-          selector:
-            boolean:
-        alarm_auto_arm_night:
-          name: Auto-Arm Night Mode
-          description: Automatically arm the alarm in Night mode at the specified time.
+          description: Automatically disarm the alarm when someone arrives home during the configured schedule hours.
           default: false
           selector:
             boolean:
 
     alarm_automation_weekdays:
       name: Alarm Automation - Weekdays Schedule
-      description: Configure daytime disarm hours and nighttime arming for weekdays
+      description: Configure automatic alarm mode changes based on time for weekdays
       icon: mdi:calendar-week
       collapsed: true
       input:
-        alarm_disarm_schedule_weekdays_days:
+        alarm_schedule_weekdays_enabled:
+          name: Enable Weekdays Schedule
+          description: Enable automatic mode changes for weekdays.
+          default: true
+          selector:
+            boolean:
+        alarm_schedule_weekdays_days:
           name: Days
           description: Select which days this schedule applies to.
           default:
@@ -172,61 +172,60 @@ blueprint:
                 - label: Sunday
                   value: sun
               multiple: true
-        alarm_disarm_schedule_weekdays_start:
-          name: Disarm Start Time
-          description: Time to start allowing auto-disarm when arriving home.
+        alarm_schedule_weekdays_start_time:
+          name: Start Time
+          description: Time to change to the start mode.
           default: "07:30:00"
           selector:
             time:
-        alarm_disarm_schedule_weekdays_end:
-          name: Disarm End Time
-          description: Time to stop allowing auto-disarm when arriving home.
-          default: "23:00:00"
-          selector:
-            time:
-        alarm_night_schedule_weekdays_days:
-          name: Night Mode Days
-          description: Select which days to auto-arm night mode.
-          default:
-            - mon
-            - tue
-            - wed
-            - thu
-            - fri
+        alarm_schedule_weekdays_start_mode:
+          name: Start Mode
+          description: Alarm mode to set at start time (if someone is home).
+          default: disarmed
           selector:
             select:
               options:
-                - label: Monday
-                  value: mon
-                - label: Tuesday
-                  value: tue
-                - label: Wednesday
-                  value: wed
-                - label: Thursday
-                  value: thu
-                - label: Friday
-                  value: fri
-                - label: Saturday
-                  value: sat
-                - label: Sunday
-                  value: sun
-              multiple: true
-        alarm_night_schedule_weekdays_time:
-          name: Night Mode Time
-          description: Time to auto-arm night mode.
+                - label: Disarmed
+                  value: disarmed
+                - label: Armed Home
+                  value: armed_home
+                - label: Armed Night
+                  value: armed_night
+        alarm_schedule_weekdays_end_time:
+          name: End Time
+          description: Time to change to the end mode.
           default: "23:00:00"
           selector:
             time:
+        alarm_schedule_weekdays_end_mode:
+          name: End Mode
+          description: Alarm mode to set at end time (if someone is home).
+          default: armed_night
+          selector:
+            select:
+              options:
+                - label: Disarmed
+                  value: disarmed
+                - label: Armed Home
+                  value: armed_home
+                - label: Armed Night
+                  value: armed_night
 
     alarm_automation_weekends:
       name: Alarm Automation - Weekends Schedule
-      description: Configure daytime disarm hours and nighttime arming for weekends
+      description: Configure automatic alarm mode changes based on time for weekends
       icon: mdi:calendar-weekend
       collapsed: true
       input:
-        alarm_disarm_schedule_weekends_days:
+        alarm_schedule_weekends_enabled:
+          name: Enable Weekends Schedule
+          description: Enable automatic mode changes for weekends.
+          default: true
+          selector:
+            boolean:
+        alarm_schedule_weekends_days:
           name: Days
-          description: Select which days this schedule applies to (leave empty to disable).
+          description: Select which days this schedule applies to.
           default:
             - sat
             - sun
@@ -248,48 +247,44 @@ blueprint:
                 - label: Sunday
                   value: sun
               multiple: true
-        alarm_disarm_schedule_weekends_start:
-          name: Disarm Start Time
-          description: Time to start allowing auto-disarm when arriving home.
+        alarm_schedule_weekends_start_time:
+          name: Start Time
+          description: Time to change to the start mode.
           default: "08:30:00"
           selector:
             time:
-        alarm_disarm_schedule_weekends_end:
-          name: Disarm End Time
-          description: Time to stop allowing auto-disarm when arriving home.
-          default: "23:00:00"
-          selector:
-            time:
-        alarm_night_schedule_weekends_days:
-          name: Night Mode Days
-          description: Select which days to auto-arm night mode (leave empty to disable).
-          default:
-            - sat
-            - sun
+        alarm_schedule_weekends_start_mode:
+          name: Start Mode
+          description: Alarm mode to set at start time (if someone is home).
+          default: disarmed
           selector:
             select:
               options:
-                - label: Monday
-                  value: mon
-                - label: Tuesday
-                  value: tue
-                - label: Wednesday
-                  value: wed
-                - label: Thursday
-                  value: thu
-                - label: Friday
-                  value: fri
-                - label: Saturday
-                  value: sat
-                - label: Sunday
-                  value: sun
-              multiple: true
-        alarm_night_schedule_weekends_time:
-          name: Night Mode Time
-          description: Time to auto-arm night mode.
+                - label: Disarmed
+                  value: disarmed
+                - label: Armed Home
+                  value: armed_home
+                - label: Armed Night
+                  value: armed_night
+        alarm_schedule_weekends_end_time:
+          name: End Time
+          description: Time to change to the end mode.
           default: "23:00:00"
           selector:
             time:
+        alarm_schedule_weekends_end_mode:
+          name: End Mode
+          description: Alarm mode to set at end time (if someone is home).
+          default: armed_night
+          selector:
+            select:
+              options:
+                - label: Disarmed
+                  value: disarmed
+                - label: Armed Home
+                  value: armed_home
+                - label: Armed Night
+                  value: armed_night
 
     alarm_automation_custom:
       name: Alarm Automation - Custom Schedule
@@ -297,9 +292,15 @@ blueprint:
       icon: mdi:calendar-edit
       collapsed: true
       input:
-        alarm_disarm_schedule_custom_days:
+        alarm_schedule_custom_enabled:
+          name: Enable Custom Schedule
+          description: Enable automatic mode changes for custom days.
+          default: false
+          selector:
+            boolean:
+        alarm_schedule_custom_days:
           name: Days
-          description: Select which days this schedule applies to (leave empty to disable).
+          description: Select which days this schedule applies to.
           default: []
           selector:
             select:
@@ -319,46 +320,44 @@ blueprint:
                 - label: Sunday
                   value: sun
               multiple: true
-        alarm_disarm_schedule_custom_start:
-          name: Disarm Start Time
-          description: Time to start allowing auto-disarm when arriving home.
+        alarm_schedule_custom_start_time:
+          name: Start Time
+          description: Time to change to the start mode.
           default: "09:00:00"
           selector:
             time:
-        alarm_disarm_schedule_custom_end:
-          name: Disarm End Time
-          description: Time to stop allowing auto-disarm when arriving home.
-          default: "22:00:00"
-          selector:
-            time:
-        alarm_night_schedule_custom_days:
-          name: Night Mode Days
-          description: Select which days to auto-arm night mode (leave empty to disable).
-          default: []
+        alarm_schedule_custom_start_mode:
+          name: Start Mode
+          description: Alarm mode to set at start time (if someone is home).
+          default: disarmed
           selector:
             select:
               options:
-                - label: Monday
-                  value: mon
-                - label: Tuesday
-                  value: tue
-                - label: Wednesday
-                  value: wed
-                - label: Thursday
-                  value: thu
-                - label: Friday
-                  value: fri
-                - label: Saturday
-                  value: sat
-                - label: Sunday
-                  value: sun
-              multiple: true
-        alarm_night_schedule_custom_time:
-          name: Night Mode Time
-          description: Time to auto-arm night mode.
-          default: "23:30:00"
+                - label: Disarmed
+                  value: disarmed
+                - label: Armed Home
+                  value: armed_home
+                - label: Armed Night
+                  value: armed_night
+        alarm_schedule_custom_end_time:
+          name: End Time
+          description: Time to change to the end mode.
+          default: "22:00:00"
           selector:
             time:
+        alarm_schedule_custom_end_mode:
+          name: End Mode
+          description: Alarm mode to set at end time (if someone is home).
+          default: armed_night
+          selector:
+            select:
+              options:
+                - label: Disarmed
+                  value: disarmed
+                - label: Armed Home
+                  value: armed_home
+                - label: Armed Night
+                  value: armed_night
 
     alarm_notifications:
       name: Here you can set which devices should receive the text notifications and/or audio announcements
@@ -1503,29 +1502,29 @@ triggers:
     alias: presence_change
     id: presence_change
   - trigger: time
-    at: !input alarm_disarm_schedule_weekdays_start
-    alias: time_disarm_weekdays_start
-    id: time_disarm_weekdays_start
+    at: !input alarm_schedule_weekdays_start_time
+    alias: time_weekdays_start
+    id: time_weekdays_start
   - trigger: time
-    at: !input alarm_disarm_schedule_weekends_start
-    alias: time_disarm_weekends_start
-    id: time_disarm_weekends_start
+    at: !input alarm_schedule_weekdays_end_time
+    alias: time_weekdays_end
+    id: time_weekdays_end
   - trigger: time
-    at: !input alarm_disarm_schedule_custom_start
-    alias: time_disarm_custom_start
-    id: time_disarm_custom_start
+    at: !input alarm_schedule_weekends_start_time
+    alias: time_weekends_start
+    id: time_weekends_start
   - trigger: time
-    at: !input alarm_night_schedule_weekdays_time
-    alias: time_night_weekdays
-    id: time_night_weekdays
+    at: !input alarm_schedule_weekends_end_time
+    alias: time_weekends_end
+    id: time_weekends_end
   - trigger: time
-    at: !input alarm_night_schedule_weekends_time
-    alias: time_night_weekends
-    id: time_night_weekends
+    at: !input alarm_schedule_custom_start_time
+    alias: time_custom_start
+    id: time_custom_start
   - trigger: time
-    at: !input alarm_night_schedule_custom_time
-    alias: time_night_custom
-    id: time_night_custom
+    at: !input alarm_schedule_custom_end_time
+    alias: time_custom_end
+    id: time_custom_end
 
 variables:
   alarm_main: !input alarm_control_panel_main
@@ -1630,22 +1629,24 @@ variables:
   alarm_presence_sensor: !input alarm_presence_sensor
   alarm_auto_arm_away: !input alarm_auto_arm_away
   alarm_auto_disarm_arriving: !input alarm_auto_disarm_arriving
-  alarm_auto_arm_night: !input alarm_auto_arm_night
-  alarm_disarm_schedule_weekdays_days: !input alarm_disarm_schedule_weekdays_days
-  alarm_disarm_schedule_weekdays_start: !input alarm_disarm_schedule_weekdays_start
-  alarm_disarm_schedule_weekdays_end: !input alarm_disarm_schedule_weekdays_end
-  alarm_disarm_schedule_weekends_days: !input alarm_disarm_schedule_weekends_days
-  alarm_disarm_schedule_weekends_start: !input alarm_disarm_schedule_weekends_start
-  alarm_disarm_schedule_weekends_end: !input alarm_disarm_schedule_weekends_end
-  alarm_disarm_schedule_custom_days: !input alarm_disarm_schedule_custom_days
-  alarm_disarm_schedule_custom_start: !input alarm_disarm_schedule_custom_start
-  alarm_disarm_schedule_custom_end: !input alarm_disarm_schedule_custom_end
-  alarm_night_schedule_weekdays_days: !input alarm_night_schedule_weekdays_days
-  alarm_night_schedule_weekdays_time: !input alarm_night_schedule_weekdays_time
-  alarm_night_schedule_weekends_days: !input alarm_night_schedule_weekends_days
-  alarm_night_schedule_weekends_time: !input alarm_night_schedule_weekends_time
-  alarm_night_schedule_custom_days: !input alarm_night_schedule_custom_days
-  alarm_night_schedule_custom_time: !input alarm_night_schedule_custom_time
+  alarm_schedule_weekdays_enabled: !input alarm_schedule_weekdays_enabled
+  alarm_schedule_weekdays_days: !input alarm_schedule_weekdays_days
+  alarm_schedule_weekdays_start_time: !input alarm_schedule_weekdays_start_time
+  alarm_schedule_weekdays_start_mode: !input alarm_schedule_weekdays_start_mode
+  alarm_schedule_weekdays_end_time: !input alarm_schedule_weekdays_end_time
+  alarm_schedule_weekdays_end_mode: !input alarm_schedule_weekdays_end_mode
+  alarm_schedule_weekends_enabled: !input alarm_schedule_weekends_enabled
+  alarm_schedule_weekends_days: !input alarm_schedule_weekends_days
+  alarm_schedule_weekends_start_time: !input alarm_schedule_weekends_start_time
+  alarm_schedule_weekends_start_mode: !input alarm_schedule_weekends_start_mode
+  alarm_schedule_weekends_end_time: !input alarm_schedule_weekends_end_time
+  alarm_schedule_weekends_end_mode: !input alarm_schedule_weekends_end_mode
+  alarm_schedule_custom_enabled: !input alarm_schedule_custom_enabled
+  alarm_schedule_custom_days: !input alarm_schedule_custom_days
+  alarm_schedule_custom_start_time: !input alarm_schedule_custom_start_time
+  alarm_schedule_custom_start_mode: !input alarm_schedule_custom_start_mode
+  alarm_schedule_custom_end_time: !input alarm_schedule_custom_end_time
+  alarm_schedule_custom_end_mode: !input alarm_schedule_custom_end_mode
 
 conditions:
   - condition: template
@@ -2614,16 +2615,8 @@ actions:
               entity_id: !input alarm_control_panel_main
       - alias: Auto-Disarm When Arriving Home
         conditions:
-          - condition: or
-            conditions:
-              - condition: trigger
-                id: presence_change
-              - condition: trigger
-                id: time_disarm_weekdays_start
-              - condition: trigger
-                id: time_disarm_weekends_start
-              - condition: trigger
-                id: time_disarm_custom_start
+          - condition: trigger
+            id: presence_change
           - condition: template
             value_template: "{{ alarm_auto_disarm_arriving and alarm_presence_sensor != none }}"
           - condition: state
@@ -2634,88 +2627,130 @@ actions:
               - alias: Weekdays Schedule
                 conditions:
                   - condition: template
-                    value_template: "{{ alarm_disarm_schedule_weekdays_days | count > 0 }}"
+                    value_template: "{{ alarm_schedule_weekdays_enabled and alarm_schedule_weekdays_days | count > 0 }}"
                   - condition: time
-                    after: !input alarm_disarm_schedule_weekdays_start
-                    before: !input alarm_disarm_schedule_weekdays_end
-                    weekday: !input alarm_disarm_schedule_weekdays_days
+                    after: !input alarm_schedule_weekdays_start_time
+                    before: !input alarm_schedule_weekdays_end_time
+                    weekday: !input alarm_schedule_weekdays_days
                 sequence:
-                  - action: alarm_control_panel.alarm_disarm
+                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_weekdays_start_mode }}"
                     target:
                       entity_id: !input alarm_control_panel_main
               - alias: Weekends Schedule
                 conditions:
                   - condition: template
-                    value_template: "{{ alarm_disarm_schedule_weekends_days | count > 0 }}"
+                    value_template: "{{ alarm_schedule_weekends_enabled and alarm_schedule_weekends_days | count > 0 }}"
                   - condition: time
-                    after: !input alarm_disarm_schedule_weekends_start
-                    before: !input alarm_disarm_schedule_weekends_end
-                    weekday: !input alarm_disarm_schedule_weekends_days
+                    after: !input alarm_schedule_weekends_start_time
+                    before: !input alarm_schedule_weekends_end_time
+                    weekday: !input alarm_schedule_weekends_days
                 sequence:
-                  - action: alarm_control_panel.alarm_disarm
+                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_weekends_start_mode }}"
                     target:
                       entity_id: !input alarm_control_panel_main
               - alias: Custom Schedule
                 conditions:
                   - condition: template
-                    value_template: "{{ alarm_disarm_schedule_custom_days | count > 0 }}"
+                    value_template: "{{ alarm_schedule_custom_enabled and alarm_schedule_custom_days | count > 0 }}"
                   - condition: time
-                    after: !input alarm_disarm_schedule_custom_start
-                    before: !input alarm_disarm_schedule_custom_end
-                    weekday: !input alarm_disarm_schedule_custom_days
+                    after: !input alarm_schedule_custom_start_time
+                    before: !input alarm_schedule_custom_end_time
+                    weekday: !input alarm_schedule_custom_days
                 sequence:
-                  - action: alarm_control_panel.alarm_disarm
+                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_custom_start_mode }}"
                     target:
                       entity_id: !input alarm_control_panel_main
-      - alias: Auto-Arm Night Mode
+      - alias: Scheduled Mode Change - Start Time
         conditions:
           - condition: or
             conditions:
               - condition: trigger
-                id: time_night_weekdays
+                id: time_weekdays_start
               - condition: trigger
-                id: time_night_weekends
+                id: time_weekends_start
               - condition: trigger
-                id: time_night_custom
-              - condition: trigger
-                id: presence_change
+                id: time_custom_start
           - condition: template
-            value_template: "{{ alarm_auto_arm_night and alarm_presence_sensor != none }}"
+            value_template: "{{ alarm_presence_sensor != none }}"
           - condition: state
             entity_id: !input alarm_presence_sensor
             state: "on"
         sequence:
           - choose:
-              - alias: Weekdays Schedule
+              - alias: Weekdays Start Mode
                 conditions:
+                  - condition: trigger
+                    id: time_weekdays_start
                   - condition: template
-                    value_template: "{{ alarm_night_schedule_weekdays_days | count > 0 }}"
-                  - condition: time
-                    after: !input alarm_night_schedule_weekdays_time
-                    weekday: !input alarm_night_schedule_weekdays_days
+                    value_template: "{{ alarm_schedule_weekdays_enabled and alarm_schedule_weekdays_days | count > 0 }}"
                 sequence:
-                  - action: alarm_control_panel.alarm_arm_night
+                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_weekdays_start_mode }}"
                     target:
                       entity_id: !input alarm_control_panel_main
-              - alias: Weekends Schedule
+              - alias: Weekends Start Mode
                 conditions:
+                  - condition: trigger
+                    id: time_weekends_start
                   - condition: template
-                    value_template: "{{ alarm_night_schedule_weekends_days | count > 0 }}"
-                  - condition: time
-                    after: !input alarm_night_schedule_weekends_time
-                    weekday: !input alarm_night_schedule_weekends_days
+                    value_template: "{{ alarm_schedule_weekends_enabled and alarm_schedule_weekends_days | count > 0 }}"
                 sequence:
-                  - action: alarm_control_panel.alarm_arm_night
+                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_weekends_start_mode }}"
                     target:
                       entity_id: !input alarm_control_panel_main
-              - alias: Custom Schedule
+              - alias: Custom Start Mode
                 conditions:
+                  - condition: trigger
+                    id: time_custom_start
                   - condition: template
-                    value_template: "{{ alarm_night_schedule_custom_days | count > 0 }}"
-                  - condition: time
-                    after: !input alarm_night_schedule_custom_time
-                    weekday: !input alarm_night_schedule_custom_days
+                    value_template: "{{ alarm_schedule_custom_enabled and alarm_schedule_custom_days | count > 0 }}"
                 sequence:
-                  - action: alarm_control_panel.alarm_arm_night
+                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_custom_start_mode }}"
+                    target:
+                      entity_id: !input alarm_control_panel_main
+      - alias: Scheduled Mode Change - End Time
+        conditions:
+          - condition: or
+            conditions:
+              - condition: trigger
+                id: time_weekdays_end
+              - condition: trigger
+                id: time_weekends_end
+              - condition: trigger
+                id: time_custom_end
+          - condition: template
+            value_template: "{{ alarm_presence_sensor != none }}"
+          - condition: state
+            entity_id: !input alarm_presence_sensor
+            state: "on"
+        sequence:
+          - choose:
+              - alias: Weekdays End Mode
+                conditions:
+                  - condition: trigger
+                    id: time_weekdays_end
+                  - condition: template
+                    value_template: "{{ alarm_schedule_weekdays_enabled and alarm_schedule_weekdays_days | count > 0 }}"
+                sequence:
+                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_weekdays_end_mode }}"
+                    target:
+                      entity_id: !input alarm_control_panel_main
+              - alias: Weekends End Mode
+                conditions:
+                  - condition: trigger
+                    id: time_weekends_end
+                  - condition: template
+                    value_template: "{{ alarm_schedule_weekends_enabled and alarm_schedule_weekends_days | count > 0 }}"
+                sequence:
+                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_weekends_end_mode }}"
+                    target:
+                      entity_id: !input alarm_control_panel_main
+              - alias: Custom End Mode
+                conditions:
+                  - condition: trigger
+                    id: time_custom_end
+                  - condition: template
+                    value_template: "{{ alarm_schedule_custom_enabled and alarm_schedule_custom_days | count > 0 }}"
+                sequence:
+                  - action: "alarm_control_panel.alarm_{{ alarm_schedule_custom_end_mode }}"
                     target:
                       entity_id: !input alarm_control_panel_main
