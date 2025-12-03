@@ -3353,37 +3353,18 @@
       target:
         entity_id: tts.home_assistant_cloud
       action: tts.speak
-    - alias: Notify TV
-      if:
-      - alias: Woonkamer TV not off
-        condition: not
-        conditions:
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv
-            state: 'off'
-          - condition: state
-            entity_id: media_player.woonkamer_tv
-            state: unavailable
-      then:
-      - action: media_player.media_pause
-        metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.woonkamer_tv
-      - action: androidtv.adb_command
-        metadata: {}
-        data:
-          command: adb shell am start -n org.videolan.vlc/org.videolan.vlc.gui.video.VideoPlayerActivity
-            rtsp://192.168.16.1:7447/nW89EmoHxiJ4koVD
-        target:
-          entity_id: media_player.woonkamer_tv_adb
-      enabled: false
-    - action: notify.notify
+    - alias: Notify
+      action: notify.notify
       data:
         message: Er heeft iemand aangebeld!
-      metadata: {}
+        data:
+          channel: Voordeur
+          clickAction: /lovelace/voordeur
+          image: /api/camera_proxy/camera.voordeur
+          importance: high
+          notification_icon: mdi:doorbell-video
+          priority: high
+          ttl: 0
   variables:
     base_url_https: '{{ states(''input_text.base_url_https'') }}'
     base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
@@ -3420,9 +3401,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
             }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
             }}'
           transition: 10
         metadata: {}
@@ -3474,9 +3455,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
             }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
             }}'
           transition: 10
         metadata: {}
@@ -4413,13 +4394,14 @@
       duration:
         hours: 0
         minutes: 0
-        seconds: 30
-      title_arriving: Geofence
+        seconds: 20
+      title_arriving: Home Assistant
       message_arriving: '{{ person }} arriveert bij {{ zone }}.'
-      title_leaving: Geofence
+      title_leaving: Home Assistant
       message_leaving: '{{ person }} vertrekt van {{ zone }}.'
       notify_group: notify
       channel: Geofence
+      group: Geofence
 - id: '1761738156612'
   alias: Raambekleding
   description: All logic for window coverings (time + climate)
@@ -5594,16 +5576,16 @@
     input:
       alarm_control_panel_main: alarm_control_panel.alarm
       alarm_code_user:
-      - input_text.alarm_code_user_1
-      - input_text.alarm_code_user_2
-      - input_text.alarm_code_user_3
+      - input_text.alarm_code_alex
+      - input_text.alarm_code_deni
+      - input_text.alarm_code_arjen_en_yuni
+      alarm_code_user_name: input_text.alarm_code_user_name
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_alarm_keypad: Alarm Paneel
       alarm_presence_sensor: binary_sensor.presence
       alarm_auto_arm_away: true
-      alarm_auto_arm_night: true
       alarm_notifications_target:
       - 1b49bd1284b5afb6e9f5f081024a600c
       - 0654bae851c3e493e4f82eebbd80c4b6
@@ -5615,10 +5597,13 @@
       - binary_sensor.entree_deursensor
       - binary_sensor.tuin_deursensor
       - binary_sensor.woonkamer_raamsensor
-      alarm_notifications_armed_away: Het alarm is nu ingesteld op Afwezig modus.
+      alarm_notifications_armed_away: Het Alarm is ingesteld op Afwezig modus door
+        {user_name}.
       alarm_scripts_away:
       - script.alarm_away
-      alarm_notifications_armed_home: Het alarm is nu ingesteld op Thuis modus.
+      alarm_camera_away: camera.entree
+      alarm_camera_away_click_action: /lovelace/entree
+      alarm_notifications_armed_home: Het Alarm is ingesteld op Thuis modus door {user_name}.
       alarm_scripts_home:
       - script.alarm_home
       - script.music_home
@@ -5627,31 +5612,43 @@
       - binary_sensor.entree_deursensor
       - binary_sensor.tuin_deursensor
       - binary_sensor.woonkamer_raamsensor
-      alarm_notifications_armed_night: Het alarm is nu ingesteld op Nacht modus.
+      alarm_notifications_armed_night: Het Alarm is ingesteld op Nacht modus door
+        {user_name}.
       alarm_scripts_night:
       - script.alarm_night
       - script.music_night
       alarm_camera_night: camera.entree
-      alarm_notifications_arming: Het alarm wordt ingeschakeld. Verlaat het huis zo
-        snel mogelijk!
-      alarm_notifications_pending: heeft het alarm geactiveerd! Schakel het alarm
-        uit om te voorkomen dat het afgaat!
+      alarm_camera_night_click_action: /lovelace/entree
+      alarm_notifications_arming: Het Alarm wordt ingeschakeld door {user_name}. Verlaat
+        het huis zo snel mogelijk!
+      alarm_notifications_pending: '{trigger_name} heeft het Alarm geactiveerd! Schakel
+        het alarm uit om te voorkomen dat het afgaat!'
+      alarm_notifications_critical_pending: true
       alarm_scripts_pending:
       - script.alarm_pending
-      alarm_notifications_disarmed: Het alarm is nu uitgeschakeld.
+      alarm_notifications_disarmed: Het Alarm is uitgeschakeld door {user_name}.
       alarm_scripts_disarmed:
       - script.music_home
       - script.alarm_disarmed
-      alarm_notifications_triggered: heeft het alarm geactiveerd! Het alarm gaat af!
-      alarm_notifications_always: geactiveerd!
+      alarm_notifications_triggered: '{trigger_name} heeft het alarm geactiveerd!
+        Het alarm gaat af!'
+      alarm_notifications_critical_triggered: true
+      alarm_notifications_always: '{trigger_name} heeft het alarm geactiveerd! Het
+        alarm gaat af!'
+      alarm_notifications_critical_always: false
       alarm_sensor_fire:
       - binary_sensor.entree_brandmelder
       - binary_sensor.gang_brandmelder
       - binary_sensor.gameroom_brandmelder
       - binary_sensor.schuur_brandmelder_smoke
-      alarm_notifications_fire: heeft vuur gedetecteerd!
+      alarm_notifications_fire: '{trigger_name} heeft vuur gedetecteerd!'
+      alarm_notifications_critical_fire: true
+      alarm_notifications_gas: '{trigger_name} heeft gas gedetecteerd!'
+      alarm_notifications_critical_gas: true
       alarm_sensor_moisture:
+      - binary_sensor.keuken_vochtmelder
       - binary_sensor.wasruimte_vochtmelder
-      alarm_notifications_moisture: heeft vocht gedetecteerd!
+      alarm_notifications_moisture: '{trigger_name} heeft vocht gedetecteerd!'
+      alarm_notifications_critical_moisture: true
       alarm_scripts_moisture:
       - script.lights_blue
