@@ -2734,7 +2734,7 @@ actions:
                 {{ ns.schedule }}
           - condition: template
             value_template: "{{ matching_schedule != none }}"
-          - action: "alarm_control_panel.alarm_{{ matching_schedule.mode }}"
+          - action: "alarm_control_panel.{{ 'alarm_disarm' if matching_schedule.mode == 'disarmed' else 'alarm_arm_' ~ matching_schedule.mode.replace('armed_', '') }}"
             data:
               code: "{{ alarm_code_main_state }}"
             target:
@@ -2772,7 +2772,7 @@ actions:
               current_schedule: "{{ schedule_map[trigger.id] }}"
           - condition: template
             value_template: "{{ current_schedule.enabled and current_schedule.days_count > 0 }}"
-          - action: "alarm_control_panel.alarm_{{ current_schedule.mode }}"
+          - action: "alarm_control_panel.{{ 'alarm_disarm' if current_schedule.mode == 'disarmed' else 'alarm_arm_' ~ current_schedule.mode.replace('armed_', '') }}"
             data:
               code: "{{ alarm_code_main_state }}"
             target:
@@ -2810,7 +2810,7 @@ actions:
               current_schedule: "{{ schedule_map[trigger.id] }}"
           - condition: template
             value_template: "{{ current_schedule.enabled and current_schedule.days_count > 0 }}"
-          - action: "alarm_control_panel.alarm_{{ current_schedule.mode }}"
+          - action: "alarm_control_panel.{{ 'alarm_disarm' if current_schedule.mode == 'disarmed' else 'alarm_arm_' ~ current_schedule.mode.replace('armed_', '') }}"
             data:
               code: "{{ alarm_code_main_state }}"
             target:
