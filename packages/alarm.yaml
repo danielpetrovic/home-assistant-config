@@ -7,7 +7,7 @@ alarm_control_panel:
       delay_time: 20
     armed_home:
       arming_time: 0
-      delay_time: 10
+      delay_time: 20
     armed_night:
       arming_time: 0
       delay_time: 20
@@ -15,35 +15,35 @@ input_text:
   alarm_code_main:
     name: Alarm Code Main
     icon: mdi:dialpad
-    min: 1
+    min: 4
     max: 16
     mode: password
-    pattern: "^[0-9A-F+]+$"
+    pattern: "^[0-9]+$"
   alarm_code_keypad:
     name: Alarm Code Keypad
     icon: mdi:dialpad
-    min: 1
+    min: 4
+    max: 16
+    mode: password
+    pattern: "^[0-9]+$"
+  alarm_code_user_1:
+    name: Alarm Code Deni
+    icon: mdi:dialpad
+    min: 4
     max: 16
     mode: password
     pattern: "^[0-9A-F+]+$"
-  alarm_code_alex:
-    name: Alex
+  alarm_code_user_2:
+    name: Alarm Code Alex
     icon: mdi:dialpad
-    min: 1
+    min: 4
     max: 16
     mode: password
     pattern: "^[0-9A-F+]+$"
-  alarm_code_arjen_en_yuni:
-    name: Arjen en Yuni
+  alarm_code_user_3:
+    name: Alarm Code Arjen en Yuni
     icon: mdi:dialpad
-    min: 1
-    max: 16
-    mode: password
-    pattern: "^[0-9A-F+]+$"
-  alarm_code_deni:
-    name: Deni
-    icon: mdi:dialpad
-    min: 1
+    min: 4
     max: 16
     mode: password
     pattern: "^[0-9A-F+]+$"
