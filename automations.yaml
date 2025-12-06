@@ -1898,6 +1898,30 @@
     - light.sauna_lamp
     to: 'off'
     id: lights off
+  - alias: tv on
+    trigger: state
+    entity_id:
+    - media_player.sauna_kef
+    attribute: source
+    to:
+    - tv
+    id: tv on
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 3
+  - alias: tv off
+    trigger: state
+    entity_id:
+    - media_player.sauna_kef
+    attribute: source
+    from:
+    - tv
+    id: tv off
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 3
   - trigger: time
     at: 01:00:00
     id: 01:00
@@ -1930,6 +1954,30 @@
         metadata: {}
         target:
           entity_id: media_player.sauna
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - tv on
+      sequence:
+      - action: media_player.unjoin
+        metadata: {}
+        target:
+          entity_id: media_player.sauna
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - tv off
+      sequence:
+      - action: media_player.join
+        metadata: {}
+        target:
+          entity_id: media_player.slaapkamer
+        data:
+          group_members:
+          - media_player.sauna
+    alias: TV
   - alias: Time
     choose:
     - conditions:
@@ -3365,6 +3413,21 @@
           notification_icon: mdi:doorbell-video
           priority: high
           ttl: 0
+    - alias: Woonkamer TV
+      if:
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: media_player.woonkamer_tv_cast
+          state:
+          - 'off'
+        alias: Woonkamer TV not off
+      then:
+      - action: media_player.media_pause
+        metadata: {}
+        target:
+          entity_id: media_player.woonkamer_tv
+        data: {}
   variables:
     base_url_https: '{{ states(''input_text.base_url_https'') }}'
     base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
@@ -4394,7 +4457,7 @@
       duration:
         hours: 0
         minutes: 0
-        seconds: 20
+        seconds: 10
       title_arriving: Home Assistant
       message_arriving: '{{ person }} arriveert bij {{ zone }}.'
       title_leaving: Home Assistant
@@ -5439,8 +5502,8 @@
     trigger: state
     for:
       hours: 0
-      minutes: 1
-      seconds: 0
+      minutes: 0
+      seconds: 30
   conditions: []
   actions:
   - choose:
@@ -5576,12 +5639,13 @@
     input:
       alarm_control_panel_main: alarm_control_panel.alarm
       alarm_code_user:
-      - input_text.alarm_code_alex
-      - input_text.alarm_code_deni
-      - input_text.alarm_code_arjen_en_yuni
+      - input_text.alarm_code_user_1
+      - input_text.alarm_code_user_2
+      - input_text.alarm_code_user_3
       alarm_code_user_name: input_text.alarm_code_user_name
       integration_type:
       - z2m
+      - dashboard
       z2m_base_topic: zigbee2mqtt
       z2m_alarm_keypad: Alarm Paneel
       alarm_presence_sensor: binary_sensor.presence
@@ -5601,6 +5665,7 @@
         {user_name}.
       alarm_scripts_away:
       - script.alarm_away
+      - script.music_away
       alarm_camera_away: camera.entree
       alarm_camera_away_click_action: /lovelace/entree
       alarm_notifications_armed_home: Het Alarm is ingesteld op Thuis modus door {user_name}.
@@ -5628,8 +5693,8 @@
       - script.alarm_pending
       alarm_notifications_disarmed: Het Alarm is uitgeschakeld door {user_name}.
       alarm_scripts_disarmed:
-      - script.music_home
       - script.alarm_disarmed
+      - script.music_home
       alarm_notifications_triggered: '{trigger_name} heeft het alarm geactiveerd!
         Het alarm gaat af!'
       alarm_notifications_critical_triggered: true
@@ -5652,3 +5717,6 @@
       alarm_notifications_critical_moisture: true
       alarm_scripts_moisture:
       - script.lights_blue
+      dashboard_code_entry_helper: input_text.dashboard_code_entry
+      dashboard_alarm_code: input_text.dashboard_alarm_code
+      dashboard_alarm_action: input_text.dashboard_alarm_action

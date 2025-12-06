@@ -11,6 +11,7 @@
 /tts
 /zigbee2mqtt
 .ha_run.lock
+.HA_VERSION
 go2rtc.yaml
 home-assistant_v2.db
 home-assistant_v2.db-shm
