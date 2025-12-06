@@ -1,75 +1,136 @@
 blueprint:
   name: Alarm System with Zigbee Keypad support (Z2M / ZHA)
   author: danielpetrovic
-  description: "# Alarm System with Zigbee (Z2M / ZHA) Keypad support (KEPZB-110)\n\n
-    This blueprint enables a custom Alarm system without the needs of any custom_component.\n\n
-    It can sync the states with a physical keypad connected to Z2M or ZHA. I'm using it with the frient Intelligent Keypad.\n\n
-    You can set multiple codes for multiple users, including hexadecimals for RFID tags.\n
-    The logic to check if a code is present is inside this blueprint so your alarm panel doesn't need to support multiple codes.\n\n
-    You can change the notifications that are sent when the Alarm Control Panel changes states, defaults are set.\n
-    You can set to show a (live) camerafeed from any of your cameras inside the notification of the state change.\n
-    You can change what scripts are run per Alarm state change. They will run at the same time, so the order doesn't matter.\n"
+  description: |
+    # Alarm System with Zigbee (Z2M / ZHA) Keypad support (KEPZB-110)
+
+    A comprehensive alarm system blueprint for Home Assistant with physical Zigbee keypad support. No custom components required.
+
+    ## Features
+    - **Physical Keypad Integration**: Sync states with Zigbee keypads via Z2M or ZHA (tested with frient KEPZB-110)
+    - **Multiple User Codes**: Unlimited user codes with support for PIN codes (digits) and RFID tags (hexadecimal: 0-9/A-F) (pattern: `^[0-9A-F+]+$`)
+    - **Two-Tier Code System**: Blueprint validates user codes, then sends master code to alarm panel - your alarm panel doesn't need to support multiple codes
+    - **Smart Automation**: Auto-arm when leaving, auto-disarm on arrival, flexible time-based schedules (weekday/weekend/custom)
+    - **Rich Notifications**: Text notifications with camera feeds (iOS live/Android snapshot), TTS announcements, critical alerts
+    - **Mode-Specific Configuration**: Different sensors and actions for Away/Home/Night/Arming/Pending/Disarmed/Triggered/Emergency modes
+    - **Emergency Mode**: Silent alarm via keypad SOS button (long-press 5+ seconds)
+
+    ## Prerequisites
+    - Home Assistant 2024.8.0 or later
+    - Manual Alarm Control Panel (see setup below)
+    - Text Helper entities for storing codes (see setup below)
+    - Physical Zigbee keypad connected via Z2M or ZHA (optional but recommended)
+
+    ## Recommended Setup Using Packages
+    Using packages keeps all alarm-related configuration in one file for easy management.
+
+    **1. Enable Packages** in `/config/configuration.yaml`:
+    ```yaml
+    homeassistant:
+      packages: !include_dir_named packages
+    ```
+
+    **2. Create `/config/packages/alarm.yaml`** with all alarm components:
+    ```yaml
+    input_text:
+      alarm_code_main:
+        name: Alarm Code Main
+        mode: password
+        min: 4
+        max: 16
+        pattern: "^[0-9]+$"
+      alarm_code_user_1:
+        name: John's Code
+        icon: mdi:dialpad
+        mode: password
+        min: 4
+        max: 16
+        pattern: "^[0-9A-F+]+$"
+      alarm_code_user_name:
+        name: Last User Name
+        max: 255
+    alarm_control_panel:
+      - platform: manual
+        name: Alarm
+        code_arm_required: false
+        armed_away:
+          arming_time: 30
+          delay_time: 20
+        armed_home:
+          arming_time: 0
+          delay_time: 10
+        armed_night:
+          arming_time: 0
+          delay_time: 20
+    ```
+
+    **3. Restart Home Assistant** to load the new entities.
+
+    **4. Configure this blueprint** using the created entities.
+
+    The field descriptions below reference this `/config/packages/alarm.yaml` file.
+
+    ## Version Information
+    For changelog, version-specific issues, and community discussion, visit:
+    https://community.home-assistant.io/t/alarm-system-with-zigbee-z2m-zha-keypad-support-kepzb-110/958295
   domain: automation
   source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/alarm-system-with-keypad.yaml
   input:
-    alarm_main:
-      name: Set your Primary Alarm Control Panel
-      icon: mdi:dialpad
-      collapsed: false
-      input:
-        alarm_control_panel_main:
-          name: Alarm Control Panel (Main)
-          description: "`required`
+    alarm_control_panel_main:
+      name: Alarm Control Panel
+      description: |
+        `required`
 
+        Select your Manual Alarm Panel. ZHA keypad entities don't support all required states; manual platform does.
+      selector:
+        entity:
+          filter:
+            - domain:
+                - alarm_control_panel
+          multiple: false
+    alarm_code_main:
+      name: Alarm Code (Main)
+      description: |
+        `optional` `input_text`
 
-            Here you need to set the primary Alarm control panel. I've set it up with a Manual Alarm Panel, see instructions below how to create through YAML. Don't select a ZHA keypad here, as it doesn't support all states."
-          selector:
-            entity:
-              filter:
-                - domain:
-                    - alarm_control_panel
-              multiple: false
-        alarm_code_main:
-          name: Alarm Code Main (Text Helper)
-          description: "Create a Text helper to contain the master code for the main alarm panel. If not set, the alarm panel will work without requiring a code. The format supported is 1-16 digits."
-          default: null
-          selector:
-            entity:
-              filter:
-                - domain:
-                    - input_text
-              multiple: false
-        alarm_code_user:
-          name: Alarm Code User (Text Helper)
-          description: "`required`
+        Master code for alarm panel. Enables two-tier validation where users enter personal codes, blueprint validates and sends this master code. Requires restart on changes.
+      default: null
+      selector:
+        entity:
+          filter:
+            - domain:
+                - input_text
+          multiple: false
+    alarm_code_user:
+      name: Alarm Codes (Users)
+      description: |
+        `required` `input_text`
 
+        Individual user codes validated when entered on keypad. Use friendly name pattern "Alarm Code [Name]" - only [Name] appears in notifications. Supports PIN codes (digits) and RFID tags (hexadecimal: 0-9/A-F).
+      selector:
+        entity:
+          filter:
+            - domain:
+                - input_text
+          multiple: true
+    alarm_code_user_name:
+      name: User Name (Storage)
+      description: |
+        `required` `input_text`
 
-            Create a Text helper within Home Assistant to contain the Alarm Code per user. You can set as many as you want, just make sure each code has it's own helper. The format supported is 1-16 digits including Hexadecimals for RFID tags. The friendly name of each helper will be used as the user name in notifications."
-          selector:
-            entity:
-              filter:
-                - domain:
-                    - input_text
-              multiple: true
-        alarm_code_user_name:
-          name: Alarm Code User Name (Text Helper)
-          description: "Create a Text helper to temporarily store the last user's name. The blueprint will automatically update this with the friendly name of the code helper entity when someone uses the keypad. If not set, all notifications will use the Default User Name."
-          default: null
-          selector:
-            entity:
-              filter:
-                - domain:
-                    - input_text
-              multiple: false
-        alarm_default_user_name:
-          name: Default User Name
-          description: "The name to use when the user is unknown (e.g., when triggered by automations). Use {user_name} in notification messages to include the user name."
-          default: "Home Assistant"
-          selector:
-            text:
+        Stores the last user's name who armed/disarmed the alarm. Automatically updated by blueprint. Available in notifications via `{user_name}`.
+      selector:
+        entity:
+          filter:
+            - domain:
+                - input_text
+          multiple: false
     integration_type:
-      name: Keypad integration
-      description: Select which integration your keypad uses.
+      name: Keypad Integration
+      description: |
+        `optional`
+
+        Select which integration manages your Zigbee keypad: Z2M, ZHA, or both. Leave empty if no physical keypad.
       default: []
       selector:
         select:
@@ -81,31 +142,42 @@ blueprint:
           multiple: true
 
     z2m:
-      name: (Z2M) Zigbee2MQTT settings
+      name: Zigbee2MQTT (Z2M)
+      description: Configure Zigbee2MQTT keypad integration settings.
       icon: mdi:zigbee
       collapsed: true
       input:
         z2m_base_topic:
-          name: Zigbee2MQTT Base Topic
-          description: Enter the base topic for Z2M (usually "zigbee2mqtt").
+          name: Base Topic
+          description: |
+            `optional` `text`
+
+            MQTT base topic for Zigbee2MQTT installation. Default is `zigbee2mqtt`. Leave empty if not using Z2M.
           default: ""
           selector:
             text: {}
         z2m_alarm_keypad:
-          name: Zigbee2MQTT Friendly Name
-          description: Enter the Friendly Name of your device as set in Z2M.
+          name: Keypad Friendly Name
+          description: |
+            `optional` `text`
+
+            Friendly name of your Zigbee keypad in Z2M (case-sensitive). Compatible models: Frient KEPZB-110, Linkind ZS130000078, Hive KEYPAD001. Leave empty if not using Z2M.
           default: ""
           selector:
             text: {}
 
     zha:
-      name: (ZHA) Zigbee Home Automation settings
+      name: Zigbee Home Automation (ZHA)
+      description: Configure ZHA keypad integration settings.
       icon: mdi:zigbee
       collapsed: true
       input:
         zha_alarm_keypad_device:
-          name: Alarm Keypad Device
-          description: Set the ZHA Keypad Device to be able to receive the key commands from the device.
+          name: Keypad Device
+          description: |
+            `optional` `device`
+
+            ZHA device for your Zigbee keypad. Compatible models: Frient KEPZB-110, Develco KEYZB-110. Note: ZHA LED indicators don't accurately reflect alarm state (known ZHA bug). Leave empty if not using ZHA.
           default: null
           selector:
             device:
@@ -113,8 +185,11 @@ blueprint:
                 - integration: zha
               multiple: false
         zha_alarm_control_panel_keypad:
-          name: Alarm Control Panel (Keypad)
-          description: Set the Alarm Control Panel of the Keypad Device to be able to sync the state to the Keypad.
+          name: Keypad Control Panel
+          description: |
+            `optional` `alarm_control_panel`
+
+            Alarm panel entity created by ZHA for your keypad. Syncs alarm states to keypad display. Leave empty if not using ZHA.
           default: null
           selector:
             entity:
@@ -123,8 +198,11 @@ blueprint:
                     - alarm_control_panel
               multiple: false
         zha_alarm_code_keypad:
-          name: Alarm Code Keypad (Text Helper)
-          description: Create a Text helper within Home Assistant to contain the Alarm Code of the Keypad alarm_control_panel set in the ZHA Settings.
+          name: Keypad Code
+          description: |
+            `optional` `input_text`
+
+            Code sent to ZHA keypad's alarm panel when changing states. Use same value as `alarm_code_main` for simplicity. Leave empty if not using ZHA.
           default: null
           selector:
             entity:
@@ -134,14 +212,17 @@ blueprint:
               multiple: false
 
     alarm_automation_main:
-      name: Alarm Automation - Main Settings
-      description: Automatically arm/disarm the alarm based on presence and time schedules
+      name: Automation - Main Settings
+      description: Configure automatic arm/disarm based on presence and time schedules.
       icon: mdi:home-automation
       collapsed: true
       input:
         alarm_presence_sensor:
           name: Presence Sensor
-          description: Binary sensor that indicates if anyone is home (e.g., binary_sensor.presence based on zone.home).
+          description: |
+            `optional` `binary_sensor`
+
+            Binary sensor indicating if anyone is home (on=home, off=away). Required for auto-arm/disarm and schedule automation. Leave empty if not using automation.
           default: []
           selector:
             entity:
@@ -154,32 +235,44 @@ blueprint:
               multiple: false
         alarm_auto_arm_away:
           name: Auto-Arm Away When Leaving
-          description: Automatically arm the alarm in Away mode when everyone leaves.
+          description: |
+            `optional` `boolean`
+
+            Automatically arm in Away mode when everyone leaves (presence sensor on → off). No built-in delay. Requires presence sensor.
           default: false
           selector:
             boolean:
         alarm_auto_disarm_arriving:
           name: Auto-Disarm When Arriving
-          description: Automatically disarm the alarm when someone arrives home during the configured schedule hours.
+          description: |
+            `optional` `boolean`
+
+            Automatically disarm when someone arrives (presence sensor off → on), but only during scheduled hours. Prevents unexpected disarming at unusual times. Requires presence sensor and active schedule.
           default: false
           selector:
             boolean:
 
     alarm_automation_weekdays:
-      name: Alarm Automation - Weekdays Schedule
-      description: Configure automatic alarm mode changes based on time for weekdays
+      name: Automation - Weekdays Schedule
+      description: Configure automatic alarm mode changes based on time for weekdays.
       icon: mdi:calendar-week
       collapsed: true
       input:
         alarm_schedule_weekdays_enabled:
           name: Enable Weekdays Schedule
-          description: Enable automatic mode changes for weekdays.
+          description: |
+            `optional` `boolean`
+
+            Enable automatic mode changes for weekdays.
           default: true
           selector:
             boolean:
         alarm_schedule_weekdays_days:
           name: Days
-          description: Select which days this schedule applies to.
+          description: |
+            `optional` `select`
+
+            Select which days this schedule applies to.
           default:
             - mon
             - tue
@@ -206,13 +299,19 @@ blueprint:
               multiple: true
         alarm_schedule_weekdays_start_time:
           name: Start Time
-          description: Time to change to the start mode.
+          description: |
+            `optional` `time`
+
+            When to switch to daytime mode (e.g., when you wake up).
           default: "07:30:00"
           selector:
             time:
         alarm_schedule_weekdays_start_mode:
           name: Start Mode
-          description: Alarm mode to set at start time (if someone is home).
+          description: |
+            `optional` `select`
+
+            Alarm mode to set at start time. Only changes mode if someone is home.
           default: disarmed
           selector:
             select:
@@ -225,13 +324,19 @@ blueprint:
                   value: armed_night
         alarm_schedule_weekdays_end_time:
           name: End Time
-          description: Time to change to the end mode.
+          description: |
+            `optional` `time`
+
+            When to switch to nighttime mode (e.g., at bedtime).
           default: "23:00:00"
           selector:
             time:
         alarm_schedule_weekdays_end_mode:
           name: End Mode
-          description: Alarm mode to set at end time (if someone is home).
+          description: |
+            `optional` `select`
+
+            Alarm mode to set at end time. Only changes mode if someone is home.
           default: armed_night
           selector:
             select:
@@ -244,20 +349,26 @@ blueprint:
                   value: armed_night
 
     alarm_automation_weekends:
-      name: Alarm Automation - Weekends Schedule
-      description: Configure automatic alarm mode changes based on time for weekends
+      name: Automation - Weekends Schedule
+      description: Configure automatic alarm mode changes based on time for weekends.
       icon: mdi:calendar-weekend
       collapsed: true
       input:
         alarm_schedule_weekends_enabled:
           name: Enable Weekends Schedule
-          description: Enable automatic mode changes for weekends.
+          description: |
+            `optional` `boolean`
+
+            Enable automatic mode changes for weekends.
           default: true
           selector:
             boolean:
         alarm_schedule_weekends_days:
           name: Days
-          description: Select which days this schedule applies to.
+          description: |
+            `optional` `select`
+
+            Select which days this schedule applies to.
           default:
             - sat
             - sun
@@ -281,13 +392,19 @@ blueprint:
               multiple: true
         alarm_schedule_weekends_start_time:
           name: Start Time
-          description: Time to change to the start mode.
+          description: |
+            `optional` `time`
+
+            When to switch to daytime mode (e.g., when you wake up on weekends).
           default: "08:30:00"
           selector:
             time:
         alarm_schedule_weekends_start_mode:
           name: Start Mode
-          description: Alarm mode to set at start time (if someone is home).
+          description: |
+            `optional` `select`
+
+            Alarm mode to set at start time. Only changes mode if someone is home.
           default: disarmed
           selector:
             select:
@@ -300,13 +417,19 @@ blueprint:
                   value: armed_night
         alarm_schedule_weekends_end_time:
           name: End Time
-          description: Time to change to the end mode.
+          description: |
+            `optional` `time`
+
+            When to switch to nighttime mode (e.g., at bedtime on weekends).
           default: "23:00:00"
           selector:
             time:
         alarm_schedule_weekends_end_mode:
           name: End Mode
-          description: Alarm mode to set at end time (if someone is home).
+          description: |
+            `optional` `select`
+
+            Alarm mode to set at end time. Only changes mode if someone is home.
           default: armed_night
           selector:
             select:
@@ -319,20 +442,26 @@ blueprint:
                   value: armed_night
 
     alarm_automation_custom:
-      name: Alarm Automation - Custom Schedule
-      description: Additional schedule for special days or patterns
+      name: Automation - Custom Schedule
+      description: Additional schedule for special days or custom patterns.
       icon: mdi:calendar-edit
       collapsed: true
       input:
         alarm_schedule_custom_enabled:
           name: Enable Custom Schedule
-          description: Enable automatic mode changes for custom days.
+          description: |
+            `optional` `boolean`
+
+            Enable automatic mode changes for custom days.
           default: false
           selector:
             boolean:
         alarm_schedule_custom_days:
           name: Days
-          description: Select which days this schedule applies to.
+          description: |
+            `optional` `select`
+
+            Select which days this schedule applies to.
           default: []
           selector:
             select:
@@ -354,13 +483,19 @@ blueprint:
               multiple: true
         alarm_schedule_custom_start_time:
           name: Start Time
-          description: Time to change to the start mode.
+          description: |
+            `optional` `time`
+
+            When to switch to daytime mode for your custom days (e.g., holidays, special occasions).
           default: "09:00:00"
           selector:
             time:
         alarm_schedule_custom_start_mode:
           name: Start Mode
-          description: Alarm mode to set at start time (if someone is home).
+          description: |
+            `optional` `select`
+
+            Alarm mode to set at start time. Only changes mode if someone is home.
           default: disarmed
           selector:
             select:
@@ -373,13 +508,19 @@ blueprint:
                   value: armed_night
         alarm_schedule_custom_end_time:
           name: End Time
-          description: Time to change to the end mode.
+          description: |
+            `optional` `time`
+
+            When to switch to nighttime mode for your custom days (e.g., earlier bedtime on special occasions).
           default: "22:00:00"
           selector:
             time:
         alarm_schedule_custom_end_mode:
           name: End Mode
-          description: Alarm mode to set at end time (if someone is home).
+          description: |
+            `optional` `select`
+
+            Alarm mode to set at end time. Only changes mode if someone is home.
           default: armed_night
           selector:
             select:
@@ -392,14 +533,27 @@ blueprint:
                   value: armed_night
 
     alarm_notifications:
-      name: Here you can set which devices should receive the text notifications and/or audio announcements
+      name: Notifications & Announcements
+      description: Configure devices for text notifications and audio announcements.
       icon: mdi:bell-ring
       collapsed: true
       input:
+        alarm_default_user_name:
+          name: Default User Name
+          description: |
+            `required` `text`
+
+            Fallback name used in notifications when the actual user is unknown (automations, sensors, or undetermined users). Use `{user_name}` template variable in notification messages.
+          default: "Home Assistant"
+          selector:
+            text:
         alarm_notifications_target:
           name: Text Notifications Target
+          description: |
+            `optional` `device`
+
+            Mobile devices to receive alarm notifications via Home Assistant Companion app. Supports single or multiple devices. Leave empty to disable text notifications.
           default: []
-          description: If not selected, it will not send text notifications at all.
           selector:
             device:
               filter:
@@ -407,16 +561,22 @@ blueprint:
               multiple: true
         alarm_announcements_engine:
           name: Audio Announcements Engine
+          description: |
+            `optional` `tts`
+
+            TTS engine for spoken alarm announcements. Must be configured in Home Assistant first. Leave empty to disable audio announcements.
           default: []
-          description: If not selected, it will not send audio announcements at all.
           selector:
             entity:
               filter:
                 domain: tts
         alarm_announcements_player:
           name: Audio Announcements Player
+          description: |
+            `optional` `media_player`
+
+            Media player(s) for TTS announcements. Supports smart speakers, audio systems, or multiple players. Leave empty to disable audio announcements.
           default: []
-          description: If not selected, it will not send audio announcements at all.
           selector:
             entity:
               filter:
@@ -425,14 +585,18 @@ blueprint:
               multiple: true
 
     alarm_mode_away:
-      name: Settings for when the alarm is set to Away mode
+      name: Mode - Armed Away
+      description: Configure sensors, notifications, and scripts for Away mode.
       icon: mdi:shield-lock
       collapsed: true
       input:
         alarm_sensor_away:
           name: Sensors
+          description: |
+            `optional` `binary_sensor`
+
+            Binary sensors that trigger the alarm in Away mode. Any sensor activating will trigger the alarm (OR logic). Leave empty to disable sensor monitoring.
           default: []
-          description: Sensors that trigger the alarm in Away mode.
           selector:
             entity:
               filter:
@@ -447,52 +611,58 @@ blueprint:
                     - window
               multiple: true
         alarm_notifications_armed_away:
-          name: Notification
+          name: Notification Message
+          description: |
+            `required` `text`
+
+            Notification message when entering Armed Away mode. Use `{user_name}` template variable for the person who armed the alarm.
           default: "{user_name} armed the alarm in Away mode."
-          description: Notification message sent when entering this state. Use {user_name} to include the user name.
           selector:
             text:
         alarm_notifications_critical_armed_away:
           name: Critical Notification
-          description: "`Android` `iOS`
+          description: |
+            `optional` `boolean` `android` `ios`
 
-
-            If enabled, notifications will appear no matter phone state."
+            Make notification high-priority, bypassing Do Not Disturb (Android) and Focus modes (iOS). Enable for important security events, disable for routine changes.
           default: false
           selector:
             boolean:
         alarm_notifications_status_bar_icon_armed_away:
           name: Status Bar Icon
-          description: "`Android`
+          description: |
+            `optional` `icon` `android`
 
-
-            Sets the status bar icon."
+            Custom icon for Android notification status bar.
           default: "mdi:shield-lock"
           selector:
             icon:
               placeholder: mdi:shield-lock
         alarm_notifications_channel_armed_away:
           name: Notification Channel
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+            Android notification channel for custom sounds per mode. Configure in HA Companion app → Settings → Notifications → Manage Channels.
           default: "Alarm"
           selector:
             text:
         alarm_notifications_group_armed_away:
           name: Notification Group
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Group notifications together."
+            Android notification grouping to organize multiple alarm notifications together. Prevents notification spam by combining them into an expandable group.
           default: "Alarm"
           selector:
             text:
         alarm_scripts_away:
           name: Scripts
+          description: |
+            `optional` `script`
+
+            Scripts to execute when entering Armed Away mode. All scripts run in parallel. Leave empty to disable script automation.
           default: []
-          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -501,11 +671,11 @@ blueprint:
               multiple: true
         alarm_camera_away:
           name: Camera
+          description: |
+            `optional` `camera` `ios` `android`
+
+            Camera to include in Armed Away notification. iOS shows live video feed, Android shows static snapshot. Leave empty to disable camera preview.
           default: []
-          description: "`iOS` `Android`
-
-
-            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
@@ -514,23 +684,27 @@ blueprint:
               multiple: false
         alarm_camera_away_click_action:
           name: Camera Click Action
+          description: |
+            `optional` `text` `android`
+
+            Lovelace dashboard path to open when tapping camera notification. Format: `/lovelace/view_name`. Leave empty for default view.
           default: ""
-          description: "`Android`
-
-
-            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
           selector:
             text:
 
     alarm_mode_home:
-      name: Settings for when the alarm is set to Home mode
+      name: Mode - Armed Home
+      description: Configure sensors, notifications, and scripts for Home mode.
       icon: mdi:shield-home
       collapsed: true
       input:
         alarm_sensor_home:
           name: Sensors
+          description: |
+            `optional` `binary_sensor`
+
+            Binary sensors that trigger the alarm in Home mode. Typically perimeter sensors only (no motion sensors). Any sensor activating will trigger the alarm (OR logic).
           default: []
-          description: Sensors that trigger the alarm in Home mode.
           selector:
             entity:
               filter:
@@ -545,52 +719,58 @@ blueprint:
                     - window
               multiple: true
         alarm_notifications_armed_home:
-          name: Notification
+          name: Notification Message
+          description: |
+            `required` `text`
+
+            Notification message when entering Armed Home mode. Use `{user_name}` template variable for the person who armed the alarm.
           default: "{user_name} armed the alarm in Home mode."
-          description: Notification message sent when entering this state. Use {user_name} to include the user name.
           selector:
             text:
         alarm_notifications_critical_armed_home:
           name: Critical Notification
-          description: "`Android` `iOS`
+          description: |
+            `optional` `boolean` `android` `ios`
 
-
-            If enabled, notifications will appear no matter phone state."
+            Make notification high-priority, bypassing Do Not Disturb (Android) and Focus modes (iOS). Enable for important security events, disable for routine changes.
           default: false
           selector:
             boolean:
         alarm_notifications_status_bar_icon_armed_home:
           name: Status Bar Icon
-          description: "`Android`
+          description: |
+            `optional` `icon` `android`
 
-
-            Sets the status bar icon."
+            Custom icon for Android notification status bar.
           default: "mdi:shield-home"
           selector:
             icon:
               placeholder: mdi:shield-home
         alarm_notifications_channel_armed_home:
           name: Notification Channel
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+            Android notification channel for custom sounds per mode. Configure in HA Companion app → Settings → Notifications → Manage Channels.
           default: "Alarm"
           selector:
             text:
         alarm_notifications_group_armed_home:
           name: Notification Group
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Group notifications together."
+            Android notification grouping to organize multiple alarm notifications together. Prevents notification spam by combining them into an expandable group.
           default: "Alarm"
           selector:
             text:
         alarm_scripts_home:
           name: Scripts
+          description: |
+            `optional` `script`
+
+            Scripts to execute when entering Armed Home mode. All scripts run in parallel. Leave empty to disable script automation.
           default: []
-          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -599,11 +779,11 @@ blueprint:
               multiple: true
         alarm_camera_home:
           name: Camera
+          description: |
+            `optional` `camera` `ios` `android`
+
+            Camera to include in Armed Home notification. iOS shows live video feed, Android shows static snapshot. Leave empty to disable camera preview.
           default: []
-          description: "`iOS` `Android`
-
-
-            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
@@ -612,23 +792,27 @@ blueprint:
               multiple: false
         alarm_camera_home_click_action:
           name: Camera Click Action
+          description: |
+            `optional` `text` `android`
+
+            Lovelace dashboard path to open when tapping camera notification. Format: `/lovelace/view_name`. Leave empty for default view.
           default: ""
-          description: "`Android`
-
-
-            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
           selector:
             text:
 
     alarm_mode_night:
-      name: Settings for when the alarm is set to Night mode
+      name: Mode - Armed Night
+      description: Configure sensors, notifications, and scripts for Night mode.
       icon: mdi:shield-moon
       collapsed: true
       input:
         alarm_sensor_night:
           name: Sensors
+          description: |
+            `optional` `binary_sensor`
+
+            Binary sensors that trigger the alarm in Night mode. Typically perimeter sensors and optional ground floor motion sensors (not bedroom/upstairs sensors). Any sensor activating will trigger (OR logic).
           default: []
-          description: Sensors that trigger the alarm in Night mode.
           selector:
             entity:
               filter:
@@ -643,52 +827,58 @@ blueprint:
                     - window
               multiple: true
         alarm_notifications_armed_night:
-          name: Notification
+          name: Notification Message
+          description: |
+            `required` `text`
+
+            Notification message when entering Armed Night mode. Use `{user_name}` template variable for the person who armed the alarm.
           default: "{user_name} armed the alarm in Night mode."
-          description: Notification message sent when entering this state. Use {user_name} to include the user name.
           selector:
             text:
         alarm_notifications_critical_armed_night:
           name: Critical Notification
-          description: "`Android` `iOS`
+          description: |
+            `optional` `boolean` `android` `ios`
 
-
-            If enabled, notifications will appear no matter phone state."
+            Make notification high-priority, bypassing Do Not Disturb (Android) and Focus modes (iOS). Enable for important security events, disable for routine changes.
           default: false
           selector:
             boolean:
         alarm_notifications_status_bar_icon_armed_night:
           name: Status Bar Icon
-          description: "`Android`
+          description: |
+            `optional` `icon` `android`
 
-
-            Sets the status bar icon."
+            Custom icon for Android notification status bar.
           default: "mdi:shield-moon"
           selector:
             icon:
               placeholder: mdi:shield-moon
         alarm_notifications_channel_armed_night:
           name: Notification Channel
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+            Android notification channel for custom sounds per mode. Configure in HA Companion app → Settings → Notifications → Manage Channels.
           default: "Alarm"
           selector:
             text:
         alarm_notifications_group_armed_night:
           name: Notification Group
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Group notifications together."
+            Android notification grouping to organize multiple alarm notifications together. Prevents notification spam by combining them into an expandable group.
           default: "Alarm"
           selector:
             text:
         alarm_scripts_night:
           name: Scripts
+          description: |
+            `optional` `script`
+
+            Scripts to execute when entering Armed Night mode. All scripts run in parallel. Leave empty to disable script automation.
           default: []
-          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -697,11 +887,11 @@ blueprint:
               multiple: true
         alarm_camera_night:
           name: Camera
+          description: |
+            `optional` `camera` `ios` `android`
+
+            Camera to include in Armed Night notification. iOS shows live video feed, Android shows static snapshot. Leave empty to disable camera preview.
           default: []
-          description: "`iOS` `Android`
-
-
-            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
@@ -710,66 +900,73 @@ blueprint:
               multiple: false
         alarm_camera_night_click_action:
           name: Camera Click Action
+          description: |
+            `optional` `text` `android`
+
+            Lovelace dashboard path to open when tapping camera notification. Format: `/lovelace/view_name`. Leave empty for default view.
           default: ""
-          description: "`Android`
-
-
-            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
           selector:
             text:
 
     alarm_mode_arming:
-      name: Settings for when the alarm is Arming
+      name: Mode - Arming
+      description: Configure notifications and scripts for when the alarm is arming (countdown before armed).
       icon: mdi:shield-half-full
       collapsed: true
       input:
         alarm_notifications_arming:
-          name: Notification
+          name: Notification Message
+          description: |
+            `required` `text`
+
+            Notification message during arming countdown. Use `{user_name}` template variable for the person who is arming the alarm.
           default: "{user_name} is arming the alarm. Please exit the house promptly!"
-          description: Notification message sent when entering this state. Use {user_name} to include the user name.
           selector:
             text:
         alarm_notifications_critical_arming:
           name: Critical Notification
-          description: "`Android` `iOS`
+          description: |
+            `optional` `boolean` `android` `ios`
 
-
-            If enabled, notifications will appear no matter phone state."
+            Make notification high-priority, bypassing Do Not Disturb (Android) and Focus modes (iOS). Enable for important security events, disable for routine changes.
           default: false
           selector:
             boolean:
         alarm_notifications_status_bar_icon_arming:
           name: Status Bar Icon
-          description: "`Android`
+          description: |
+            `optional` `icon` `android`
 
-
-            Sets the status bar icon."
+            Custom icon for Android notification status bar.
           default: "mdi:shield-half-full"
           selector:
             icon:
               placeholder: mdi:shield-half-full
         alarm_notifications_channel_arming:
           name: Notification Channel
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+            Android notification channel for custom sounds per mode. Configure in HA Companion app → Settings → Notifications → Manage Channels.
           default: "Alarm"
           selector:
             text:
         alarm_notifications_group_arming:
           name: Notification Group
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Group notifications together."
+            Android notification grouping to organize multiple alarm notifications together. Prevents notification spam by combining them into an expandable group.
           default: "Alarm"
           selector:
             text:
         alarm_scripts_arming:
           name: Scripts
+          description: |
+            `optional` `script`
+
+            Scripts to execute when entering arming countdown. All scripts run in parallel. Leave empty to disable script automation.
           default: []
-          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -778,57 +975,64 @@ blueprint:
               multiple: true
 
     alarm_mode_pending:
-      name: Settings for when the alarm is Pending
+      name: Mode - Pending
+      description: Configure notifications and scripts for when the alarm is pending (delay before triggering).
       icon: mdi:shield-outline
       collapsed: true
       input:
         alarm_notifications_pending:
-          name: Notification
+          name: Notification Message
+          description: |
+            `required` `text`
+
+            Notification message when sensor triggers pending countdown. Use `{trigger_name}` template variable for the sensor that triggered the alarm.
           default: "{trigger_name} triggered the alarm! Please disarm the alarm to prevent it from activating!"
-          description: Notification message sent when entering this state. Use {trigger_name} to include the entity name that triggered the alarm. This state is entered before triggering if a delay is configured.
           selector:
             text:
         alarm_notifications_critical_pending:
           name: Critical Notification
-          description: "`Android` `iOS`
+          description: |
+            `optional` `boolean` `android` `ios`
 
-
-            If enabled, notifications will appear no matter phone state."
+            Make notification high-priority, bypassing Do Not Disturb (Android) and Focus modes (iOS). Enable for important security events, disable for routine changes.
           default: false
           selector:
             boolean:
         alarm_notifications_status_bar_icon_pending:
           name: Status Bar Icon
-          description: "`Android`
+          description: |
+            `optional` `icon` `android`
 
-
-            Sets the status bar icon."
+            Custom icon for Android notification status bar.
           default: "mdi:shield-outline"
           selector:
             icon:
               placeholder: mdi:shield-outline
         alarm_notifications_channel_pending:
           name: Notification Channel
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+            Android notification channel for custom sounds per mode. Configure in HA Companion app → Settings → Notifications → Manage Channels.
           default: "Alarm"
           selector:
             text:
         alarm_notifications_group_pending:
           name: Notification Group
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Group notifications together."
+            Android notification grouping to organize multiple alarm notifications together. Prevents notification spam by combining them into an expandable group.
           default: "Alarm"
           selector:
             text:
         alarm_scripts_pending:
           name: Scripts
+          description: |
+            `optional` `script`
+
+            Scripts to execute when entering pending state. All scripts run in parallel. Leave empty to disable script automation.
           default: []
-          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -837,57 +1041,64 @@ blueprint:
               multiple: true
 
     alarm_mode_disarmed:
-      name: Settings for when the alarm is Disarmed
+      name: Mode - Disarmed
+      description: Configure notifications and scripts for when the alarm is disarmed.
       icon: mdi:shield-off
       collapsed: true
       input:
         alarm_notifications_disarmed:
-          name: Notification
+          name: Notification Message
+          description: |
+            `required` `text`
+
+            Notification message when alarm is disarmed. Use `{user_name}` template variable for the person who disarmed the alarm.
           default: "{user_name} disarmed the alarm."
-          description: Notification message sent when entering this state. Use {user_name} to include the user name.
           selector:
             text:
         alarm_notifications_critical_disarmed:
           name: Critical Notification
-          description: "`Android` `iOS`
+          description: |
+            `optional` `boolean` `android` `ios`
 
-
-            If enabled, notifications will appear no matter phone state."
+            Make notification high-priority, bypassing Do Not Disturb (Android) and Focus modes (iOS). Enable for important security events, disable for routine changes.
           default: false
           selector:
             boolean:
         alarm_notifications_status_bar_icon_disarmed:
           name: Status Bar Icon
-          description: "`Android`
+          description: |
+            `optional` `icon` `android`
 
-
-            Sets the status bar icon."
+            Custom icon for Android notification status bar.
           default: "mdi:shield-off"
           selector:
             icon:
               placeholder: mdi:shield-off
         alarm_notifications_channel_disarmed:
           name: Notification Channel
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+            Android notification channel for custom sounds per mode. Configure in HA Companion app → Settings → Notifications → Manage Channels.
           default: "Alarm"
           selector:
             text:
         alarm_notifications_group_disarmed:
           name: Notification Group
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Group notifications together."
+            Android notification grouping to organize multiple alarm notifications together. Prevents notification spam by combining them into an expandable group.
           default: "Alarm"
           selector:
             text:
         alarm_scripts_disarmed:
           name: Scripts
+          description: |
+            `optional` `script`
+
+            Scripts to execute when alarm is disarmed. All scripts run in parallel. Leave empty to disable script automation.
           default: []
-          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -896,57 +1107,64 @@ blueprint:
               multiple: true
 
     alarm_mode_triggered:
-      name: Settings for when the alarm is Triggered
+      name: Mode - Triggered
+      description: Configure notifications and scripts for when the alarm is triggered (active alarm).
       icon: mdi:shield-alert
       collapsed: true
       input:
         alarm_notifications_triggered:
-          name: Notification
+          name: Notification Message
+          description: |
+            `required` `text`
+
+            Notification message when alarm is fully triggered. Use `{trigger_name}` template variable for the sensor that triggered the alarm.
           default: "{trigger_name} triggered the alarm! The alarm has been activated!"
-          description: Notification message sent when entering this state. Use {trigger_name} to include the entity name that triggered the alarm.
           selector:
             text:
         alarm_notifications_critical_triggered:
           name: Critical Notification
-          description: "`Android` `iOS`
+          description: |
+            `optional` `boolean` `android` `ios`
 
-
-            If enabled, notifications will appear no matter phone state."
+            Make notification high-priority, bypassing Do Not Disturb (Android) and Focus modes (iOS). Enable for important security events, disable for routine changes.
           default: true
           selector:
             boolean:
         alarm_notifications_status_bar_icon_triggered:
           name: Status Bar Icon
-          description: "`Android`
+          description: |
+            `optional` `icon` `android`
 
-
-            Sets the status bar icon."
+            Custom icon for Android notification status bar.
           default: "mdi:shield-alert"
           selector:
             icon:
               placeholder: mdi:shield-alert
         alarm_notifications_channel_triggered:
           name: Notification Channel
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+            Android notification channel for custom sounds per mode. Configure in HA Companion app → Settings → Notifications → Manage Channels.
           default: "Alarm"
           selector:
             text:
         alarm_notifications_group_triggered:
           name: Notification Group
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Group notifications together."
+            Android notification grouping to organize multiple alarm notifications together. Prevents notification spam by combining them into an expandable group.
           default: "Alarm"
           selector:
             text:
         alarm_scripts_triggered:
           name: Scripts
+          description: |
+            `optional` `script`
+
+            Scripts to execute when alarm triggers. All scripts run in parallel. Leave empty to disable script automation.
           default: []
-          description: Scripts to execute when entering this state. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -955,11 +1173,11 @@ blueprint:
               multiple: true
         alarm_camera_triggered:
           name: Camera
+          description: |
+            `optional` `camera` `ios` `android`
+
+            Camera to include in triggered alarm notification. iOS shows live video feed, Android shows static snapshot. Leave empty to disable camera preview.
           default: []
-          description: "`iOS` `Android`
-
-
-            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
@@ -968,67 +1186,73 @@ blueprint:
               multiple: false
         alarm_camera_triggered_click_action:
           name: Camera Click Action
+          description: |
+            `optional` `text` `android`
+
+            Lovelace dashboard path to open when tapping camera notification. Format: `/lovelace/view_name`. Leave empty for default view.
           default: ""
-          description: "`Android`
-
-
-            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
           selector:
             text:
 
     alarm_mode_emergency:
-      name: Settings for when Emergency mode of the Keypad is activated
-      description: "It is activated by long pressing the SOS button on the Keypad, no pin needed. There is no link to the Alarm Control Panel as it doesn't support an Emergency state, you can choose to add scripts to do whatever you want, when this is activated."
+      name: Mode - Emergency
+      description: Configure notifications and scripts for Emergency mode (activated by long-pressing SOS on keypad, no PIN required). This mode is independent of the alarm control panel.
       icon: mdi:shield-star
       collapsed: true
       input:
         alarm_notifications_emergency:
-          name: Notification
+          name: Notification Message
+          description: |
+            `required` `text`
+
+            Notification message when Emergency mode is activated (long-press SOS button on keypad). Requires no PIN code for instant activation.
           default: Emergency mode activated!
-          description: Notification message sent when Emergency mode is activated on the keypad.
           selector:
             text:
         alarm_notifications_critical_emergency:
           name: Critical Notification
-          description: "`Android` `iOS`
+          description: |
+            `optional` `boolean` `android` `ios`
 
-
-            If enabled, notifications will appear no matter phone state."
+            Make notification high-priority, bypassing Do Not Disturb (Android) and Focus modes (iOS). Enable for important security events, disable for routine changes.
           default: true
           selector:
             boolean:
         alarm_notifications_status_bar_icon_emergency:
           name: Status Bar Icon
-          description: "`Android`
+          description: |
+            `optional` `icon` `android`
 
-
-            Sets the status bar icon."
+            Custom icon for Android notification status bar.
           default: "mdi:shield-star"
           selector:
             icon:
               placeholder: mdi:shield-star
         alarm_notifications_channel_emergency:
           name: Notification Channel
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+            Android notification channel for custom sounds per mode. Configure in HA Companion app → Settings → Notifications → Manage Channels.
           default: "Emergency"
           selector:
             text:
         alarm_notifications_group_emergency:
           name: Notification Group
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Group notifications together."
+            Android notification grouping to organize multiple alarm notifications together. Prevents notification spam by combining them into an expandable group.
           default: "Alarm"
           selector:
             text:
         alarm_scripts_emergency:
           name: Scripts
+          description: |
+            `optional` `script`
+
+            Scripts to execute when Emergency mode is activated. All scripts run in parallel. Leave empty to disable script automation.
           default: []
-          description: Scripts to execute when Emergency mode is activated. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -1037,11 +1261,11 @@ blueprint:
               multiple: true
         alarm_camera_emergency:
           name: Camera
+          description: |
+            `optional` `camera` `ios` `android`
+
+            Camera to include in Emergency mode notification. iOS shows live video feed, Android shows static snapshot. Leave empty to disable camera preview.
           default: []
-          description: "`iOS` `Android`
-
-
-            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
@@ -1050,23 +1274,27 @@ blueprint:
               multiple: false
         alarm_camera_emergency_click_action:
           name: Camera Click Action
+          description: |
+            `optional` `text` `android`
+
+            Lovelace dashboard path to open when tapping camera notification. Format: `/lovelace/view_name`. Leave empty for default view.
           default: ""
-          description: "`Android`
-
-
-            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
           selector:
             text:
 
     alarm_mode_always:
-      name: Settings for actions not tied to the alarm status
+      name: Sensors - Always Active
+      description: Configure sensors and notifications that trigger regardless of alarm state (does not trigger the alarm itself).
       icon: mdi:shield
       collapsed: true
       input:
         alarm_sensor_always:
           name: Sensors
+          description: |
+            `optional` `binary_sensor`
+
+            Binary sensors monitored 24/7 regardless of alarm state. Sends notifications only, does not trigger alarm. Leave empty to disable always-active monitoring.
           default: []
-          description: Sensors that trigger notifications regardless of alarm state. Does not trigger the alarm itself.
           selector:
             entity:
               filter:
@@ -1081,52 +1309,58 @@ blueprint:
                     - window
               multiple: true
         alarm_notifications_always:
-          name: Notification
+          name: Notification Message
+          description: |
+            `required` `text`
+
+            Notification message when an always-active sensor triggers. Use `{trigger_name}` template variable for the sensor name.
           default: "{trigger_name} triggered!"
-          description: Notification message sent when a sensor is triggered. Use {trigger_name} to include the entity name.
           selector:
             text:
         alarm_notifications_critical_always:
           name: Critical Notification
-          description: "`Android` `iOS`
+          description: |
+            `optional` `boolean` `android` `ios`
 
-
-            If enabled, notifications will appear no matter phone state."
+            Make notification high-priority, bypassing Do Not Disturb (Android) and Focus modes (iOS). Enable for important security events, disable for routine changes.
           default: false
           selector:
             boolean:
         alarm_notifications_status_bar_icon_always:
           name: Status Bar Icon
-          description: "`Android`
+          description: |
+            `optional` `icon` `android`
 
-
-            Sets the status bar icon."
+            Custom icon for Android notification status bar.
           default: "mdi:shield"
           selector:
             icon:
               placeholder: mdi:shield
         alarm_notifications_channel_always:
           name: Notification Channel
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+            Android notification channel for custom sounds per mode. Configure in HA Companion app → Settings → Notifications → Manage Channels.
           default: "General"
           selector:
             text:
         alarm_notifications_group_always:
           name: Notification Group
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Group notifications together."
+            Android notification grouping to organize multiple alarm notifications together. Prevents notification spam by combining them into an expandable group.
           default: "Alarm"
           selector:
             text:
         alarm_scripts_always:
           name: Scripts
+          description: |
+            `optional` `script`
+
+            Scripts to execute when always-active sensors trigger. All scripts run in parallel. Leave empty to disable script automation.
           default: []
-          description: Scripts to execute when sensors are triggered. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -1135,11 +1369,11 @@ blueprint:
               multiple: true
         alarm_camera_always:
           name: Camera
+          description: |
+            `optional` `camera` `ios` `android`
+
+            Camera to include in always-active sensor notifications. iOS shows live video feed, Android shows static snapshot. Leave empty to disable camera preview.
           default: []
-          description: "`iOS` `Android`
-
-
-            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
@@ -1148,23 +1382,27 @@ blueprint:
               multiple: false
         alarm_camera_always_click_action:
           name: Camera Click Action
+          description: |
+            `optional` `text` `android`
+
+            Lovelace dashboard path to open when tapping camera notification. Format: `/lovelace/view_name`. Leave empty for default view.
           default: ""
-          description: "`Android`
-
-
-            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
           selector:
             text:
 
     alarm_mode_fire:
-      name: Settings for Fire, Smoke and Heat detections
+      name: Sensors - Fire/Smoke/Heat
+      description: Configure fire, smoke, and heat sensors with emergency notifications (does not trigger the alarm itself).
       icon: mdi:fire-alert
       collapsed: true
       input:
         alarm_sensor_fire:
           name: Sensors
+          description: |
+            `optional` `binary_sensor`
+
+            Fire, smoke, and heat sensors that trigger emergency notifications. Does not trigger alarm itself. Leave empty to disable fire monitoring.
           default: []
-          description: Fire, smoke, and heat sensors that trigger emergency notifications. Does not trigger the alarm itself.
           selector:
             entity:
               filter:
@@ -1175,52 +1413,58 @@ blueprint:
                     - smoke
               multiple: true
         alarm_notifications_fire:
-          name: Notification
+          name: Notification Message
+          description: |
+            `required` `text`
+
+            Notification message when fire sensor triggers. Use `{trigger_name}` template variable for the sensor name.
           default: "{trigger_name} detected a fire!"
-          description: Notification message sent when a sensor is triggered. Use {trigger_name} to include the entity name.
           selector:
             text:
         alarm_notifications_critical_fire:
           name: Critical Notification
-          description: "`Android` `iOS`
+          description: |
+            `optional` `boolean` `android` `ios`
 
-
-            If enabled, notifications will appear no matter phone state."
+            Make notification high-priority, bypassing Do Not Disturb (Android) and Focus modes (iOS).
           default: true
           selector:
             boolean:
         alarm_notifications_status_bar_icon_fire:
           name: Status Bar Icon
-          description: "`Android`
+          description: |
+            `optional` `icon` `android`
 
-
-            Sets the status bar icon."
+            Custom icon for Android notification status bar.
           default: "mdi:fire-alert"
           selector:
             icon:
               placeholder: mdi:fire-alert
         alarm_notifications_channel_fire:
           name: Notification Channel
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+            Android notification channel for custom sounds. Configure in HA Companion app.
           default: "Emergency"
           selector:
             text:
         alarm_notifications_group_fire:
           name: Notification Group
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Group notifications together."
+            Android notification grouping to organize multiple notifications together.
           default: "Alarm"
           selector:
             text:
         alarm_scripts_fire:
           name: Scripts
+          description: |
+            `optional` `script`
+
+            Scripts to execute when fire sensors trigger. All scripts run in parallel. Leave empty to disable.
           default: []
-          description: Scripts to execute when sensors are triggered. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -1229,11 +1473,11 @@ blueprint:
               multiple: true
         alarm_camera_fire:
           name: Camera
+          description: |
+            `optional` `camera` `ios` `android`
+
+            Camera to include in fire notifications. iOS shows live video, Android shows snapshot. Leave empty to disable.
           default: []
-          description: "`iOS` `Android`
-
-
-            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
@@ -1242,23 +1486,27 @@ blueprint:
               multiple: false
         alarm_camera_fire_click_action:
           name: Camera Click Action
+          description: |
+            `optional` `text` `android`
+
+            Lovelace dashboard path to open when tapping camera notification. Format: `/lovelace/view_name`. Leave empty for default view.
           default: ""
-          description: "`Android`
-
-
-            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
           selector:
             text:
 
     alarm_mode_gas:
-      name: Settings for Carbon Monoxide and Gas detections
+      name: Sensors - Gas/CO
+      description: Configure carbon monoxide and gas sensors with emergency notifications (does not trigger the alarm itself).
       icon: mdi:smoke-detector-alert
       collapsed: true
       input:
         alarm_sensor_gas:
           name: Sensors
+          description: |
+            `optional` `binary_sensor`
+
+            Carbon monoxide and gas sensors that trigger emergency notifications. Does not trigger alarm itself. Leave empty to disable gas monitoring.
           default: []
-          description: Carbon monoxide and gas sensors that trigger emergency notifications. Does not trigger the alarm itself.
           selector:
             entity:
               filter:
@@ -1269,52 +1517,58 @@ blueprint:
                     - gas
               multiple: true
         alarm_notifications_gas:
-          name: Notification
+          name: Notification Message
+          description: |
+            `required` `text`
+
+            Notification message when gas sensor triggers. Use `{trigger_name}` template variable for the sensor name.
           default: "{trigger_name} detected gas!"
-          description: Notification message sent when a sensor is triggered. Use {trigger_name} to include the entity name.
           selector:
             text:
         alarm_notifications_critical_gas:
           name: Critical Notification
-          description: "`Android` `iOS`
+          description: |
+            `optional` `boolean` `android` `ios`
 
-
-            If enabled, notifications will appear no matter phone state."
+            Make notification high-priority, bypassing Do Not Disturb (Android) and Focus modes (iOS).
           default: true
           selector:
             boolean:
         alarm_notifications_status_bar_icon_gas:
           name: Status Bar Icon
-          description: "`Android`
+          description: |
+            `optional` `icon` `android`
 
-
-            Sets the status bar icon."
+            Custom icon for Android notification status bar.
           default: "mdi:smoke-detector-alert"
           selector:
             icon:
               placeholder: mdi:smoke-detector-alert
         alarm_notifications_channel_gas:
           name: Notification Channel
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+            Android notification channel for custom sounds. Configure in HA Companion app.
           default: "Emergency"
           selector:
             text:
         alarm_notifications_group_gas:
           name: Notification Group
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Group notifications together."
+            Android notification grouping to organize multiple notifications together.
           default: "Alarm"
           selector:
             text:
         alarm_scripts_gas:
           name: Scripts
+          description: |
+            `optional` `script`
+
+            Scripts to execute when gas sensors trigger. All scripts run in parallel. Leave empty to disable.
           default: []
-          description: Scripts to execute when sensors are triggered. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -1323,11 +1577,11 @@ blueprint:
               multiple: true
         alarm_camera_gas:
           name: Camera
+          description: |
+            `optional` `camera` `ios` `android`
+
+            Camera to include in gas notifications. iOS shows live video, Android shows snapshot. Leave empty to disable.
           default: []
-          description: "`iOS` `Android`
-
-
-            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
@@ -1336,23 +1590,27 @@ blueprint:
               multiple: false
         alarm_camera_gas_click_action:
           name: Camera Click Action
+          description: |
+            `optional` `text` `android`
+
+            Lovelace dashboard path to open when tapping camera notification. Format: `/lovelace/view_name`. Leave empty for default view.
           default: ""
-          description: "`Android`
-
-
-            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
           selector:
             text:
 
     alarm_mode_moisture:
-      name: Settings for Moisture detections
+      name: Sensors - Moisture
+      description: Configure moisture sensors with emergency notifications (does not trigger the alarm itself).
       icon: mdi:water-alert
       collapsed: true
       input:
         alarm_sensor_moisture:
           name: Sensors
+          description: |
+            `optional` `binary_sensor`
+
+            Moisture sensors that trigger emergency notifications. Does not trigger alarm itself. Leave empty to disable moisture monitoring.
           default: []
-          description: Moisture sensors that trigger emergency notifications. Does not trigger the alarm itself.
           selector:
             entity:
               filter:
@@ -1362,52 +1620,58 @@ blueprint:
                     - moisture
               multiple: true
         alarm_notifications_moisture:
-          name: Notification
+          name: Notification Message
+          description: |
+            `required` `text`
+
+            Notification message when moisture sensor triggers. Use `{trigger_name}` template variable for the sensor name.
           default: "{trigger_name} detected moisture!"
-          description: Notification message sent when a sensor is triggered. Use {trigger_name} to include the entity name.
           selector:
             text:
         alarm_notifications_critical_moisture:
           name: Critical Notification
-          description: "`Android` `iOS`
+          description: |
+            `optional` `boolean` `android` `ios`
 
-
-            If enabled, notifications will appear no matter phone state."
+            Make notification high-priority, bypassing Do Not Disturb (Android) and Focus modes (iOS).
           default: true
           selector:
             boolean:
         alarm_notifications_status_bar_icon_moisture:
           name: Status Bar Icon
-          description: "`Android`
+          description: |
+            `optional` `icon` `android`
 
-
-            Sets the status bar icon."
+            Custom icon for Android notification status bar.
           default: "mdi:water-alert"
           selector:
             icon:
               placeholder: mdi:water-alert
         alarm_notifications_channel_moisture:
           name: Notification Channel
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Notification channel (can have custom sound in companion app). **Note:** When critical notifications are enabled, this channel name is overridden with `alarm_stream` to ensure the notification bypasses Do Not Disturb."
+            Android notification channel for custom sounds. Configure in HA Companion app.
           default: "Emergency"
           selector:
             text:
         alarm_notifications_group_moisture:
           name: Notification Group
-          description: "`Android`
+          description: |
+            `optional` `text` `android`
 
-
-            Group notifications together."
+            Android notification grouping to organize multiple notifications together.
           default: "Alarm"
           selector:
             text:
         alarm_scripts_moisture:
           name: Scripts
+          description: |
+            `optional` `script`
+
+            Scripts to execute when moisture sensors trigger. All scripts run in parallel. Leave empty to disable.
           default: []
-          description: Scripts to execute when sensors are triggered. All scripts run in parallel.
           selector:
             entity:
               filter:
@@ -1416,11 +1680,11 @@ blueprint:
               multiple: true
         alarm_camera_moisture:
           name: Camera
+          description: |
+            `optional` `camera` `ios` `android`
+
+            Camera to include in moisture notifications. iOS shows live video, Android shows snapshot. Leave empty to disable.
           default: []
-          description: "`iOS` `Android`
-
-
-            Camera to display in the notification. iOS shows a live video feed, Android shows a static image."
           selector:
             entity:
               filter:
@@ -1429,11 +1693,11 @@ blueprint:
               multiple: false
         alarm_camera_moisture_click_action:
           name: Camera Click Action
+          description: |
+            `optional` `text` `android`
+
+            Lovelace dashboard path to open when tapping camera notification. Format: `/lovelace/view_name`. Leave empty for default view.
           default: ""
-          description: "`Android`
-
-
-            Dashboard path to open when tapping the notification (e.g., /lovelace/cameras). Use this to show a live camera feed on Android."
           selector:
             text:
 
@@ -1478,39 +1742,46 @@ triggers:
     to: "on"
     alias: alarm_sensor_away
     id: alarm_sensor_away
+    enabled: "{{ alarm_sensor_away | count > 0 }}"
   - trigger: state
     entity_id: !input alarm_sensor_home
     to: "on"
     alias: alarm_sensor_home
     id: alarm_sensor_home
+    enabled: "{{ alarm_sensor_home | count > 0 }}"
   - trigger: state
     entity_id: !input alarm_sensor_night
     to: "on"
     alias: alarm_sensor_night
     id: alarm_sensor_night
+    enabled: "{{ alarm_sensor_night | count > 0 }}"
   - trigger: state
     entity_id: !input alarm_sensor_always
     to: "on"
     alias: alarm_sensor_always
     id: alarm_sensor_always
+    enabled: "{{ alarm_sensor_always | count > 0 }}"
   - trigger: state
     entity_id: !input alarm_sensor_fire
     to: "on"
     alias: alarm_sensor_fire
     id: alarm_sensor_fire
     for: "00:00:02"
+    enabled: "{{ alarm_sensor_fire | count > 0 }}"
   - trigger: state
     entity_id: !input alarm_sensor_gas
     to: "on"
     alias: alarm_sensor_gas
     id: alarm_sensor_gas
     for: "00:00:02"
+    enabled: "{{ alarm_sensor_gas | count > 0 }}"
   - trigger: state
     entity_id: !input alarm_sensor_moisture
     to: "on"
     alias: alarm_sensor_moisture
     id: alarm_sensor_moisture
     for: "00:00:02"
+    enabled: "{{ alarm_sensor_moisture | count > 0 }}"
   - trigger: event
     event_type: mobile_app_notification_action
     event_data:
@@ -1533,30 +1804,37 @@ triggers:
     entity_id: !input alarm_presence_sensor
     alias: presence_change
     id: presence_change
+    enabled: "{{ alarm_presence_sensor != none and alarm_presence_sensor != '' }}"
   - trigger: time
     at: !input alarm_schedule_weekdays_start_time
     alias: time_weekdays_start
     id: time_weekdays_start
+    enabled: "{{ alarm_schedule_weekdays_start_time != none and alarm_schedule_weekdays_start_time != '' }}"
   - trigger: time
     at: !input alarm_schedule_weekdays_end_time
     alias: time_weekdays_end
     id: time_weekdays_end
+    enabled: "{{ alarm_schedule_weekdays_end_time != none and alarm_schedule_weekdays_end_time != '' }}"
   - trigger: time
     at: !input alarm_schedule_weekends_start_time
     alias: time_weekends_start
     id: time_weekends_start
+    enabled: "{{ alarm_schedule_weekends_start_time != none and alarm_schedule_weekends_start_time != '' }}"
   - trigger: time
     at: !input alarm_schedule_weekends_end_time
     alias: time_weekends_end
     id: time_weekends_end
+    enabled: "{{ alarm_schedule_weekends_end_time != none and alarm_schedule_weekends_end_time != '' }}"
   - trigger: time
     at: !input alarm_schedule_custom_start_time
     alias: time_custom_start
     id: time_custom_start
+    enabled: "{{ alarm_schedule_custom_start_time != none and alarm_schedule_custom_start_time != '' }}"
   - trigger: time
     at: !input alarm_schedule_custom_end_time
     alias: time_custom_end
     id: time_custom_end
+    enabled: "{{ alarm_schedule_custom_end_time != none and alarm_schedule_custom_end_time != '' }}"
 
 variables:
   alarm_main: !input alarm_control_panel_main
@@ -1569,6 +1847,7 @@ variables:
   integration_type: !input integration_type
   z2m_base_topic: !input z2m_base_topic
   z2m_alarm_keypad: !input z2m_alarm_keypad
+  zha_alarm_keypad_device: !input zha_alarm_keypad_device
   zha_alarm_control_panel_keypad: !input zha_alarm_control_panel_keypad
   zha_alarm_code_keypad: !input zha_alarm_code_keypad
   zha_alarm_code_keypad_state: "{{ states(zha_alarm_code_keypad) if zha_alarm_code_keypad != none else '' }}"
@@ -1638,6 +1917,10 @@ variables:
   alarm_sensor_fire: !input alarm_sensor_fire
   alarm_sensor_gas: !input alarm_sensor_gas
   alarm_sensor_moisture: !input alarm_sensor_moisture
+  alarm_sensor_away: !input alarm_sensor_away
+  alarm_sensor_home: !input alarm_sensor_home
+  alarm_sensor_night: !input alarm_sensor_night
+  alarm_sensor_always: !input alarm_sensor_always
   alarm_scripts_away: !input alarm_scripts_away
   alarm_scripts_home: !input alarm_scripts_home
   alarm_scripts_night: !input alarm_scripts_night
@@ -1747,7 +2030,7 @@ actions:
           - condition: trigger
             id: z2m_keypad
           - condition: template
-            value_template: "{{ trigger.payload_json.action_code in alarm_codes_state }}"
+            value_template: "{{ trigger.payload_json.action_code in alarm_codes_state or (alarm_code_main_state != '' and trigger.payload_json.action_code == alarm_code_main_state) }}"
         then:
           - variables:
               z2m_arm_action: |
@@ -1766,7 +2049,8 @@ actions:
                 {% set ns = namespace(name=none) %}
                 {% for code_entity in alarm_codes %}
                   {% if states(code_entity) | string == code_to_match %}
-                    {% set ns.name = state_attr(code_entity, 'friendly_name') or code_entity.split('.')[1].replace('_', ' ').title() %}
+                    {% set full_name = state_attr(code_entity, 'friendly_name') or code_entity.split('.')[1].replace('_', ' ').title() %}
+                    {% set ns.name = full_name.replace('Alarm Code ', '', 1) %}
                   {% endif %}
                 {% endfor %}
                 {{ ns.name if ns.name != none else alarm_default_user_name }}
@@ -1791,7 +2075,7 @@ actions:
           - condition: trigger
             id: zha_keypad
           - condition: template
-            value_template: "{{ trigger.event.data.args.code in alarm_codes_state }}"
+            value_template: "{{ trigger.event.data.args.code in alarm_codes_state or (alarm_code_main_state != '' and trigger.event.data.args.code == alarm_code_main_state) }}"
         then:
           - variables:
               zha_arm_action: |
@@ -1810,7 +2094,8 @@ actions:
                 {% set ns = namespace(name=none) %}
                 {% for code_entity in alarm_codes %}
                   {% if states(code_entity) | string == code_to_match %}
-                    {% set ns.name = state_attr(code_entity, 'friendly_name') or code_entity.split('.')[1].replace('_', ' ').title() %}
+                    {% set full_name = state_attr(code_entity, 'friendly_name') or code_entity.split('.')[1].replace('_', ' ').title() %}
+                    {% set ns.name = full_name.replace('Alarm Code ', '', 1) %}
                   {% endif %}
                 {% endfor %}
                 {{ ns.name if ns.name != none else alarm_default_user_name }}
@@ -1829,6 +2114,7 @@ actions:
             target:
               entity_id: "{{ alarm_main }}"
             continue_on_error: true
+
 
   - alias: Alarm State Change Handler
     if:
@@ -1938,7 +2224,6 @@ actions:
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
-                              title: "{{ config.title }}"
                               message: "{{ config.message }}"
                               data:
                                 actions: "{{ notification_actions }}"
@@ -1966,7 +2251,6 @@ actions:
                         sequence:
                           - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
                             data:
-                              title: "{{ config.title }}"
                               message: "{{ config.message }}"
                               data:
                                 actions: "{{ notification_actions }}"
@@ -2278,6 +2562,87 @@ actions:
           - action: script.turn_on
             target:
               entity_id: "{{ alarm_scripts_emergency }}"
+
+  - alias: Emergency Notifications
+    if:
+      - condition: trigger
+        id: z2m_keypad
+      - condition: template
+        value_template: "{{ trigger.payload_json.action == 'emergency' }}"
+      - condition: template
+        value_template: "{{ alarm_notifications_target | count > 0 }}"
+    then:
+      - variables:
+          emergency_camera: !input alarm_camera_emergency
+          emergency_camera_image: >-
+            {% set cam = emergency_camera %}
+            {% if cam %}
+              /api/camera_proxy/{{ cam }}
+            {% else %}
+
+            {% endif %}
+          emergency_click_action: !input alarm_camera_emergency_click_action
+      - parallel:
+          # Critical notifications
+          - if:
+              - condition: template
+                value_template: "{{ alarm_notifications_critical_emergency == true }}"
+            then:
+              repeat:
+                for_each: !input alarm_notifications_target
+                sequence:
+                  - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                    data:
+                      message: "{{ alarm_notifications_emergency }}"
+                      data:
+                        actions: "{{ notification_actions }}"
+                        entity_id: "{{ emergency_camera if emergency_camera else none }}"
+                        image: "{{ emergency_camera_image }}"
+                        clickAction: "{{ emergency_click_action }}"
+                        notification_icon: "{{ alarm_notifications_status_bar_icon_emergency }}"
+                        channel: alarm_stream
+                        group: "{{ alarm_notifications_group_emergency }}"
+                        tag: "emergency"
+                        importance: high
+                        priority: high
+                        ttl: 0
+                        push:
+                          sound:
+                            name: default
+                            critical: 1
+                            volume: 1
+          # Normal notifications
+          - if:
+              - condition: template
+                value_template: "{{ alarm_notifications_critical_emergency == false }}"
+            then:
+              repeat:
+                for_each: !input alarm_notifications_target
+                sequence:
+                  - action: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                    data:
+                      message: "{{ alarm_notifications_emergency }}"
+                      data:
+                        actions: "{{ notification_actions }}"
+                        entity_id: "{{ emergency_camera if emergency_camera else none }}"
+                        image: "{{ emergency_camera_image }}"
+                        clickAction: "{{ emergency_click_action }}"
+                        notification_icon: "{{ alarm_notifications_status_bar_icon_emergency }}"
+                        channel: "{{ alarm_notifications_channel_emergency }}"
+                        group: "{{ alarm_notifications_group_emergency }}"
+                        tag: "emergency"
+          # TTS announcements
+          - if:
+              - condition: template
+                value_template: "{{ alarm_announcements_player is defined and alarm_announcements_engine is defined }}"
+            then:
+              action: tts.speak
+              data:
+                cache: true
+                media_player_entity_id: "{{ alarm_announcements_player }}"
+                message: "{{ alarm_notifications_emergency }}"
+              target:
+                entity_id: "{{ alarm_announcements_engine }}"
 
   - alias: Sensor Scripts
     choose:
@@ -2760,18 +3125,21 @@ actions:
                 time_weekdays_start:
                   enabled: "{{ alarm_schedule_weekdays_enabled }}"
                   days_count: "{{ alarm_schedule_weekdays_days | count }}"
+                  days: "{{ alarm_schedule_weekdays_days }}"
                   mode: "{{ alarm_schedule_weekdays_start_mode }}"
                 time_weekends_start:
                   enabled: "{{ alarm_schedule_weekends_enabled }}"
                   days_count: "{{ alarm_schedule_weekends_days | count }}"
+                  days: "{{ alarm_schedule_weekends_days }}"
                   mode: "{{ alarm_schedule_weekends_start_mode }}"
                 time_custom_start:
                   enabled: "{{ alarm_schedule_custom_enabled }}"
                   days_count: "{{ alarm_schedule_custom_days | count }}"
+                  days: "{{ alarm_schedule_custom_days }}"
                   mode: "{{ alarm_schedule_custom_start_mode }}"
               current_schedule: "{{ schedule_map[trigger.id] }}"
           - condition: template
-            value_template: "{{ current_schedule.enabled and current_schedule.days_count > 0 }}"
+            value_template: "{{ current_schedule.enabled and current_schedule.days_count > 0 and now().strftime('%a').lower() in current_schedule.days }}"
           - action: "alarm_control_panel.{{ 'alarm_disarm' if current_schedule.mode == 'disarmed' else 'alarm_arm_' ~ current_schedule.mode.replace('armed_', '') }}"
             data:
               code: "{{ alarm_code_main_state }}"
@@ -2798,18 +3166,21 @@ actions:
                 time_weekdays_end:
                   enabled: "{{ alarm_schedule_weekdays_enabled }}"
                   days_count: "{{ alarm_schedule_weekdays_days | count }}"
+                  days: "{{ alarm_schedule_weekdays_days }}"
                   mode: "{{ alarm_schedule_weekdays_end_mode }}"
                 time_weekends_end:
                   enabled: "{{ alarm_schedule_weekends_enabled }}"
                   days_count: "{{ alarm_schedule_weekends_days | count }}"
+                  days: "{{ alarm_schedule_weekends_days }}"
                   mode: "{{ alarm_schedule_weekends_end_mode }}"
                 time_custom_end:
                   enabled: "{{ alarm_schedule_custom_enabled }}"
                   days_count: "{{ alarm_schedule_custom_days | count }}"
+                  days: "{{ alarm_schedule_custom_days }}"
                   mode: "{{ alarm_schedule_custom_end_mode }}"
               current_schedule: "{{ schedule_map[trigger.id] }}"
           - condition: template
-            value_template: "{{ current_schedule.enabled and current_schedule.days_count > 0 }}"
+            value_template: "{{ current_schedule.enabled and current_schedule.days_count > 0 and now().strftime('%a').lower() in current_schedule.days }}"
           - action: "alarm_control_panel.{{ 'alarm_disarm' if current_schedule.mode == 'disarmed' else 'alarm_arm_' ~ current_schedule.mode.replace('armed_', '') }}"
             data:
               code: "{{ alarm_code_main_state }}"
