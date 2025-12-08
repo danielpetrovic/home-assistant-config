@@ -1,25 +1,28 @@
 blueprint:
-  name: Alarm System with Zigbee Keypad support (Z2M / ZHA)
+  name: Alarm System with Keypad support (Z2M / ZHA / Dashboard)
   author: danielpetrovic
   description: |
-    # Alarm System with Zigbee (Z2M / ZHA) Keypad support (KEPZB-110)
+    # Alarm System with Keypad support (Z2M / ZHA / Dashboard)
 
-    A comprehensive alarm system blueprint for Home Assistant with physical Zigbee keypad support. No custom components required.
+    A comprehensive alarm system blueprint for Home Assistant with multiple keypad integration options. No custom components required.
 
     ## Features
-    - **Physical Keypad Integration**: Sync states with Zigbee keypads via Z2M or ZHA (tested with frient KEPZB-110)
+    - **Multiple Keypad Options**: Choose Z2M, ZHA, Dashboard, or any combination
+      - **Physical Zigbee Keypads**: Sync states with Z2M or ZHA (tested with frient KEPZB-110)
+      - **Dashboard Keypad**: Custom on-screen numeric keypad for wall tablets/panels or Companion App
     - **Multiple User Codes**: Unlimited user codes with support for PIN codes (digits) and RFID tags (hexadecimal: 0-9/A-F) (pattern: `^[0-9A-F+]+$`)
     - **Two-Tier Code System**: Blueprint validates user codes, then sends master code to alarm panel - your alarm panel doesn't need to support multiple codes
     - **Smart Automation**: Auto-arm when leaving, auto-disarm on arrival, flexible time-based schedules (weekday/weekend/custom)
     - **Rich Notifications**: Text notifications with camera feeds (iOS live/Android snapshot), TTS announcements, critical alerts
     - **Mode-Specific Configuration**: Different sensors and actions for Away/Home/Night/Arming/Pending/Disarmed/Triggered/Emergency modes
-    - **Emergency Mode**: Silent alarm via keypad SOS button (long-press 5+ seconds)
+    - **Emergency Mode**: Silent alarm via keypad SOS button (long-press 5+ seconds) (physical keypads only)
 
     ## Prerequisites
     - Home Assistant 2024.8.0 or later
     - Manual Alarm Control Panel (see setup below)
     - Text Helper entities for storing codes (see setup below)
-    - Physical Zigbee keypad connected via Z2M or ZHA (optional but recommended)
+    - Physical Zigbee keypad connected via Z2M or ZHA (optional)
+    - Dashboard helper entities if using Dashboard keypad (see setup below)
 
     ## Recommended Setup Using Packages
     Using packages keeps all alarm-related configuration in one file for easy management.
@@ -32,23 +35,7 @@ blueprint:
 
     **2. Create `/config/packages/alarm.yaml`** with all alarm components:
     ```yaml
-    input_text:
-      alarm_code_main:
-        name: Alarm Code Main
-        mode: password
-        min: 4
-        max: 16
-        pattern: "^[0-9]+$"
-      alarm_code_user_1:
-        name: John's Code
-        icon: mdi:dialpad
-        mode: password
-        min: 4
-        max: 16
-        pattern: "^[0-9A-F+]+$"
-      alarm_code_user_name:
-        name: Last User Name
-        max: 255
+    # Manual Alarm Control Panel
     alarm_control_panel:
       - platform: manual
         name: Alarm
@@ -62,6 +49,39 @@ blueprint:
         armed_night:
           arming_time: 0
           delay_time: 20
+
+    # Input Text Helpers
+    input_text:
+      # Main/Master code (sent to alarm panel)
+      alarm_code_main:
+        name: Alarm Code Main
+        icon: mdi:dialpad
+        mode: password
+        min: 4
+        max: 16
+        pattern: "^[0-9]+$"  # Supports PIN only
+
+      # User codes (validated by blueprint)
+      alarm_code_user_1:
+        name: Alarm Code John
+        icon: mdi:dialpad
+        mode: password
+        min: 4
+        max: 16
+        pattern: "^[0-9A-F+]+$"  # Supports PIN and RFID
+      alarm_code_user_2:
+        name: Alarm Code Jane
+        icon: mdi:dialpad
+        mode: password
+        min: 4
+        max: 16
+        pattern: "^[0-9A-F+]+$"  # Supports PIN and RFID
+
+      # User name storage (updated by blueprint)
+      alarm_code_user_name:
+        name: Alarm Last User Name
+        icon: mdi:account
+        max: 255
     ```
 
     **3. Restart Home Assistant** to load the new entities.
@@ -130,7 +150,7 @@ blueprint:
       description: |
         `optional`
 
-        Select which integration manages your Zigbee keypad: Z2M, ZHA, or both. Leave empty if no physical keypad.
+        Select which integration(s) to use: Z2M, ZHA, Dashboard, or any combination. Leave empty if no keypad integration needed.
       default: []
       selector:
         select:
@@ -139,6 +159,8 @@ blueprint:
               value: z2m
             - label: Zigbee Home Automation (ZHA)
               value: zha
+            - label: Dashboard (Custom On-Screen Keypad)
+              value: dashboard
           multiple: true
 
     z2m:
@@ -210,6 +232,348 @@ blueprint:
                 - domain:
                     - input_text
               multiple: false
+
+    dashboard:
+      name: Dashboard Keypad
+      description: Configure custom on-screen numeric keypad for wall tablets/panels or Home Assistant Companion App.
+      icon: mdi:tablet-dashboard
+      collapsed: true
+      input:
+        alarm_dashboard_code:
+          name: Code Helper
+          description: |
+            `optional` `input_text`
+
+            Helper storing digits as user taps number buttons. Creates `input_text.alarm_dashboard_code` with name "Alarm Dashboard Code", pattern `^[0-9]*$` and max 16 characters. Leave empty if not using dashboard keypad.
+          default: null
+          selector:
+            entity:
+              filter:
+                - domain: input_text
+        alarm_dashboard_action:
+          name: Action Helper
+          description: |
+            `optional` `input_text`
+
+            Helper storing requested action (arm_away, arm_home, arm_night, disarm). Creates `input_text.alarm_dashboard_action` with name "Alarm Dashboard Action". Leave empty if not using dashboard keypad.
+          default: null
+          selector:
+            entity:
+              filter:
+                - domain: input_text
+
+    dashboard_scripts:
+      name: Dashboard Keypad - Setup Instructions
+      description: |
+        Add these sections to `/config/packages/alarm.yaml` and restart Home Assistant:
+
+        ```yaml
+        input_text:
+          # Dashboard keypad helpers
+          alarm_dashboard_code:
+            name: Alarm Dashboard Code
+            icon: mdi:numeric
+            min: 0
+            max: 16
+            mode: password
+            initial: ""
+            pattern: "^[0-9]*$"
+          alarm_dashboard_action:
+            name: Alarm Dashboard Action
+            icon: mdi:shield-lock
+            min: 0
+            max: 20
+            initial: ""
+
+        # Dashboard keypad scripts (required - button cards don't support templates)
+        script:
+          alarm_dashboard_append_1:
+            alias: "Alarm Dashboard: Append 1"
+            sequence:
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.alarm_dashboard_code
+                data:
+                  value: "{{ states('input_text.alarm_dashboard_code') + '1' }}"
+          alarm_dashboard_append_2:
+            alias: "Alarm Dashboard: Append 2"
+            sequence:
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.alarm_dashboard_code
+                data:
+                  value: "{{ states('input_text.alarm_dashboard_code') + '2' }}"
+          alarm_dashboard_append_3:
+            alias: "Alarm Dashboard: Append 3"
+            sequence:
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.alarm_dashboard_code
+                data:
+                  value: "{{ states('input_text.alarm_dashboard_code') + '3' }}"
+          alarm_dashboard_append_4:
+            alias: "Alarm Dashboard: Append 4"
+            sequence:
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.alarm_dashboard_code
+                data:
+                  value: "{{ states('input_text.alarm_dashboard_code') + '4' }}"
+          alarm_dashboard_append_5:
+            alias: "Alarm Dashboard: Append 5"
+            sequence:
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.alarm_dashboard_code
+                data:
+                  value: "{{ states('input_text.alarm_dashboard_code') + '5' }}"
+          alarm_dashboard_append_6:
+            alias: "Alarm Dashboard: Append 6"
+            sequence:
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.alarm_dashboard_code
+                data:
+                  value: "{{ states('input_text.alarm_dashboard_code') + '6' }}"
+          alarm_dashboard_append_7:
+            alias: "Alarm Dashboard: Append 7"
+            sequence:
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.alarm_dashboard_code
+                data:
+                  value: "{{ states('input_text.alarm_dashboard_code') + '7' }}"
+          alarm_dashboard_append_8:
+            alias: "Alarm Dashboard: Append 8"
+            sequence:
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.alarm_dashboard_code
+                data:
+                  value: "{{ states('input_text.alarm_dashboard_code') + '8' }}"
+          alarm_dashboard_append_9:
+            alias: "Alarm Dashboard: Append 9"
+            sequence:
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.alarm_dashboard_code
+                data:
+                  value: "{{ states('input_text.alarm_dashboard_code') + '9' }}"
+          alarm_dashboard_append_0:
+            alias: "Alarm Dashboard: Append 0"
+            sequence:
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.alarm_dashboard_code
+                data:
+                  value: "{{ states('input_text.alarm_dashboard_code') + '0' }}"
+          alarm_dashboard_clear:
+            alias: "Alarm Dashboard: Clear"
+            sequence:
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.alarm_dashboard_code
+                data:
+                  value: ""
+          alarm_dashboard_backspace:
+            alias: "Alarm Dashboard: Backspace"
+            sequence:
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.alarm_dashboard_code
+                data:
+                  value: "{{ states('input_text.alarm_dashboard_code')[:-1] }}"
+        ```
+      icon: mdi:script-text
+      collapsed: true
+      input: {}
+
+    dashboard_lovelace_example:
+      name: Dashboard Keypad - Lovelace YAML
+      description: |
+        Add this card to your Lovelace dashboard:
+
+        ```yaml
+        type: vertical-stack
+        cards:
+          - type: heading
+            heading: Alarm Keypad
+            heading_style: title
+            icon: mdi:shield-lock
+          - type: horizontal-stack
+            cards:
+              - type: tile
+                entity: alarm_control_panel.alarm
+                name: Status
+                vertical: false
+                tap_action:
+                  action: none
+                icon_tap_action:
+                  action: none
+                features_position: bottom
+              - type: tile
+                entity: input_text.alarm_code_user_name
+                name: Last User
+                icon: mdi:account
+                vertical: false
+                tap_action:
+                  action: none
+                icon_tap_action:
+                  action: none
+                features_position: bottom
+          - type: markdown
+            content: >
+              {% set code = states('input_text.alarm_dashboard_code') %}
+
+              <div style="height: 60px; display: flex; align-items: center; justify-content: center; font-size: 48px; letter-spacing: 8px; font-family: monospace;">
+                {% if code == '' %}
+                  ____
+                {% else %}
+                  {{ '●' * (code | length) }}
+                {% endif %}
+              </div>
+          - square: false
+            type: grid
+            columns: 3
+            cards:
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:numeric-1
+                tap_action:
+                  action: call-service
+                  service: script.alarm_dashboard_append_1
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:numeric-2
+                tap_action:
+                  action: call-service
+                  service: script.alarm_dashboard_append_2
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:numeric-3
+                tap_action:
+                  action: call-service
+                  service: script.alarm_dashboard_append_3
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:numeric-4
+                tap_action:
+                  action: call-service
+                  service: script.alarm_dashboard_append_4
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:numeric-5
+                tap_action:
+                  action: call-service
+                  service: script.alarm_dashboard_append_5
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:numeric-6
+                tap_action:
+                  action: call-service
+                  service: script.alarm_dashboard_append_6
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:numeric-7
+                tap_action:
+                  action: call-service
+                  service: script.alarm_dashboard_append_7
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:numeric-8
+                tap_action:
+                  action: call-service
+                  service: script.alarm_dashboard_append_8
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:numeric-9
+                tap_action:
+                  action: call-service
+                  service: script.alarm_dashboard_append_9
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:close-circle
+                tap_action:
+                  action: call-service
+                  service: script.alarm_dashboard_clear
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:numeric-0
+                tap_action:
+                  action: call-service
+                  service: script.alarm_dashboard_append_0
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:backspace
+                tap_action:
+                  action: call-service
+                  service: script.alarm_dashboard_backspace
+          - type: horizontal-stack
+            cards:
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:shield-lock
+                icon_height: 50px
+                tap_action:
+                  action: call-service
+                  service: input_text.set_value
+                  target:
+                    entity_id: input_text.alarm_dashboard_action
+                  data:
+                    value: arm_away
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:shield-home
+                icon_height: 50px
+                tap_action:
+                  action: call-service
+                  service: input_text.set_value
+                  target:
+                    entity_id: input_text.alarm_dashboard_action
+                  data:
+                    value: arm_home
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:shield-moon
+                icon_height: 50px
+                tap_action:
+                  action: call-service
+                  service: input_text.set_value
+                  target:
+                    entity_id: input_text.alarm_dashboard_action
+                  data:
+                    value: arm_night
+              - type: button
+                show_name: false
+                show_icon: true
+                icon: mdi:shield-off
+                icon_height: 50px
+                tap_action:
+                  action: call-service
+                  service: input_text.set_value
+                  target:
+                    entity_id: input_text.alarm_dashboard_action
+                  data:
+                    value: disarm
+        ```
+      icon: mdi:code-braces
+      collapsed: true
+      input: {}
 
     alarm_automation_main:
       name: Automation - Main Settings
@@ -1708,6 +2072,7 @@ trigger_variables:
   integration_type: !input integration_type
   z2m_base_topic: !input z2m_base_topic
   z2m_alarm_keypad: !input z2m_alarm_keypad
+  alarm_dashboard_action: !input alarm_dashboard_action
   notification_actions:
     - action: disarm
       title: Alarm Disarm
@@ -1835,6 +2200,10 @@ triggers:
     alias: time_custom_end
     id: time_custom_end
     enabled: "{{ alarm_schedule_custom_end_time != none and alarm_schedule_custom_end_time != '' }}"
+  - trigger: template
+    value_template: "{{ alarm_dashboard_action != none and states(alarm_dashboard_action) not in ['', 'unknown', 'unavailable'] }}"
+    alias: dashboard_keypad
+    id: dashboard_keypad
 
 variables:
   alarm_main: !input alarm_control_panel_main
@@ -1954,6 +2323,8 @@ variables:
   alarm_schedule_custom_start_mode: !input alarm_schedule_custom_start_mode
   alarm_schedule_custom_end_time: !input alarm_schedule_custom_end_time
   alarm_schedule_custom_end_mode: !input alarm_schedule_custom_end_mode
+  alarm_dashboard_code: !input alarm_dashboard_code
+  alarm_dashboard_action: !input alarm_dashboard_action
 
 conditions:
   - condition: template
@@ -2115,6 +2486,124 @@ actions:
               entity_id: "{{ alarm_main }}"
             continue_on_error: true
 
+  - alias: Dashboard Keypad → Main Alarm
+    if:
+      - condition: trigger
+        id: dashboard_keypad
+      - condition: template
+        value_template: >
+          {{ alarm_dashboard_code != none and
+             alarm_dashboard_action != none and
+             trigger.to_state.state != '' }}
+    then:
+      - variables:
+          dashboard_code: "{{ states(alarm_dashboard_code) }}"
+          dashboard_action_raw: "{{ trigger.to_state.state }}"
+          dashboard_alarm_action: |
+            {% if dashboard_action_raw == "arm_away" %}
+              alarm_control_panel.alarm_arm_away
+            {% elif dashboard_action_raw == "arm_home" %}
+              alarm_control_panel.alarm_arm_home
+            {% elif dashboard_action_raw == "arm_night" %}
+              alarm_control_panel.alarm_arm_night
+            {% elif dashboard_action_raw == "disarm" %}
+              alarm_control_panel.alarm_disarm
+            {% else %}
+              invalid
+            {% endif %}
+          code_is_valid: >
+            {% set code_match = namespace(found=false) %}
+            {% set dashboard_code_str = dashboard_code | string %}
+            {% for code_entity in alarm_codes %}
+              {% if states(code_entity) | string == dashboard_code_str %}
+                {% set code_match.found = true %}
+              {% endif %}
+            {% endfor %}
+            {{ code_match.found or (alarm_code_main_state != '' and dashboard_code_str == alarm_code_main_state | string) }}
+          dashboard_user_name: >
+            {% set code_to_match = dashboard_code | string %}
+            {% set ns = namespace(name=none) %}
+            {% for code_entity in alarm_codes %}
+              {% if states(code_entity) | string == code_to_match %}
+                {% set full_name = state_attr(code_entity, 'friendly_name') or code_entity.split('.')[1].replace('_', ' ').title() %}
+                {% set ns.name = full_name.replace('Alarm Code ', '', 1) %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.name if ns.name != none else '' }}
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ code_is_valid and dashboard_alarm_action != 'invalid' }}"
+            sequence:
+              - if:
+                  - condition: template
+                    value_template: "{{ alarm_code_user_name != none }}"
+                then:
+                  - action: input_text.set_value
+                    target:
+                      entity_id: "{{ alarm_code_user_name }}"
+                    data:
+                      value: "{{ dashboard_user_name }}"
+              - action: "{{ dashboard_alarm_action }}"
+                data:
+                  code: "{{ alarm_code_main_state if alarm_code_main_state != '' else dashboard_code }}"
+                target:
+                  entity_id: "{{ alarm_main }}"
+                continue_on_error: true
+              - parallel:
+                  - action: input_text.set_value
+                    target:
+                      entity_id: "{{ alarm_dashboard_code }}"
+                    data:
+                      value: ""
+                  - action: input_text.set_value
+                    target:
+                      entity_id: "{{ alarm_dashboard_action }}"
+                    data:
+                      value: ""
+              - delay:
+                  seconds: 5
+              - if:
+                  - condition: template
+                    value_template: "{{ alarm_code_user_name != none }}"
+                then:
+                  - action: input_text.set_value
+                    target:
+                      entity_id: "{{ alarm_code_user_name }}"
+                    data:
+                      value: ""
+        default:
+          - if:
+              - condition: template
+                value_template: "{{ alarm_code_user_name != none }}"
+            then:
+              - action: input_text.set_value
+                target:
+                  entity_id: "{{ alarm_code_user_name }}"
+                data:
+                  value: "Invalid Code"
+          - delay:
+              seconds: 2
+          - parallel:
+              - action: input_text.set_value
+                target:
+                  entity_id: "{{ alarm_dashboard_code }}"
+                data:
+                  value: ""
+              - action: input_text.set_value
+                target:
+                  entity_id: "{{ alarm_dashboard_action }}"
+                data:
+                  value: ""
+              - if:
+                  - condition: template
+                    value_template: "{{ alarm_code_user_name != none }}"
+                then:
+                  - action: input_text.set_value
+                    target:
+                      entity_id: "{{ alarm_code_user_name }}"
+                    data:
+                      value: ""
 
   - alias: Alarm State Change Handler
     if:
@@ -2141,7 +2630,7 @@ actions:
             pending: "{{ alarm_scripts_pending }}"
             disarmed: "{{ alarm_scripts_disarmed }}"
             triggered: "{{ alarm_scripts_triggered }}"
-          # Notification configuration per state  
+          # Notification configuration per state
           state_config:
             armed_away:
               message: "{{ alarm_notifications_armed_away | replace('{user_name}', triggered_user) }}"
@@ -2275,16 +2764,6 @@ actions:
                         message: "{{ config.message }}"
                       target:
                         entity_id: "{{ alarm_announcements_engine }}"
-          # Reset user name to default after notifications are sent
-          - if:
-              - condition: template
-                value_template: "{{ alarm_code_user_name != none and config is not none }}"
-            then:
-              - action: input_text.set_value
-                target:
-                  entity_id: "{{ alarm_code_user_name }}"
-                data:
-                  value: "{{ alarm_default_user_name }}"
 
   - alias: Alarm Triggers
     choose:

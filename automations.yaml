@@ -5746,3 +5746,5 @@
       dashboard_code_entry_helper: input_text.dashboard_code_entry
       dashboard_alarm_code: input_text.dashboard_alarm_code
       dashboard_alarm_action: input_text.dashboard_alarm_action
+      alarm_dashboard_code: input_text.alarm_dashboard_code
+      alarm_dashboard_action: input_text.alarm_dashboard_action

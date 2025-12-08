@@ -1,3 +1,4 @@
+# Manual Alarm Control Panel
 alarm_control_panel:
   - platform: manual
     name: Alarm
@@ -7,51 +8,185 @@ alarm_control_panel:
       delay_time: 20
     armed_home:
       arming_time: 0
-      delay_time: 20
+      delay_time: 10
     armed_night:
       arming_time: 0
       delay_time: 20
+
+# Input Text Helpers
 input_text:
+  # Main/Master code (sent to alarm panel)
   alarm_code_main:
     name: Alarm Code Main
     icon: mdi:dialpad
+    mode: password
     min: 4
     max: 16
-    mode: password
-    pattern: "^[0-9]+$"
+    pattern: "^[0-9]+$" # Supports PIN only
+
   alarm_code_keypad:
     name: Alarm Code Keypad
     icon: mdi:dialpad
+    mode: password
     min: 4
     max: 16
-    mode: password
-    pattern: "^[0-9]+$"
+    pattern: "^[0-9]+$" # Supports PIN only
+
+  # User codes (validated by blueprint)
   alarm_code_user_1:
     name: Alarm Code Deni
     icon: mdi:dialpad
+    mode: password
     min: 4
     max: 16
-    mode: password
-    pattern: "^[0-9A-F+]+$"
+    pattern: "^[0-9A-F+]+$" # Supports PIN and RFID
   alarm_code_user_2:
     name: Alarm Code Alex
     icon: mdi:dialpad
+    mode: password
     min: 4
     max: 16
-    mode: password
-    pattern: "^[0-9A-F+]+$"
+    pattern: "^[0-9A-F+]+$" # Supports PIN and RFID
   alarm_code_user_3:
     name: Alarm Code Arjen en Yuni
     icon: mdi:dialpad
+    mode: password
     min: 4
     max: 16
-    mode: password
-    pattern: "^[0-9A-F+]+$"
+    pattern: "^[0-9A-F+]+$" # Supports PIN and RFID
+
+  # User name storage (updated by blueprint)
   alarm_code_user_name:
-    name: Alarm Code User Name
+    name: Alarm Last User Name
     icon: mdi:account
+    max: 255
+
+  # Dashboard keypad helpers (OPTIONAL - only if using Dashboard integration)
+  alarm_dashboard_code:
+    name: Alarm Dashboard Code
+    icon: mdi:numeric
     min: 0
-    max: 100
+    max: 16
+    mode: password
+    initial: ""
+    pattern: "^[0-9]*$" # Supports PIN only
+  alarm_dashboard_action:
+    name: Alarm Dashboard Action
+    icon: mdi:shield-lock
+    min: 0
+    max: 20
+    initial: ""
+
+# Dashboard Alarm Keypad Scripts
+script:
+  alarm_dashboard_append_1:
+    alias: "Alarm Dashboard: Append 1"
+    sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.alarm_dashboard_code
+        data:
+          value: "{{ states('input_text.alarm_dashboard_code') + '1' }}"
+
+  alarm_dashboard_append_2:
+    alias: "Alarm Dashboard: Append 2"
+    sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.alarm_dashboard_code
+        data:
+          value: "{{ states('input_text.alarm_dashboard_code') + '2' }}"
+
+  alarm_dashboard_append_3:
+    alias: "Alarm Dashboard: Append 3"
+    sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.alarm_dashboard_code
+        data:
+          value: "{{ states('input_text.alarm_dashboard_code') + '3' }}"
+
+  alarm_dashboard_append_4:
+    alias: "Alarm Dashboard: Append 4"
+    sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.alarm_dashboard_code
+        data:
+          value: "{{ states('input_text.alarm_dashboard_code') + '4' }}"
+
+  alarm_dashboard_append_5:
+    alias: "Alarm Dashboard: Append 5"
+    sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.alarm_dashboard_code
+        data:
+          value: "{{ states('input_text.alarm_dashboard_code') + '5' }}"
+
+  alarm_dashboard_append_6:
+    alias: "Alarm Dashboard: Append 6"
+    sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.alarm_dashboard_code
+        data:
+          value: "{{ states('input_text.alarm_dashboard_code') + '6' }}"
+
+  alarm_dashboard_append_7:
+    alias: "Alarm Dashboard: Append 7"
+    sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.alarm_dashboard_code
+        data:
+          value: "{{ states('input_text.alarm_dashboard_code') + '7' }}"
+
+  alarm_dashboard_append_8:
+    alias: "Alarm Dashboard: Append 8"
+    sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.alarm_dashboard_code
+        data:
+          value: "{{ states('input_text.alarm_dashboard_code') + '8' }}"
+
+  alarm_dashboard_append_9:
+    alias: "Alarm Dashboard: Append 9"
+    sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.alarm_dashboard_code
+        data:
+          value: "{{ states('input_text.alarm_dashboard_code') + '9' }}"
+
+  alarm_dashboard_append_0:
+    alias: "Alarm Dashboard: Append 0"
+    sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.alarm_dashboard_code
+        data:
+          value: "{{ states('input_text.alarm_dashboard_code') + '0' }}"
+
+  alarm_dashboard_clear:
+    alias: "Alarm Dashboard: Clear"
+    sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.alarm_dashboard_code
+        data:
+          value: ""
+
+  alarm_dashboard_backspace:
+    alias: "Alarm Dashboard: Backspace"
+    sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.alarm_dashboard_code
+        data:
+          value: "{{ states('input_text.alarm_dashboard_code')[:-1] }}"
+
 template:
   - binary_sensor:
       - name: "Presence"
