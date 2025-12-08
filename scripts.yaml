@@ -79,10 +79,10 @@ music_home:
       enqueue: replace_next
       media_id:
       - Alternative
+      - Asian
       - Dance
       - Eurovision
       - Hip Hop
-      - K-Pop
       - Pop
       - R&B
       - Rock
