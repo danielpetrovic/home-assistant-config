@@ -5158,6 +5158,8 @@
       - condition: state
         entity_id: sensor.climate_luminosity
         state: dark
+      - condition: time
+        after: '12:00:00'
       sequence:
       - action: light.turn_on
         target:
@@ -5542,20 +5544,44 @@
   triggers:
   - trigger: time
     at: 06:00:00
+  - trigger: state
+    entity_id:
+    - sensor.bg_robot_stofzuiger_status
+    to:
+    - actionrequired
   conditions: []
   actions:
-  - action: select.select_option
-    metadata: {}
-    data:
-      option: consumer_products_cleaning_robot_program_cleaning_clean_all
-    target:
-      entity_id: select.bg_robot_stofzuiger_actieve_programma
-  - action: select.select_option
-    metadata: {}
-    data:
-      option: consumer_products_cleaning_robot_enum_type_cleaning_mode_intelligent_mode
-    target:
-      entity_id: select.bg_robot_stofzuiger_schoonmaakmodus
+  - if:
+    - condition: state
+      entity_id: sensor.bg_robot_stofzuiger_status
+      state:
+      - actionrequired
+    then:
+    - action: select.select_option
+      metadata: {}
+      data:
+        option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_only
+      target:
+        entity_id: select.bg_robot_stofzuiger_schoonmaakmodus
+    - action: select.select_option
+      metadata: {}
+      data:
+        option: consumer_products_cleaning_robot_program_cleaning_clean_all
+      target:
+        entity_id: select.bg_robot_stofzuiger_actieve_programma
+    else:
+    - action: select.select_option
+      metadata: {}
+      data:
+        option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_and_mop
+      target:
+        entity_id: select.bg_robot_stofzuiger_schoonmaakmodus
+    - action: select.select_option
+      metadata: {}
+      data:
+        option: consumer_products_cleaning_robot_program_cleaning_clean_all
+      target:
+        entity_id: select.bg_robot_stofzuiger_actieve_programma
   mode: single
 - id: '1764429546417'
   alias: Gameroom Beweging
