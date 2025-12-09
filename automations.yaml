@@ -3085,57 +3085,6 @@
       - condition: state
         entity_id: remote.woonkamer_tv
         attribute: current_activity
-        state: com.disney.disneyplus
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: playing
-          sequence:
-          - data:
-              volume_level: 0.01
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: idle
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: paused
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-      alias: Disney+
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.spauldhaliwal.dispatch
-      sequence:
-      - alias: Keuken volume omhoog
-        data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      alias: Launcher Dispatch
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
         state: com.google.android.apps.tv.launcherx
       sequence:
       - alias: Keuken volume omhoog
@@ -3144,20 +3093,7 @@
         target:
           entity_id: media_player.keuken
         action: media_player.volume_set
-      alias: Launcher Google
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.spocky.projengmenu
-      sequence:
-      - alias: Keuken volume omhoog
-        data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      alias: Launcher Projectivy
+      alias: Launcher
     - conditions:
       - condition: state
         entity_id: remote.woonkamer_tv
@@ -3224,18 +3160,6 @@
       - condition: state
         entity_id: remote.woonkamer_tv
         attribute: current_activity
-        state: com.neilturner.aerialviews
-      sequence:
-      - data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.keuken
-        action: media_player.volume_set
-      alias: Screen Saver Aerial Views
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
         state: com.google.android.apps.tv.dreamx
       sequence:
       - data:
@@ -3243,83 +3167,7 @@
         target:
           entity_id: media_player.keuken
         action: media_player.volume_set
-      alias: Screen Saver Google
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.teamsmart.videomanager.tv
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: playing
-          sequence:
-          - data:
-              volume_level: 0.01
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: idle
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: paused
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-      alias: SmartTube
-    - conditions:
-      - condition: state
-        entity_id: remote.woonkamer_tv
-        attribute: current_activity
-        state: com.liskovsoft.smarttubetv.beta
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: playing
-          sequence:
-          - data:
-              volume_level: 0.01
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: idle
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.woonkamer_tv_cast
-            state: paused
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.keuken
-            action: media_player.volume_set
-      alias: SmartTube Beta
+      alias: Screen Saver
     - conditions:
       - condition: state
         entity_id: remote.woonkamer_tv
