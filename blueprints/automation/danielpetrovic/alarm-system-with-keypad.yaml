@@ -2093,7 +2093,6 @@ triggers:
     topic: "{{ z2m_base_topic ~ '/' ~ z2m_alarm_keypad }}"
     alias: z2m_keypad
     id: z2m_keypad
-    enabled: "{{ z2m_base_topic != '' and z2m_alarm_keypad != '' }}"
   - trigger: event
     event_type: zha_event
     event_data:
@@ -2101,52 +2100,44 @@ triggers:
       command: arm
     alias: zha_keypad
     id: zha_keypad
-    enabled: "{{ zha_alarm_keypad_device != none }}"
   - trigger: state
     entity_id: !input alarm_sensor_away
     to: "on"
     alias: alarm_sensor_away
     id: alarm_sensor_away
-    enabled: "{{ alarm_sensor_away | count > 0 }}"
   - trigger: state
     entity_id: !input alarm_sensor_home
     to: "on"
     alias: alarm_sensor_home
     id: alarm_sensor_home
-    enabled: "{{ alarm_sensor_home | count > 0 }}"
   - trigger: state
     entity_id: !input alarm_sensor_night
     to: "on"
     alias: alarm_sensor_night
     id: alarm_sensor_night
-    enabled: "{{ alarm_sensor_night | count > 0 }}"
   - trigger: state
     entity_id: !input alarm_sensor_always
     to: "on"
     alias: alarm_sensor_always
     id: alarm_sensor_always
-    enabled: "{{ alarm_sensor_always | count > 0 }}"
   - trigger: state
     entity_id: !input alarm_sensor_fire
     to: "on"
     alias: alarm_sensor_fire
     id: alarm_sensor_fire
     for: "00:00:02"
-    enabled: "{{ alarm_sensor_fire | count > 0 }}"
   - trigger: state
     entity_id: !input alarm_sensor_gas
     to: "on"
     alias: alarm_sensor_gas
     id: alarm_sensor_gas
     for: "00:00:02"
-    enabled: "{{ alarm_sensor_gas | count > 0 }}"
   - trigger: state
     entity_id: !input alarm_sensor_moisture
     to: "on"
     alias: alarm_sensor_moisture
     id: alarm_sensor_moisture
     for: "00:00:02"
-    enabled: "{{ alarm_sensor_moisture | count > 0 }}"
   - trigger: event
     event_type: mobile_app_notification_action
     event_data:
@@ -2169,37 +2160,30 @@ triggers:
     entity_id: !input alarm_presence_sensor
     alias: presence_change
     id: presence_change
-    enabled: "{{ alarm_presence_sensor != none and alarm_presence_sensor != '' }}"
   - trigger: time
     at: !input alarm_schedule_weekdays_start_time
     alias: time_weekdays_start
     id: time_weekdays_start
-    enabled: "{{ alarm_schedule_weekdays_start_time != none and alarm_schedule_weekdays_start_time != '' }}"
   - trigger: time
     at: !input alarm_schedule_weekdays_end_time
     alias: time_weekdays_end
     id: time_weekdays_end
-    enabled: "{{ alarm_schedule_weekdays_end_time != none and alarm_schedule_weekdays_end_time != '' }}"
   - trigger: time
     at: !input alarm_schedule_weekends_start_time
     alias: time_weekends_start
     id: time_weekends_start
-    enabled: "{{ alarm_schedule_weekends_start_time != none and alarm_schedule_weekends_start_time != '' }}"
   - trigger: time
     at: !input alarm_schedule_weekends_end_time
     alias: time_weekends_end
     id: time_weekends_end
-    enabled: "{{ alarm_schedule_weekends_end_time != none and alarm_schedule_weekends_end_time != '' }}"
   - trigger: time
     at: !input alarm_schedule_custom_start_time
     alias: time_custom_start
     id: time_custom_start
-    enabled: "{{ alarm_schedule_custom_start_time != none and alarm_schedule_custom_start_time != '' }}"
   - trigger: time
     at: !input alarm_schedule_custom_end_time
     alias: time_custom_end
     id: time_custom_end
-    enabled: "{{ alarm_schedule_custom_end_time != none and alarm_schedule_custom_end_time != '' }}"
   - trigger: template
     value_template: "{{ alarm_dashboard_action != none and states(alarm_dashboard_action) not in ['', 'unknown', 'unavailable'] }}"
     alias: dashboard_keypad
