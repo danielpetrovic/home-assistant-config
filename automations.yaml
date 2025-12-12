@@ -3261,6 +3261,7 @@
           notification_icon: mdi:doorbell-video
           priority: high
           ttl: 0
+      enabled: false
     - alias: Woonkamer TV
       if:
       - condition: not
@@ -5322,7 +5323,7 @@
       - if:
         - condition: numeric_state
           entity_id: sensor.kantoor_bureau_energiegebruik
-          above: 40
+          above: 30
         then: []
         else:
         - action: light.turn_off
@@ -5421,7 +5422,7 @@
     - action: select.select_option
       metadata: {}
       data:
-        option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_and_mop
+        option: consumer_products_cleaning_robot_enum_type_cleaning_mode_mop_after_vacuum
       target:
         entity_id: select.bg_robot_stofzuiger_schoonmaakmodus
     - action: select.select_option
@@ -5494,7 +5495,7 @@
       - if:
         - condition: numeric_state
           entity_id: sensor.gameroom_bureau_energiegebruik
-          above: 40
+          above: 30
         then: []
         else:
         - action: light.turn_off
@@ -5526,7 +5527,7 @@
       alarm_auto_arm_away: true
       alarm_notifications_target:
       - 1b49bd1284b5afb6e9f5f081024a600c
-      - 0654bae851c3e493e4f82eebbd80c4b6
+      - 4e78dc3151bcb7dd0ac4060b7b17158b
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
       - media_player.meterkast
@@ -5596,3 +5597,56 @@
       dashboard_alarm_action: input_text.dashboard_alarm_action
       alarm_dashboard_code: input_text.alarm_dashboard_code
       alarm_dashboard_action: input_text.alarm_dashboard_action
+- id: '1765450835637'
+  alias: Sauna Beweging
+  description: ''
+  triggers:
+  - alias: motion detected
+    entity_id:
+    - binary_sensor.sauna_bewegingssensor
+    to: 'on'
+    id: motion detected
+    trigger: state
+  - alias: motion clear
+    entity_id:
+    - binary_sensor.sauna_bewegingssensor
+    to:
+    - 'off'
+    id: motion clear
+    trigger: state
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - motion detected
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+            }}'
+          transition: 3
+        metadata: {}
+        target:
+          entity_id: light.sauna_lampen
+      alias: motion detected
+    - conditions:
+      - condition: trigger
+        id:
+        - motion clear
+      sequence:
+      - action: light.turn_off
+        data:
+          transition: 30
+        metadata: {}
+        target:
+          entity_id: light.sauna_lampen
+      alias: motion clear
+  mode: restart
