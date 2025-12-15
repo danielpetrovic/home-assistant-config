@@ -1,7 +1,10 @@
+.ha_run.lock
+.HA_VERSION
+/@eaDir
 /.aspnet
+/.claude/session.md
 /.cloud
 /.storage
-/@eaDir
 /addons_config
 /backups
 /glances
@@ -9,8 +12,6 @@
 /tmp_backups
 /tts
 /zigbee2mqtt
-.ha_run.lock
-.HA_VERSION
 go2rtc.yaml
 home-assistant_v2.db
 home-assistant_v2.db-shm
