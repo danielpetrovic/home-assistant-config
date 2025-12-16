@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(python3:*)",
+      "Bash(find:*)",
+      "Bash(GIT_SEQUENCE_EDITOR='sed -i \"\"2s/^pick/fixup/\"\"' git rebase -i HEAD~2)",
+      "Bash(git restore:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(ha core check:*)",
+      "Bash(ls:*)",
+      "Bash(journalctl:*)",
+      "Bash(ha automation traces list:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(grep:*)",
+      "Bash(curl:*)",
+      "Bash(timeout 30 python3:*)",
+      "Bash(timeout 60 python3:*)",
+      "Bash(cut:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat .claude/session.md 2>/dev/null || echo 'No previous session found'"
+          },
+          {
+            "type": "prompt",
+            "prompt": "IMPORTANT: The SessionStart hook above has loaded the session.md file. You MUST:\n1. Acknowledge that you've loaded the previous session context\n2. Summarize what we were working on based on the session file\n3. Ask the user what they'd like to continue with or work on next\n4. Update the session.md file as we work on tasks throughout this conversation"
+          }
+        ]
+      }
+    ]
+  }
+}
