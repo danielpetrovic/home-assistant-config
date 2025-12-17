@@ -1,24 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cat:*)",
-      "Bash(python3:*)",
-      "Bash(find:*)",
-      "Bash(GIT_SEQUENCE_EDITOR='sed -i \"\"2s/^pick/fixup/\"\"' git rebase -i HEAD~2)",
-      "Bash(git restore:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(ha core check:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
       "Bash(ls:*)",
-      "Bash(journalctl:*)",
-      "Bash(ha automation traces list:*)",
-      "Bash(git fetch:*)",
-      "Bash(git pull:*)",
+      "Bash(cat:*)",
+      "Bash(pwd:*)",
+      "Bash(wc:*)",
+      "Bash(find:*)",
       "Bash(grep:*)",
-      "Bash(curl:*)",
-      "Bash(timeout 30 python3:*)",
-      "Bash(timeout 60 python3:*)",
-      "Bash(cut:*)"
+      "Read(//config/**)",
+      "Read(/share/github/**)"
     ]
   },
   "hooks": {
