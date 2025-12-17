@@ -78,7 +78,6 @@ music_home:
       media_type: playlist
       enqueue: replace_next
       media_id:
-      - Alternative
       - Asian
       - Dance
       - Eurovision
