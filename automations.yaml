@@ -17,7 +17,8 @@
     id: 06:00
   conditions: []
   actions:
-  - choose:
+  - alias: Lights
+    choose:
     - alias: lights on - speaker on
       conditions:
       - condition: trigger
@@ -30,8 +31,13 @@
           - media_player.badkamer
         metadata: {}
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.music_assistant
         enabled: true
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
       - action: media_player.volume_set
         metadata: {}
         data:
@@ -50,12 +56,6 @@
           volume_level: 0.25
         target:
           entity_id: media_player.badkamer
-      - action: media_player.volume_set
-        metadata: {}
-        data:
-          volume_level: 0.15
-        target:
-          entity_id: media_player.badkamer
       - delay:
           hours: 0
           minutes: 0
@@ -68,7 +68,6 @@
         target:
           entity_id: media_player.badkamer
         enabled: true
-    alias: Lights
   - alias: Time
     choose:
     - conditions:
@@ -117,7 +116,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor
+            entity_id: binary_sensor.tuin_deursensor_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -128,12 +127,12 @@
               entity_id: cover.tuin_rolluik
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor
+            entity_id: binary_sensor.tuin_deursensor_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.tuin_deursensor
+              - binary_sensor.tuin_deursensor_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -157,7 +156,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor
+            entity_id: binary_sensor.tuin_deursensor_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -168,12 +167,12 @@
               entity_id: cover.tuin_rolluik
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor
+            entity_id: binary_sensor.tuin_deursensor_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.tuin_deursensor
+              - binary_sensor.tuin_deursensor_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -197,7 +196,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor
+            entity_id: binary_sensor.tuin_deursensor_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -208,12 +207,12 @@
               entity_id: cover.tuin_rolluik
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor
+            entity_id: binary_sensor.tuin_deursensor_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.tuin_deursensor
+              - binary_sensor.tuin_deursensor_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -237,7 +236,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor
+            entity_id: binary_sensor.tuin_deursensor_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -248,12 +247,12 @@
               entity_id: cover.tuin_rolluik
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor
+            entity_id: binary_sensor.tuin_deursensor_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.tuin_deursensor
+              - binary_sensor.tuin_deursensor_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -277,7 +276,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor
+            entity_id: binary_sensor.tuin_deursensor_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -288,12 +287,12 @@
               entity_id: cover.tuin_rolluik
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor
+            entity_id: binary_sensor.tuin_deursensor_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.tuin_deursensor
+              - binary_sensor.tuin_deursensor_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -317,7 +316,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor
+            entity_id: binary_sensor.tuin_deursensor_contact
             state: 'off'
           sequence:
           - action: cover.close_cover
@@ -328,12 +327,12 @@
               - cover.tuin_rolluik
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor
+            entity_id: binary_sensor.tuin_deursensor_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.tuin_deursensor
+              - binary_sensor.tuin_deursensor_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -381,7 +380,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor
+            entity_id: binary_sensor.dakterras_deursensor_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -392,12 +391,12 @@
               entity_id: cover.dakterras_rolluik
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor
+            entity_id: binary_sensor.dakterras_deursensor_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.dakterras_deursensor
+              - binary_sensor.dakterras_deursensor_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -421,7 +420,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor
+            entity_id: binary_sensor.dakterras_deursensor_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -432,12 +431,12 @@
               entity_id: cover.dakterras_rolluik
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor
+            entity_id: binary_sensor.dakterras_deursensor_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.dakterras_deursensor
+              - binary_sensor.dakterras_deursensor_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -461,7 +460,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor
+            entity_id: binary_sensor.dakterras_deursensor_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -472,12 +471,12 @@
               entity_id: cover.dakterras_rolluik
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor
+            entity_id: binary_sensor.dakterras_deursensor_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.dakterras_deursensor
+              - binary_sensor.dakterras_deursensor_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -501,7 +500,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor
+            entity_id: binary_sensor.dakterras_deursensor_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -512,12 +511,12 @@
               entity_id: cover.dakterras_rolluik
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor
+            entity_id: binary_sensor.dakterras_deursensor_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.dakterras_deursensor
+              - binary_sensor.dakterras_deursensor_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -541,7 +540,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor
+            entity_id: binary_sensor.dakterras_deursensor_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -552,12 +551,12 @@
               entity_id: cover.dakterras_rolluik
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor
+            entity_id: binary_sensor.dakterras_deursensor_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.dakterras_deursensor
+              - binary_sensor.dakterras_deursensor_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -581,7 +580,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor
+            entity_id: binary_sensor.dakterras_deursensor_contact
             state: 'off'
           sequence:
           - action: cover.close_cover
@@ -591,12 +590,12 @@
               entity_id: cover.dakterras_rolluik
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor
+            entity_id: binary_sensor.dakterras_deursensor_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.dakterras_deursensor
+              - binary_sensor.dakterras_deursensor_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -1632,7 +1631,7 @@
   description: ''
   triggers:
   - entity_id:
-    - binary_sensor.toilet_deursensor
+    - binary_sensor.toilet_deursensor_contact
     to: 'on'
     id: door open
     alias: door open
@@ -1647,20 +1646,20 @@
         }}'
     metadata: {}
     target:
-      entity_id: light.toilet_lamp
+      entity_id: light.toilet_lampen
   mode: restart
 - id: '1706028727906'
   alias: Keukenkast Deur
   description: ''
   triggers:
   - entity_id:
-    - binary_sensor.keukenkast_deursensor
+    - binary_sensor.keukenkast_deursensor_contact
     to: 'on'
     id: door open
     alias: door open
     trigger: state
   - entity_id:
-    - binary_sensor.keukenkast_deursensor
+    - binary_sensor.keukenkast_deursensor_contact
     to: 'off'
     id: door closed
     alias: door closed
@@ -1700,13 +1699,13 @@
   description: ''
   triggers:
   - entity_id:
-    - binary_sensor.wasruimte_deursensor
+    - binary_sensor.wasruimte_deursensor_contact
     to: 'on'
     id: door open
     alias: door open
     trigger: state
   - entity_id:
-    - binary_sensor.wasruimte_deursensor
+    - binary_sensor.wasruimte_deursensor_contact
     to: 'off'
     id: door closed
     alias: door closed
@@ -1746,13 +1745,13 @@
   description: ''
   triggers:
   - entity_id:
-    - binary_sensor.entree_bewegingssensor
+    - binary_sensor.entree_bewegingssensor_occupancy
     to: 'on'
     id: motion detected
     alias: motion detected
     trigger: state
   - entity_id:
-    - binary_sensor.entree_bewegingssensor
+    - binary_sensor.entree_bewegingssensor_occupancy
     to: 'off'
     id: motion clear
     alias: motion clear
@@ -1794,13 +1793,13 @@
   description: ''
   triggers:
   - entity_id:
-    - binary_sensor.looppad_bewegingssensor
+    - binary_sensor.looppad_bewegingssensor_occupancy
     to: 'on'
     id: motion detected
     alias: motion detected
     trigger: state
   - entity_id:
-    - binary_sensor.looppad_bewegingssensor
+    - binary_sensor.looppad_bewegingssensor_occupancy
     to: 'off'
     id: motion clear
     alias: motion clear
@@ -1862,7 +1861,7 @@
   triggers:
   - alias: door open
     entity_id:
-    - binary_sensor.slaapkamer_deursensor
+    - binary_sensor.slaapkamer_deursensor_contact
     to: 'on'
     id: door open
     trigger: state
@@ -1880,7 +1879,7 @@
         }}'
     metadata: {}
     target:
-      entity_id: light.slaapkamer_lamp
+      entity_id: light.slaapkamer_lampen
   mode: restart
 - id: '1706166729686'
   alias: Sauna Media
@@ -1973,7 +1972,7 @@
       - action: media_player.join
         metadata: {}
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.music_assistant
         data:
           group_members:
           - media_player.sauna
@@ -2006,7 +2005,7 @@
           group_members:
           - media_player.sauna
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.music_assistant
       - action: media_player.volume_set
         data:
           volume_level: 0.25
@@ -2021,13 +2020,13 @@
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.gang_bewegingssensor
+    - binary_sensor.gang_bewegingssensor_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.gang_bewegingssensor
+    - binary_sensor.gang_bewegingssensor_occupancy
     to: 'off'
     id: motion clear
     trigger: state
@@ -2068,7 +2067,7 @@
   description: ''
   triggers:
   - entity_id:
-    - binary_sensor.badkamer_deursensor
+    - binary_sensor.badkamer_deursensor_contact
     to: 'on'
     id: door open
     alias: door open
@@ -2125,7 +2124,8 @@
       - data:
           volume_level: 0.25
         target:
-          entity_id: media_player.slaapkamer
+          entity_id:
+          - media_player.slaapkamer
         action: media_player.volume_set
   mode: parallel
 - id: '1706694278160'
@@ -2521,7 +2521,7 @@
       button_1_light:
         entity_id: light.badkamer_lamp
       button_1_light_schedule: schedule.lights_bright
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.music_assistant
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2580,7 +2580,7 @@
         entity_id: light.gameroom_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.music_assistant
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2632,7 +2632,7 @@
         entity_id: light.gameroom_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.music_assistant
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2732,7 +2732,7 @@
         target:
           entity_id: switch.kantoor_bureau
       button_3_media: media_player.kantoor
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.music_assistant
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -2777,7 +2777,7 @@
         entity_id: light.keuken_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.keuken
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.music_assistant
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2821,7 +2821,7 @@
         entity_id: light.sauna_lamp
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.sauna
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.music_assistant
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -2866,7 +2866,7 @@
         entity_id:
         - light.slaapkamer_lamp
       button_1_light_schedule: schedule.lights_dimmed
-      button_3_media: media_player.slaapkamer
+      button_3_media: media_player.music_assistant
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3289,13 +3289,13 @@
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.slaapkamer_alex_bewegingssensor
+    - binary_sensor.slaapkamer_alex_bewegingssensor_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.slaapkamer_alex_bewegingssensor
+    - binary_sensor.slaapkamer_alex_bewegingssensor_occupancy
     to: 'off'
     id: motion clear
     trigger: state
@@ -3343,13 +3343,13 @@
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.slaapkamer_deni_bewegingssensor
+    - binary_sensor.slaapkamer_deni_bewegingssensor_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.slaapkamer_deni_bewegingssensor
+    - binary_sensor.slaapkamer_deni_bewegingssensor_occupancy
     to: 'off'
     id: motion clear
     trigger: state
@@ -3468,6 +3468,9 @@
   use_blueprint:
     path: danielpetrovic/zha-niko-battery-switch-with-1-button.yaml
     input:
+      integration_type:
+      - z2m
+      z2m_device_name: Entree Knop
       remote: 9255ccd79b61c364a3a8319ded5a4447
       button_1_double_press:
       - action: automation.toggle
@@ -3475,9 +3478,10 @@
         data: {}
         target:
           entity_id: automation.entree_beweging
-      button_1_light:
-        entity_id: light.entree_lamp
       button_1_light_schedule: schedule.lights_bright
+      button_1_light_schedule_auto_adjust: true
+      button_1_light:
+        area_id: keuken
 - id: '1755899171238'
   alias: Toilet Knop
   description: ''
@@ -3552,7 +3556,7 @@
         entity_id: light.gameroom_lampen
       button_1_light_schedule: schedule.lights_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.music_assistant
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -4851,12 +4855,6 @@
   - at: 01:00:00
     id: 01:00
     trigger: time
-  - at: '10:00:00'
-    id: '10:00'
-    trigger: time
-  - at: '11:00:00'
-    id: '11:00'
-    trigger: time
   - at: '18:00:00'
     id: '18:00'
     trigger: time
@@ -4921,33 +4919,6 @@
           - woonkamer
         data:
           transition: 60
-    - alias: '10:00'
-      conditions:
-      - condition: trigger
-        id: '10:00'
-      - condition: time
-        weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
-      sequence:
-      - action: light.turn_off
-        target:
-          entity_id: light.slaapkamer_lampen
-        data:
-          transition: 30
-    - alias: '11:00'
-      conditions:
-      - condition: trigger
-        id: '11:00'
-      sequence:
-      - action: light.turn_off
-        target:
-          entity_id: light.slaapkamer_lampen
-        data:
-          transition: 30
     - alias: '18:00'
       conditions:
       - condition: trigger
@@ -4994,7 +4965,6 @@
         target:
           entity_id:
           - light.eettafel_lamp_onder
-          - light.keuken
           - light.woonkamer_lamp_onder
         data:
           transition: 300
@@ -5013,7 +4983,6 @@
       - action: light.turn_on
         target:
           entity_id:
-          - light.looppad_lampen
           - light.voordeur_lampen
         data:
           brightness_pct: 100
@@ -5029,21 +4998,6 @@
           color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'',''color_temp_kelvin'')
             }}'
           transition: 300
-      - if:
-        - condition: state
-          entity_id: switch.gameroom_bureau
-          state: 'on'
-        then:
-        - action: light.turn_on
-          target:
-            entity_id:
-            - light.gameroom_lampen
-          data:
-            brightness_pct: '{{ state_attr(''schedule.lights_bright'',''brightness_pct'')
-              }}'
-            color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'',''color_temp_kelvin'')
-              }}'
-            transition: 300
     - alias: not dark
       conditions:
       - condition: trigger
@@ -5258,7 +5212,7 @@
           group_members:
           - media_player.keuken
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.music_assistant
   mode: parallel
 - id: '1764237963995'
   alias: Kantoor Beweging
@@ -5266,13 +5220,13 @@
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.kantoor_bewegingssensor
+    - binary_sensor.kantoor_bewegingssensor_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.kantoor_bewegingssensor
+    - binary_sensor.kantoor_bewegingssensor_occupancy
     to:
     - 'off'
     id: motion clear
@@ -5340,13 +5294,13 @@
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.keuken_bewegingssensor
+    - binary_sensor.keuken_bewegingssensor_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.keuken_bewegingssensor
+    - binary_sensor.keuken_bewegingssensor_occupancy
     to:
     - 'off'
     id: motion clear
@@ -5395,14 +5349,14 @@
     at: 06:00:00
   - trigger: state
     entity_id:
-    - sensor.bg_robot_stofzuiger_status
+    - sensor.bart_status
     to:
     - actionrequired
   conditions: []
   actions:
   - if:
     - condition: state
-      entity_id: sensor.bg_robot_stofzuiger_status
+      entity_id: sensor.bart_status
       state:
       - actionrequired
     then:
@@ -5411,26 +5365,26 @@
       data:
         option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_only
       target:
-        entity_id: select.bg_robot_stofzuiger_schoonmaakmodus
+        entity_id: select.bart_schoonmaakmodus
     - action: select.select_option
       metadata: {}
       data:
         option: consumer_products_cleaning_robot_program_cleaning_clean_all
       target:
-        entity_id: select.bg_robot_stofzuiger_actieve_programma
+        entity_id: select.bart_actieve_programma
     else:
     - action: select.select_option
       metadata: {}
       data:
-        option: consumer_products_cleaning_robot_enum_type_cleaning_mode_mop_after_vacuum
+        option: consumer_products_cleaning_robot_enum_type_cleaning_mode_intelligent_mode
       target:
-        entity_id: select.bg_robot_stofzuiger_schoonmaakmodus
+        entity_id: select.bart_schoonmaakmodus
     - action: select.select_option
       metadata: {}
       data:
         option: consumer_products_cleaning_robot_program_cleaning_clean_all
       target:
-        entity_id: select.bg_robot_stofzuiger_actieve_programma
+        entity_id: select.bart_actieve_programma
   mode: single
 - id: '1764429546417'
   alias: Gameroom Beweging
@@ -5438,13 +5392,13 @@
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.gameroom_bewegingssensor
+    - binary_sensor.gameroom_bewegingssensor_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.gameroom_bewegingssensor
+    - binary_sensor.gameroom_bewegingssensor_occupancy
     to:
     - 'off'
     id: motion clear
@@ -5532,10 +5486,10 @@
       alarm_announcements_player:
       - media_player.meterkast
       alarm_sensor_away:
-      - binary_sensor.dakterras_deursensor
-      - binary_sensor.entree_deursensor
-      - binary_sensor.tuin_deursensor
-      - binary_sensor.woonkamer_raamsensor
+      - binary_sensor.dakterras_deursensor_contact
+      - binary_sensor.entree_deursensor_contact
+      - binary_sensor.tuin_deursensor_contact
+      - binary_sensor.woonkamer_raamsensor_contact
       alarm_notifications_armed_away: Het Alarm is ingesteld op Afwezig modus door
         {user_name}.
       alarm_scripts_away:
@@ -5548,10 +5502,10 @@
       - script.alarm_home
       - script.music_home
       alarm_sensor_night:
-      - binary_sensor.dakterras_deursensor
-      - binary_sensor.entree_deursensor
-      - binary_sensor.tuin_deursensor
-      - binary_sensor.woonkamer_raamsensor
+      - binary_sensor.dakterras_deursensor_contact
+      - binary_sensor.entree_deursensor_contact
+      - binary_sensor.tuin_deursensor_contact
+      - binary_sensor.woonkamer_raamsensor_contact
       alarm_notifications_armed_night: Het Alarm is ingesteld op Nacht modus door
         {user_name}.
       alarm_scripts_night:
@@ -5603,13 +5557,13 @@
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.sauna_bewegingssensor
+    - binary_sensor.sauna_bewegingssensor_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.sauna_bewegingssensor
+    - binary_sensor.sauna_bewegingssensor_occupancy
     to:
     - 'off'
     id: motion clear
@@ -5648,5 +5602,53 @@
         metadata: {}
         target:
           entity_id: light.sauna_lampen
+      alias: motion clear
+  mode: restart
+- id: '1766088289333'
+  alias: Gang Trap 1 Beweging
+  description: ''
+  triggers:
+  - alias: motion detected
+    entity_id:
+    - binary_sensor.gang_trap_1_bewegingssensor_occupancy
+    to: 'on'
+    id: motion detected
+    trigger: state
+  - alias: motion clear
+    entity_id:
+    - binary_sensor.gang_trap_1_bewegingssensor_occupancy
+    to: 'off'
+    id: motion clear
+    trigger: state
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - motion detected
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
+            }}'
+          transition: 3
+        metadata: {}
+        target:
+          entity_id: light.gang_trap_1_lamp
+      alias: motion detected
+    - conditions:
+      - condition: trigger
+        id:
+        - motion clear
+      sequence:
+      - action: light.turn_off
+        data:
+          transition: 9
+        metadata: {}
+        target:
+          entity_id: light.gang_trap_1_lamp
       alias: motion clear
   mode: restart

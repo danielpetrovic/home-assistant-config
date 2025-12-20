@@ -11,7 +11,10 @@
       "Bash(find:*)",
       "Bash(grep:*)",
       "Read(//config/**)",
-      "Read(/share/github/**)"
+      "Read(/share/github/**)",
+      "Bash(python3:*)",
+      "Bash(tee:*)",
+      "Bash(git checkout:*)"
     ]
   },
   "hooks": {
