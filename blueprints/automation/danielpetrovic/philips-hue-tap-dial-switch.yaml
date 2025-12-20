@@ -1,0 +1,3890 @@
+blueprint:
+  name: Philips Hue Tap Dial Switch (Z2M / ZHA)
+  author: danielpetrovic
+  source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml
+  description: |
+    # Philips Hue Tap Dial Switch (Z2M / ZHA)
+
+    This blueprint enables comprehensive control of a Philips Hue Tap Dial Switch through Zigbee2MQTT or ZHA integration, supporting custom actions, light automation, and media player control.
+
+    ## Key Features
+    - **Multiple Integration Options**: Choose Zigbee2MQTT (Z2M), ZHA, or both
+    - **4 Buttons**: Each with short press, long press, and multi-press support (Z2M: double, ZHA: double/triple/quad/quint)
+    - **Rotary Dial**: Context-aware based on last button pressed
+    - **Custom Mode**: Program buttons to execute personalized home automation routines
+    - **Light Mode**: Control lights with brightness, color temperature, and transitions
+    - **Media Mode**: Control media players with volume, playback, and grouping
+    - **Schedule Support**: Time-based brightness and color temperature adjustments
+    - **Auto-Adjust**: Optionally enable automatic light adjustment when your schedule changes
+
+    *Each configuration option below includes detailed instructions in the automation editor.*
+
+    ## Schedule Helper Configuration
+
+    Create time-based brightness and color adjustments using Home Assistant schedule helpers.
+
+    ### Setting up Packages (Optional)
+    Organize schedules into packages for easier management. Create a `packages` folder in `/config/` and add to your configuration:
+
+    ```yaml
+    homeassistant:
+      packages: !include_dir_named packages
+    ```
+
+    ### Schedule YAML Example
+    Create `/config/packages/lights.yaml` with your schedules:
+
+    ```yaml
+    schedule:
+      lights_bright:
+        name: "Lights Bright"
+        icon: mdi:lightbulb-auto
+        monday:
+          - from: "00:00:00"
+            to: "09:00:00"
+            data:
+              brightness_pct: 30
+              color_temp_kelvin: 3333
+          - from: "09:00:00"
+            to: "23:00:00"
+            data:
+              brightness_pct: 90
+              color_temp_kelvin: 3333
+          - from: "23:00:00"
+            to: "24:00:00"
+            data:
+              brightness_pct: 30
+              color_temp_kelvin: 3333
+        # Repeat pattern for tuesday through sunday
+    ```
+
+    You can create multiple schedules with different brightness levels (e.g., `lights_bright` and `lights_dimmed`) for different scenarios.
+
+    ## Schedule Flexibility
+
+    **Optional Fields:** If a schedule lacks certain data fields (like `transition`), the blueprint reverts to default values configured in the automation. This allows selective override of specific parameters while maintaining other preset defaults.
+
+    **Supported Schedule Attributes:**
+    - `brightness_pct`: Brightness percentage (0-100)
+    - `color_temp_kelvin`: Color temperature in Kelvin
+    - `transition`: Optional transition time in seconds
+
+    ## Auto-Adjust Feature
+
+    When enabled, the blueprint automatically updates lights when the schedule changes (e.g., when moving from morning to afternoon time block):
+    - Only affects lights that are currently ON
+    - Configurable transition duration (default: 5 minutes)
+    - Applies current schedule's brightness and color temperature
+    - Can be enabled/disabled per button
+
+    ## Requirements
+    - Home Assistant 2024.10.0 or later
+    - Zigbee2MQTT (Z2M) and/or Zigbee Home Automation (ZHA)
+    - Philips Hue Tap Dial Switch (RDM002)
+  domain: automation
+  homeassistant:
+    min_version: 2024.10.0
+  input:
+    integration_type:
+      name: Integration Type
+      description: |
+        `required`
+
+        Select which integration(s) to use for the Philips Hue Tap Dial Switch. You can select Z2M, ZHA, or both.
+      default: []
+      selector:
+        select:
+          options:
+            - label: Zigbee2MQTT (Z2M)
+              value: z2m
+            - label: Zigbee Home Automation (ZHA)
+              value: zha
+          multiple: true
+    z2m:
+      name: Zigbee2MQTT (Z2M)
+      description: Configure Zigbee2MQTT integration settings.
+      icon: mdi:zigbee
+      collapsed: true
+      input:
+        z2m_base_topic:
+          name: Base Topic
+          description: |
+            `optional` `text`
+
+            MQTT base topic for Zigbee2MQTT installation. Default is `zigbee2mqtt`. Leave empty if not using Z2M.
+          default: "zigbee2mqtt"
+          selector:
+            text: {}
+        z2m_device_name:
+          name: Device Friendly Name
+          description: |
+            `optional` `text`
+
+            Friendly name of your Philips Hue Tap Dial Switch in Z2M (case-sensitive, as shown in Z2M UI). Leave empty if not using Z2M.
+          default: ""
+          selector:
+            text: {}
+    zha:
+      name: Zigbee Home Automation (ZHA)
+      description: Configure ZHA integration settings.
+      icon: mdi:zigbee
+      collapsed: true
+      input:
+        zha_remote:
+          name: Remote Device (ZHA)
+          description: |
+            `optional` `device`
+
+            Select the Philips Hue Tap Dial Switch device from ZHA. Leave empty if not using ZHA.
+          default: {}
+          selector:
+            device:
+              entity:
+                - domain:
+                    - sensor
+                  device_class:
+                    - battery
+              filter:
+                - integration: zha
+                  manufacturer: Signify Netherlands B.V.
+                  model: RDM002
+              multiple: false
+    last_pressed:
+      name: Last Pressed Input Text Helper
+      description: |
+        `required` `entity`
+
+        Create an input text helper within Home Assistant to keep track
+        of the last button pressed. This will facilitate implementing different rotation
+        actions based on the last button pressed. **Each switch requires a unique helper!**
+      selector:
+        entity:
+          filter:
+            - domain:
+                - input_text
+          multiple: false
+    button_1_custom:
+      name: Button 1 - Custom Actions
+      icon: mdi:numeric-1-circle-outline
+      collapsed: true
+      input:
+        button_1_press:
+          name: Short Press
+          description: |
+            `optional` `action`
+
+            Action to run on a short press of Button 1.
+          default: []
+          selector:
+            action: {}
+        button_1_short_release:
+          name: Short Release
+          description: |
+            `optional` `action`
+
+            Action to run on a release of Button 1 after a short press.
+          default: []
+          selector:
+            action: {}
+        button_1_hold:
+          name: Long Press
+          description: |
+            `optional` `action`
+
+            Action to run on a long press of Button 1. Will repeat while the button is held.
+          default: []
+          selector:
+            action: {}
+        button_1_long_release:
+          name: Long Release
+          description: |
+            `optional` `action`
+
+            Action to run when Button 1 is released after a long press.
+          default: []
+          selector:
+            action: {}
+        button_1_double:
+          name: Double Press
+          description: |
+            `optional` `action`
+
+            Action to run on a double press of Button 1.
+          default: []
+          selector:
+            action: {}
+        button_1_triple:
+          name: Triple Press
+          description: |
+            `optional` `action`
+
+            Action to run on a triple press of Button 1.
+          default: []
+          selector:
+            action: {}
+        button_1_quadruple:
+          name: Quadruple Press
+          description: |
+            `optional` `action`
+
+            Action to run on a quadruple press of Button 1.
+          default: []
+          selector:
+            action: {}
+        button_1_quintuple:
+          name: Quintuple Press
+          description: |
+            `optional` `action`
+
+            Action to run on a quintuple press of Button 1.
+          default: []
+          selector:
+            action: {}
+        button_1_rotate_left:
+          name: Rotate Left
+          description: |
+            `optional` `action`
+
+            Action to run when dial is turned to the left after pressing Button 1.
+          default: []
+          selector:
+            action: {}
+        button_1_rotate_right:
+          name: Rotate Right
+          description: |
+            `optional` `action`
+
+            Action to run when dial is turned to the right after pressing Button 1.
+          default: []
+          selector:
+            action: {}
+    button_1_light:
+      name: Button 1 - Light Mode
+      icon: mdi:lightbulb
+      collapsed: true
+      input:
+        button_1_light:
+          name: Lights
+          default: []
+          description: |
+            `optional` `target`
+
+            The lights to control with this button.
+          selector:
+            target:
+              entity:
+                - domain:
+                    - light
+        button_1_light_schedule:
+          name: Schedule
+          default: []
+          description: |
+            `optional` `entity`
+
+            Schedule helper for time-based brightness and color adjustments. **Schedules can be reused between lights.**
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - schedule
+              multiple: false
+        button_1_light_brightness:
+          name: Default Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Default brightness percentage (fallback when schedule is not set or lacks this attribute).
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_1_light_color:
+          name: Default Color Temperature
+          default: 3333
+          description: |
+            `optional` `color_temp`
+
+            Default color temperature in Kelvin (fallback when schedule is not set or lacks this attribute).
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_1_light_transition:
+          name: Default Transition
+          default: 1
+          description: |
+            `optional` `number`
+
+            Default transition duration in seconds (fallback when schedule is not set or lacks this attribute).
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
+              mode: slider
+        button_1_short_release_light_mode:
+          name: Short Release Mode
+          default: turn_on
+          description: |
+            `optional` `select`
+
+            Light actions for short release. Multiple selections trigger simultaneously.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+              custom_value: false
+              multiple: true
+        button_1_long_release_light_mode:
+          name: Long Release Mode
+          default: turn_off
+          description: |
+            `optional` `select`
+
+            Light actions for long release. Multiple selections trigger simultaneously.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+              custom_value: false
+              multiple: true
+        button_1_rotate_light_mode:
+          name: Rotate Mode
+          default: dim
+          description: |
+            `optional` `select`
+
+            Light actions for dial rotation. Multiple selections trigger simultaneously.
+          selector:
+            select:
+              options:
+                - label: "Dim"
+                  value: dim
+              custom_value: false
+              multiple: true
+        button_1_dimming_speed:
+          name: Dimming Speed
+          default: 5
+          description: |
+            `optional` `number`
+
+            Controls how fast lights dim when using the dial (1=slowest/smoothest, 10=fastest/jumpiest).
+          selector:
+            number:
+              min: 1
+              max: 10
+              step: 1
+              mode: slider
+        button_1_short_release_reset:
+          name: Reset to Schedule/Defaults on Short Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply schedule/default brightness and color when turning on. Disable to maintain current light settings.
+          selector:
+            boolean: {}
+        button_1_long_release_reset:
+          name: Reset to Schedule/Defaults on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply schedule/default brightness and color on long release. Disable to maintain current light settings.
+          selector:
+            boolean: {}
+    button_1_auto_adjust:
+      name: Button 1 - Auto-Adjust
+      icon: mdi:auto-fix
+      collapsed: true
+      input:
+        button_1_auto_adjust:
+          name: Auto-Adjust on Schedule Change
+          default: false
+          description: |
+            `optional` `boolean`
+
+            Automatically update lights when schedule changes. Only affects currently on lights.
+          selector:
+            boolean: {}
+        button_1_auto_adjust_transition:
+          name: Auto-Adjust Transition
+          default: 300
+          description: |
+            `optional` `number`
+
+            Transition duration in seconds when auto-adjusting lights on schedule change.
+          selector:
+            number:
+              min: 0
+              max: 600
+              step: 30
+              unit_of_measurement: "s"
+              mode: slider
+    button_1_media:
+      name: Button 1 - Media Mode
+      icon: mdi:play-box
+      collapsed: true
+      input:
+        button_1_media:
+          name: Media Player
+          default: []
+          description: |
+            `optional` `entity`
+
+            The media player to control with this button.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - media_player
+              multiple: false
+        button_1_media_leader:
+          name: Group Leader
+          default: []
+          description: |
+            `optional` `entity`
+
+            Media player to use as Group Leader for join commands. Works great with Music Assistant.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - media_player
+              multiple: false
+        button_1_media_volume:
+          name: Default Volume
+          default: 35
+          description: |
+            `optional` `number`
+
+            Default volume percentage for the media player.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_1_short_release_media_mode:
+          name: Short Release Mode
+          default: turn_on
+          description: |
+            `optional` `select`
+
+            Media player mode actions for short release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_1_short_release_media_control:
+          name: Short Release Control
+          default: volume_set
+          description: |
+            `optional` `select`
+
+            Media player control actions for short release.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_1_long_release_media_mode:
+          name: Long Release Mode
+          default: turn_off
+          description: |
+            `optional` `select`
+
+            Media player mode actions for long release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_1_long_release_media_control:
+          name: Long Release Control
+          default: []
+          description: |
+            `optional` `select`
+
+            Media player control actions for long release.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_1_double_media_mode:
+          name: Double Press Mode
+          default: []
+          description: |
+            `optional` `select`
+
+            Media player mode actions for double press.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_1_double_media_control:
+          name: Double Press Control
+          default: media_next_track
+          description: |
+            `optional` `select`
+
+            Media player control actions for double press.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_1_triple_media_mode:
+          name: Triple Press Mode
+          default: []
+          description: |
+            `optional` `select`
+
+            Media player mode actions for triple press.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_1_triple_media_control:
+          name: Triple Press Control
+          default: media_previous_track
+          description: |
+            `optional` `select`
+
+            Media player control actions for triple press.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_1_rotate_media_mode:
+          name: Rotate Mode
+          default: volume
+          description: |
+            `optional` `select`
+
+            Media player actions for dial rotation.
+          selector:
+            select:
+              options:
+                - label: "Volume"
+                  value: volume
+              custom_value: false
+              multiple: true
+    button_2_custom:
+      name: Button 2 - Custom Actions
+      icon: mdi:numeric-2-circle-outline
+      collapsed: true
+      input:
+        button_2_press:
+          name: Short Press
+          description: |
+            `optional` `action`
+
+            Action to run on a short press of Button 2.
+          default: []
+          selector:
+            action: {}
+        button_2_short_release:
+          name: Short Release
+          description: |
+            `optional` `action`
+
+            Action to run on a release of Button 2 after a short press.
+          default: []
+          selector:
+            action: {}
+        button_2_hold:
+          name: Long Press
+          description: |
+            `optional` `action`
+
+            Action to run on a long press of Button 2. Will repeat while the button is held.
+          default: []
+          selector:
+            action: {}
+        button_2_long_release:
+          name: Long Release
+          description: |
+            `optional` `action`
+
+            Action to run when Button 2 is released after a long press.
+          default: []
+          selector:
+            action: {}
+        button_2_double:
+          name: Double Press
+          description: |
+            `optional` `action`
+
+            Action to run on a double press of Button 2.
+          default: []
+          selector:
+            action: {}
+        button_2_triple:
+          name: Triple Press
+          description: |
+            `optional` `action`
+
+            Action to run on a triple press of Button 2.
+          default: []
+          selector:
+            action: {}
+        button_2_quadruple:
+          name: Quadruple Press
+          description: |
+            `optional` `action`
+
+            Action to run on a quadruple press of Button 2.
+          default: []
+          selector:
+            action: {}
+        button_2_quintuple:
+          name: Quintuple Press
+          description: |
+            `optional` `action`
+
+            Action to run on a quintuple press of Button 2.
+          default: []
+          selector:
+            action: {}
+        button_2_rotate_left:
+          name: Rotate Left
+          description: |
+            `optional` `action`
+
+            Action to run when dial is turned to the left after pressing Button 2.
+          default: []
+          selector:
+            action: {}
+        button_2_rotate_right:
+          name: Rotate Right
+          description: |
+            `optional` `action`
+
+            Action to run when dial is turned to the right after pressing Button 2.
+          default: []
+          selector:
+            action: {}
+    button_2_light:
+      name: Button 2 - Light Mode
+      icon: mdi:lightbulb
+      collapsed: true
+      input:
+        button_2_light:
+          name: Lights
+          default: []
+          description: |
+            `optional` `target`
+
+            The lights to control with this button.
+          selector:
+            target:
+              entity:
+                - domain:
+                    - light
+        button_2_light_schedule:
+          name: Schedule
+          default: []
+          description: |
+            `optional` `entity`
+
+            Schedule helper for time-based brightness and color adjustments.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - schedule
+              multiple: false
+        button_2_light_brightness:
+          name: Default Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Default brightness percentage.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_2_light_color:
+          name: Default Color Temperature
+          default: 3333
+          description: |
+            `optional` `color_temp`
+
+            Default color temperature in Kelvin.
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_2_light_transition:
+          name: Default Transition
+          default: 1
+          description: |
+            `optional` `number`
+
+            Default transition duration in seconds.
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
+              mode: slider
+        button_2_short_release_light_mode:
+          name: Short Release Mode
+          default: turn_on
+          description: |
+            `optional` `select`
+
+            Light actions for short release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+              custom_value: false
+              multiple: true
+        button_2_long_release_light_mode:
+          name: Long Release Mode
+          default: turn_off
+          description: |
+            `optional` `select`
+
+            Light actions for long release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+              custom_value: false
+              multiple: true
+        button_2_rotate_light_mode:
+          name: Rotate Mode
+          default: dim
+          description: |
+            `optional` `select`
+
+            Light actions for dial rotation.
+          selector:
+            select:
+              options:
+                - label: "Dim"
+                  value: dim
+              custom_value: false
+              multiple: true
+        button_2_dimming_speed:
+          name: Dimming Speed
+          default: 5
+          description: |
+            `optional` `number`
+
+            Controls how fast lights dim when using the dial (1=slowest/smoothest, 10=fastest/jumpiest).
+          selector:
+            number:
+              min: 1
+              max: 10
+              step: 1
+              mode: slider
+        button_2_short_release_reset:
+          name: Reset to Schedule/Defaults on Short Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply schedule/default brightness and color when turning on. Disable to maintain current light settings.
+          selector:
+            boolean: {}
+        button_2_long_release_reset:
+          name: Reset to Schedule/Defaults on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply schedule/default brightness and color on long release. Disable to maintain current light settings.
+          selector:
+            boolean: {}
+    button_2_auto_adjust:
+      name: Button 2 - Auto-Adjust
+      icon: mdi:auto-fix
+      collapsed: true
+      input:
+        button_2_auto_adjust:
+          name: Auto-Adjust on Schedule Change
+          default: false
+          description: |
+            `optional` `boolean`
+
+            Automatically update lights when schedule changes. Only affects currently on lights.
+          selector:
+            boolean: {}
+        button_2_auto_adjust_transition:
+          name: Auto-Adjust Transition
+          default: 300
+          description: |
+            `optional` `number`
+
+            Transition duration in seconds when auto-adjusting lights on schedule change.
+          selector:
+            number:
+              min: 0
+              max: 600
+              step: 30
+              unit_of_measurement: "s"
+              mode: slider
+    button_2_media:
+      name: Button 2 - Media Mode
+      icon: mdi:play-box
+      collapsed: true
+      input:
+        button_2_media:
+          name: Media Player
+          default: []
+          description: |
+            `optional` `entity`
+
+            The media player to control with this button.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - media_player
+              multiple: false
+        button_2_media_leader:
+          name: Group Leader
+          default: []
+          description: |
+            `optional` `entity`
+
+            Media player to use as Group Leader for join commands.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - media_player
+              multiple: false
+        button_2_media_volume:
+          name: Default Volume
+          default: 35
+          description: |
+            `optional` `number`
+
+            Default volume percentage.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_2_short_release_media_mode:
+          name: Short Release Mode
+          default: turn_on
+          description: |
+            `optional` `select`
+
+            Media player mode actions for short release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_2_short_release_media_control:
+          name: Short Release Control
+          default: volume_set
+          description: |
+            `optional` `select`
+
+            Media player control actions for short release.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_2_long_release_media_mode:
+          name: Long Release Mode
+          default: turn_off
+          description: |
+            `optional` `select`
+
+            Media player mode actions for long release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_2_long_release_media_control:
+          name: Long Release Control
+          default: []
+          description: |
+            `optional` `select`
+
+            Media player control actions for long release.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_2_double_media_mode:
+          name: Double Press Mode
+          default: []
+          description: |
+            `optional` `select`
+
+            Media player mode actions for double press.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_2_double_media_control:
+          name: Double Press Control
+          default: media_next_track
+          description: |
+            `optional` `select`
+
+            Media player control actions for double press.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_2_triple_media_mode:
+          name: Triple Press Mode
+          default: []
+          description: |
+            `optional` `select`
+
+            Media player mode actions for triple press.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_2_triple_media_control:
+          name: Triple Press Control
+          default: media_previous_track
+          description: |
+            `optional` `select`
+
+            Media player control actions for triple press.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_2_rotate_media_mode:
+          name: Rotate Mode
+          default: volume
+          description: |
+            `optional` `select`
+
+            Media player actions for dial rotation.
+          selector:
+            select:
+              options:
+                - label: "Volume"
+                  value: volume
+              custom_value: false
+              multiple: true
+    button_3_custom:
+      name: Button 3 - Custom Actions
+      icon: mdi:numeric-3-circle-outline
+      collapsed: true
+      input:
+        button_3_press:
+          name: Short Press
+          description: |
+            `optional` `action`
+
+            Action to run on a short press of Button 3.
+          default: []
+          selector:
+            action: {}
+        button_3_short_release:
+          name: Short Release
+          description: |
+            `optional` `action`
+
+            Action to run on a release of Button 3 after a short press.
+          default: []
+          selector:
+            action: {}
+        button_3_hold:
+          name: Long Press
+          description: |
+            `optional` `action`
+
+            Action to run on a long press of Button 3. Will repeat while the button is held.
+          default: []
+          selector:
+            action: {}
+        button_3_long_release:
+          name: Long Release
+          description: |
+            `optional` `action`
+
+            Action to run when Button 3 is released after a long press.
+          default: []
+          selector:
+            action: {}
+        button_3_double:
+          name: Double Press
+          description: |
+            `optional` `action`
+
+            Action to run on a double press of Button 3.
+          default: []
+          selector:
+            action: {}
+        button_3_triple:
+          name: Triple Press
+          description: |
+            `optional` `action`
+
+            Action to run on a triple press of Button 3.
+          default: []
+          selector:
+            action: {}
+        button_3_quadruple:
+          name: Quadruple Press
+          description: |
+            `optional` `action`
+
+            Action to run on a quadruple press of Button 3.
+          default: []
+          selector:
+            action: {}
+        button_3_quintuple:
+          name: Quintuple Press
+          description: |
+            `optional` `action`
+
+            Action to run on a quintuple press of Button 3.
+          default: []
+          selector:
+            action: {}
+        button_3_rotate_left:
+          name: Rotate Left
+          description: |
+            `optional` `action`
+
+            Action to run when dial is turned to the left after pressing Button 3.
+          default: []
+          selector:
+            action: {}
+        button_3_rotate_right:
+          name: Rotate Right
+          description: |
+            `optional` `action`
+
+            Action to run when dial is turned to the right after pressing Button 3.
+          default: []
+          selector:
+            action: {}
+    button_3_light:
+      name: Button 3 - Light Mode
+      icon: mdi:lightbulb
+      collapsed: true
+      input:
+        button_3_light:
+          name: Lights
+          default: []
+          description: |
+            `optional` `target`
+
+            The lights to control with this button.
+          selector:
+            target:
+              entity:
+                - domain:
+                    - light
+        button_3_light_schedule:
+          name: Schedule
+          default: []
+          description: |
+            `optional` `entity`
+
+            Schedule helper for time-based brightness and color adjustments.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - schedule
+              multiple: false
+        button_3_light_brightness:
+          name: Default Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Default brightness percentage.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_3_light_color:
+          name: Default Color Temperature
+          default: 3333
+          description: |
+            `optional` `color_temp`
+
+            Default color temperature in Kelvin.
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_3_light_transition:
+          name: Default Transition
+          default: 1
+          description: |
+            `optional` `number`
+
+            Default transition duration in seconds.
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
+              mode: slider
+        button_3_short_release_light_mode:
+          name: Short Release Mode
+          default: turn_on
+          description: |
+            `optional` `select`
+
+            Light actions for short release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+              custom_value: false
+              multiple: true
+        button_3_long_release_light_mode:
+          name: Long Release Mode
+          default: turn_off
+          description: |
+            `optional` `select`
+
+            Light actions for long release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+              custom_value: false
+              multiple: true
+        button_3_rotate_light_mode:
+          name: Rotate Mode
+          default: dim
+          description: |
+            `optional` `select`
+
+            Light actions for dial rotation.
+          selector:
+            select:
+              options:
+                - label: "Dim"
+                  value: dim
+              custom_value: false
+              multiple: true
+        button_3_dimming_speed:
+          name: Dimming Speed
+          default: 5
+          description: |
+            `optional` `number`
+
+            Controls how fast lights dim when using the dial (1=slowest/smoothest, 10=fastest/jumpiest).
+          selector:
+            number:
+              min: 1
+              max: 10
+              step: 1
+              mode: slider
+        button_3_short_release_reset:
+          name: Reset to Schedule/Defaults on Short Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply schedule/default brightness and color when turning on. Disable to maintain current light settings.
+          selector:
+            boolean: {}
+        button_3_long_release_reset:
+          name: Reset to Schedule/Defaults on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply schedule/default brightness and color on long release. Disable to maintain current light settings.
+          selector:
+            boolean: {}
+    button_3_auto_adjust:
+      name: Button 3 - Auto-Adjust
+      icon: mdi:auto-fix
+      collapsed: true
+      input:
+        button_3_auto_adjust:
+          name: Auto-Adjust on Schedule Change
+          default: false
+          description: |
+            `optional` `boolean`
+
+            Automatically update lights when schedule changes. Only affects currently on lights.
+          selector:
+            boolean: {}
+        button_3_auto_adjust_transition:
+          name: Auto-Adjust Transition
+          default: 300
+          description: |
+            `optional` `number`
+
+            Transition duration in seconds when auto-adjusting lights on schedule change.
+          selector:
+            number:
+              min: 0
+              max: 600
+              step: 30
+              unit_of_measurement: "s"
+              mode: slider
+    button_3_media:
+      name: Button 3 - Media Mode
+      icon: mdi:play-box
+      collapsed: true
+      input:
+        button_3_media:
+          name: Media Player
+          default: []
+          description: |
+            `optional` `entity`
+
+            The media player to control with this button.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - media_player
+              multiple: false
+        button_3_media_leader:
+          name: Group Leader
+          default: []
+          description: |
+            `optional` `entity`
+
+            Media player to use as Group Leader for join commands.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - media_player
+              multiple: false
+        button_3_media_volume:
+          name: Default Volume
+          default: 35
+          description: |
+            `optional` `number`
+
+            Default volume percentage.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_3_short_release_media_mode:
+          name: Short Release Mode
+          default: turn_on
+          description: |
+            `optional` `select`
+
+            Media player mode actions for short release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_3_short_release_media_control:
+          name: Short Release Control
+          default: volume_set
+          description: |
+            `optional` `select`
+
+            Media player control actions for short release.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_3_long_release_media_mode:
+          name: Long Release Mode
+          default: turn_off
+          description: |
+            `optional` `select`
+
+            Media player mode actions for long release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_3_long_release_media_control:
+          name: Long Release Control
+          default: []
+          description: |
+            `optional` `select`
+
+            Media player control actions for long release.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_3_double_media_mode:
+          name: Double Press Mode
+          default: []
+          description: |
+            `optional` `select`
+
+            Media player mode actions for double press.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_3_double_media_control:
+          name: Double Press Control
+          default: media_next_track
+          description: |
+            `optional` `select`
+
+            Media player control actions for double press.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_3_triple_media_mode:
+          name: Triple Press Mode
+          default: []
+          description: |
+            `optional` `select`
+
+            Media player mode actions for triple press.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_3_triple_media_control:
+          name: Triple Press Control
+          default: media_previous_track
+          description: |
+            `optional` `select`
+
+            Media player control actions for triple press.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_3_rotate_media_mode:
+          name: Rotate Mode
+          default: volume
+          description: |
+            `optional` `select`
+
+            Media player actions for dial rotation.
+          selector:
+            select:
+              options:
+                - label: "Volume"
+                  value: volume
+              custom_value: false
+              multiple: true
+    button_4_custom:
+      name: Button 4 - Custom Actions
+      icon: mdi:numeric-4-circle-outline
+      collapsed: true
+      input:
+        button_4_press:
+          name: Short Press
+          description: |
+            `optional` `action`
+
+            Action to run on a short press of Button 4.
+          default: []
+          selector:
+            action: {}
+        button_4_short_release:
+          name: Short Release
+          description: |
+            `optional` `action`
+
+            Action to run on a release of Button 4 after a short press.
+          default: []
+          selector:
+            action: {}
+        button_4_hold:
+          name: Long Press
+          description: |
+            `optional` `action`
+
+            Action to run on a long press of Button 4. Will repeat while the button is held.
+          default: []
+          selector:
+            action: {}
+        button_4_long_release:
+          name: Long Release
+          description: |
+            `optional` `action`
+
+            Action to run when Button 4 is released after a long press.
+          default: []
+          selector:
+            action: {}
+        button_4_double:
+          name: Double Press
+          description: |
+            `optional` `action`
+
+            Action to run on a double press of Button 4.
+          default: []
+          selector:
+            action: {}
+        button_4_triple:
+          name: Triple Press
+          description: |
+            `optional` `action`
+
+            Action to run on a triple press of Button 4.
+          default: []
+          selector:
+            action: {}
+        button_4_quadruple:
+          name: Quadruple Press
+          description: |
+            `optional` `action`
+
+            Action to run on a quadruple press of Button 4.
+          default: []
+          selector:
+            action: {}
+        button_4_quintuple:
+          name: Quintuple Press
+          description: |
+            `optional` `action`
+
+            Action to run on a quintuple press of Button 4.
+          default: []
+          selector:
+            action: {}
+        button_4_rotate_left:
+          name: Rotate Left
+          description: |
+            `optional` `action`
+
+            Action to run when dial is turned to the left after pressing Button 4.
+          default: []
+          selector:
+            action: {}
+        button_4_rotate_right:
+          name: Rotate Right
+          description: |
+            `optional` `action`
+
+            Action to run when dial is turned to the right after pressing Button 4.
+          default: []
+          selector:
+            action: {}
+    button_4_light:
+      name: Button 4 - Light Mode
+      icon: mdi:lightbulb
+      collapsed: true
+      input:
+        button_4_light:
+          name: Lights
+          default: []
+          description: |
+            `optional` `target`
+
+            The lights to control with this button.
+          selector:
+            target:
+              entity:
+                - domain:
+                    - light
+        button_4_light_schedule:
+          name: Schedule
+          default: []
+          description: |
+            `optional` `entity`
+
+            Schedule helper for time-based brightness and color adjustments.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - schedule
+              multiple: false
+        button_4_light_brightness:
+          name: Default Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Default brightness percentage.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_4_light_color:
+          name: Default Color Temperature
+          default: 3333
+          description: |
+            `optional` `color_temp`
+
+            Default color temperature in Kelvin.
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_4_light_transition:
+          name: Default Transition
+          default: 1
+          description: |
+            `optional` `number`
+
+            Default transition duration in seconds.
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
+              mode: slider
+        button_4_short_release_light_mode:
+          name: Short Release Mode
+          default: turn_on
+          description: |
+            `optional` `select`
+
+            Light actions for short release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+              custom_value: false
+              multiple: true
+        button_4_long_release_light_mode:
+          name: Long Release Mode
+          default: turn_off
+          description: |
+            `optional` `select`
+
+            Light actions for long release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+              custom_value: false
+              multiple: true
+        button_4_rotate_light_mode:
+          name: Rotate Mode
+          default: dim
+          description: |
+            `optional` `select`
+
+            Light actions for dial rotation.
+          selector:
+            select:
+              options:
+                - label: "Dim"
+                  value: dim
+              custom_value: false
+              multiple: true
+        button_4_dimming_speed:
+          name: Dimming Speed
+          default: 5
+          description: |
+            `optional` `number`
+
+            Controls how fast lights dim when using the dial (1=slowest/smoothest, 10=fastest/jumpiest).
+          selector:
+            number:
+              min: 1
+              max: 10
+              step: 1
+              mode: slider
+        button_4_short_release_reset:
+          name: Reset to Schedule/Defaults on Short Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply schedule/default brightness and color when turning on. Disable to maintain current light settings.
+          selector:
+            boolean: {}
+        button_4_long_release_reset:
+          name: Reset to Schedule/Defaults on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply schedule/default brightness and color on long release. Disable to maintain current light settings.
+          selector:
+            boolean: {}
+    button_4_auto_adjust:
+      name: Button 4 - Auto-Adjust
+      icon: mdi:auto-fix
+      collapsed: true
+      input:
+        button_4_auto_adjust:
+          name: Auto-Adjust on Schedule Change
+          default: false
+          description: |
+            `optional` `boolean`
+
+            Automatically update lights when schedule changes. Only affects currently on lights.
+          selector:
+            boolean: {}
+        button_4_auto_adjust_transition:
+          name: Auto-Adjust Transition
+          default: 300
+          description: |
+            `optional` `number`
+
+            Transition duration in seconds when auto-adjusting lights on schedule change.
+          selector:
+            number:
+              min: 0
+              max: 600
+              step: 30
+              unit_of_measurement: "s"
+              mode: slider
+    button_4_media:
+      name: Button 4 - Media Mode
+      icon: mdi:play-box
+      collapsed: true
+      input:
+        button_4_media:
+          name: Media Player
+          default: []
+          description: |
+            `optional` `entity`
+
+            The media player to control with this button.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - media_player
+              multiple: false
+        button_4_media_leader:
+          name: Group Leader
+          default: []
+          description: |
+            `optional` `entity`
+
+            Media player to use as Group Leader for join commands.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - media_player
+              multiple: false
+        button_4_media_volume:
+          name: Default Volume
+          default: 35
+          description: |
+            `optional` `number`
+
+            Default volume percentage.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_4_short_release_media_mode:
+          name: Short Release Mode
+          default: turn_on
+          description: |
+            `optional` `select`
+
+            Media player mode actions for short release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_4_short_release_media_control:
+          name: Short Release Control
+          default: volume_set
+          description: |
+            `optional` `select`
+
+            Media player control actions for short release.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_4_long_release_media_mode:
+          name: Long Release Mode
+          default: turn_off
+          description: |
+            `optional` `select`
+
+            Media player mode actions for long release.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_4_long_release_media_control:
+          name: Long Release Control
+          default: []
+          description: |
+            `optional` `select`
+
+            Media player control actions for long release.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_4_double_media_mode:
+          name: Double Press Mode
+          default: []
+          description: |
+            `optional` `select`
+
+            Media player mode actions for double press.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_4_double_media_control:
+          name: Double Press Control
+          default: media_next_track
+          description: |
+            `optional` `select`
+
+            Media player control actions for double press.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_4_triple_media_mode:
+          name: Triple Press Mode
+          default: []
+          description: |
+            `optional` `select`
+
+            Media player mode actions for triple press.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Join"
+                  value: join
+                - label: "Unjoin"
+                  value: unjoin
+              custom_value: false
+              multiple: true
+        button_4_triple_media_control:
+          name: Triple Press Control
+          default: media_previous_track
+          description: |
+            `optional` `select`
+
+            Media player control actions for triple press.
+          selector:
+            select:
+              options:
+                - label: "Previous Track"
+                  value: media_previous_track
+                - label: "Next Track"
+                  value: media_next_track
+                - label: "Set Volume"
+                  value: volume_set
+              custom_value: false
+              multiple: true
+        button_4_rotate_media_mode:
+          name: Rotate Mode
+          default: volume
+          description: |
+            `optional` `select`
+
+            Media player actions for dial rotation.
+          selector:
+            select:
+              options:
+                - label: "Volume"
+                  value: volume
+              custom_value: false
+              multiple: true
+
+mode: parallel
+max_exceeded: silent
+
+trigger_variables:
+  z2m_base_topic: !input z2m_base_topic
+  z2m_device_name: !input z2m_device_name
+
+variables:
+  # Integration config
+  integration_type: !input integration_type
+  zha_remote: !input zha_remote
+  z2m_base_topic: !input z2m_base_topic
+  z2m_device_name: !input z2m_device_name
+  last_pressed: !input last_pressed
+  # Command parsing - handles both Z2M MQTT payloads and ZHA events
+  zha_command: "{{ trigger.event.data.command if trigger.event is defined else '' }}"
+  z2m_action: "{{ trigger.payload_json.action | default('') if trigger.payload_json is defined else '' }}"
+  # Unified command - normalize Z2M actions to match ZHA command format
+  command: >-
+    {% if zha_command != '' %}
+      {{ zha_command }}
+    {% elif z2m_action != '' %}
+      {% if z2m_action == 'button_1_press' %}button_1_press
+      {% elif z2m_action == 'button_1_press_release' %}button_1_short_release
+      {% elif z2m_action == 'button_1_hold' %}button_1_hold
+      {% elif z2m_action == 'button_1_hold_release' %}button_1_long_release
+      {% elif z2m_action == 'button_2_press' %}button_2_press
+      {% elif z2m_action == 'button_2_press_release' %}button_2_short_release
+      {% elif z2m_action == 'button_2_hold' %}button_2_hold
+      {% elif z2m_action == 'button_2_hold_release' %}button_2_long_release
+      {% elif z2m_action == 'button_3_press' %}button_3_press
+      {% elif z2m_action == 'button_3_press_release' %}button_3_short_release
+      {% elif z2m_action == 'button_3_hold' %}button_3_hold
+      {% elif z2m_action == 'button_3_hold_release' %}button_3_long_release
+      {% elif z2m_action == 'button_4_press' %}button_4_press
+      {% elif z2m_action == 'button_4_press_release' %}button_4_short_release
+      {% elif z2m_action == 'button_4_hold' %}button_4_hold
+      {% elif z2m_action == 'button_4_hold_release' %}button_4_long_release
+      {% elif 'dial_rotate' in z2m_action or 'brightness_step' in z2m_action %}step_with_on_off
+      {% else %}{{ z2m_action }}
+      {% endif %}
+    {% else %}
+    {% endif %}
+  # Rotation parameters
+  step_mode: >-
+    {% if trigger.event is defined %}
+      {{ trigger.event.data.params.step_mode | default('0') }}
+    {% elif z2m_action != '' %}
+      {% if 'left' in z2m_action or 'down' in z2m_action %}StepMode.Down
+      {% elif 'right' in z2m_action or 'up' in z2m_action %}StepMode.Up
+      {% else %}0
+      {% endif %}
+    {% else %}0
+    {% endif %}
+  step_size: >-
+    {% if trigger.event is defined %}
+      {{ trigger.event.data.params.step_size | default(0) }}
+    {% elif trigger.payload_json is defined %}
+      {{ trigger.payload_json.action_step_size | default(0) }}
+    {% else %}0
+    {% endif %}
+  button_num: "{{ command | regex_replace(find='[^1-4]', replace='') | default(states(last_pressed), true) }}"
+  is_rotation: "{{ command == 'step_with_on_off' }}"
+  rotate_left: "{{ is_rotation and step_mode == 'StepMode.Down' and step_size | int != 255 }}"
+  rotate_right: "{{ is_rotation and step_mode == 'StepMode.Up' and step_size | int != 255 }}"
+  # Button 1 config
+  button_1_light: !input button_1_light
+  button_1_schedule: !input button_1_light_schedule
+  button_1_brightness_input: !input button_1_light_brightness
+  button_1_color_input: !input button_1_light_color
+  button_1_transition_input: !input button_1_light_transition
+  button_1_brightness_pct: >-
+    {% set val = state_attr(button_1_schedule, 'brightness_pct') if button_1_schedule is string and button_1_schedule != '' else none %}
+    {{ val if val is not none else button_1_brightness_input }}
+  button_1_color_temp_kelvin: >-
+    {% set val = state_attr(button_1_schedule, 'color_temp_kelvin') if button_1_schedule is string and button_1_schedule != '' else none %}
+    {{ val if val is not none else button_1_color_input }}
+  button_1_transition: >-
+    {% set val = state_attr(button_1_schedule, 'transition') if button_1_schedule is string and button_1_schedule != '' else none %}
+    {{ val if val is not none else button_1_transition_input }}
+  button_1_short_release_light_mode: !input button_1_short_release_light_mode
+  button_1_long_release_light_mode: !input button_1_long_release_light_mode
+  button_1_rotate_light_mode: !input button_1_rotate_light_mode
+  button_1_media: !input button_1_media
+  button_1_media_leader: !input button_1_media_leader
+  button_1_volume: !input button_1_media_volume
+  button_1_current_volume: "{{ state_attr(button_1_media, 'volume_level') | default(button_1_volume / 100, true) if button_1_media is string and button_1_media != '' else button_1_volume / 100 }}"
+  button_1_short_release_media_mode: !input button_1_short_release_media_mode
+  button_1_short_release_media_control: !input button_1_short_release_media_control
+  button_1_long_release_media_mode: !input button_1_long_release_media_mode
+  button_1_long_release_media_control: !input button_1_long_release_media_control
+  button_1_double_media_mode: !input button_1_double_media_mode
+  button_1_double_media_control: !input button_1_double_media_control
+  button_1_triple_media_mode: !input button_1_triple_media_mode
+  button_1_triple_media_control: !input button_1_triple_media_control
+  button_1_rotate_media_mode: !input button_1_rotate_media_mode
+  button_1_has_light: "{{ button_1_light.entity_id | default([]) | length > 0 or button_1_light.device_id | default([]) | length > 0 or button_1_light.area_id | default([]) | length > 0 }}"
+  button_1_has_media: "{{ button_1_media is string and button_1_media != '' }}"
+  button_1_dimming_speed: !input button_1_dimming_speed
+  button_1_step_size: "{{ (button_1_dimming_speed * 2.5) | int }}"
+  button_1_short_release_reset: !input button_1_short_release_reset
+  button_1_long_release_reset: !input button_1_long_release_reset
+  button_1_auto_adjust: !input button_1_auto_adjust
+  button_1_auto_adjust_transition: !input button_1_auto_adjust_transition
+  button_1_light_entities: >-
+    {% set ns = namespace(entities=[]) %}
+    {% if button_1_light.entity_id is defined and button_1_light.entity_id | length > 0 %}
+      {% if button_1_light.entity_id is string %}
+        {% set ns.entities = [button_1_light.entity_id] %}
+      {% else %}
+        {% set ns.entities = button_1_light.entity_id %}
+      {% endif %}
+    {% elif button_1_light.device_id is defined and button_1_light.device_id | length > 0 %}
+      {% set devices = [button_1_light.device_id] if button_1_light.device_id is string else button_1_light.device_id %}
+      {% for device in devices %}
+        {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% elif button_1_light.area_id is defined and button_1_light.area_id | length > 0 %}
+      {% set areas = [button_1_light.area_id] if button_1_light.area_id is string else button_1_light.area_id %}
+      {% for area in areas %}
+        {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% endif %}
+    {{ ns.entities }}
+  # Button 2 config
+  button_2_light: !input button_2_light
+  button_2_schedule: !input button_2_light_schedule
+  button_2_brightness_input: !input button_2_light_brightness
+  button_2_color_input: !input button_2_light_color
+  button_2_transition_input: !input button_2_light_transition
+  button_2_brightness_pct: >-
+    {% set val = state_attr(button_2_schedule, 'brightness_pct') if button_2_schedule is string and button_2_schedule != '' else none %}
+    {{ val if val is not none else button_2_brightness_input }}
+  button_2_color_temp_kelvin: >-
+    {% set val = state_attr(button_2_schedule, 'color_temp_kelvin') if button_2_schedule is string and button_2_schedule != '' else none %}
+    {{ val if val is not none else button_2_color_input }}
+  button_2_transition: >-
+    {% set val = state_attr(button_2_schedule, 'transition') if button_2_schedule is string and button_2_schedule != '' else none %}
+    {{ val if val is not none else button_2_transition_input }}
+  button_2_short_release_light_mode: !input button_2_short_release_light_mode
+  button_2_long_release_light_mode: !input button_2_long_release_light_mode
+  button_2_rotate_light_mode: !input button_2_rotate_light_mode
+  button_2_media: !input button_2_media
+  button_2_media_leader: !input button_2_media_leader
+  button_2_volume: !input button_2_media_volume
+  button_2_current_volume: "{{ state_attr(button_2_media, 'volume_level') | default(button_2_volume / 100, true) if button_2_media is string and button_2_media != '' else button_2_volume / 100 }}"
+  button_2_short_release_media_mode: !input button_2_short_release_media_mode
+  button_2_short_release_media_control: !input button_2_short_release_media_control
+  button_2_long_release_media_mode: !input button_2_long_release_media_mode
+  button_2_long_release_media_control: !input button_2_long_release_media_control
+  button_2_double_media_mode: !input button_2_double_media_mode
+  button_2_double_media_control: !input button_2_double_media_control
+  button_2_triple_media_mode: !input button_2_triple_media_mode
+  button_2_triple_media_control: !input button_2_triple_media_control
+  button_2_rotate_media_mode: !input button_2_rotate_media_mode
+  button_2_has_light: "{{ button_2_light.entity_id | default([]) | length > 0 or button_2_light.device_id | default([]) | length > 0 or button_2_light.area_id | default([]) | length > 0 }}"
+  button_2_has_media: "{{ button_2_media is string and button_2_media != '' }}"
+  button_2_dimming_speed: !input button_2_dimming_speed
+  button_2_step_size: "{{ (button_2_dimming_speed * 2.5) | int }}"
+  button_2_short_release_reset: !input button_2_short_release_reset
+  button_2_long_release_reset: !input button_2_long_release_reset
+  button_2_auto_adjust: !input button_2_auto_adjust
+  button_2_auto_adjust_transition: !input button_2_auto_adjust_transition
+  button_2_light_entities: >-
+    {% set ns = namespace(entities=[]) %}
+    {% if button_2_light.entity_id is defined and button_2_light.entity_id | length > 0 %}
+      {% if button_2_light.entity_id is string %}
+        {% set ns.entities = [button_2_light.entity_id] %}
+      {% else %}
+        {% set ns.entities = button_2_light.entity_id %}
+      {% endif %}
+    {% elif button_2_light.device_id is defined and button_2_light.device_id | length > 0 %}
+      {% set devices = [button_2_light.device_id] if button_2_light.device_id is string else button_2_light.device_id %}
+      {% for device in devices %}
+        {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% elif button_2_light.area_id is defined and button_2_light.area_id | length > 0 %}
+      {% set areas = [button_2_light.area_id] if button_2_light.area_id is string else button_2_light.area_id %}
+      {% for area in areas %}
+        {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% endif %}
+    {{ ns.entities }}
+  # Button 3 config
+  button_3_light: !input button_3_light
+  button_3_schedule: !input button_3_light_schedule
+  button_3_brightness_input: !input button_3_light_brightness
+  button_3_color_input: !input button_3_light_color
+  button_3_transition_input: !input button_3_light_transition
+  button_3_brightness_pct: >-
+    {% set val = state_attr(button_3_schedule, 'brightness_pct') if button_3_schedule is string and button_3_schedule != '' else none %}
+    {{ val if val is not none else button_3_brightness_input }}
+  button_3_color_temp_kelvin: >-
+    {% set val = state_attr(button_3_schedule, 'color_temp_kelvin') if button_3_schedule is string and button_3_schedule != '' else none %}
+    {{ val if val is not none else button_3_color_input }}
+  button_3_transition: >-
+    {% set val = state_attr(button_3_schedule, 'transition') if button_3_schedule is string and button_3_schedule != '' else none %}
+    {{ val if val is not none else button_3_transition_input }}
+  button_3_short_release_light_mode: !input button_3_short_release_light_mode
+  button_3_long_release_light_mode: !input button_3_long_release_light_mode
+  button_3_rotate_light_mode: !input button_3_rotate_light_mode
+  button_3_media: !input button_3_media
+  button_3_media_leader: !input button_3_media_leader
+  button_3_volume: !input button_3_media_volume
+  button_3_current_volume: "{{ state_attr(button_3_media, 'volume_level') | default(button_3_volume / 100, true) if button_3_media is string and button_3_media != '' else button_3_volume / 100 }}"
+  button_3_short_release_media_mode: !input button_3_short_release_media_mode
+  button_3_short_release_media_control: !input button_3_short_release_media_control
+  button_3_long_release_media_mode: !input button_3_long_release_media_mode
+  button_3_long_release_media_control: !input button_3_long_release_media_control
+  button_3_double_media_mode: !input button_3_double_media_mode
+  button_3_double_media_control: !input button_3_double_media_control
+  button_3_triple_media_mode: !input button_3_triple_media_mode
+  button_3_triple_media_control: !input button_3_triple_media_control
+  button_3_rotate_media_mode: !input button_3_rotate_media_mode
+  button_3_has_light: "{{ button_3_light.entity_id | default([]) | length > 0 or button_3_light.device_id | default([]) | length > 0 or button_3_light.area_id | default([]) | length > 0 }}"
+  button_3_has_media: "{{ button_3_media is string and button_3_media != '' }}"
+  button_3_dimming_speed: !input button_3_dimming_speed
+  button_3_step_size: "{{ (button_3_dimming_speed * 2.5) | int }}"
+  button_3_short_release_reset: !input button_3_short_release_reset
+  button_3_long_release_reset: !input button_3_long_release_reset
+  button_3_auto_adjust: !input button_3_auto_adjust
+  button_3_auto_adjust_transition: !input button_3_auto_adjust_transition
+  button_3_light_entities: >-
+    {% set ns = namespace(entities=[]) %}
+    {% if button_3_light.entity_id is defined and button_3_light.entity_id | length > 0 %}
+      {% if button_3_light.entity_id is string %}
+        {% set ns.entities = [button_3_light.entity_id] %}
+      {% else %}
+        {% set ns.entities = button_3_light.entity_id %}
+      {% endif %}
+    {% elif button_3_light.device_id is defined and button_3_light.device_id | length > 0 %}
+      {% set devices = [button_3_light.device_id] if button_3_light.device_id is string else button_3_light.device_id %}
+      {% for device in devices %}
+        {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% elif button_3_light.area_id is defined and button_3_light.area_id | length > 0 %}
+      {% set areas = [button_3_light.area_id] if button_3_light.area_id is string else button_3_light.area_id %}
+      {% for area in areas %}
+        {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% endif %}
+    {{ ns.entities }}
+  # Button 4 config
+  button_4_light: !input button_4_light
+  button_4_schedule: !input button_4_light_schedule
+  button_4_brightness_input: !input button_4_light_brightness
+  button_4_color_input: !input button_4_light_color
+  button_4_transition_input: !input button_4_light_transition
+  button_4_brightness_pct: >-
+    {% set val = state_attr(button_4_schedule, 'brightness_pct') if button_4_schedule is string and button_4_schedule != '' else none %}
+    {{ val if val is not none else button_4_brightness_input }}
+  button_4_color_temp_kelvin: >-
+    {% set val = state_attr(button_4_schedule, 'color_temp_kelvin') if button_4_schedule is string and button_4_schedule != '' else none %}
+    {{ val if val is not none else button_4_color_input }}
+  button_4_transition: >-
+    {% set val = state_attr(button_4_schedule, 'transition') if button_4_schedule is string and button_4_schedule != '' else none %}
+    {{ val if val is not none else button_4_transition_input }}
+  button_4_short_release_light_mode: !input button_4_short_release_light_mode
+  button_4_long_release_light_mode: !input button_4_long_release_light_mode
+  button_4_rotate_light_mode: !input button_4_rotate_light_mode
+  button_4_media: !input button_4_media
+  button_4_media_leader: !input button_4_media_leader
+  button_4_volume: !input button_4_media_volume
+  button_4_current_volume: "{{ state_attr(button_4_media, 'volume_level') | default(button_4_volume / 100, true) if button_4_media is string and button_4_media != '' else button_4_volume / 100 }}"
+  button_4_short_release_media_mode: !input button_4_short_release_media_mode
+  button_4_short_release_media_control: !input button_4_short_release_media_control
+  button_4_long_release_media_mode: !input button_4_long_release_media_mode
+  button_4_long_release_media_control: !input button_4_long_release_media_control
+  button_4_double_media_mode: !input button_4_double_media_mode
+  button_4_double_media_control: !input button_4_double_media_control
+  button_4_triple_media_mode: !input button_4_triple_media_mode
+  button_4_triple_media_control: !input button_4_triple_media_control
+  button_4_rotate_media_mode: !input button_4_rotate_media_mode
+  button_4_has_light: "{{ button_4_light.entity_id | default([]) | length > 0 or button_4_light.device_id | default([]) | length > 0 or button_4_light.area_id | default([]) | length > 0 }}"
+  button_4_has_media: "{{ button_4_media is string and button_4_media != '' }}"
+  button_4_dimming_speed: !input button_4_dimming_speed
+  button_4_step_size: "{{ (button_4_dimming_speed * 2.5) | int }}"
+  button_4_short_release_reset: !input button_4_short_release_reset
+  button_4_long_release_reset: !input button_4_long_release_reset
+  button_4_auto_adjust: !input button_4_auto_adjust
+  button_4_auto_adjust_transition: !input button_4_auto_adjust_transition
+  button_4_light_entities: >-
+    {% set ns = namespace(entities=[]) %}
+    {% if button_4_light.entity_id is defined and button_4_light.entity_id | length > 0 %}
+      {% if button_4_light.entity_id is string %}
+        {% set ns.entities = [button_4_light.entity_id] %}
+      {% else %}
+        {% set ns.entities = button_4_light.entity_id %}
+      {% endif %}
+    {% elif button_4_light.device_id is defined and button_4_light.device_id | length > 0 %}
+      {% set devices = [button_4_light.device_id] if button_4_light.device_id is string else button_4_light.device_id %}
+      {% for device in devices %}
+        {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% elif button_4_light.area_id is defined and button_4_light.area_id | length > 0 %}
+      {% set areas = [button_4_light.area_id] if button_4_light.area_id is string else button_4_light.area_id %}
+      {% for area in areas %}
+        {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% endif %}
+    {{ ns.entities }}
+
+triggers:
+  - trigger: event
+    event_type: zha_event
+    event_data:
+      device_id: !input zha_remote
+    id: zha_event
+  - trigger: mqtt
+    topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+    id: z2m_action
+  - trigger: state
+    entity_id: !input button_1_light_schedule
+    id: schedule_1_change
+  - trigger: state
+    entity_id: !input button_2_light_schedule
+    id: schedule_2_change
+  - trigger: state
+    entity_id: !input button_3_light_schedule
+    id: schedule_3_change
+  - trigger: state
+    entity_id: !input button_4_light_schedule
+    id: schedule_4_change
+
+actions:
+  - alias: Validate integration type matches trigger
+    condition: template
+    value_template: >-
+      {% if trigger.id == 'zha_event' %}
+        {{ 'zha' in integration_type }}
+      {% elif trigger.id == 'z2m_action' %}
+        {{ 'z2m' in integration_type }}
+      {% else %}
+        true
+      {% endif %}
+  # Skip Z2M 'press' events - we only act on 'press_release' and 'hold_release'
+  # This prevents double-triggering since press is always followed by press_release or hold_release
+  - alias: Skip Z2M press-only events
+    condition: template
+    value_template: >-
+      {% if trigger.id == 'z2m_action' %}
+        {{ z2m_action not in ['button_1_press', 'button_2_press', 'button_3_press', 'button_4_press'] }}
+      {% else %}
+        true
+      {% endif %}
+  # Z2M double press detection using wait_for_trigger
+  # Note: wait_for_trigger creates an independent MQTT listener that bypasses the skip condition above
+  # Triple/quad/quint press requires ZHA integration which natively supports these events
+  - alias: Z2M double press detection
+    if:
+      - "{{ trigger.id == 'z2m_action' }}"
+      - "{{ command in ['button_1_short_release', 'button_2_short_release', 'button_3_short_release', 'button_4_short_release'] }}"
+    then:
+      - variables:
+          detected_button: "{{ button_num }}"
+      - alias: Wait for second press
+        wait_for_trigger:
+          - trigger: mqtt
+            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+            payload: "button_{{ button_num }}_press"
+            value_template: "{{ value_json.action }}"
+        timeout:
+          milliseconds: 300
+        continue_on_timeout: true
+      - variables:
+          command: >-
+            {% if wait.trigger is not none %}button_{{ detected_button }}_double_press
+            {% else %}button_{{ detected_button }}_short_release
+            {% endif %}
+  - alias: Update last pressed helper for button commands
+    if:
+      - "{{ command | regex_search('button_[1-4]') }}"
+    then:
+      - action: input_text.set_value
+        target:
+          entity_id: "{{ last_pressed }}"
+        data:
+          value: "{{ button_num }}"
+  - choose:
+      # ========== SCHEDULE AUTO-ADJUST ==========
+      - conditions:
+          - "{{ trigger.id == 'schedule_1_change' }}"
+          - "{{ button_1_auto_adjust }}"
+          - "{{ button_1_has_light }}"
+          - "{{ button_1_schedule is string and button_1_schedule != '' }}"
+        sequence:
+          - repeat:
+              for_each: "{{ button_1_light_entities }}"
+              sequence:
+                - if:
+                    - "{{ is_state(repeat.item, 'on') }}"
+                  then:
+                    - action: light.turn_on
+                      target:
+                        entity_id: "{{ repeat.item }}"
+                      data:
+                        brightness_pct: "{{ button_1_brightness_pct }}"
+                        color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                        transition: "{{ button_1_auto_adjust_transition }}"
+          - stop: Schedule 1 auto-adjust completed
+      - conditions:
+          - "{{ trigger.id == 'schedule_2_change' }}"
+          - "{{ button_2_auto_adjust }}"
+          - "{{ button_2_has_light }}"
+          - "{{ button_2_schedule is string and button_2_schedule != '' }}"
+        sequence:
+          - repeat:
+              for_each: "{{ button_2_light_entities }}"
+              sequence:
+                - if:
+                    - "{{ is_state(repeat.item, 'on') }}"
+                  then:
+                    - action: light.turn_on
+                      target:
+                        entity_id: "{{ repeat.item }}"
+                      data:
+                        brightness_pct: "{{ button_2_brightness_pct }}"
+                        color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                        transition: "{{ button_2_auto_adjust_transition }}"
+          - stop: Schedule 2 auto-adjust completed
+      - conditions:
+          - "{{ trigger.id == 'schedule_3_change' }}"
+          - "{{ button_3_auto_adjust }}"
+          - "{{ button_3_has_light }}"
+          - "{{ button_3_schedule is string and button_3_schedule != '' }}"
+        sequence:
+          - repeat:
+              for_each: "{{ button_3_light_entities }}"
+              sequence:
+                - if:
+                    - "{{ is_state(repeat.item, 'on') }}"
+                  then:
+                    - action: light.turn_on
+                      target:
+                        entity_id: "{{ repeat.item }}"
+                      data:
+                        brightness_pct: "{{ button_3_brightness_pct }}"
+                        color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                        transition: "{{ button_3_auto_adjust_transition }}"
+          - stop: Schedule 3 auto-adjust completed
+      - conditions:
+          - "{{ trigger.id == 'schedule_4_change' }}"
+          - "{{ button_4_auto_adjust }}"
+          - "{{ button_4_has_light }}"
+          - "{{ button_4_schedule is string and button_4_schedule != '' }}"
+        sequence:
+          - repeat:
+              for_each: "{{ button_4_light_entities }}"
+              sequence:
+                - if:
+                    - "{{ is_state(repeat.item, 'on') }}"
+                  then:
+                    - action: light.turn_on
+                      target:
+                        entity_id: "{{ repeat.item }}"
+                      data:
+                        brightness_pct: "{{ button_4_brightness_pct }}"
+                        color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                        transition: "{{ button_4_auto_adjust_transition }}"
+          - stop: Schedule 4 auto-adjust completed
+      # ========== BUTTON 1 ==========
+      - conditions: "{{ command == 'button_1_press' }}"
+        sequence: !input button_1_press
+      - conditions: "{{ command == 'button_1_short_release' }}"
+        sequence:
+          - sequence: !input button_1_short_release
+          - if: "{{ button_1_has_light }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_1_short_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_1_short_release_reset }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_1_light }}"
+                                data:
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                        default:
+                          - action: light.turn_on
+                            target: "{{ button_1_light }}"
+                            data:
+                              transition: "{{ button_1_transition }}"
+                  - if: "{{ 'turn_off' in button_1_short_release_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        target: "{{ button_1_light }}"
+                        data:
+                          transition: "{{ button_1_transition }}"
+                  - if: "{{ 'toggle' in button_1_short_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_1_short_release_reset }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_1_light }}"
+                                data:
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                        default:
+                          - action: light.toggle
+                            target: "{{ button_1_light }}"
+                            data:
+                              transition: "{{ button_1_transition }}"
+          - if: "{{ button_1_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_1_short_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'turn_off' in button_1_short_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'toggle' in button_1_short_release_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'join' in button_1_short_release_media_mode and button_1_media_leader is string and button_1_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_1_media_leader }}"
+                        data:
+                          group_members: "{{ button_1_media }}"
+                  - if: "{{ 'unjoin' in button_1_short_release_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'media_previous_track' in button_1_short_release_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'media_next_track' in button_1_short_release_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'volume_set' in button_1_short_release_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                        data:
+                          volume_level: "{{ button_1_volume / 100 }}"
+      - conditions: "{{ command == 'button_1_hold' }}"
+        sequence: !input button_1_hold
+      - conditions: "{{ command == 'button_1_long_release' }}"
+        sequence:
+          - sequence: !input button_1_long_release
+          - if: "{{ button_1_has_light }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_1_long_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_1_long_release_reset }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_1_light }}"
+                                data:
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                        default:
+                          - action: light.turn_on
+                            target: "{{ button_1_light }}"
+                            data:
+                              transition: "{{ button_1_transition }}"
+                  - if: "{{ 'turn_off' in button_1_long_release_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        target: "{{ button_1_light }}"
+                        data:
+                          transition: "{{ button_1_transition }}"
+                  - if: "{{ 'toggle' in button_1_long_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_1_long_release_reset }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_1_light }}"
+                                data:
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                        default:
+                          - action: light.toggle
+                            target: "{{ button_1_light }}"
+                            data:
+                              transition: "{{ button_1_transition }}"
+          - if: "{{ button_1_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_1_long_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'turn_off' in button_1_long_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'toggle' in button_1_long_release_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'join' in button_1_long_release_media_mode and button_1_media_leader is string and button_1_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_1_media_leader }}"
+                        data:
+                          group_members: "{{ button_1_media }}"
+                  - if: "{{ 'unjoin' in button_1_long_release_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'media_previous_track' in button_1_long_release_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'media_next_track' in button_1_long_release_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'volume_set' in button_1_long_release_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                        data:
+                          volume_level: "{{ button_1_volume / 100 }}"
+      - conditions: "{{ command == 'button_1_double_press' }}"
+        sequence:
+          - sequence: !input button_1_double
+          - if: "{{ button_1_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_1_double_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'turn_off' in button_1_double_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'toggle' in button_1_double_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'join' in button_1_double_media_mode and button_1_media_leader is string and button_1_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_1_media_leader }}"
+                        data:
+                          group_members: "{{ button_1_media }}"
+                  - if: "{{ 'unjoin' in button_1_double_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'media_previous_track' in button_1_double_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'media_next_track' in button_1_double_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'volume_set' in button_1_double_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                        data:
+                          volume_level: "{{ button_1_volume / 100 }}"
+      - conditions: "{{ command == 'button_1_triple_press' }}"
+        sequence:
+          - sequence: !input button_1_triple
+          - if: "{{ button_1_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_1_triple_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'turn_off' in button_1_triple_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'toggle' in button_1_triple_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'join' in button_1_triple_media_mode and button_1_media_leader is string and button_1_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_1_media_leader }}"
+                        data:
+                          group_members: "{{ button_1_media }}"
+                  - if: "{{ 'unjoin' in button_1_triple_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'media_previous_track' in button_1_triple_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'media_next_track' in button_1_triple_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                  - if: "{{ 'volume_set' in button_1_triple_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_1_media }}"
+                        data:
+                          volume_level: "{{ button_1_volume / 100 }}"
+      - conditions: "{{ command == 'button_1_quadruple_press' }}"
+        sequence: !input button_1_quadruple
+      - conditions: "{{ command == 'button_1_quintuple_press' }}"
+        sequence: !input button_1_quintuple
+      - conditions: "{{ rotate_left and states(last_pressed) == '1' }}"
+        sequence:
+          - sequence: !input button_1_rotate_left
+          - if: "{{ button_1_has_light and 'dim' in button_1_rotate_light_mode }}"
+            then:
+              - action: light.turn_on
+                target: "{{ button_1_light }}"
+                data:
+                  brightness_step: "-{{ (step_size * button_1_step_size / 10) | int }}"
+                  transition: "{{ button_1_transition }}"
+          - if: "{{ button_1_has_media and 'volume' in button_1_rotate_media_mode }}"
+            then:
+              - action: media_player.volume_set
+                target:
+                  entity_id: "{{ button_1_media }}"
+                data:
+                  volume_level: "{{ [0, button_1_current_volume - (step_size / 8 / 100)] | max }}"
+      - conditions: "{{ rotate_right and states(last_pressed) == '1' }}"
+        sequence:
+          - sequence: !input button_1_rotate_right
+          - if: "{{ button_1_has_light and 'dim' in button_1_rotate_light_mode }}"
+            then:
+              - action: light.turn_on
+                target: "{{ button_1_light }}"
+                data:
+                  brightness_step: "{{ (step_size * button_1_step_size / 10) | int }}"
+                  transition: "{{ button_1_transition }}"
+          - if: "{{ button_1_has_media and 'volume' in button_1_rotate_media_mode }}"
+            then:
+              - action: media_player.volume_set
+                target:
+                  entity_id: "{{ button_1_media }}"
+                data:
+                  volume_level: "{{ [1, button_1_current_volume + (step_size / 8 / 100)] | min }}"
+      # ========== BUTTON 2 ==========
+      - conditions: "{{ command == 'button_2_press' }}"
+        sequence: !input button_2_press
+      - conditions: "{{ command == 'button_2_short_release' }}"
+        sequence:
+          - sequence: !input button_2_short_release
+          - if: "{{ button_2_has_light }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_2_short_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_2_short_release_reset }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_2_light }}"
+                                data:
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                        default:
+                          - action: light.turn_on
+                            target: "{{ button_2_light }}"
+                            data:
+                              transition: "{{ button_2_transition }}"
+                  - if: "{{ 'turn_off' in button_2_short_release_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        target: "{{ button_2_light }}"
+                        data:
+                          transition: "{{ button_2_transition }}"
+                  - if: "{{ 'toggle' in button_2_short_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_2_short_release_reset }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_2_light }}"
+                                data:
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                        default:
+                          - action: light.toggle
+                            target: "{{ button_2_light }}"
+                            data:
+                              transition: "{{ button_2_transition }}"
+          - if: "{{ button_2_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_2_short_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'turn_off' in button_2_short_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'toggle' in button_2_short_release_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'join' in button_2_short_release_media_mode and button_2_media_leader is string and button_2_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_2_media_leader }}"
+                        data:
+                          group_members: "{{ button_2_media }}"
+                  - if: "{{ 'unjoin' in button_2_short_release_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'media_previous_track' in button_2_short_release_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'media_next_track' in button_2_short_release_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'volume_set' in button_2_short_release_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                        data:
+                          volume_level: "{{ button_2_volume / 100 }}"
+      - conditions: "{{ command == 'button_2_hold' }}"
+        sequence: !input button_2_hold
+      - conditions: "{{ command == 'button_2_long_release' }}"
+        sequence:
+          - sequence: !input button_2_long_release
+          - if: "{{ button_2_has_light }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_2_long_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_2_long_release_reset }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_2_light }}"
+                                data:
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                        default:
+                          - action: light.turn_on
+                            target: "{{ button_2_light }}"
+                            data:
+                              transition: "{{ button_2_transition }}"
+                  - if: "{{ 'turn_off' in button_2_long_release_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        target: "{{ button_2_light }}"
+                        data:
+                          transition: "{{ button_2_transition }}"
+                  - if: "{{ 'toggle' in button_2_long_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_2_long_release_reset }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_2_light }}"
+                                data:
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                        default:
+                          - action: light.toggle
+                            target: "{{ button_2_light }}"
+                            data:
+                              transition: "{{ button_2_transition }}"
+          - if: "{{ button_2_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_2_long_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'turn_off' in button_2_long_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'toggle' in button_2_long_release_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'join' in button_2_long_release_media_mode and button_2_media_leader is string and button_2_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_2_media_leader }}"
+                        data:
+                          group_members: "{{ button_2_media }}"
+                  - if: "{{ 'unjoin' in button_2_long_release_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'media_previous_track' in button_2_long_release_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'media_next_track' in button_2_long_release_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'volume_set' in button_2_long_release_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                        data:
+                          volume_level: "{{ button_2_volume / 100 }}"
+      - conditions: "{{ command == 'button_2_double_press' }}"
+        sequence:
+          - sequence: !input button_2_double
+          - if: "{{ button_2_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_2_double_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'turn_off' in button_2_double_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'toggle' in button_2_double_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'join' in button_2_double_media_mode and button_2_media_leader is string and button_2_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_2_media_leader }}"
+                        data:
+                          group_members: "{{ button_2_media }}"
+                  - if: "{{ 'unjoin' in button_2_double_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'media_previous_track' in button_2_double_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'media_next_track' in button_2_double_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'volume_set' in button_2_double_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                        data:
+                          volume_level: "{{ button_2_volume / 100 }}"
+      - conditions: "{{ command == 'button_2_triple_press' }}"
+        sequence:
+          - sequence: !input button_2_triple
+          - if: "{{ button_2_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_2_triple_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'turn_off' in button_2_triple_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'toggle' in button_2_triple_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'join' in button_2_triple_media_mode and button_2_media_leader is string and button_2_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_2_media_leader }}"
+                        data:
+                          group_members: "{{ button_2_media }}"
+                  - if: "{{ 'unjoin' in button_2_triple_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'media_previous_track' in button_2_triple_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'media_next_track' in button_2_triple_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                  - if: "{{ 'volume_set' in button_2_triple_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_2_media }}"
+                        data:
+                          volume_level: "{{ button_2_volume / 100 }}"
+      - conditions: "{{ command == 'button_2_quadruple_press' }}"
+        sequence: !input button_2_quadruple
+      - conditions: "{{ command == 'button_2_quintuple_press' }}"
+        sequence: !input button_2_quintuple
+      - conditions: "{{ rotate_left and states(last_pressed) == '2' }}"
+        sequence:
+          - sequence: !input button_2_rotate_left
+          - if: "{{ button_2_has_light and 'dim' in button_2_rotate_light_mode }}"
+            then:
+              - action: light.turn_on
+                target: "{{ button_2_light }}"
+                data:
+                  brightness_step: "-{{ (step_size * button_2_step_size / 10) | int }}"
+                  transition: "{{ button_2_transition }}"
+          - if: "{{ button_2_has_media and 'volume' in button_2_rotate_media_mode }}"
+            then:
+              - action: media_player.volume_set
+                target:
+                  entity_id: "{{ button_2_media }}"
+                data:
+                  volume_level: "{{ [0, button_2_current_volume - (step_size / 8 / 100)] | max }}"
+      - conditions: "{{ rotate_right and states(last_pressed) == '2' }}"
+        sequence:
+          - sequence: !input button_2_rotate_right
+          - if: "{{ button_2_has_light and 'dim' in button_2_rotate_light_mode }}"
+            then:
+              - action: light.turn_on
+                target: "{{ button_2_light }}"
+                data:
+                  brightness_step: "{{ (step_size * button_2_step_size / 10) | int }}"
+                  transition: "{{ button_2_transition }}"
+          - if: "{{ button_2_has_media and 'volume' in button_2_rotate_media_mode }}"
+            then:
+              - action: media_player.volume_set
+                target:
+                  entity_id: "{{ button_2_media }}"
+                data:
+                  volume_level: "{{ [1, button_2_current_volume + (step_size / 8 / 100)] | min }}"
+      # ========== BUTTON 3 ==========
+      - conditions: "{{ command == 'button_3_press' }}"
+        sequence: !input button_3_press
+      - conditions: "{{ command == 'button_3_short_release' }}"
+        sequence:
+          - sequence: !input button_3_short_release
+          - if: "{{ button_3_has_light }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_3_short_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_3_short_release_reset }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_3_light }}"
+                                data:
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                        default:
+                          - action: light.turn_on
+                            target: "{{ button_3_light }}"
+                            data:
+                              transition: "{{ button_3_transition }}"
+                  - if: "{{ 'turn_off' in button_3_short_release_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        target: "{{ button_3_light }}"
+                        data:
+                          transition: "{{ button_3_transition }}"
+                  - if: "{{ 'toggle' in button_3_short_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_3_short_release_reset }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_3_light }}"
+                                data:
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                        default:
+                          - action: light.toggle
+                            target: "{{ button_3_light }}"
+                            data:
+                              transition: "{{ button_3_transition }}"
+          - if: "{{ button_3_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_3_short_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'turn_off' in button_3_short_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'toggle' in button_3_short_release_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'join' in button_3_short_release_media_mode and button_3_media_leader is string and button_3_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_3_media_leader }}"
+                        data:
+                          group_members: "{{ button_3_media }}"
+                  - if: "{{ 'unjoin' in button_3_short_release_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'media_previous_track' in button_3_short_release_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'media_next_track' in button_3_short_release_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'volume_set' in button_3_short_release_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                        data:
+                          volume_level: "{{ button_3_volume / 100 }}"
+      - conditions: "{{ command == 'button_3_hold' }}"
+        sequence: !input button_3_hold
+      - conditions: "{{ command == 'button_3_long_release' }}"
+        sequence:
+          - sequence: !input button_3_long_release
+          - if: "{{ button_3_has_light }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_3_long_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_3_long_release_reset }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_3_light }}"
+                                data:
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                        default:
+                          - action: light.turn_on
+                            target: "{{ button_3_light }}"
+                            data:
+                              transition: "{{ button_3_transition }}"
+                  - if: "{{ 'turn_off' in button_3_long_release_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        target: "{{ button_3_light }}"
+                        data:
+                          transition: "{{ button_3_transition }}"
+                  - if: "{{ 'toggle' in button_3_long_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_3_long_release_reset }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_3_light }}"
+                                data:
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                        default:
+                          - action: light.toggle
+                            target: "{{ button_3_light }}"
+                            data:
+                              transition: "{{ button_3_transition }}"
+          - if: "{{ button_3_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_3_long_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'turn_off' in button_3_long_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'toggle' in button_3_long_release_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'join' in button_3_long_release_media_mode and button_3_media_leader is string and button_3_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_3_media_leader }}"
+                        data:
+                          group_members: "{{ button_3_media }}"
+                  - if: "{{ 'unjoin' in button_3_long_release_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'media_previous_track' in button_3_long_release_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'media_next_track' in button_3_long_release_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'volume_set' in button_3_long_release_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                        data:
+                          volume_level: "{{ button_3_volume / 100 }}"
+      - conditions: "{{ command == 'button_3_double_press' }}"
+        sequence:
+          - sequence: !input button_3_double
+          - if: "{{ button_3_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_3_double_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'turn_off' in button_3_double_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'toggle' in button_3_double_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'join' in button_3_double_media_mode and button_3_media_leader is string and button_3_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_3_media_leader }}"
+                        data:
+                          group_members: "{{ button_3_media }}"
+                  - if: "{{ 'unjoin' in button_3_double_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'media_previous_track' in button_3_double_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'media_next_track' in button_3_double_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'volume_set' in button_3_double_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                        data:
+                          volume_level: "{{ button_3_volume / 100 }}"
+      - conditions: "{{ command == 'button_3_triple_press' }}"
+        sequence:
+          - sequence: !input button_3_triple
+          - if: "{{ button_3_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_3_triple_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'turn_off' in button_3_triple_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'toggle' in button_3_triple_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'join' in button_3_triple_media_mode and button_3_media_leader is string and button_3_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_3_media_leader }}"
+                        data:
+                          group_members: "{{ button_3_media }}"
+                  - if: "{{ 'unjoin' in button_3_triple_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'media_previous_track' in button_3_triple_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'media_next_track' in button_3_triple_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                  - if: "{{ 'volume_set' in button_3_triple_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_3_media }}"
+                        data:
+                          volume_level: "{{ button_3_volume / 100 }}"
+      - conditions: "{{ command == 'button_3_quadruple_press' }}"
+        sequence: !input button_3_quadruple
+      - conditions: "{{ command == 'button_3_quintuple_press' }}"
+        sequence: !input button_3_quintuple
+      - conditions: "{{ rotate_left and states(last_pressed) == '3' }}"
+        sequence:
+          - sequence: !input button_3_rotate_left
+          - if: "{{ button_3_has_light and 'dim' in button_3_rotate_light_mode }}"
+            then:
+              - action: light.turn_on
+                target: "{{ button_3_light }}"
+                data:
+                  brightness_step: "-{{ (step_size * button_3_step_size / 10) | int }}"
+                  transition: "{{ button_3_transition }}"
+          - if: "{{ button_3_has_media and 'volume' in button_3_rotate_media_mode }}"
+            then:
+              - action: media_player.volume_set
+                target:
+                  entity_id: "{{ button_3_media }}"
+                data:
+                  volume_level: "{{ [0, button_3_current_volume - (step_size / 8 / 100)] | max }}"
+      - conditions: "{{ rotate_right and states(last_pressed) == '3' }}"
+        sequence:
+          - sequence: !input button_3_rotate_right
+          - if: "{{ button_3_has_light and 'dim' in button_3_rotate_light_mode }}"
+            then:
+              - action: light.turn_on
+                target: "{{ button_3_light }}"
+                data:
+                  brightness_step: "{{ (step_size * button_3_step_size / 10) | int }}"
+                  transition: "{{ button_3_transition }}"
+          - if: "{{ button_3_has_media and 'volume' in button_3_rotate_media_mode }}"
+            then:
+              - action: media_player.volume_set
+                target:
+                  entity_id: "{{ button_3_media }}"
+                data:
+                  volume_level: "{{ [1, button_3_current_volume + (step_size / 8 / 100)] | min }}"
+      # ========== BUTTON 4 ==========
+      - conditions: "{{ command == 'button_4_press' }}"
+        sequence: !input button_4_press
+      - conditions: "{{ command == 'button_4_short_release' }}"
+        sequence:
+          - sequence: !input button_4_short_release
+          - if: "{{ button_4_has_light }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_4_short_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_4_short_release_reset }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_4_light }}"
+                                data:
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                        default:
+                          - action: light.turn_on
+                            target: "{{ button_4_light }}"
+                            data:
+                              transition: "{{ button_4_transition }}"
+                  - if: "{{ 'turn_off' in button_4_short_release_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        target: "{{ button_4_light }}"
+                        data:
+                          transition: "{{ button_4_transition }}"
+                  - if: "{{ 'toggle' in button_4_short_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_4_short_release_reset }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_4_light }}"
+                                data:
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                        default:
+                          - action: light.toggle
+                            target: "{{ button_4_light }}"
+                            data:
+                              transition: "{{ button_4_transition }}"
+          - if: "{{ button_4_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_4_short_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'turn_off' in button_4_short_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'toggle' in button_4_short_release_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'join' in button_4_short_release_media_mode and button_4_media_leader is string and button_4_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_4_media_leader }}"
+                        data:
+                          group_members: "{{ button_4_media }}"
+                  - if: "{{ 'unjoin' in button_4_short_release_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'media_previous_track' in button_4_short_release_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'media_next_track' in button_4_short_release_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'volume_set' in button_4_short_release_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                        data:
+                          volume_level: "{{ button_4_volume / 100 }}"
+      - conditions: "{{ command == 'button_4_hold' }}"
+        sequence: !input button_4_hold
+      - conditions: "{{ command == 'button_4_long_release' }}"
+        sequence:
+          - sequence: !input button_4_long_release
+          - if: "{{ button_4_has_light }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_4_long_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_4_long_release_reset }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_4_light }}"
+                                data:
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                        default:
+                          - action: light.turn_on
+                            target: "{{ button_4_light }}"
+                            data:
+                              transition: "{{ button_4_transition }}"
+                  - if: "{{ 'turn_off' in button_4_long_release_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        target: "{{ button_4_light }}"
+                        data:
+                          transition: "{{ button_4_transition }}"
+                  - if: "{{ 'toggle' in button_4_long_release_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions: "{{ button_4_long_release_reset }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_4_light }}"
+                                data:
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                        default:
+                          - action: light.toggle
+                            target: "{{ button_4_light }}"
+                            data:
+                              transition: "{{ button_4_transition }}"
+          - if: "{{ button_4_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_4_long_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'turn_off' in button_4_long_release_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'toggle' in button_4_long_release_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'join' in button_4_long_release_media_mode and button_4_media_leader is string and button_4_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_4_media_leader }}"
+                        data:
+                          group_members: "{{ button_4_media }}"
+                  - if: "{{ 'unjoin' in button_4_long_release_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'media_previous_track' in button_4_long_release_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'media_next_track' in button_4_long_release_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'volume_set' in button_4_long_release_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                        data:
+                          volume_level: "{{ button_4_volume / 100 }}"
+      - conditions: "{{ command == 'button_4_double_press' }}"
+        sequence:
+          - sequence: !input button_4_double
+          - if: "{{ button_4_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_4_double_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'turn_off' in button_4_double_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'toggle' in button_4_double_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'join' in button_4_double_media_mode and button_4_media_leader is string and button_4_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_4_media_leader }}"
+                        data:
+                          group_members: "{{ button_4_media }}"
+                  - if: "{{ 'unjoin' in button_4_double_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'media_previous_track' in button_4_double_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'media_next_track' in button_4_double_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'volume_set' in button_4_double_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                        data:
+                          volume_level: "{{ button_4_volume / 100 }}"
+      - conditions: "{{ command == 'button_4_triple_press' }}"
+        sequence:
+          - sequence: !input button_4_triple
+          - if: "{{ button_4_has_media }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_4_triple_media_mode }}"
+                    then:
+                      - action: media_player.turn_on
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'turn_off' in button_4_triple_media_mode }}"
+                    then:
+                      - action: media_player.turn_off
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'toggle' in button_4_triple_media_mode }}"
+                    then:
+                      - action: media_player.toggle
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'join' in button_4_triple_media_mode and button_4_media_leader is string and button_4_media_leader != '' }}"
+                    then:
+                      - action: media_player.join
+                        target:
+                          entity_id: "{{ button_4_media_leader }}"
+                        data:
+                          group_members: "{{ button_4_media }}"
+                  - if: "{{ 'unjoin' in button_4_triple_media_mode }}"
+                    then:
+                      - action: media_player.unjoin
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'media_previous_track' in button_4_triple_media_control }}"
+                    then:
+                      - action: media_player.media_previous_track
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'media_next_track' in button_4_triple_media_control }}"
+                    then:
+                      - action: media_player.media_next_track
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                  - if: "{{ 'volume_set' in button_4_triple_media_control }}"
+                    then:
+                      - action: media_player.volume_set
+                        target:
+                          entity_id: "{{ button_4_media }}"
+                        data:
+                          volume_level: "{{ button_4_volume / 100 }}"
+      - conditions: "{{ command == 'button_4_quadruple_press' }}"
+        sequence: !input button_4_quadruple
+      - conditions: "{{ command == 'button_4_quintuple_press' }}"
+        sequence: !input button_4_quintuple
+      - conditions: "{{ rotate_left and states(last_pressed) == '4' }}"
+        sequence:
+          - sequence: !input button_4_rotate_left
+          - if: "{{ button_4_has_light and 'dim' in button_4_rotate_light_mode }}"
+            then:
+              - action: light.turn_on
+                target: "{{ button_4_light }}"
+                data:
+                  brightness_step: "-{{ (step_size * button_4_step_size / 10) | int }}"
+                  transition: "{{ button_4_transition }}"
+          - if: "{{ button_4_has_media and 'volume' in button_4_rotate_media_mode }}"
+            then:
+              - action: media_player.volume_set
+                target:
+                  entity_id: "{{ button_4_media }}"
+                data:
+                  volume_level: "{{ [0, button_4_current_volume - (step_size / 8 / 100)] | max }}"
+      - conditions: "{{ rotate_right and states(last_pressed) == '4' }}"
+        sequence:
+          - sequence: !input button_4_rotate_right
+          - if: "{{ button_4_has_light and 'dim' in button_4_rotate_light_mode }}"
+            then:
+              - action: light.turn_on
+                target: "{{ button_4_light }}"
+                data:
+                  brightness_step: "{{ (step_size * button_4_step_size / 10) | int }}"
+                  transition: "{{ button_4_transition }}"
+          - if: "{{ button_4_has_media and 'volume' in button_4_rotate_media_mode }}"
+            then:
+              - action: media_player.volume_set
+                target:
+                  entity_id: "{{ button_4_media }}"
+                data:
+                  volume_level: "{{ [1, button_4_current_volume + (step_size / 8 / 100)] | min }}"
