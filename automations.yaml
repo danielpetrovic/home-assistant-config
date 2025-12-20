@@ -3466,7 +3466,7 @@
   alias: Entree Knop
   description: ''
   use_blueprint:
-    path: danielpetrovic/zha-niko-battery-switch-with-1-button.yaml
+    path: danielpetrovic/niko-battery-switch-with-1-button.yaml
     input:
       integration_type:
       - z2m
@@ -3481,16 +3481,16 @@
       button_1_light_schedule: schedule.lights_bright
       button_1_light_schedule_auto_adjust: true
       button_1_light:
-        area_id: keuken
+        entity_id: light.entree_lampen
 - id: '1755899171238'
   alias: Toilet Knop
   description: ''
   use_blueprint:
-    path: danielpetrovic/zha-niko-battery-switch-with-1-button.yaml
+    path: danielpetrovic/niko-battery-switch-with-1-button.yaml
     input:
       remote: b5b016dbd25e4edc48cfe901343953e3
       button_1_light:
-        entity_id: light.toilet_lamp
+        entity_id: light.toilet_lampen
       button_1_light_schedule: schedule.lights_bright
       button_1_double_press:
       - action: automation.toggle
@@ -3502,6 +3502,9 @@
       - toggle
       button_1_off_light_mode:
       - toggle
+      integration_type:
+      - z2m
+      z2m_device_name: Toilet Knop
 - id: '1755965337801'
   alias: Schuur Looppad Knop
   description: ''
