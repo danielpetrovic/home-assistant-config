@@ -17,12 +17,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -48,12 +48,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -79,12 +79,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -110,12 +110,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -141,12 +141,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -172,12 +172,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 4000
-      - from: "19:00:00"
+          color_temp_kelvin: 3521
+      - from: "19:42:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -203,12 +203,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -237,12 +237,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 50
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -268,12 +268,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 20
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -299,12 +299,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 50
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -330,12 +330,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 50
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -361,12 +361,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 50
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -392,12 +392,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 50
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
@@ -423,12 +423,12 @@ schedule:
         to: "19:00:00"
         data:
           brightness_pct: 50
-          color_temp_kelvin: 4000
+          color_temp_kelvin: 3521
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3500
+          color_temp_kelvin: 3521
       - from: "21:00:00"
         to: "23:00:00"
         data:
