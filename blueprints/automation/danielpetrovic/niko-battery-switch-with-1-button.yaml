@@ -1,14 +1,14 @@
 blueprint:
-  name: Niko Battery switch with 1 button (552-720X1) - ZHA / Z2M
+  name: Niko Battery Switch with 1 Button (Z2M / ZHA)
   author: danielpetrovic
   source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-with-1-button.yaml
   description: |
-    # Niko Battery switch with 1 button (552-720X1) - ZHA / Z2M
+    # Niko Battery Switch with 1 Button (Z2M / ZHA)
 
-    This blueprint enables comprehensive control of a Niko Battery switch (model 552-720X1) through ZHA or Zigbee2MQTT integration, supporting both custom actions and light automation.
+    This blueprint enables comprehensive control of a Niko Battery switch (model 552-720X1) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
     ## Key Features
-    - **Multiple Integration Options**: Choose ZHA, Zigbee2MQTT (Z2M), or both
+    - **Multiple Integration Options**: Choose Zigbee2MQTT (Z2M), ZHA, or both
     - **Custom Mode:** Program the button to execute your personalized home automation routines, from controlling your shades to activating security modes.
     - **Lights Mode:** Dim, brighten, and change the color of your lights depending on day and time of day with the intuitive button and a schedule.
     - **Auto-Adjust:** Optionally enable automatic light adjustment when your schedule changes - lights will smoothly transition to match the current schedule settings.
@@ -80,7 +80,7 @@ blueprint:
 
     ## Requirements
     - Home Assistant 2024.10.0 or later
-    - ZHA integration and/or Zigbee2MQTT
+    - Zigbee2MQTT (Z2M) and/or Zigbee Home Automation (ZHA)
     - Niko Battery switch model 552-720X1
   domain: automation
   homeassistant:
@@ -91,15 +91,15 @@ blueprint:
       description: |
         `required`
 
-        Select which integration(s) to use for the Niko switch. You can select ZHA, Z2M, or both.
+        Select which integration(s) to use for the Niko switch. You can select Z2M, ZHA, or both.
       default: []
       selector:
         select:
           options:
-            - label: Zigbee Home Automation (ZHA)
-              value: zha
             - label: Zigbee2MQTT (Z2M)
               value: z2m
+            - label: Zigbee Home Automation (ZHA)
+              value: zha
           multiple: true
     zha:
       name: Zigbee Home Automation (ZHA)
