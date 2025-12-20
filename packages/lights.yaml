@@ -173,7 +173,7 @@ schedule:
         data:
           brightness_pct: 100
           color_temp_kelvin: 3521
-      - from: "19:42:00"
+      - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
