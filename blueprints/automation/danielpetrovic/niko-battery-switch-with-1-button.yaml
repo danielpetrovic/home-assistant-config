@@ -1,13 +1,14 @@
 blueprint:
-  name: ZHA - Niko Battery switch with 1 button (552-720X1)
+  name: Niko Battery switch with 1 button (552-720X1) - ZHA / Z2M
   author: danielpetrovic
-  source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/zha-niko-battery-switch-with-1-button.yaml
+  source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-with-1-button.yaml
   description: |
-    # ZHA - Niko Battery switch with 1 button (552-720X1)
+    # Niko Battery switch with 1 button (552-720X1) - ZHA / Z2M
 
-    This blueprint enables comprehensive control of a Niko Battery switch (model 552-720X1) through ZHA integration, supporting both custom actions and light automation.
+    This blueprint enables comprehensive control of a Niko Battery switch (model 552-720X1) through ZHA or Zigbee2MQTT integration, supporting both custom actions and light automation.
 
     ## Key Features
+    - **Multiple Integration Options**: Choose ZHA, Zigbee2MQTT (Z2M), or both
     - **Custom Mode:** Program the button to execute your personalized home automation routines, from controlling your shades to activating security modes.
     - **Lights Mode:** Dim, brighten, and change the color of your lights depending on day and time of day with the intuitive button and a schedule.
     - **Auto-Adjust:** Optionally enable automatic light adjustment when your schedule changes - lights will smoothly transition to match the current schedule settings.
@@ -79,21 +80,71 @@ blueprint:
 
     ## Requirements
     - Home Assistant 2024.10.0 or later
-    - ZHA integration
+    - ZHA integration and/or Zigbee2MQTT
     - Niko Battery switch model 552-720X1
   domain: automation
   homeassistant:
     min_version: 2024.10.0
   input:
-    remote:
-      name: Remote Device (NIKO)
+    integration_type:
+      name: Integration Type
+      description: |
+        `required`
+
+        Select which integration(s) to use for the Niko switch. You can select ZHA, Z2M, or both.
+      default: []
       selector:
-        device:
-          filter:
-            - integration: zha
-              manufacturer: NIKO NV
-              model: Battery switch, 1 button
-          multiple: false
+        select:
+          options:
+            - label: Zigbee Home Automation (ZHA)
+              value: zha
+            - label: Zigbee2MQTT (Z2M)
+              value: z2m
+          multiple: true
+    zha:
+      name: Zigbee Home Automation (ZHA)
+      description: Configure ZHA integration settings.
+      icon: mdi:zigbee
+      collapsed: true
+      input:
+        zha_remote:
+          name: Remote Device (ZHA)
+          description: |
+            `optional` `device`
+
+            Select the Niko switch device from ZHA. Leave empty if not using ZHA.
+          default: {}
+          selector:
+            device:
+              filter:
+                - integration: zha
+                  manufacturer: NIKO NV
+                  model: Battery switch, 1 button
+              multiple: false
+    z2m:
+      name: Zigbee2MQTT (Z2M)
+      description: Configure Zigbee2MQTT integration settings.
+      icon: mdi:zigbee
+      collapsed: true
+      input:
+        z2m_base_topic:
+          name: Base Topic
+          description: |
+            `optional` `text`
+
+            MQTT base topic for Zigbee2MQTT installation. Default is `zigbee2mqtt`. Leave empty if not using Z2M.
+          default: "zigbee2mqtt"
+          selector:
+            text: {}
+        z2m_device_name:
+          name: Device Friendly Name
+          description: |
+            `optional` `text`
+
+            Friendly name of your Niko switch in Z2M (case-sensitive, as shown in Z2M UI). Leave empty if not using Z2M.
+          default: ""
+          selector:
+            text: {}
     button_1_custom:
       name: Button 1 - Custom Actions
       icon: mdi:numeric-1-circle-outline
@@ -101,37 +152,55 @@ blueprint:
       input:
         button_1_on:
           name: Short Press On
-          description: Action for short press in on state.
+          description: |
+            `optional` `action`
+
+            Action for short press in on state.
           default: []
           selector:
             action: {}
         button_1_off:
           name: Short Press Off
-          description: Action for short press in off state.
+          description: |
+            `optional` `action`
+
+            Action for short press in off state.
           default: []
           selector:
             action: {}
         button_1_double_press:
           name: Double Press
-          description: Action for double press detection.
+          description: |
+            `optional` `action`
+
+            Action for double press detection.
           default: []
           selector:
             action: {}
         button_1_increase:
           name: Long Press Increase
-          description: Action for long press from off state or when alternating brightness up.
+          description: |
+            `optional` `action`
+
+            Action for long press from off state or when alternating brightness up.
           default: []
           selector:
             action: {}
         button_1_decrease:
           name: Long Press Decrease
-          description: Action for long press from on state or when alternating brightness down.
+          description: |
+            `optional` `action`
+
+            Action for long press from on state or when alternating brightness down.
           default: []
           selector:
             action: {}
         button_1_stop:
           name: Long Press Release
-          description: Action for release after long press.
+          description: |
+            `optional` `action`
+
+            Action for release after long press.
           default: []
           selector:
             action: {}
@@ -143,7 +212,10 @@ blueprint:
         button_1_light:
           name: Lights
           default: []
-          description: Select lights to control.
+          description: |
+            `optional` `target`
+
+            Select lights to control.
           selector:
             target:
               entity:
@@ -152,7 +224,10 @@ blueprint:
         button_1_light_schedule:
           name: Schedule
           default: []
-          description: Optional schedule helper for time-based brightness and color adjustments. **Schedules can be reused between lights.**
+          description: |
+            `optional` `schedule`
+
+            Schedule helper for time-based brightness and color adjustments. **Schedules can be reused between lights.**
           selector:
             entity:
               filter:
@@ -162,7 +237,10 @@ blueprint:
         button_1_light_brightness:
           name: Default Brightness
           default: 100
-          description: Default brightness percentage (fallback when schedule is not set or lacks this attribute).
+          description: |
+            `optional` `number`
+
+            Default brightness percentage (fallback when schedule is not set or lacks this attribute).
           selector:
             number:
               min: 0.0
@@ -173,7 +251,10 @@ blueprint:
         button_1_light_color:
           name: Default Color Temperature
           default: 3333
-          description: Default color temperature in Kelvin (fallback when schedule is not set or lacks this attribute).
+          description: |
+            `optional` `color_temp`
+
+            Default color temperature in Kelvin (fallback when schedule is not set or lacks this attribute).
           selector:
             color_temp:
               unit: kelvin
@@ -181,7 +262,10 @@ blueprint:
         button_1_light_transition:
           name: Default Transition
           default: 1
-          description: Default transition duration in seconds (fallback when schedule is not set or lacks this attribute).
+          description: |
+            `optional` `number`
+
+            Default transition duration in seconds (fallback when schedule is not set or lacks this attribute).
           selector:
             number:
               min: 0.0
@@ -191,7 +275,10 @@ blueprint:
         button_1_light_dimming_speed:
           name: Dimming Speed
           default: 5
-          description: Controls how fast lights dim (1=slowest/smoothest, 10=fastest/jumpiest).
+          description: |
+            `optional` `number`
+
+            Controls how fast lights dim (1=slowest/smoothest, 10=fastest/jumpiest).
           selector:
             number:
               min: 1.0
@@ -201,7 +288,10 @@ blueprint:
         button_1_on_light_mode:
           name: Short Press On Actions
           default: turn_on
-          description: Light actions for short press in on state. Multiple selections trigger simultaneously.
+          description: |
+            `optional` `select`
+
+            Light actions for short press in on state. Multiple selections trigger simultaneously.
           selector:
             select:
               options:
@@ -216,13 +306,19 @@ blueprint:
         button_1_on_reset_to_defaults:
           name: Reset to Schedule/Defaults on Short Press On
           default: true
-          description: Apply schedule/default brightness and color when turning on. Disable to maintain current light settings.
+          description: |
+            `optional` `boolean`
+
+            Apply schedule/default brightness and color when turning on. Disable to maintain current light settings.
           selector:
             boolean:
         button_1_off_light_mode:
           name: Short Press Off Actions
           default: turn_off
-          description: Light actions for short press in off state. Multiple selections trigger simultaneously.
+          description: |
+            `optional` `select`
+
+            Light actions for short press in off state. Multiple selections trigger simultaneously.
           selector:
             select:
               options:
@@ -237,13 +333,19 @@ blueprint:
         button_1_off_reset_to_defaults:
           name: Reset to Schedule/Defaults on Short Press Off
           default: true
-          description: Apply schedule/default brightness and color when turning off. Disable to maintain current light settings.
+          description: |
+            `optional` `boolean`
+
+            Apply schedule/default brightness and color when turning off. Disable to maintain current light settings.
           selector:
             boolean:
         button_1_dimmer_light_mode:
           name: Long Press Actions
           default: dim
-          description: Light actions for long press. Multiple selections trigger simultaneously.
+          description: |
+            `optional` `select`
+
+            Light actions for long press. Multiple selections trigger simultaneously.
           selector:
             select:
               options:
@@ -254,7 +356,10 @@ blueprint:
         button_1_dimmer_reset_to_defaults:
           name: Reset to Schedule/Defaults on Long Press
           default: false
-          description: Apply schedule/default color temperature while dimming. Enable to reset color, disable for pure brightness adjustment.
+          description: |
+            `optional` `boolean`
+
+            Apply schedule/default color temperature while dimming. Enable to reset color, disable for pure brightness adjustment.
           selector:
             boolean:
     button_1_auto_adjust:
@@ -265,13 +370,19 @@ blueprint:
         button_1_light_schedule_auto_adjust:
           name: Auto-Adjust on Schedule Change
           default: false
-          description: Automatically update lights when schedule changes. Only affects currently on lights.
+          description: |
+            `optional` `boolean`
+
+            Automatically update lights when schedule changes. Only affects currently on lights.
           selector:
             boolean:
         button_1_light_schedule_auto_adjust_transition:
           name: Auto-Adjust Transition
           default: 300
-          description: Transition duration in seconds when auto-adjusting lights on schedule change.
+          description: |
+            `optional` `number`
+
+            Transition duration in seconds when auto-adjusting lights on schedule change.
           selector:
             number:
               min: 0.0
@@ -280,8 +391,15 @@ blueprint:
               step: 30.0
               unit_of_measurement: "s"
 mode: single
+trigger_variables:
+  integration_type: !input integration_type
+  z2m_base_topic: !input z2m_base_topic
+  z2m_device_name: !input z2m_device_name
 variables:
   stop_flag: false
+  integration_type: !input integration_type
+  z2m_base_topic: !input z2m_base_topic
+  z2m_device_name: !input z2m_device_name
   button_1_light: !input button_1_light
   has_light_target: >-
     {{ button_1_light.entity_id | default([]) | length > 0
@@ -291,8 +409,13 @@ triggers:
   - trigger: event
     event_type: zha_event
     event_data:
-      device_id: !input remote
-    id: button_event
+      device_id: !input zha_remote
+    alias: zha_button
+    id: zha_button
+  - trigger: mqtt
+    topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+    alias: z2m_button
+    id: z2m_button
   - trigger: state
     entity_id: !input button_1_light_schedule
     id: schedule_change
@@ -316,13 +439,15 @@ actions:
       button_1_dimmer_reset_to_defaults: !input button_1_dimmer_reset_to_defaults
       button_1_color_temp_kelvin: >-
         {% if button_1_light_schedule not in [none, '', null] %}
-          {{ state_attr(button_1_light_schedule, 'color_temp_kelvin') | default(button_1_light_color) }}
+          {% set val = state_attr(button_1_light_schedule, 'color_temp_kelvin') %}
+          {{ val if val is not none else button_1_light_color }}
         {% else %}
           {{ button_1_light_color }}
         {% endif %}
       button_1_brightness_pct: >-
         {% if button_1_light_schedule not in [none, '', null] %}
-          {{ state_attr(button_1_light_schedule, 'brightness_pct') | default(button_1_light_brightness) }}
+          {% set val = state_attr(button_1_light_schedule, 'brightness_pct') %}
+          {{ val if val is not none else button_1_light_brightness }}
         {% else %}
           {{ button_1_light_brightness }}
         {% endif %}
@@ -337,17 +462,50 @@ actions:
       light_entities: >-
         {% set ns = namespace(entities=[]) %}
         {% if button_1_light.entity_id is defined and button_1_light.entity_id | length > 0 %}
-          {% set ns.entities = button_1_light.entity_id %}
+          {% if button_1_light.entity_id is string %}
+            {% set ns.entities = [button_1_light.entity_id] %}
+          {% else %}
+            {% set ns.entities = button_1_light.entity_id %}
+          {% endif %}
         {% elif button_1_light.device_id is defined and button_1_light.device_id | length > 0 %}
-          {% for device in button_1_light.device_id %}
+          {% set devices = [button_1_light.device_id] if button_1_light.device_id is string else button_1_light.device_id %}
+          {% for device in devices %}
             {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
           {% endfor %}
         {% elif button_1_light.area_id is defined and button_1_light.area_id | length > 0 %}
-          {% for area in button_1_light.area_id %}
+          {% set areas = [button_1_light.area_id] if button_1_light.area_id is string else button_1_light.area_id %}
+          {% for area in areas %}
             {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
           {% endfor %}
         {% endif %}
         {{ ns.entities }}
+      button_action: >-
+        {% if trigger.id == 'zha_button' %}
+          {% set cmd = trigger.event.data.command %}
+          {% set args = trigger.event.data.args | default([]) %}
+          {% if cmd == 'on' %}
+            on
+          {% elif cmd == 'off' %}
+            off
+          {% elif cmd in ['move', 'move_with_on_off'] and args[0] == 0 %}
+            brightness_move_up
+          {% elif cmd == 'move' and args[0] == 1 %}
+            brightness_move_down
+          {% elif cmd == 'stop' %}
+            brightness_stop
+          {% else %}
+            unknown
+          {% endif %}
+        {% elif trigger.id == 'z2m_button' %}
+          {{ trigger.payload_json.action | default('unknown') }}
+        {% else %}
+          none
+        {% endif %}
+      is_button_event: "{{ trigger.id in ['zha_button', 'z2m_button'] }}"
+  - condition: >-
+      {{ (trigger.id == 'zha_button' and 'zha' in integration_type) or
+         (trigger.id == 'z2m_button' and 'z2m' in integration_type) or
+         trigger.id == 'schedule_change' }}
   - choose:
       - conditions:
           - "{{ trigger.id == 'schedule_change' }}"
@@ -370,8 +528,8 @@ actions:
                         transition: "{{ button_1_light_schedule_auto_adjust_transition }}"
           - stop: Schedule auto-adjust completed
       - conditions:
-          - "{{ trigger.event.data.command in ['move','move_with_on_off']
-            and trigger.event.data.args[0] == 0 }}"
+          - "{{ is_button_event }}"
+          - "{{ button_action == 'brightness_move_up' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_1_increase
@@ -385,18 +543,20 @@ actions:
                           - trigger: event
                             event_type: zha_event
                             event_data:
-                              device_id: !input remote
+                              device_id: !input zha_remote
                               command: stop
                           - trigger: event
                             event_type: zha_event
                             event_data:
-                              device_id: !input remote
+                              device_id: !input zha_remote
                               command: "on"
                           - trigger: event
                             event_type: zha_event
                             event_data:
-                              device_id: !input remote
+                              device_id: !input zha_remote
                               command: "off"
+                          - trigger: mqtt
+                            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                         timeout: "30"
                         continue_on_timeout: true
                       - variables:
@@ -427,8 +587,8 @@ actions:
                                 - stop: Stop flag set
               - stop: Done increase brightness
       - conditions:
-          - "{{ trigger.event.data.command == 'move' and trigger.event.data.args[0]
-            == 1 }}"
+          - "{{ is_button_event }}"
+          - "{{ button_action == 'brightness_move_down' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_1_decrease
@@ -442,18 +602,20 @@ actions:
                           - trigger: event
                             event_type: zha_event
                             event_data:
-                              device_id: !input remote
+                              device_id: !input zha_remote
                               command: stop
                           - trigger: event
                             event_type: zha_event
                             event_data:
-                              device_id: !input remote
+                              device_id: !input zha_remote
                               command: "on"
                           - trigger: event
                             event_type: zha_event
                             event_data:
-                              device_id: !input remote
+                              device_id: !input zha_remote
                               command: "off"
+                          - trigger: mqtt
+                            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                         timeout: "30"
                         continue_on_timeout: true
                       - variables:
@@ -484,29 +646,43 @@ actions:
                                 - stop: Stop flag set
               - stop: Done decrease brightness
       - conditions:
-          - "{{ trigger.event.data.command == 'stop' }}"
+          - "{{ is_button_event }}"
+          - "{{ button_action == 'brightness_stop' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_1_stop
+  - condition: "{{ is_button_event }}"
+  - condition: "{{ button_action in ['on', 'off'] }}"
   - variables:
-      first_cmd: "{{ trigger.event.data.command }}"
-  - condition: "{{ first_cmd in ['on','off'] }}"
+      first_action: "{{ button_action }}"
   - wait_for_trigger:
       - trigger: event
         event_type: zha_event
         event_data:
-          device_id: !input remote
+          device_id: !input zha_remote
+      - trigger: mqtt
+        topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
     timeout: "0.30"
     continue_on_timeout: true
+  - variables:
+      second_action: >-
+        {% if wait.trigger is none %}
+          none
+        {% elif wait.trigger.platform == 'event' %}
+          {{ wait.trigger.event.data.command }}
+        {% elif wait.trigger.platform == 'mqtt' %}
+          {{ wait.trigger.payload_json.action | default('none') }}
+        {% else %}
+          none
+        {% endif %}
   - if:
-      - "{{ wait.trigger is not none and wait.trigger.event.data.command
-        in ['on','off'] and wait.trigger.event.data.command != first_cmd }}"
+      - "{{ second_action in ['on', 'off'] and second_action != first_action }}"
     then:
       - sequence: !input button_1_double_press
       - stop: Double Press detected
   - choose:
       - conditions:
-          - "{{ first_cmd == 'on' }}"
+          - "{{ first_action == 'on' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_1_on
@@ -562,7 +738,7 @@ actions:
                               transition: "{{ button_1_transition }}"
                             target: "{{ button_1_light }}"
       - conditions:
-          - "{{ first_cmd == 'off' }}"
+          - "{{ first_action == 'off' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_1_off
