@@ -31,7 +31,7 @@
           - media_player.badkamer
         metadata: {}
         target:
-          entity_id: media_player.music_assistant
+          entity_id: media_player.slaapkamer
         enabled: true
       - delay:
           hours: 0
@@ -1640,10 +1640,11 @@
   actions:
   - action: light.toggle
     data:
-      brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+      brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'') | int
         }}'
-      color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-        }}'
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'') |
+        int }}'
+      transition: 1
     metadata: {}
     target:
       entity_id: light.toilet_lampen
@@ -1674,10 +1675,11 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+            | int }}'
+          transition: 1
         metadata: {}
         target:
           entity_id: light.keukenkast_lampen
@@ -1688,8 +1690,9 @@
         - door closed
       sequence:
       - action: light.turn_off
+        data:
+          transition: 1
         metadata: {}
-        data: {}
         target:
           entity_id: light.keukenkast_lampen
       alias: door closed - lights off
@@ -1720,10 +1723,11 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+            | int }}'
+          transition: 1
         metadata: {}
         target:
           entity_id: light.wasruimte_lampen
@@ -1734,8 +1738,9 @@
         - door closed
       sequence:
       - action: light.turn_off
+        data:
+          transition: 1
         metadata: {}
-        data: {}
         target:
           entity_id: light.wasruimte_lampen
       alias: door closed - lights off
@@ -1750,12 +1755,17 @@
     id: motion detected
     alias: motion detected
     trigger: state
-  - entity_id:
+  - alias: motion clear
+    entity_id:
     - binary_sensor.entree_bewegingssensor_occupancy
-    to: 'off'
+    to:
+    - 'off'
     id: motion clear
-    alias: motion clear
     trigger: state
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
   conditions: []
   actions:
   - choose:
@@ -1765,13 +1775,13 @@
         - motion detected
       sequence:
       - action: light.turn_on
-        metadata: {}
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
-            }}'
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
           transition: 3
+        metadata: {}
         target:
           entity_id: light.entree_lampen
       alias: motion detected
@@ -1798,12 +1808,17 @@
     id: motion detected
     alias: motion detected
     trigger: state
-  - entity_id:
+  - alias: motion clear
+    entity_id:
     - binary_sensor.looppad_bewegingssensor_occupancy
-    to: 'off'
+    to:
+    - 'off'
     id: motion clear
-    alias: motion clear
     trigger: state
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
   conditions: []
   actions:
   - choose:
@@ -1873,10 +1888,11 @@
   actions:
   - action: light.toggle
     data:
-      brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
+      brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'') | int
         }}'
-      color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
-        }}'
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'') |
+        int }}'
+      transition: 1
     metadata: {}
     target:
       entity_id: light.slaapkamer_lampen
@@ -2027,9 +2043,14 @@
   - alias: motion clear
     entity_id:
     - binary_sensor.gang_bewegingssensor_occupancy
-    to: 'off'
+    to:
+    - 'off'
     id: motion clear
     trigger: state
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
   conditions: []
   actions:
   - choose:
@@ -2040,10 +2061,10 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
-            }}'
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
           transition: 3
         metadata: {}
         target:
@@ -2076,10 +2097,11 @@
   actions:
   - action: light.toggle
     data:
-      brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+      brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'') | int
         }}'
-      color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-        }}'
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'') |
+        int }}'
+      transition: 1
     metadata: {}
     target:
       entity_id: light.badkamer_lampen
@@ -2517,17 +2539,21 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       remote: a313053b914727f02b55d20d2faf38fb
       last_pressed: input_text.badkamer_knop_last_pressed
       button_1_light:
         entity_id: light.badkamer_lamp
-      button_1_light_schedule: schedule.lights_bright
-      button_3_media_leader: media_player.music_assistant
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
       button_3_media: media_player.badkamer
+      z2m_device_name: Badkamer Knop
 - id: '1736811938136'
   alias: Eettafel Knop
   description: ''
@@ -2540,8 +2566,10 @@
       last_pressed: input_text.eettafel_knop_last_pressed
       button_1_light:
         entity_id: light.eettafel_lamp_boven
-      button_1_light_schedule: schedule.lights_bright
-      button_1_auto_adjust: true
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -2556,10 +2584,12 @@
         metadata: {}
         target:
           entity_id: input_select.tuin_raambekleding
-      button_3_light_schedule: schedule.lights_dimmed
       button_3_light:
         entity_id: light.eettafel_lamp_onder
-      button_3_auto_adjust: true
+      button_3_light_adjustment_mode: adaptive
+      button_3_light_adaptive_brightness: input_number.adaptive_brightness_dimmed
+      button_3_light_adaptive_color_temp: input_number.adaptive_color_temp_dimmed
+      button_3_light_auto_adjust: true
       button_4_short_release:
       - action: input_select.select_previous
         data:
@@ -2581,12 +2611,15 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       remote: 0bcfedaeb62b267b0f20e3420e9d813c
       last_pressed: input_text.gameroom_bureau_knop_last_pressed
       button_1_light:
         entity_id: light.gameroom_lampen
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_3_media: media_player.gameroom
       button_3_media_leader: media_player.music_assistant
       button_3_short_release_media_mode:
@@ -2628,6 +2661,7 @@
           entity_id:
           - input_select.dakterras_raambekleding
           - input_select.gameroom_raambekleding
+      z2m_device_name: Gameroom Bureau Knop
 - id: '1736812276991'
   alias: Gameroom Knop
   description: ''
@@ -2635,12 +2669,15 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       remote: b87c7c3e3374c2f72a886847a822aaa2
       last_pressed: input_text.gameroom_knop_last_pressed
       button_1_light:
         entity_id: light.gameroom_lampen
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_3_media: media_player.gameroom
       button_3_media_leader: media_player.music_assistant
       button_3_short_release_media_mode:
@@ -2682,6 +2719,7 @@
           entity_id:
           - input_select.dakterras_raambekleding
           - input_select.gameroom_raambekleding
+      z2m_device_name: Gameroom Knop
 - id: '1736812360019'
   alias: Gang Knop
   description: ''
@@ -2689,12 +2727,15 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       remote: ef5526728bb7ee6ad89a2369cc0b3ac8
       last_pressed: input_text.gang_knop_last_pressed
       button_1_light:
         entity_id: light.gang_lampen
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_3_light:
         entity_id: light.gameroom_lampen
       button_3_light_schedule: schedule.lights_bright
@@ -2726,6 +2767,7 @@
         metadata: {}
         target:
           entity_id: input_select.gang_raambekleding
+      z2m_device_name: Gang Knop
 - id: '1736812390460'
   alias: Kantoor Knop
   description: ''
@@ -2733,12 +2775,15 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       remote: f5ef75e8bbb966033b55e95b944f5df4
       last_pressed: input_text.kantoor_knop_last_pressed
       button_1_light:
         entity_id: light.kantoor_lampen
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_1_double:
       - action: switch.toggle
         metadata: {}
@@ -2779,6 +2824,7 @@
         metadata: {}
         target:
           entity_id: input_select.kantoor_raambekleding
+      z2m_device_name: Kantoor Knop
 - id: '1736812457946'
   alias: Keuken Knop
   description: ''
@@ -2786,12 +2832,15 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       remote: 82579517455cc843c64ca05a6805fa4c
       last_pressed: input_text.keuken_knop_last_pressed
       button_1_light:
         entity_id: light.keuken_lampen
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_3_media: media_player.keuken
       button_3_media_leader: media_player.music_assistant
       button_3_short_release_media_mode:
@@ -2825,6 +2874,7 @@
         metadata: {}
         target:
           entity_id: input_select.schuur_raambekleding
+      z2m_device_name: Keuken Knop
 - id: '1736812474175'
   alias: Sauna Knop
   description: ''
@@ -2835,7 +2885,10 @@
       last_pressed: input_text.sauna_knop_last_pressed
       button_1_light:
         entity_id: light.sauna_lamp
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_dimmed
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_dimmed
+      button_1_light_auto_adjust: true
       button_3_media: media_player.sauna
       button_3_media_leader: media_player.music_assistant
       button_3_media_volume: 25
@@ -2870,6 +2923,9 @@
         metadata: {}
         target:
           entity_id: input_select.sauna_raambekleding
+      integration_type:
+      - z2m
+      z2m_device_name: Sauna Knop
 - id: '1736812648341'
   alias: Slaapkamer Knop
   description: ''
@@ -2877,13 +2933,16 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       remote: 2875aec8a2c9949b898149bc977edf66
       last_pressed: input_text.slaapkamer_knop_last_pressed
       button_1_light:
         entity_id:
         - light.slaapkamer_lamp
-      button_1_light_schedule: schedule.lights_dimmed
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_3_media: media_player.music_assistant
       button_2_short_release:
       - action: input_select.select_next
@@ -2913,6 +2972,7 @@
         metadata: {}
         target:
           entity_id: input_select.slaapkamer_raambekleding
+      z2m_device_name: Slaapkamer Knop
 - id: '1736812743223'
   alias: Slaapkamer Alex Knop
   description: ''
@@ -2920,12 +2980,15 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       remote: f83dd43b0be74cf3c4e5cb7cb57152f2
       last_pressed: input_text.slaapkamer_alex_knop_last_pressed
       button_1_light:
         entity_id: light.slaapkamer_lamp
-      button_1_light_schedule: schedule.lights_dimmed
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_2_light:
         entity_id: light.slaapkamer_alex_lamp
       button_2_light_brightness: 5
@@ -2937,6 +3000,7 @@
         entity_id: light.slaapkamer_deni_lamp
       button_4_light_brightness: 5
       button_4_light_color: 2500
+      z2m_device_name: Slaapkamer Alex Knop
 - id: '1736812877909'
   alias: Slaapkamer Deni Knop
   description: ''
@@ -2944,12 +3008,15 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       remote: 069b67a9f9b26c2165bc4e12d8ed393f
       last_pressed: input_text.slaapkamer_deni_knop_last_pressed
       button_1_light:
         entity_id: light.slaapkamer_lamp
-      button_1_light_schedule: schedule.lights_dimmed
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_2_light:
         entity_id: light.slaapkamer_alex_lamp
       button_2_light_brightness: 5
@@ -2962,6 +3029,7 @@
         entity_id: light.slaapkamer_deni_lamp
       button_4_light_brightness: 5
       button_4_light_color: 2500
+      z2m_device_name: Slaapkamer Deni Knop
 - id: '1736813115022'
   alias: Woonkamer Knop
   description: ''
@@ -2969,15 +3037,15 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      remote: e9789887c8cfb912c32c407e2b2997e5
+      - z2m
+      z2m_device_name: Woonkamer Knop
       last_pressed: input_text.woonkamer_knop_last_pressed
       button_1_light:
         entity_id: light.woonkamer_lamp_boven
-      button_1_light_schedule: schedule.lights_bright
-      button_3_light:
-        entity_id: light.woonkamer_lamp_onder
-      button_3_light_schedule: schedule.lights_dimmed
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -2992,6 +3060,12 @@
         metadata: {}
         target:
           entity_id: input_select.woonkamer_raambekleding
+      button_3_light:
+        entity_id: light.woonkamer_lamp_onder
+      button_3_light_adjustment_mode: adaptive
+      button_3_light_adaptive_brightness: input_number.adaptive_brightness_dimmed
+      button_3_light_adaptive_color_temp: input_number.adaptive_color_temp_dimmed
+      button_3_light_auto_adjust: true
       button_4_short_release:
       - action: input_select.select_previous
         data:
@@ -3013,12 +3087,15 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       remote: ce828991805e479e99dd60762f50ab5e
       last_pressed: input_text.schuur_tuin_knop_last_pressed
       button_1_light:
         entity_id: light.schuur_lampen
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_3_light:
         entity_id: light.tuin_lampen
       button_3_light_schedule: schedule.lights_bright
@@ -3050,6 +3127,7 @@
         metadata: {}
         target:
           entity_id: input_select.schuur_raambekleding
+      z2m_device_name: Schuur Tuin Knop
 - id: '1743325307976'
   alias: Woonkamer Media
   description: ''
@@ -3322,7 +3400,8 @@
   - alias: motion clear
     entity_id:
     - binary_sensor.slaapkamer_alex_bewegingssensor_occupancy
-    to: 'off'
+    to:
+    - 'off'
     id: motion clear
     trigger: state
     for:
@@ -3339,15 +3418,14 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+            | int }}'
           transition: 10
         metadata: {}
         target:
-          entity_id:
-          - light.slaapkamer_bed
+          entity_id: light.slaapkamer_bed
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -3376,7 +3454,8 @@
   - alias: motion clear
     entity_id:
     - binary_sensor.slaapkamer_deni_bewegingssensor_occupancy
-    to: 'off'
+    to:
+    - 'off'
     id: motion clear
     trigger: state
     for:
@@ -3393,15 +3472,14 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+            | int }}'
           transition: 10
         metadata: {}
         target:
-          entity_id:
-          - light.slaapkamer_bed
+          entity_id: light.slaapkamer_bed
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -3497,40 +3575,43 @@
       integration_type:
       - z2m
       z2m_device_name: Entree Knop
-      remote: 9255ccd79b61c364a3a8319ded5a4447
+      button_1_light:
+        entity_id: light.entree_lampen
       button_1_double_press:
       - action: automation.toggle
         metadata: {}
         data: {}
         target:
           entity_id: automation.entree_beweging
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_1_light_schedule_auto_adjust: true
-      button_1_light:
-        entity_id: light.entree_lampen
 - id: '1755899171238'
   alias: Toilet Knop
   description: ''
   use_blueprint:
     path: danielpetrovic/niko-battery-switch-with-1-button.yaml
     input:
-      remote: b5b016dbd25e4edc48cfe901343953e3
+      integration_type:
+      - z2m
+      z2m_device_name: Toilet Knop
       button_1_light:
         entity_id: light.toilet_lampen
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
+      button_1_on_light_mode:
+      - toggle
+      button_1_off_light_mode:
+      - toggle
       button_1_double_press:
       - action: automation.toggle
         metadata: {}
         data: {}
         target:
           entity_id: automation.toilet_deur
-      button_1_on_light_mode:
-      - toggle
-      button_1_off_light_mode:
-      - toggle
-      integration_type:
-      - z2m
-      z2m_device_name: Toilet Knop
 - id: '1755965337801'
   alias: Schuur Looppad Knop
   description: ''
@@ -3538,12 +3619,15 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       remote: 26d5d55e4c3e3230789f8ad5a0638b5e
       last_pressed: input_text.schuur_looppad_knop_last_pressed
       button_1_light:
         entity_id: light.schuur_lampen
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_3_light:
         entity_id: light.tuin_lampen
       button_3_light_schedule: schedule.lights_bright
@@ -3575,6 +3659,7 @@
         metadata: {}
         target:
           entity_id: input_select.schuur_raambekleding
+      z2m_device_name: Schuur Looppad Knop
 - id: '1756122670916'
   alias: Gameroom Dakterras Knop
   description: ''
@@ -3582,12 +3667,15 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       remote: 8e2268f06da1b2d923b0d8e87dea4bc3
       last_pressed: input_text.gameroom_dakterras_knop_last_pressed
       button_1_light:
         entity_id: light.gameroom_lampen
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_auto_adjust: true
       button_3_media: media_player.gameroom
       button_3_media_leader: media_player.music_assistant
       button_3_short_release_media_mode:
@@ -3635,6 +3723,7 @@
         data: {}
         target:
           entity_id: switch.gameroom_media
+      z2m_device_name: Gameroom Dakterras Knop
 - id: '1757451715340'
   alias: Woonkamer Klimaat
   description: ''
@@ -5050,6 +5139,7 @@
           - light.voordeur_lampen
         data:
           transition: 3600
+    enabled: true
   - alias: Schedules
     choose:
     - alias: Lights Bright
@@ -5110,6 +5200,7 @@
                 color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'',''color_temp_kelvin'')
                   }}'
                 transition: 300
+    enabled: false
   mode: queued
   max: 10
 - id: '1761751867278'
@@ -5293,11 +5384,11 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
-          transition: 10
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+            | int }}'
+          transition: 1
         metadata: {}
         target:
           entity_id: light.kantoor_lampen
@@ -5309,7 +5400,7 @@
       sequence:
       - if:
         - condition: numeric_state
-          entity_id: sensor.kantoor_bureau_energiegebruik
+          entity_id: sensor.kantoor_bureau_power
           above: 30
         then: []
         else:
@@ -5340,8 +5431,8 @@
     trigger: state
     for:
       hours: 0
-      minutes: 0
-      seconds: 30
+      minutes: 1
+      seconds: 0
   conditions: []
   actions:
   - choose:
@@ -5352,10 +5443,10 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+            | int }}'
           transition: 3
         metadata: {}
         target:
@@ -5465,11 +5556,11 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
-          transition: 3
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+            | int }}'
+          transition: 1
         metadata: {}
         target:
           entity_id: light.gameroom_lampen
@@ -5481,7 +5572,7 @@
       sequence:
       - if:
         - condition: numeric_state
-          entity_id: sensor.gameroom_bureau_energiegebruik
+          entity_id: sensor.gameroom_bureau_power
           above: 30
         then: []
         else:
@@ -5603,8 +5694,8 @@
     trigger: state
     for:
       hours: 0
-      minutes: 0
-      seconds: 30
+      minutes: 1
+      seconds: 0
   conditions: []
   actions:
   - choose:
@@ -5615,10 +5706,10 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
           transition: 3
         metadata: {}
         target:
@@ -5650,9 +5741,14 @@
   - alias: motion clear
     entity_id:
     - binary_sensor.gang_trap_1_bewegingssensor_occupancy
-    to: 'off'
+    to:
+    - 'off'
     id: motion clear
     trigger: state
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
   conditions: []
   actions:
   - choose:
@@ -5663,10 +5759,10 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
-            }}'
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
           transition: 3
         metadata: {}
         target:
@@ -5685,3 +5781,75 @@
           entity_id: light.gang_trap_1_lamp
       alias: motion clear
   mode: restart
+- id: '1766320112568'
+  alias: Gang Trap 2 Beweging
+  description: ''
+  triggers:
+  - alias: motion detected
+    entity_id:
+    - binary_sensor.gang_trap_2_bewegingssensor_occupancy
+    to: 'on'
+    id: motion detected
+    trigger: state
+  - alias: motion clear
+    entity_id:
+    - binary_sensor.gang_trap_2_bewegingssensor_occupancy
+    to:
+    - 'off'
+    id: motion clear
+    trigger: state
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - motion detected
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
+          transition: 3
+        metadata: {}
+        target:
+          entity_id: light.gang_trap_2_lamp
+      alias: motion detected
+    - conditions:
+      - condition: trigger
+        id:
+        - motion clear
+      sequence:
+      - action: light.turn_off
+        data:
+          transition: 9
+        metadata: {}
+        target:
+          entity_id: light.gang_trap_2_lamp
+      alias: motion clear
+  mode: restart
+- id: '1766509326839'
+  alias: Adaptive Lighting Scheduler Bright
+  description: ''
+  use_blueprint:
+    path: danielpetrovic/adaptive-lighting-scheduler.yaml
+    input:
+      brightness_helper: input_number.adaptive_brightness_bright
+      color_temp_helper: input_number.adaptive_color_temp_bright
+- id: '1766509365106'
+  alias: Adaptive Lighting Scheduler Dimmed
+  description: ''
+  use_blueprint:
+    path: danielpetrovic/adaptive-lighting-scheduler.yaml
+    input:
+      brightness_helper: input_number.adaptive_brightness_dimmed
+      color_temp_helper: input_number.adaptive_color_temp_dimmed
+      max_brightness: 50
+      min_brightness: 25
+      night_brightness: 10

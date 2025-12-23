@@ -10,8 +10,8 @@ music_away:
       - media_player.kantoor
       - media_player.keuken
       - media_player.sauna
+      - media_player.slaapkamer
       - media_player.woonkamer
-      - media_player.music_assistant
   alias: Music - Away
   description: ''
   icon: mdi:music-note-off-outline
@@ -28,24 +28,24 @@ music_night:
       media_id:
       - Classical
     target:
-      entity_id: media_player.music_assistant
+      entity_id: media_player.slaapkamer
   - action: media_player.media_play
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.music_assistant
+      entity_id: media_player.slaapkamer
   - action: media_player.repeat_set
     metadata: {}
     data:
       repeat: all
     target:
-      entity_id: media_player.music_assistant
+      entity_id: media_player.slaapkamer
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.music_assistant
+      entity_id: media_player.slaapkamer
   - delay:
       hours: 0
       minutes: 0
@@ -58,7 +58,7 @@ music_night:
       - media_player.keuken
       - media_player.sauna
     target:
-      entity_id: media_player.music_assistant
+      entity_id: media_player.slaapkamer
   - action: media_player.volume_set
     metadata: {}
     data:
@@ -66,7 +66,7 @@ music_night:
     target:
       entity_id:
       - media_player.sauna
-      - media_player.music_assistant
+      - media_player.slaapkamer
 music_home:
   alias: Music - Home
   description: ''
@@ -82,29 +82,30 @@ music_home:
       - Dance
       - Eurovision
       - Hip Hop
+      - Jazz
       - Metal
       - Pop
       - R&B
       - Rock
     target:
-      entity_id: media_player.music_assistant
+      entity_id: media_player.slaapkamer
   - action: media_player.media_play
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.music_assistant
+      entity_id: media_player.slaapkamer
   - action: media_player.repeat_set
     metadata: {}
     data:
       repeat: all
     target:
-      entity_id: media_player.music_assistant
+      entity_id: media_player.slaapkamer
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.music_assistant
+      entity_id: media_player.slaapkamer
   - delay:
       hours: 0
       minutes: 0
@@ -116,9 +117,8 @@ music_home:
       group_members:
       - media_player.keuken
       - media_player.sauna
-      - media_player.slaapkamer
     target:
-      entity_id: media_player.music_assistant
+      entity_id: media_player.slaapkamer
   - action: media_player.volume_set
     metadata: {}
     data:
@@ -147,16 +147,18 @@ lights_green:
       - light.gameroom_lamp_onder
       - light.gang_lamp
       - light.kantoor_lamp
+      - light.sauna_lamp
       - light.schuur_lamp_werkbank
-      - light.slaapkamer_alex_lamp
-      - light.slaapkamer_deni_lamp
+      - light.slaapkamer_lamp
+      - light.toilet_lamp
       - light.woonkamer_lamp_onder
-  - alias: Lights green, flash long
+  - alias: Lights green, breathe
     action: light.turn_on
     data:
       brightness_pct: 100
       color_name: green
-      flash: long
+      effect: breathe
+      transition: 1
     target:
       entity_id: light.alarm
   - delay:
@@ -164,14 +166,16 @@ lights_green:
       minutes: 0
       seconds: 15
       milliseconds: 0
-  - action: light.turn_on
-    alias: Lights on, white
+  - alias: Lights on, white
+    action: light.turn_on
     data:
-      brightness_pct: 50
-      color_temp_kelvin: 3333
+      brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'') | int
+        }}'
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'') |
+        int }}'
       transition: 1
     target:
-      entity_id: light.alarm
+      entity_id: light.eettafel_lamp_onder
   - delay:
       hours: 0
       minutes: 0
@@ -180,7 +184,7 @@ lights_green:
   - action: scene.turn_on
     alias: Scene, restore
     data:
-      transition: 1
+      transition: 0
     target:
       entity_id: scene.alarm_before
   - delay:
@@ -193,7 +197,8 @@ lights_green:
     target:
       entity_id: scene.alarm_before
     data: {}
-  alias: Lights - Green
+    enabled: true
+  alias: Lights - Breathe Green
   description: ''
   icon: mdi:alarm-light
 lights_blue:
@@ -209,16 +214,18 @@ lights_blue:
       - light.gameroom_lamp_onder
       - light.gang_lamp
       - light.kantoor_lamp
+      - light.sauna_lamp
       - light.schuur_lamp_werkbank
-      - light.slaapkamer_alex_lamp
-      - light.slaapkamer_deni_lamp
+      - light.slaapkamer_lamp
+      - light.toilet_lamp
       - light.woonkamer_lamp_onder
-  - action: light.turn_on
-    alias: Lights blue, flash long
+  - alias: Lights blue, breathe
+    action: light.turn_on
     data:
       brightness_pct: 100
       color_name: blue
-      flash: long
+      effect: breathe
+      transition: 1
     target:
       entity_id: light.alarm
   - delay:
@@ -226,14 +233,16 @@ lights_blue:
       minutes: 0
       seconds: 15
       milliseconds: 0
-  - action: light.turn_on
-    alias: Lights on, white
+  - alias: Lights on, white
+    action: light.turn_on
     data:
-      brightness_pct: 50
-      color_temp_kelvin: 3333
+      brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'') | int
+        }}'
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'') |
+        int }}'
       transition: 1
     target:
-      entity_id: light.alarm
+      entity_id: light.eettafel_lamp_onder
   - delay:
       hours: 0
       minutes: 0
@@ -242,7 +251,7 @@ lights_blue:
   - action: scene.turn_on
     alias: Scene, restore
     data:
-      transition: 1
+      transition: 0
     target:
       entity_id: scene.alarm_before
   - delay:
@@ -255,7 +264,8 @@ lights_blue:
     target:
       entity_id: scene.alarm_before
     data: {}
-  alias: Lights - Blue
+    enabled: true
+  alias: Lights - Breathe Blue
   description: ''
   icon: mdi:alarm-light
 lights_red:
@@ -271,16 +281,18 @@ lights_red:
       - light.gameroom_lamp_onder
       - light.gang_lamp
       - light.kantoor_lamp
+      - light.sauna_lamp
       - light.schuur_lamp_werkbank
-      - light.slaapkamer_alex_lamp
-      - light.slaapkamer_deni_lamp
+      - light.slaapkamer_lamp
+      - light.toilet_lamp
       - light.woonkamer_lamp_onder
-  - action: light.turn_on
-    alias: Lights red, flash long
+  - alias: Lights red, breathe
+    action: light.turn_on
     data:
       brightness_pct: 100
       color_name: red
-      flash: long
+      effect: breathe
+      transition: 1
     target:
       entity_id: light.alarm
   - delay:
@@ -288,14 +300,16 @@ lights_red:
       minutes: 0
       seconds: 15
       milliseconds: 0
-  - action: light.turn_on
-    alias: Lights on, white
+  - alias: Lights on, white
+    action: light.turn_on
     data:
-      brightness_pct: 50
-      color_temp_kelvin: 3333
+      brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'') | int
+        }}'
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'') |
+        int }}'
       transition: 1
     target:
-      entity_id: light.alarm
+      entity_id: light.eettafel_lamp_onder
   - delay:
       hours: 0
       minutes: 0
@@ -304,7 +318,7 @@ lights_red:
   - action: scene.turn_on
     alias: Scene, restore
     data:
-      transition: 1
+      transition: 0
     target:
       entity_id: scene.alarm_before
   - delay:
@@ -317,7 +331,8 @@ lights_red:
     target:
       entity_id: scene.alarm_before
     data: {}
-  alias: Lights - Red
+    enabled: true
+  alias: Lights - Breathe Red
   description: ''
   icon: mdi:alarm-light
 lights_orange:
@@ -333,16 +348,18 @@ lights_orange:
       - light.gameroom_lamp_onder
       - light.gang_lamp
       - light.kantoor_lamp
+      - light.sauna_lamp
       - light.schuur_lamp_werkbank
-      - light.slaapkamer_alex_lamp
-      - light.slaapkamer_deni_lamp
+      - light.slaapkamer_lamp
+      - light.toilet_lamp
       - light.woonkamer_lamp_onder
-  - action: light.turn_on
-    alias: Lights orange, flash long
+  - alias: Lights orange, breathe
+    action: light.turn_on
     data:
       brightness_pct: 100
       color_name: orange
-      flash: long
+      effect: breathe
+      transition: 1
     target:
       entity_id: light.alarm
   - delay:
@@ -350,14 +367,16 @@ lights_orange:
       minutes: 0
       seconds: 15
       milliseconds: 0
-  - action: light.turn_on
-    alias: Lights on, white
+  - alias: Lights on, white
+    action: light.turn_on
     data:
-      brightness_pct: 50
-      color_temp_kelvin: 3333
+      brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'') | int
+        }}'
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'') |
+        int }}'
       transition: 1
     target:
-      entity_id: light.alarm
+      entity_id: light.eettafel_lamp_onder
   - delay:
       hours: 0
       minutes: 0
@@ -366,7 +385,7 @@ lights_orange:
   - action: scene.turn_on
     alias: Scene, restore
     data:
-      transition: 1
+      transition: 0
     target:
       entity_id: scene.alarm_before
   - delay:
@@ -379,7 +398,8 @@ lights_orange:
     target:
       entity_id: scene.alarm_before
     data: {}
-  alias: Lights - Orange
+    enabled: true
+  alias: Lights - Breathe Orange
   description: ''
   icon: mdi:alarm-light
 alarm_pending:
@@ -427,3 +447,113 @@ alarm_disarmed:
   alias: Alarm - Disarmed
   description: ''
   icon: mdi:shield-off
+lights_preset_000:
+  alias: Lights - Preset 000%
+  description: Turn off a light
+  icon: mdi:lightbulb-off
+  fields:
+    target_light:
+      description: Light entity to control
+      required: true
+      selector:
+        entity:
+          domain: light
+  sequence:
+  - action: light.turn_off
+    target:
+      entity_id: '{{ target_light }}'
+lights_preset_025:
+  alias: Lights - Preset 025%
+  description: Set light to 25% brightness with adaptive color temperature
+  icon: mdi:lightbulb-on-10
+  fields:
+    target_light:
+      description: Light entity to control
+      required: true
+      selector:
+        entity:
+          domain: light
+  sequence:
+  - action: light.turn_on
+    target:
+      entity_id: '{{ target_light }}'
+    data:
+      brightness_pct: 25
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'') |
+        int }}'
+lights_preset_050:
+  alias: Lights - Preset 050%
+  description: Set light to 50% brightness with adaptive color temperature
+  icon: mdi:lightbulb-on-40
+  fields:
+    target_light:
+      description: Light entity to control
+      required: true
+      selector:
+        entity:
+          domain: light
+  sequence:
+  - action: light.turn_on
+    target:
+      entity_id: '{{ target_light }}'
+    data:
+      brightness_pct: 50
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'') |
+        int }}'
+lights_preset_100:
+  alias: Lights - Preset 100%
+  description: Set light to 100% brightness with adaptive color temperature
+  icon: mdi:lightbulb-on
+  fields:
+    target_light:
+      description: Light entity to control
+      required: true
+      selector:
+        entity:
+          domain: light
+  sequence:
+  - action: light.turn_on
+    target:
+      entity_id: '{{ target_light }}'
+    data:
+      brightness_pct: 100
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'') |
+        int }}'
+lights_preset_adaptive:
+  alias: Lights - Preset Adaptive
+  description: Set light to full adaptive (brightness + color temperature)
+  icon: mdi:lightbulb-auto
+  fields:
+    target_light:
+      description: Light entity to control
+      required: true
+      selector:
+        entity:
+          domain: light
+  sequence:
+  - action: light.turn_on
+    target:
+      entity_id: '{{ target_light }}'
+    data:
+      brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'') | int
+        }}'
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'') |
+        int }}'
+lights_preset_adaptive_color:
+  alias: Lights - Preset Adaptive Color
+  description: Reset light to adaptive color temperature (keeps current brightness)
+  icon: mdi:lightbulb-auto-outline
+  fields:
+    target_light:
+      description: Light entity to control
+      required: true
+      selector:
+        entity:
+          domain: light
+  sequence:
+  - action: light.turn_on
+    target:
+      entity_id: '{{ target_light }}'
+    data:
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'') |
+        int }}'
