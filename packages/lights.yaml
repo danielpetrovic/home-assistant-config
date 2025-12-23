@@ -1,3 +1,35 @@
+# Adaptive Lighting Helpers
+# These are updated by the Adaptive Lighting blueprint automation
+input_number:
+  adaptive_brightness_bright:
+    name: "Adaptive Brightness Bright"
+    min: 0
+    max: 100
+    step: 1
+    unit_of_measurement: "%"
+    icon: mdi:brightness-percent
+  adaptive_color_temp_bright:
+    name: "Adaptive Color Temp Bright"
+    min: 2000
+    max: 6500
+    step: 100
+    unit_of_measurement: "K"
+    icon: mdi:thermometer
+  adaptive_brightness_dimmed:
+    name: "Adaptive Brightness Dimmed"
+    min: 0
+    max: 100
+    step: 1
+    unit_of_measurement: "%"
+    icon: mdi:brightness-percent
+  adaptive_color_temp_dimmed:
+    name: "Adaptive Color Temp Dimmed"
+    min: 2000
+    max: 6500
+    step: 100
+    unit_of_measurement: "K"
+    icon: mdi:thermometer
+
 schedule:
   lights_bright:
     name: "Lights Bright"
@@ -7,218 +39,218 @@ schedule:
         to: "07:00:00"
         data:
           brightness_pct: 40
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "09:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "09:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
     tuesday:
       - from: "00:00:00"
         to: "07:00:00"
         data:
           brightness_pct: 40
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "09:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "09:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
     wednesday:
       - from: "00:00:00"
         to: "07:00:00"
         data:
           brightness_pct: 40
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "09:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "09:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
     thursday:
       - from: "00:00:00"
         to: "07:00:00"
         data:
           brightness_pct: 40
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "09:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "09:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
     friday:
       - from: "00:00:00"
         to: "07:00:00"
         data:
           brightness_pct: 40
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "09:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "09:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
     saturday:
       - from: "00:00:00"
         to: "07:00:00"
         data:
           brightness_pct: 40
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "10:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "10:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
     sunday:
       - from: "00:00:00"
         to: "07:00:00"
         data:
           brightness_pct: 40
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "10:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "10:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 100
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 80
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 60
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
   lights_dimmed:
     name: "Lights Dimmed"
     icon: mdi:lightbulb-auto-outline
@@ -227,215 +259,215 @@ schedule:
         to: "07:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "09:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "09:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 50
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
     tuesday:
       - from: "00:00:00"
         to: "07:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "09:00:00"
         data:
           brightness_pct: 20
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "09:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 20
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
     wednesday:
       - from: "00:00:00"
         to: "07:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "09:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "09:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 50
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
     thursday:
       - from: "00:00:00"
         to: "07:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "09:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "09:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 50
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
     friday:
       - from: "00:00:00"
         to: "07:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "09:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "09:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 50
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
     saturday:
       - from: "00:00:00"
         to: "07:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "10:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "10:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 50
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
     sunday:
       - from: "00:00:00"
         to: "07:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200
       - from: "07:00:00"
         to: "10:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "10:00:00"
         to: "19:00:00"
         data:
           brightness_pct: 50
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 4000
       - from: "19:00:00"
         to: "21:00:00"
         data:
           brightness_pct: 30
-          color_temp_kelvin: 3521
+          color_temp_kelvin: 3333
       - from: "21:00:00"
         to: "23:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 3000
+          color_temp_kelvin: 2700
       - from: "23:00:00"
         to: "24:00:00"
         data:
           brightness_pct: 10
-          color_temp_kelvin: 2500
+          color_temp_kelvin: 2200

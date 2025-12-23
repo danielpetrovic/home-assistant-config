@@ -80,7 +80,7 @@ input_text:
 # Dashboard Alarm Keypad Scripts
 script:
   alarm_dashboard_append_1:
-    alias: "Alarm Dashboard: Append 1"
+    alias: "Alarm Dashboard - Append 1"
     sequence:
       - action: input_text.set_value
         target:
@@ -89,7 +89,7 @@ script:
           value: "{{ states('input_text.alarm_dashboard_code') + '1' }}"
 
   alarm_dashboard_append_2:
-    alias: "Alarm Dashboard: Append 2"
+    alias: "Alarm Dashboard - Append 2"
     sequence:
       - action: input_text.set_value
         target:
@@ -98,7 +98,7 @@ script:
           value: "{{ states('input_text.alarm_dashboard_code') + '2' }}"
 
   alarm_dashboard_append_3:
-    alias: "Alarm Dashboard: Append 3"
+    alias: "Alarm Dashboard - Append 3"
     sequence:
       - action: input_text.set_value
         target:
@@ -107,7 +107,7 @@ script:
           value: "{{ states('input_text.alarm_dashboard_code') + '3' }}"
 
   alarm_dashboard_append_4:
-    alias: "Alarm Dashboard: Append 4"
+    alias: "Alarm Dashboard - Append 4"
     sequence:
       - action: input_text.set_value
         target:
@@ -116,7 +116,7 @@ script:
           value: "{{ states('input_text.alarm_dashboard_code') + '4' }}"
 
   alarm_dashboard_append_5:
-    alias: "Alarm Dashboard: Append 5"
+    alias: "Alarm Dashboard - Append 5"
     sequence:
       - action: input_text.set_value
         target:
@@ -125,7 +125,7 @@ script:
           value: "{{ states('input_text.alarm_dashboard_code') + '5' }}"
 
   alarm_dashboard_append_6:
-    alias: "Alarm Dashboard: Append 6"
+    alias: "Alarm Dashboard - Append 6"
     sequence:
       - action: input_text.set_value
         target:
@@ -134,7 +134,7 @@ script:
           value: "{{ states('input_text.alarm_dashboard_code') + '6' }}"
 
   alarm_dashboard_append_7:
-    alias: "Alarm Dashboard: Append 7"
+    alias: "Alarm Dashboard - Append 7"
     sequence:
       - action: input_text.set_value
         target:
@@ -143,7 +143,7 @@ script:
           value: "{{ states('input_text.alarm_dashboard_code') + '7' }}"
 
   alarm_dashboard_append_8:
-    alias: "Alarm Dashboard: Append 8"
+    alias: "Alarm Dashboard - Append 8"
     sequence:
       - action: input_text.set_value
         target:
@@ -152,7 +152,7 @@ script:
           value: "{{ states('input_text.alarm_dashboard_code') + '8' }}"
 
   alarm_dashboard_append_9:
-    alias: "Alarm Dashboard: Append 9"
+    alias: "Alarm Dashboard - Append 9"
     sequence:
       - action: input_text.set_value
         target:
@@ -161,7 +161,7 @@ script:
           value: "{{ states('input_text.alarm_dashboard_code') + '9' }}"
 
   alarm_dashboard_append_0:
-    alias: "Alarm Dashboard: Append 0"
+    alias: "Alarm Dashboard - Append 0"
     sequence:
       - action: input_text.set_value
         target:
@@ -170,7 +170,7 @@ script:
           value: "{{ states('input_text.alarm_dashboard_code') + '0' }}"
 
   alarm_dashboard_clear:
-    alias: "Alarm Dashboard: Clear"
+    alias: "Alarm Dashboard - Clear"
     sequence:
       - action: input_text.set_value
         target:
@@ -179,7 +179,7 @@ script:
           value: ""
 
   alarm_dashboard_backspace:
-    alias: "Alarm Dashboard: Backspace"
+    alias: "Alarm Dashboard - Backspace"
     sequence:
       - action: input_text.set_value
         target:
