@@ -2425,11 +2425,6 @@
       seconds: 0
     below: 10
     id: Alex PC
-  - trigger: state
-    entity_id:
-    - switch.alex_pc
-    to:
-    enabled: true
   - trigger: numeric_state
     entity_id:
     - sensor.deni_pc_energiegebruik
@@ -2439,25 +2434,15 @@
       seconds: 0
     below: 10
     id: Deni PC
-  - trigger: state
-    entity_id:
-    - switch.deni_pc
-    to:
-    enabled: true
   - trigger: numeric_state
     entity_id:
-    - sensor.gameroom_bureau_energiegebruik
+    - sensor.gameroom_bureau_power
     for:
       hours: 0
       minutes: 50
       seconds: 0
     below: 50
     id: Bureau Low
-  - trigger: state
-    entity_id:
-    - switch.gameroom_bureau
-    to:
-    enabled: true
   conditions: []
   actions:
   - choose:
@@ -2493,44 +2478,6 @@
         data: {}
         target:
           entity_id: switch.gameroom_bureau
-  - alias: wifi on
-    if:
-    - condition: or
-      conditions:
-      - condition: state
-        entity_id: switch.alex_pc
-        state: 'on'
-      - condition: state
-        entity_id: switch.deni_pc
-        state: 'on'
-      - condition: state
-        entity_id: switch.gameroom_bureau
-        state: 'on'
-    then:
-    - action: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.usw_gameroom_port_1_poe
-    enabled: false
-  - alias: wifi off
-    if:
-    - condition: state
-      entity_id: switch.alex_pc
-      state: 'off'
-    - condition: state
-      entity_id: switch.deni_pc
-      state: 'off'
-    - condition: state
-      entity_id: switch.gameroom_bureau
-      state: 'off'
-    then:
-    - action: switch.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.usw_gameroom_port_1_poe
-    enabled: false
   mode: restart
 - id: '1736811833071'
   alias: Badkamer Knop
@@ -3552,7 +3499,7 @@
   triggers:
   - trigger: numeric_state
     entity_id:
-    - sensor.kantoor_bureau_energiegebruik
+    - sensor.kantoor_bureau_power
     for:
       hours: 1
       minutes: 0
@@ -4977,20 +4924,8 @@
   - at: 01:00:00
     id: 01:00
     trigger: time
-  - at: '18:00:00'
-    id: '18:00'
-    trigger: time
-  - at: '18:30:00'
-    id: '18:30'
-    trigger: time
   - entity_id: sensor.climate_luminosity
     id: luminosity
-    trigger: state
-  - entity_id: schedule.lights_bright
-    id: bright
-    trigger: state
-  - entity_id: schedule.lights_dimmed
-    id: dimmed
     trigger: state
   conditions: []
   actions:
@@ -5041,55 +4976,6 @@
           - woonkamer
         data:
           transition: 60
-    - alias: '18:00'
-      conditions:
-      - condition: trigger
-        id: '18:00'
-      sequence:
-      - action: light.turn_on
-        target:
-          entity_id:
-          - light.eettafel_lamp_boven
-          - light.woonkamer_lamp_boven
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'',''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'',''color_temp_kelvin'')
-            }}'
-          transition: 90
-      - action: light.turn_on
-        target:
-          entity_id:
-          - light.eettafel_lamp_onder
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'',''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'',''color_temp_kelvin'')
-            }}'
-          transition: 90
-    - alias: '18:30'
-      conditions:
-      - condition: trigger
-        id: '18:30'
-      sequence:
-      - action: light.turn_on
-        target:
-          entity_id:
-          - light.eettafel_lamp_boven
-          - light.woonkamer_lamp_boven
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'',''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'',''color_temp_kelvin'')
-            }}'
-          transition: 300
-      - action: light.turn_off
-        target:
-          entity_id:
-          - light.eettafel_lamp_onder
-          - light.woonkamer_lamp_onder
-        data:
-          transition: 300
   - alias: Luminosity
     choose:
     - alias: dark
@@ -5109,17 +4995,6 @@
         data:
           brightness_pct: 100
           transition: 3600
-      - action: light.turn_on
-        target:
-          entity_id:
-          - light.eettafel_lamp_boven
-          - light.woonkamer_lamp_boven
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'',''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'',''color_temp_kelvin'')
-            }}'
-          transition: 300
     - alias: not dark
       conditions:
       - condition: trigger
@@ -5140,67 +5015,6 @@
         data:
           transition: 3600
     enabled: true
-  - alias: Schedules
-    choose:
-    - alias: Lights Bright
-      conditions:
-      - condition: trigger
-        id: bright
-      sequence:
-      - repeat:
-          for_each:
-          - light.badkamer_lamp
-          - light.dakterras_lamp
-          - light.eettafel_lamp_boven
-          - light.gameroom_lamp_boven
-          - light.gameroom_lamp_links
-          - light.gameroom_lamp_rechts
-          - light.kantoor_lampen
-          - light.keuken_lampen
-          - light.sauna_lamp
-          - light.toilet_lamp
-          - light.voordeur_lamp
-          - light.woonkamer_lamp_boven
-          sequence:
-          - if:
-            - condition: template
-              value_template: '{{ is_state(repeat.item, ''on'') }}'
-            then:
-            - action: light.turn_on
-              target:
-                entity_id: '{{ repeat.item }}'
-              data:
-                brightness_pct: '{{ state_attr(''schedule.lights_bright'',''brightness_pct'')
-                  }}'
-                color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'',''color_temp_kelvin'')
-                  }}'
-                transition: 300
-    - alias: Lights Dimmed
-      conditions:
-      - condition: trigger
-        id: dimmed
-      sequence:
-      - repeat:
-          for_each:
-          - light.eettafel_lamp_onder
-          - light.gameroom_lamp_onder
-          - light.slaapkamer_lamp
-          - light.woonkamer_lamp_onder
-          sequence:
-          - if:
-            - condition: template
-              value_template: '{{ is_state(repeat.item, ''on'') }}'
-            then:
-            - action: light.turn_on
-              target:
-                entity_id: '{{ repeat.item }}'
-              data:
-                brightness_pct: '{{ state_attr(''schedule.lights_dimmed'',''brightness_pct'')
-                  }}'
-                color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'',''color_temp_kelvin'')
-                  }}'
-                transition: 300
-    enabled: false
   mode: queued
   max: 10
 - id: '1761751867278'
