@@ -7,6 +7,7 @@
 /.storage
 /addons_config
 /backups
+/custom_components/
 /glances
 /image
 /tmp_backups
@@ -18,6 +19,3 @@ home-assistant_v2.db-shm
 home-assistant_v2.db-wal
 home-assistant.log.fault
 secrets.yaml
-zigbee.db
-zigbee.db-shm
-zigbee.db-wal
