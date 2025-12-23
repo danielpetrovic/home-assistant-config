@@ -5,14 +5,16 @@
 /.claude
 /.cloud
 /.storage
+/.vscode
 /addons_config
 /backups
 /custom_components/
+/deps/
 /glances
 /image
 /tmp_backups
 /tts
-/zigbee2mqtt
+/www
 go2rtc.yaml
 home-assistant_v2.db
 home-assistant_v2.db-shm
