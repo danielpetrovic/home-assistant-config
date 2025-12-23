@@ -1,0 +1,975 @@
+blueprint:
+  name: Adaptive Lighting Scheduler
+  author: danielpetrovic
+  source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/adaptive-lighting-scheduler.yaml
+  description: |
+    # Adaptive Lighting Scheduler
+
+    This blueprint calculates optimal brightness and color temperature values throughout the day and stores them in input_number helpers for use by other automations and blueprints.
+
+    ## Key Features
+    - **Schedule-Based**: Configure different times for each day of the week (weekdays vs weekends)
+    - **Sun Tracking**: Optional sunrise/sunset awareness for natural transitions
+    - **Smooth Ramping**: Gradual transitions between day phases (wake, morning, evening, sleep, night)
+    - **Helper Output**: Stores values in input_number entities for use by switches, dashboards, and other automations
+    - **Multiple Zones**: Create multiple instances with different helper pairs for different lighting zones
+
+    *Each configuration option below includes detailed instructions in the automation editor.*
+
+    ## How It Works
+
+    Set fixed times for your daily routine, with optional sun-based adjustments:
+
+    - **Night → Wake**: Flat at night values
+    - **Wake → Morning**: Ramp up to max (with sun tracking: waits for sunrise if after wake time)
+    - **Morning → Evening**: Flat at max values
+    - **Evening → Sleep**: Ramp down to min (optionally start at sunset)
+    - **Sleep → Night**: Ramp down to night values
+
+    Each day of the week has its own time settings, allowing different schedules for weekdays vs weekends.
+
+    With sunrise tracking enabled:
+    - Summer (sunrise 05:00, wake 07:30, morning 09:00): Ramp 07:30 → 09:00
+    - Winter (sunrise 08:47, wake 07:30, morning 09:00): Ramp 08:47 → 09:00
+
+    Brightness and color temperature values are shared across all days.
+
+    ## Example (Default Weekday Settings)
+
+    | Time | Brightness | Color Temp | Phase |
+    |------|------------|------------|-------|
+    | 00:00 - 07:30 | 25% | 2200K | Night (flat) |
+    | 07:30 - 09:00 | 25% → 100% | 2200K → 4000K | Morning ramp |
+    | 09:00 - 18:30 | 100% | 4000K | Day (flat) |
+    | 18:30 - 23:30 | 100% → 50% | 4000K → 2700K | Evening ramp |
+    | 23:30 - 00:00 | 50% → 25% | 2700K → 2200K | Sleep ramp |
+
+    ## Setup
+
+    ### Setting up Packages (Optional)
+    Organize helpers into packages for easier management. Create a `packages` folder in `/config/` and add to your configuration:
+
+    ```yaml
+    homeassistant:
+      packages: !include_dir_named packages
+    ```
+
+    ### Helper YAML Example
+    Create `/config/packages/adaptive_lighting.yaml` with your helpers:
+
+    ```yaml
+    input_number:
+      adaptive_brightness:
+        name: "Adaptive Brightness"
+        icon: mdi:brightness-percent
+        min: 0
+        max: 100
+        step: 1
+        unit_of_measurement: "%"
+      adaptive_color_temp:
+        name: "Adaptive Color Temperature"
+        icon: mdi:temperature-kelvin
+        min: 2000
+        max: 6500
+        step: 100
+        unit_of_measurement: "K"
+    ```
+
+    You can create multiple helper pairs for different lighting zones (e.g., `adaptive_brightness_bright` and `adaptive_brightness_dimmed`).
+
+    ### GUI Alternative
+    Create two input_number helpers via Settings → Devices & Services → Helpers:
+    - Brightness: Min 0, Max 100, Step 1
+    - Color Temperature: Min 2000, Max 6500, Step 100
+
+    ### After Creating Helpers
+
+    1. Create an automation from this blueprint
+
+    2. Configure times for each day (defaults provided for weekdays and weekends)
+
+    3. Reference helpers in other automations or blueprints:
+       ```yaml
+       brightness_pct: "{{ states('input_number.adaptive_brightness') | int }}"
+       color_temp_kelvin: "{{ states('input_number.adaptive_color_temp') | int }}"
+       ```
+
+    ## Requirements
+    - Home Assistant 2024.10.0 or later
+    - Sun integration (`sun.sun` entity) for sunrise/sunset tracking
+
+  domain: automation
+  homeassistant:
+    min_version: 2024.10.0
+  input:
+    output_helpers:
+      name: Output Helpers
+      icon: mdi:export
+      collapsed: false
+      input:
+        brightness_helper:
+          name: Brightness Helper
+          description: |
+            `required` `entity`
+
+            The input_number helper to store brightness (0-100).
+          selector:
+            entity:
+              filter:
+                - domain: input_number
+              multiple: false
+        color_temp_helper:
+          name: Color Temperature Helper
+          description: |
+            `required` `entity`
+
+            The input_number helper to store color temperature (2000-6500K).
+          selector:
+            entity:
+              filter:
+                - domain: input_number
+              multiple: false
+    time_settings_monday:
+      name: "Time Settings - Monday"
+      icon: mdi:calendar-today
+      collapsed: true
+      input:
+        wake_time_mon:
+          name: Wake Time
+          default: "07:30:00"
+          selector:
+            time: {}
+        morning_time_mon:
+          name: Morning Time
+          default: "09:00:00"
+          selector:
+            time: {}
+        evening_time_mon:
+          name: Evening Time
+          default: "18:30:00"
+          selector:
+            time: {}
+        sleep_time_mon:
+          name: Sleep Time
+          default: "23:30:00"
+          selector:
+            time: {}
+        night_time_mon:
+          name: Night Time
+          default: "00:00:00"
+          selector:
+            time: {}
+    time_settings_tuesday:
+      name: "Time Settings - Tuesday"
+      icon: mdi:calendar-today
+      collapsed: true
+      input:
+        wake_time_tue:
+          name: Wake Time
+          default: "07:30:00"
+          selector:
+            time: {}
+        morning_time_tue:
+          name: Morning Time
+          default: "09:00:00"
+          selector:
+            time: {}
+        evening_time_tue:
+          name: Evening Time
+          default: "18:30:00"
+          selector:
+            time: {}
+        sleep_time_tue:
+          name: Sleep Time
+          default: "23:30:00"
+          selector:
+            time: {}
+        night_time_tue:
+          name: Night Time
+          default: "00:00:00"
+          selector:
+            time: {}
+    time_settings_wednesday:
+      name: "Time Settings - Wednesday"
+      icon: mdi:calendar-today
+      collapsed: true
+      input:
+        wake_time_wed:
+          name: Wake Time
+          default: "07:30:00"
+          selector:
+            time: {}
+        morning_time_wed:
+          name: Morning Time
+          default: "09:00:00"
+          selector:
+            time: {}
+        evening_time_wed:
+          name: Evening Time
+          default: "18:30:00"
+          selector:
+            time: {}
+        sleep_time_wed:
+          name: Sleep Time
+          default: "23:30:00"
+          selector:
+            time: {}
+        night_time_wed:
+          name: Night Time
+          default: "00:00:00"
+          selector:
+            time: {}
+    time_settings_thursday:
+      name: "Time Settings - Thursday"
+      icon: mdi:calendar-today
+      collapsed: true
+      input:
+        wake_time_thu:
+          name: Wake Time
+          default: "07:30:00"
+          selector:
+            time: {}
+        morning_time_thu:
+          name: Morning Time
+          default: "09:00:00"
+          selector:
+            time: {}
+        evening_time_thu:
+          name: Evening Time
+          default: "18:30:00"
+          selector:
+            time: {}
+        sleep_time_thu:
+          name: Sleep Time
+          default: "23:30:00"
+          selector:
+            time: {}
+        night_time_thu:
+          name: Night Time
+          default: "00:00:00"
+          selector:
+            time: {}
+    time_settings_friday:
+      name: "Time Settings - Friday"
+      icon: mdi:calendar-today
+      collapsed: true
+      input:
+        wake_time_fri:
+          name: Wake Time
+          default: "07:30:00"
+          selector:
+            time: {}
+        morning_time_fri:
+          name: Morning Time
+          default: "09:00:00"
+          selector:
+            time: {}
+        evening_time_fri:
+          name: Evening Time
+          default: "18:30:00"
+          selector:
+            time: {}
+        sleep_time_fri:
+          name: Sleep Time
+          default: "23:30:00"
+          selector:
+            time: {}
+        night_time_fri:
+          name: Night Time
+          default: "00:00:00"
+          selector:
+            time: {}
+    time_settings_saturday:
+      name: "Time Settings - Saturday"
+      icon: mdi:calendar-today
+      collapsed: true
+      input:
+        wake_time_sat:
+          name: Wake Time
+          default: "08:30:00"
+          selector:
+            time: {}
+        morning_time_sat:
+          name: Morning Time
+          default: "10:00:00"
+          selector:
+            time: {}
+        evening_time_sat:
+          name: Evening Time
+          default: "18:30:00"
+          selector:
+            time: {}
+        sleep_time_sat:
+          name: Sleep Time
+          default: "23:30:00"
+          selector:
+            time: {}
+        night_time_sat:
+          name: Night Time
+          default: "00:00:00"
+          selector:
+            time: {}
+    time_settings_sunday:
+      name: "Time Settings - Sunday"
+      icon: mdi:calendar-today
+      collapsed: true
+      input:
+        wake_time_sun:
+          name: Wake Time
+          default: "08:30:00"
+          selector:
+            time: {}
+        morning_time_sun:
+          name: Morning Time
+          default: "10:00:00"
+          selector:
+            time: {}
+        evening_time_sun:
+          name: Evening Time
+          default: "18:30:00"
+          selector:
+            time: {}
+        sleep_time_sun:
+          name: Sleep Time
+          default: "23:30:00"
+          selector:
+            time: {}
+        night_time_sun:
+          name: Night Time
+          default: "00:00:00"
+          selector:
+            time: {}
+    brightness_settings:
+      name: Brightness Values
+      icon: mdi:brightness-percent
+      collapsed: true
+      input:
+        max_brightness:
+          name: Maximum Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Brightness at morning time (daytime maximum).
+          selector:
+            number:
+              min: 1
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        min_brightness:
+          name: Minimum Brightness
+          default: 50
+          description: |
+            `optional` `number`
+
+            Brightness at sleep time (evening).
+          selector:
+            number:
+              min: 1
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        night_brightness:
+          name: Night Brightness
+          default: 25
+          description: |
+            `optional` `number`
+
+            Brightness at night time (lowest).
+          selector:
+            number:
+              min: 1
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+    color_temp_settings:
+      name: Color Temperature Values
+      icon: mdi:thermometer
+      collapsed: true
+      input:
+        max_color_temp:
+          name: Maximum Color Temperature
+          default: 4000
+          description: |
+            `optional` `color_temp`
+
+            Color temperature at morning time (coolest/daylight).
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+              max: 6500
+        min_color_temp:
+          name: Minimum Color Temperature
+          default: 2700
+          description: |
+            `optional` `color_temp`
+
+            Color temperature at sleep time (warm).
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+              max: 6500
+        night_color_temp:
+          name: Night Color Temperature
+          default: 2200
+          description: |
+            `optional` `color_temp`
+
+            Color temperature at night time (warmest).
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+              max: 6500
+    sun_settings_brightness:
+      name: Sun Settings - Brightness
+      icon: mdi:white-balance-sunny
+      collapsed: true
+      input:
+        brightness_use_sunrise:
+          name: Wait for Sunrise
+          default: false
+          description: |
+            `optional` `boolean`
+
+            Don't start morning ramp until sunrise (if sunrise is after wake time).
+            Prevents reaching max brightness before the sun is up.
+          selector:
+            boolean: {}
+        brightness_use_sunset:
+          name: Start Dimming at Sunset
+          default: false
+          description: |
+            `optional` `boolean`
+
+            Start evening ramp at sunset if it's before evening time.
+          selector:
+            boolean: {}
+    sun_settings_color:
+      name: Sun Settings - Color Temperature
+      icon: mdi:theme-light-dark
+      collapsed: true
+      input:
+        color_use_sunrise:
+          name: Wait for Sunrise
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Don't start morning ramp until sunrise (if sunrise is after wake time).
+            Prevents reaching max color temp before the sun is up.
+          selector:
+            boolean: {}
+        color_use_sunset:
+          name: Start Warming at Sunset
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Start evening ramp at sunset if it's before evening time.
+            Useful in winter when it gets dark before your evening routine.
+          selector:
+            boolean: {}
+    sun_offsets:
+      name: Sun Offsets
+      icon: mdi:sun-clock
+      collapsed: true
+      input:
+        sunrise_offset:
+          name: Sunrise Offset
+          default: 0
+          description: |
+            `optional` `number`
+
+            Minutes to offset from sunrise. Positive = later, negative = earlier.
+          selector:
+            number:
+              min: -120
+              max: 120
+              step: 15
+              unit_of_measurement: "min"
+              mode: slider
+        sunset_offset:
+          name: Sunset Offset
+          default: 0
+          description: |
+            `optional` `number`
+
+            Minutes to offset from sunset. Positive = later, negative = earlier.
+          selector:
+            number:
+              min: -120
+              max: 120
+              step: 15
+              unit_of_measurement: "min"
+              mode: slider
+    dashboard_scripts:
+      name: Dashboard Example - Scripts
+      description: |
+        Add these scripts to `/config/packages/adaptive_lighting.yaml` (or `scripts.yaml`):
+
+        ```yaml
+        script:
+          lights_preset_off:
+            alias: "Lights - Off"
+            fields:
+              target_light:
+                required: true
+                selector:
+                  entity:
+                    domain: light
+            sequence:
+              - action: light.turn_off
+                target:
+                  entity_id: "{{ target_light }}"
+
+          lights_preset_25:
+            alias: "Lights - 25%"
+            fields:
+              target_light:
+                required: true
+                selector:
+                  entity:
+                    domain: light
+            sequence:
+              - action: light.turn_on
+                target:
+                  entity_id: "{{ target_light }}"
+                data:
+                  brightness_pct: 25
+                  color_temp_kelvin: "{{ states('input_number.adaptive_color_temp') | int }}"
+
+          lights_preset_50:
+            alias: "Lights - 50%"
+            fields:
+              target_light:
+                required: true
+                selector:
+                  entity:
+                    domain: light
+            sequence:
+              - action: light.turn_on
+                target:
+                  entity_id: "{{ target_light }}"
+                data:
+                  brightness_pct: 50
+                  color_temp_kelvin: "{{ states('input_number.adaptive_color_temp') | int }}"
+
+          lights_preset_100:
+            alias: "Lights - 100%"
+            fields:
+              target_light:
+                required: true
+                selector:
+                  entity:
+                    domain: light
+            sequence:
+              - action: light.turn_on
+                target:
+                  entity_id: "{{ target_light }}"
+                data:
+                  brightness_pct: 100
+                  color_temp_kelvin: "{{ states('input_number.adaptive_color_temp') | int }}"
+
+          lights_preset_adaptive:
+            alias: "Lights - Adaptive"
+            fields:
+              target_light:
+                required: true
+                selector:
+                  entity:
+                    domain: light
+            sequence:
+              - action: light.turn_on
+                target:
+                  entity_id: "{{ target_light }}"
+                data:
+                  brightness_pct: "{{ states('input_number.adaptive_brightness') | int }}"
+                  color_temp_kelvin: "{{ states('input_number.adaptive_color_temp') | int }}"
+
+          lights_preset_adaptive_color:
+            alias: "Lights - Adaptive Color"
+            fields:
+              target_light:
+                required: true
+                selector:
+                  entity:
+                    domain: light
+            sequence:
+              - action: light.turn_on
+                target:
+                  entity_id: "{{ target_light }}"
+                data:
+                  color_temp_kelvin: "{{ states('input_number.adaptive_color_temp') | int }}"
+        ```
+      icon: mdi:script-text
+      collapsed: true
+      input: {}
+    dashboard_lovelace:
+      name: Dashboard Example - Lovelace Card
+      description: |
+        Add this card to your dashboard (replace `light.living_room` with your light):
+
+        ```yaml
+        type: vertical-stack
+        cards:
+          - type: tile
+            entity: light.living_room
+            features:
+              - type: light-brightness
+          - type: grid
+            columns: 5
+            square: false
+            cards:
+              - type: button
+                icon: mdi:lightbulb-off-outline
+                tap_action:
+                  action: call-service
+                  service: script.lights_preset_off
+                  data:
+                    target_light: light.living_room
+              - type: button
+                icon: mdi:lightbulb-on-10
+                tap_action:
+                  action: call-service
+                  service: script.lights_preset_25
+                  data:
+                    target_light: light.living_room
+              - type: button
+                icon: mdi:lightbulb-on-40
+                tap_action:
+                  action: call-service
+                  service: script.lights_preset_50
+                  data:
+                    target_light: light.living_room
+              - type: button
+                icon: mdi:lightbulb-on
+                tap_action:
+                  action: call-service
+                  service: script.lights_preset_100
+                  data:
+                    target_light: light.living_room
+              - type: button
+                icon: mdi:lightbulb-auto
+                entity: light.living_room
+                tap_action:
+                  action: call-service
+                  service: script.lights_preset_adaptive
+                  data:
+                    target_light: light.living_room
+          - type: grid
+            columns: 5
+            square: false
+            cards:
+              - type: button
+                icon: mdi:lightbulb
+                color: deep-orange
+                tap_action:
+                  action: call-service
+                  service: light.turn_on
+                  data:
+                    color_temp_kelvin: 2200
+                  target:
+                    entity_id: light.living_room
+              - type: button
+                icon: mdi:lightbulb
+                color: orange
+                tap_action:
+                  action: call-service
+                  service: light.turn_on
+                  data:
+                    color_temp_kelvin: 2700
+                  target:
+                    entity_id: light.living_room
+              - type: button
+                icon: mdi:lightbulb
+                color: amber
+                tap_action:
+                  action: call-service
+                  service: light.turn_on
+                  data:
+                    color_temp_kelvin: 3500
+                  target:
+                    entity_id: light.living_room
+              - type: button
+                icon: mdi:lightbulb
+                color: white
+                tap_action:
+                  action: call-service
+                  service: light.turn_on
+                  data:
+                    color_temp_kelvin: 4000
+                  target:
+                    entity_id: light.living_room
+              - type: button
+                icon: mdi:lightbulb-auto-outline
+                entity: light.living_room
+                tap_action:
+                  action: call-service
+                  service: script.lights_preset_adaptive_color
+                  data:
+                    target_light: light.living_room
+        ```
+      icon: mdi:view-dashboard
+      collapsed: true
+      input: {}
+
+variables:
+  brightness_helper: !input brightness_helper
+  color_temp_helper: !input color_temp_helper
+  max_brightness: !input max_brightness
+  min_brightness: !input min_brightness
+  night_brightness: !input night_brightness
+  max_color_temp: !input max_color_temp
+  min_color_temp: !input min_color_temp
+  night_color_temp: !input night_color_temp
+  brightness_use_sunrise: !input brightness_use_sunrise
+  brightness_use_sunset: !input brightness_use_sunset
+  color_use_sunrise: !input color_use_sunrise
+  color_use_sunset: !input color_use_sunset
+  sunrise_offset: !input sunrise_offset
+  sunset_offset: !input sunset_offset
+  wake_time_mon: !input wake_time_mon
+  morning_time_mon: !input morning_time_mon
+  evening_time_mon: !input evening_time_mon
+  sleep_time_mon: !input sleep_time_mon
+  night_time_mon: !input night_time_mon
+  wake_time_tue: !input wake_time_tue
+  morning_time_tue: !input morning_time_tue
+  evening_time_tue: !input evening_time_tue
+  sleep_time_tue: !input sleep_time_tue
+  night_time_tue: !input night_time_tue
+  wake_time_wed: !input wake_time_wed
+  morning_time_wed: !input morning_time_wed
+  evening_time_wed: !input evening_time_wed
+  sleep_time_wed: !input sleep_time_wed
+  night_time_wed: !input night_time_wed
+  wake_time_thu: !input wake_time_thu
+  morning_time_thu: !input morning_time_thu
+  evening_time_thu: !input evening_time_thu
+  sleep_time_thu: !input sleep_time_thu
+  night_time_thu: !input night_time_thu
+  wake_time_fri: !input wake_time_fri
+  morning_time_fri: !input morning_time_fri
+  evening_time_fri: !input evening_time_fri
+  sleep_time_fri: !input sleep_time_fri
+  night_time_fri: !input night_time_fri
+  wake_time_sat: !input wake_time_sat
+  morning_time_sat: !input morning_time_sat
+  evening_time_sat: !input evening_time_sat
+  sleep_time_sat: !input sleep_time_sat
+  night_time_sat: !input night_time_sat
+  wake_time_sun: !input wake_time_sun
+  morning_time_sun: !input morning_time_sun
+  evening_time_sun: !input evening_time_sun
+  sleep_time_sun: !input sleep_time_sun
+  night_time_sun: !input night_time_sun
+  wake_time: >-
+    {% set day = now().weekday() %}
+    {% if day == 0 %}{{ wake_time_mon }}
+    {% elif day == 1 %}{{ wake_time_tue }}
+    {% elif day == 2 %}{{ wake_time_wed }}
+    {% elif day == 3 %}{{ wake_time_thu }}
+    {% elif day == 4 %}{{ wake_time_fri }}
+    {% elif day == 5 %}{{ wake_time_sat }}
+    {% else %}{{ wake_time_sun }}{% endif %}
+  morning_time: >-
+    {% set day = now().weekday() %}
+    {% if day == 0 %}{{ morning_time_mon }}
+    {% elif day == 1 %}{{ morning_time_tue }}
+    {% elif day == 2 %}{{ morning_time_wed }}
+    {% elif day == 3 %}{{ morning_time_thu }}
+    {% elif day == 4 %}{{ morning_time_fri }}
+    {% elif day == 5 %}{{ morning_time_sat }}
+    {% else %}{{ morning_time_sun }}{% endif %}
+  evening_time: >-
+    {% set day = now().weekday() %}
+    {% if day == 0 %}{{ evening_time_mon }}
+    {% elif day == 1 %}{{ evening_time_tue }}
+    {% elif day == 2 %}{{ evening_time_wed }}
+    {% elif day == 3 %}{{ evening_time_thu }}
+    {% elif day == 4 %}{{ evening_time_fri }}
+    {% elif day == 5 %}{{ evening_time_sat }}
+    {% else %}{{ evening_time_sun }}{% endif %}
+  sleep_time: >-
+    {% set day = now().weekday() %}
+    {% if day == 0 %}{{ sleep_time_mon }}
+    {% elif day == 1 %}{{ sleep_time_tue }}
+    {% elif day == 2 %}{{ sleep_time_wed }}
+    {% elif day == 3 %}{{ sleep_time_thu }}
+    {% elif day == 4 %}{{ sleep_time_fri }}
+    {% elif day == 5 %}{{ sleep_time_sat }}
+    {% else %}{{ sleep_time_sun }}{% endif %}
+  night_time: >-
+    {% set day = now().weekday() %}
+    {% if day == 0 %}{{ night_time_mon }}
+    {% elif day == 1 %}{{ night_time_tue }}
+    {% elif day == 2 %}{{ night_time_wed }}
+    {% elif day == 3 %}{{ night_time_thu }}
+    {% elif day == 4 %}{{ night_time_fri }}
+    {% elif day == 5 %}{{ night_time_sat }}
+    {% else %}{{ night_time_sun }}{% endif %}
+  calculated_brightness: >-
+    {% set now_ts = now().timestamp() %}
+    {% set today_midnight = today_at('00:00').timestamp() %}
+    {% set next_midnight = today_midnight + 86400 %}
+
+    {# Parse times #}
+    {% set wake_parts = wake_time.split(':') %}
+    {% set wake_ts = today_at(wake_parts[0] ~ ':' ~ wake_parts[1]).timestamp() %}
+    {% set morning_parts = morning_time.split(':') %}
+    {% set morning_ts = today_at(morning_parts[0] ~ ':' ~ morning_parts[1]).timestamp() %}
+    {% set evening_parts = evening_time.split(':') %}
+    {% set evening_ts = today_at(evening_parts[0] ~ ':' ~ evening_parts[1]).timestamp() %}
+    {% set sleep_parts = sleep_time.split(':') %}
+    {% set sleep_ts = today_at(sleep_parts[0] ~ ':' ~ sleep_parts[1]).timestamp() %}
+    {% set night_parts = night_time.split(':') %}
+    {% set night_ts = today_at(night_parts[0] ~ ':' ~ night_parts[1]).timestamp() %}
+
+    {# Handle night_time being after midnight (e.g., 00:30) #}
+    {% if night_ts <= sleep_ts %}
+      {% set night_ts = night_ts + 86400 %}
+    {% endif %}
+
+    {# Get sun times #}
+    {% set next_sunrise = (state_attr('sun.sun', 'next_rising') | as_datetime).timestamp() %}
+    {% set next_sunset = (state_attr('sun.sun', 'next_setting') | as_datetime).timestamp() %}
+    {% set today_sunrise = next_sunrise if next_sunrise < next_midnight else next_sunrise - 86400 %}
+    {% set today_sunset = next_sunset if next_sunset < next_midnight else next_sunset - 86400 %}
+    {% set sunrise_ts = today_sunrise + (sunrise_offset | int * 60) %}
+    {% set sunset_ts = today_sunset + (sunset_offset | int * 60) %}
+
+    {# Determine morning ramp start #}
+    {# With sunrise tracking: start at later of wake_time or sunrise #}
+    {# Without sunrise tracking: start at wake_time #}
+    {% if brightness_use_sunrise %}
+      {% set morning_start = [wake_ts, sunrise_ts] | max %}
+    {% else %}
+      {% set morning_start = wake_ts %}
+    {% endif %}
+
+    {# Morning ramp ends at morning_time #}
+    {% set morning_end = morning_ts %}
+
+    {# Determine evening ramp start #}
+    {% if brightness_use_sunset and sunset_ts < evening_ts %}
+      {% set evening_start = sunset_ts %}
+    {% else %}
+      {% set evening_start = evening_ts %}
+    {% endif %}
+
+    {# Calculate brightness #}
+    {% if now_ts < morning_start %}
+      {{ night_brightness }}
+    {% elif now_ts < morning_end %}
+      {% set p = (now_ts - morning_start) / (morning_end - morning_start) %}
+      {% set p = [0, [1, p] | min] | max %}
+      {{ (night_brightness + (max_brightness - night_brightness) * p) | round(0) }}
+    {% elif now_ts < evening_start %}
+      {{ max_brightness }}
+    {% elif now_ts < sleep_ts %}
+      {% set p = (now_ts - evening_start) / (sleep_ts - evening_start) %}
+      {% set p = [0, [1, p] | min] | max %}
+      {{ (max_brightness - (max_brightness - min_brightness) * p) | round(0) }}
+    {% elif now_ts < night_ts %}
+      {% set p = (now_ts - sleep_ts) / (night_ts - sleep_ts) %}
+      {% set p = [0, [1, p] | min] | max %}
+      {{ (min_brightness - (min_brightness - night_brightness) * p) | round(0) }}
+    {% else %}
+      {{ night_brightness }}
+    {% endif %}
+  calculated_color_temp: >-
+    {% set now_ts = now().timestamp() %}
+    {% set today_midnight = today_at('00:00').timestamp() %}
+    {% set next_midnight = today_midnight + 86400 %}
+
+    {# Parse times #}
+    {% set wake_parts = wake_time.split(':') %}
+    {% set wake_ts = today_at(wake_parts[0] ~ ':' ~ wake_parts[1]).timestamp() %}
+    {% set morning_parts = morning_time.split(':') %}
+    {% set morning_ts = today_at(morning_parts[0] ~ ':' ~ morning_parts[1]).timestamp() %}
+    {% set evening_parts = evening_time.split(':') %}
+    {% set evening_ts = today_at(evening_parts[0] ~ ':' ~ evening_parts[1]).timestamp() %}
+    {% set sleep_parts = sleep_time.split(':') %}
+    {% set sleep_ts = today_at(sleep_parts[0] ~ ':' ~ sleep_parts[1]).timestamp() %}
+    {% set night_parts = night_time.split(':') %}
+    {% set night_ts = today_at(night_parts[0] ~ ':' ~ night_parts[1]).timestamp() %}
+
+    {# Handle night_time being after midnight (e.g., 00:30) #}
+    {% if night_ts <= sleep_ts %}
+      {% set night_ts = night_ts + 86400 %}
+    {% endif %}
+
+    {# Get sun times #}
+    {% set next_sunrise = (state_attr('sun.sun', 'next_rising') | as_datetime).timestamp() %}
+    {% set next_sunset = (state_attr('sun.sun', 'next_setting') | as_datetime).timestamp() %}
+    {% set today_sunrise = next_sunrise if next_sunrise < next_midnight else next_sunrise - 86400 %}
+    {% set today_sunset = next_sunset if next_sunset < next_midnight else next_sunset - 86400 %}
+    {% set sunrise_ts = today_sunrise + (sunrise_offset | int * 60) %}
+    {% set sunset_ts = today_sunset + (sunset_offset | int * 60) %}
+
+    {# Determine morning ramp start #}
+    {# With sunrise tracking: start at later of wake_time or sunrise #}
+    {# Without sunrise tracking: start at wake_time #}
+    {% if color_use_sunrise %}
+      {% set morning_start = [wake_ts, sunrise_ts] | max %}
+    {% else %}
+      {% set morning_start = wake_ts %}
+    {% endif %}
+
+    {# Morning ramp ends at morning_time #}
+    {% set morning_end = morning_ts %}
+
+    {# Determine evening ramp start #}
+    {% if color_use_sunset and sunset_ts < evening_ts %}
+      {% set evening_start = sunset_ts %}
+    {% else %}
+      {% set evening_start = evening_ts %}
+    {% endif %}
+
+    {# Calculate color temp #}
+    {% if now_ts < morning_start %}
+      {{ night_color_temp }}
+    {% elif now_ts < morning_end %}
+      {% set p = (now_ts - morning_start) / (morning_end - morning_start) %}
+      {% set p = [0, [1, p] | min] | max %}
+      {{ (night_color_temp + (max_color_temp - night_color_temp) * p) | round(0) }}
+    {% elif now_ts < evening_start %}
+      {{ max_color_temp }}
+    {% elif now_ts < sleep_ts %}
+      {% set p = (now_ts - evening_start) / (sleep_ts - evening_start) %}
+      {% set p = [0, [1, p] | min] | max %}
+      {{ (max_color_temp - (max_color_temp - min_color_temp) * p) | round(0) }}
+    {% elif now_ts < night_ts %}
+      {% set p = (now_ts - sleep_ts) / (night_ts - sleep_ts) %}
+      {% set p = [0, [1, p] | min] | max %}
+      {{ (min_color_temp - (min_color_temp - night_color_temp) * p) | round(0) }}
+    {% else %}
+      {{ night_color_temp }}
+    {% endif %}
+
+triggers:
+  - trigger: time_pattern
+    minutes: "/5"
+  - trigger: state
+    entity_id: sun.sun
+  - trigger: homeassistant
+    event: start
+
+actions:
+  - action: input_number.set_value
+    target:
+      entity_id: "{{ brightness_helper }}"
+    data:
+      value: "{{ calculated_brightness }}"
+  - action: input_number.set_value
+    target:
+      entity_id: "{{ color_temp_helper }}"
+    data:
+      value: "{{ calculated_color_temp }}"
