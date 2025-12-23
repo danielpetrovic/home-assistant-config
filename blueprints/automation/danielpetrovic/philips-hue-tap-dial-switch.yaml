@@ -275,57 +275,6 @@ blueprint:
               entity:
                 - domain:
                     - light
-        button_1_light_schedule:
-          name: Schedule
-          default: []
-          description: |
-            `optional` `entity`
-
-            Schedule helper for time-based brightness and color adjustments. **Schedules can be reused between lights.**
-          selector:
-            entity:
-              filter:
-                - domain:
-                    - schedule
-              multiple: false
-        button_1_light_brightness:
-          name: Default Brightness
-          default: 100
-          description: |
-            `optional` `number`
-
-            Default brightness percentage (fallback when schedule is not set or lacks this attribute).
-          selector:
-            number:
-              min: 0
-              max: 100
-              step: 5
-              unit_of_measurement: "%"
-              mode: slider
-        button_1_light_color:
-          name: Default Color Temperature
-          default: 3333
-          description: |
-            `optional` `color_temp`
-
-            Default color temperature in Kelvin (fallback when schedule is not set or lacks this attribute).
-          selector:
-            color_temp:
-              unit: kelvin
-              min: 2000
-        button_1_light_transition:
-          name: Default Transition
-          default: 1
-          description: |
-            `optional` `number`
-
-            Default transition duration in seconds (fallback when schedule is not set or lacks this attribute).
-          selector:
-            number:
-              min: 0
-              max: 10
-              step: 1
-              mode: slider
         button_1_short_release_light_mode:
           name: Short Release Mode
           default: turn_on
@@ -389,45 +338,124 @@ blueprint:
               max: 10
               step: 1
               mode: slider
-        button_1_short_release_reset:
-          name: Reset to Schedule/Defaults on Short Release
-          default: true
-          description: |
-            `optional` `boolean`
-
-            Apply schedule/default brightness and color when turning on. Disable to maintain current light settings.
-          selector:
-            boolean: {}
-        button_1_long_release_reset:
-          name: Reset to Schedule/Defaults on Long Release
-          default: true
-          description: |
-            `optional` `boolean`
-
-            Apply schedule/default brightness and color on long release. Disable to maintain current light settings.
-          selector:
-            boolean: {}
-    button_1_auto_adjust:
-      name: Button 1 - Auto-Adjust
-      icon: mdi:auto-fix
+    button_1_light_settings:
+      name: Button 1 - Light Mode Settings
+      icon: mdi:cog
       collapsed: true
       input:
-        button_1_auto_adjust:
-          name: Auto-Adjust on Schedule Change
+        button_1_light_adjustment_mode:
+          name: Light Adjustment Mode
+          default: static
+          description: |
+            `optional` `select`
+
+            Choose where brightness and color temperature values come from:
+            - **Static**: Use the default values configured below
+            - **Adaptive**: Use input_number helpers updated by the Adaptive Lighting Scheduler blueprint
+            - **Schedule**: Use a schedule entity for time-based adjustments
+          selector:
+            select:
+              options:
+                - label: "Static"
+                  value: static
+                - label: "Adaptive"
+                  value: adaptive
+                - label: "Schedule"
+                  value: schedule
+              multiple: false
+        button_1_light_brightness:
+          name: Default Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Default brightness percentage (fallback when adaptive/schedule is not set or lacks this attribute).
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_1_light_color:
+          name: Default Color Temperature
+          default: 3333
+          description: |
+            `optional` `color_temp`
+
+            Default color temperature in Kelvin (fallback when adaptive/schedule is not set or lacks this attribute).
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_1_light_transition:
+          name: Default Transition
+          default: 1
+          description: |
+            `optional` `number`
+
+            Default transition duration in seconds (fallback when schedule is not set or lacks this attribute).
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
+              mode: slider
+        button_1_light_adaptive_brightness:
+          name: Adaptive Brightness Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            Input number helper containing adaptive brightness (0-100). Only used when Light Adjustment Mode is "Adaptive".
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_number
+              multiple: false
+        button_1_light_adaptive_color_temp:
+          name: Adaptive Color Temperature Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            Input number helper containing adaptive color temperature in Kelvin. Only used when Light Adjustment Mode is "Adaptive".
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_number
+              multiple: false
+        button_1_light_schedule:
+          name: Schedule Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            Schedule helper for time-based brightness and color adjustments. Only used when Light Adjustment Mode is "Schedule". **Schedules can be reused between lights.**
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - schedule
+              multiple: false
+        button_1_light_auto_adjust:
+          name: Auto-Adjust on Value Change
           default: false
           description: |
             `optional` `boolean`
 
-            Automatically update lights when schedule changes. Only affects currently on lights.
+            Automatically update lights when adaptive or schedule values change. Only affects currently on lights.
           selector:
             boolean: {}
-        button_1_auto_adjust_transition:
+        button_1_light_auto_adjust_transition:
           name: Auto-Adjust Transition
           default: 300
           description: |
             `optional` `number`
 
-            Transition duration in seconds when auto-adjusting lights on schedule change.
+            Transition duration in seconds when auto-adjusting lights.
           selector:
             number:
               min: 0
@@ -435,6 +463,24 @@ blueprint:
               step: 30
               unit_of_measurement: "s"
               mode: slider
+        button_1_short_release_reset:
+          name: Reset to Defaults on Short Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply brightness and color values when turning on. Disable to maintain current light settings.
+          selector:
+            boolean: {}
+        button_1_long_release_reset:
+          name: Reset to Defaults on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply brightness and color values on long release. Disable to maintain current light settings.
+          selector:
+            boolean: {}
     button_1_media:
       name: Button 1 - Media Mode
       icon: mdi:play-box
@@ -766,64 +812,13 @@ blueprint:
               entity:
                 - domain:
                     - light
-        button_2_light_schedule:
-          name: Schedule
-          default: []
-          description: |
-            `optional` `entity`
-
-            Schedule helper for time-based brightness and color adjustments.
-          selector:
-            entity:
-              filter:
-                - domain:
-                    - schedule
-              multiple: false
-        button_2_light_brightness:
-          name: Default Brightness
-          default: 100
-          description: |
-            `optional` `number`
-
-            Default brightness percentage.
-          selector:
-            number:
-              min: 0
-              max: 100
-              step: 5
-              unit_of_measurement: "%"
-              mode: slider
-        button_2_light_color:
-          name: Default Color Temperature
-          default: 3333
-          description: |
-            `optional` `color_temp`
-
-            Default color temperature in Kelvin.
-          selector:
-            color_temp:
-              unit: kelvin
-              min: 2000
-        button_2_light_transition:
-          name: Default Transition
-          default: 1
-          description: |
-            `optional` `number`
-
-            Default transition duration in seconds.
-          selector:
-            number:
-              min: 0
-              max: 10
-              step: 1
-              mode: slider
         button_2_short_release_light_mode:
           name: Short Release Mode
           default: turn_on
           description: |
             `optional` `select`
 
-            Light actions for short release.
+            Light actions for short release. Multiple selections trigger simultaneously.
           selector:
             select:
               options:
@@ -841,7 +836,7 @@ blueprint:
           description: |
             `optional` `select`
 
-            Light actions for long release.
+            Light actions for long release. Multiple selections trigger simultaneously.
           selector:
             select:
               options:
@@ -859,7 +854,7 @@ blueprint:
           description: |
             `optional` `select`
 
-            Light actions for dial rotation.
+            Light actions for dial rotation. Multiple selections trigger simultaneously.
           selector:
             select:
               options:
@@ -880,45 +875,124 @@ blueprint:
               max: 10
               step: 1
               mode: slider
-        button_2_short_release_reset:
-          name: Reset to Schedule/Defaults on Short Release
-          default: true
-          description: |
-            `optional` `boolean`
-
-            Apply schedule/default brightness and color when turning on. Disable to maintain current light settings.
-          selector:
-            boolean: {}
-        button_2_long_release_reset:
-          name: Reset to Schedule/Defaults on Long Release
-          default: true
-          description: |
-            `optional` `boolean`
-
-            Apply schedule/default brightness and color on long release. Disable to maintain current light settings.
-          selector:
-            boolean: {}
-    button_2_auto_adjust:
-      name: Button 2 - Auto-Adjust
-      icon: mdi:auto-fix
+    button_2_light_settings:
+      name: Button 2 - Light Mode Settings
+      icon: mdi:cog
       collapsed: true
       input:
-        button_2_auto_adjust:
-          name: Auto-Adjust on Schedule Change
+        button_2_light_adjustment_mode:
+          name: Light Adjustment Mode
+          default: static
+          description: |
+            `optional` `select`
+
+            Choose where brightness and color temperature values come from:
+            - **Static**: Use the default values configured below
+            - **Adaptive**: Use input_number helpers updated by the Adaptive Lighting Scheduler blueprint
+            - **Schedule**: Use a schedule entity for time-based adjustments
+          selector:
+            select:
+              options:
+                - label: "Static"
+                  value: static
+                - label: "Adaptive"
+                  value: adaptive
+                - label: "Schedule"
+                  value: schedule
+              multiple: false
+        button_2_light_brightness:
+          name: Default Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Default brightness percentage (fallback when adaptive/schedule is not set or lacks this attribute).
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_2_light_color:
+          name: Default Color Temperature
+          default: 3333
+          description: |
+            `optional` `color_temp`
+
+            Default color temperature in Kelvin (fallback when adaptive/schedule is not set or lacks this attribute).
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_2_light_transition:
+          name: Default Transition
+          default: 1
+          description: |
+            `optional` `number`
+
+            Default transition duration in seconds (fallback when schedule is not set or lacks this attribute).
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
+              mode: slider
+        button_2_light_adaptive_brightness:
+          name: Adaptive Brightness Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            Input number helper containing adaptive brightness (0-100). Only used when Light Adjustment Mode is "Adaptive".
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_number
+              multiple: false
+        button_2_light_adaptive_color_temp:
+          name: Adaptive Color Temperature Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            Input number helper containing adaptive color temperature in Kelvin. Only used when Light Adjustment Mode is "Adaptive".
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_number
+              multiple: false
+        button_2_light_schedule:
+          name: Schedule Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            Schedule helper for time-based brightness and color adjustments. Only used when Light Adjustment Mode is "Schedule". **Schedules can be reused between lights.**
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - schedule
+              multiple: false
+        button_2_light_auto_adjust:
+          name: Auto-Adjust on Value Change
           default: false
           description: |
             `optional` `boolean`
 
-            Automatically update lights when schedule changes. Only affects currently on lights.
+            Automatically update lights when adaptive or schedule values change. Only affects currently on lights.
           selector:
             boolean: {}
-        button_2_auto_adjust_transition:
+        button_2_light_auto_adjust_transition:
           name: Auto-Adjust Transition
           default: 300
           description: |
             `optional` `number`
 
-            Transition duration in seconds when auto-adjusting lights on schedule change.
+            Transition duration in seconds when auto-adjusting lights.
           selector:
             number:
               min: 0
@@ -926,6 +1000,24 @@ blueprint:
               step: 30
               unit_of_measurement: "s"
               mode: slider
+        button_2_short_release_reset:
+          name: Reset to Defaults on Short Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply brightness and color values when turning on. Disable to maintain current light settings.
+          selector:
+            boolean: {}
+        button_2_long_release_reset:
+          name: Reset to Defaults on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply brightness and color values on long release. Disable to maintain current light settings.
+          selector:
+            boolean: {}
     button_2_media:
       name: Button 2 - Media Mode
       icon: mdi:play-box
@@ -1257,64 +1349,13 @@ blueprint:
               entity:
                 - domain:
                     - light
-        button_3_light_schedule:
-          name: Schedule
-          default: []
-          description: |
-            `optional` `entity`
-
-            Schedule helper for time-based brightness and color adjustments.
-          selector:
-            entity:
-              filter:
-                - domain:
-                    - schedule
-              multiple: false
-        button_3_light_brightness:
-          name: Default Brightness
-          default: 100
-          description: |
-            `optional` `number`
-
-            Default brightness percentage.
-          selector:
-            number:
-              min: 0
-              max: 100
-              step: 5
-              unit_of_measurement: "%"
-              mode: slider
-        button_3_light_color:
-          name: Default Color Temperature
-          default: 3333
-          description: |
-            `optional` `color_temp`
-
-            Default color temperature in Kelvin.
-          selector:
-            color_temp:
-              unit: kelvin
-              min: 2000
-        button_3_light_transition:
-          name: Default Transition
-          default: 1
-          description: |
-            `optional` `number`
-
-            Default transition duration in seconds.
-          selector:
-            number:
-              min: 0
-              max: 10
-              step: 1
-              mode: slider
         button_3_short_release_light_mode:
           name: Short Release Mode
           default: turn_on
           description: |
             `optional` `select`
 
-            Light actions for short release.
+            Light actions for short release. Multiple selections trigger simultaneously.
           selector:
             select:
               options:
@@ -1332,7 +1373,7 @@ blueprint:
           description: |
             `optional` `select`
 
-            Light actions for long release.
+            Light actions for long release. Multiple selections trigger simultaneously.
           selector:
             select:
               options:
@@ -1350,7 +1391,7 @@ blueprint:
           description: |
             `optional` `select`
 
-            Light actions for dial rotation.
+            Light actions for dial rotation. Multiple selections trigger simultaneously.
           selector:
             select:
               options:
@@ -1371,45 +1412,124 @@ blueprint:
               max: 10
               step: 1
               mode: slider
-        button_3_short_release_reset:
-          name: Reset to Schedule/Defaults on Short Release
-          default: true
-          description: |
-            `optional` `boolean`
-
-            Apply schedule/default brightness and color when turning on. Disable to maintain current light settings.
-          selector:
-            boolean: {}
-        button_3_long_release_reset:
-          name: Reset to Schedule/Defaults on Long Release
-          default: true
-          description: |
-            `optional` `boolean`
-
-            Apply schedule/default brightness and color on long release. Disable to maintain current light settings.
-          selector:
-            boolean: {}
-    button_3_auto_adjust:
-      name: Button 3 - Auto-Adjust
-      icon: mdi:auto-fix
+    button_3_light_settings:
+      name: Button 3 - Light Mode Settings
+      icon: mdi:cog
       collapsed: true
       input:
-        button_3_auto_adjust:
-          name: Auto-Adjust on Schedule Change
+        button_3_light_adjustment_mode:
+          name: Light Adjustment Mode
+          default: static
+          description: |
+            `optional` `select`
+
+            Choose where brightness and color temperature values come from:
+            - **Static**: Use the default values configured below
+            - **Adaptive**: Use input_number helpers updated by the Adaptive Lighting Scheduler blueprint
+            - **Schedule**: Use a schedule entity for time-based adjustments
+          selector:
+            select:
+              options:
+                - label: "Static"
+                  value: static
+                - label: "Adaptive"
+                  value: adaptive
+                - label: "Schedule"
+                  value: schedule
+              multiple: false
+        button_3_light_brightness:
+          name: Default Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Default brightness percentage (fallback when adaptive/schedule is not set or lacks this attribute).
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_3_light_color:
+          name: Default Color Temperature
+          default: 3333
+          description: |
+            `optional` `color_temp`
+
+            Default color temperature in Kelvin (fallback when adaptive/schedule is not set or lacks this attribute).
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_3_light_transition:
+          name: Default Transition
+          default: 1
+          description: |
+            `optional` `number`
+
+            Default transition duration in seconds (fallback when schedule is not set or lacks this attribute).
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
+              mode: slider
+        button_3_light_adaptive_brightness:
+          name: Adaptive Brightness Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            Input number helper containing adaptive brightness (0-100). Only used when Light Adjustment Mode is "Adaptive".
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_number
+              multiple: false
+        button_3_light_adaptive_color_temp:
+          name: Adaptive Color Temperature Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            Input number helper containing adaptive color temperature in Kelvin. Only used when Light Adjustment Mode is "Adaptive".
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_number
+              multiple: false
+        button_3_light_schedule:
+          name: Schedule Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            Schedule helper for time-based brightness and color adjustments. Only used when Light Adjustment Mode is "Schedule". **Schedules can be reused between lights.**
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - schedule
+              multiple: false
+        button_3_light_auto_adjust:
+          name: Auto-Adjust on Value Change
           default: false
           description: |
             `optional` `boolean`
 
-            Automatically update lights when schedule changes. Only affects currently on lights.
+            Automatically update lights when adaptive or schedule values change. Only affects currently on lights.
           selector:
             boolean: {}
-        button_3_auto_adjust_transition:
+        button_3_light_auto_adjust_transition:
           name: Auto-Adjust Transition
           default: 300
           description: |
             `optional` `number`
 
-            Transition duration in seconds when auto-adjusting lights on schedule change.
+            Transition duration in seconds when auto-adjusting lights.
           selector:
             number:
               min: 0
@@ -1417,6 +1537,24 @@ blueprint:
               step: 30
               unit_of_measurement: "s"
               mode: slider
+        button_3_short_release_reset:
+          name: Reset to Defaults on Short Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply brightness and color values when turning on. Disable to maintain current light settings.
+          selector:
+            boolean: {}
+        button_3_long_release_reset:
+          name: Reset to Defaults on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply brightness and color values on long release. Disable to maintain current light settings.
+          selector:
+            boolean: {}
     button_3_media:
       name: Button 3 - Media Mode
       icon: mdi:play-box
@@ -1748,64 +1886,13 @@ blueprint:
               entity:
                 - domain:
                     - light
-        button_4_light_schedule:
-          name: Schedule
-          default: []
-          description: |
-            `optional` `entity`
-
-            Schedule helper for time-based brightness and color adjustments.
-          selector:
-            entity:
-              filter:
-                - domain:
-                    - schedule
-              multiple: false
-        button_4_light_brightness:
-          name: Default Brightness
-          default: 100
-          description: |
-            `optional` `number`
-
-            Default brightness percentage.
-          selector:
-            number:
-              min: 0
-              max: 100
-              step: 5
-              unit_of_measurement: "%"
-              mode: slider
-        button_4_light_color:
-          name: Default Color Temperature
-          default: 3333
-          description: |
-            `optional` `color_temp`
-
-            Default color temperature in Kelvin.
-          selector:
-            color_temp:
-              unit: kelvin
-              min: 2000
-        button_4_light_transition:
-          name: Default Transition
-          default: 1
-          description: |
-            `optional` `number`
-
-            Default transition duration in seconds.
-          selector:
-            number:
-              min: 0
-              max: 10
-              step: 1
-              mode: slider
         button_4_short_release_light_mode:
           name: Short Release Mode
           default: turn_on
           description: |
             `optional` `select`
 
-            Light actions for short release.
+            Light actions for short release. Multiple selections trigger simultaneously.
           selector:
             select:
               options:
@@ -1823,7 +1910,7 @@ blueprint:
           description: |
             `optional` `select`
 
-            Light actions for long release.
+            Light actions for long release. Multiple selections trigger simultaneously.
           selector:
             select:
               options:
@@ -1841,7 +1928,7 @@ blueprint:
           description: |
             `optional` `select`
 
-            Light actions for dial rotation.
+            Light actions for dial rotation. Multiple selections trigger simultaneously.
           selector:
             select:
               options:
@@ -1862,45 +1949,124 @@ blueprint:
               max: 10
               step: 1
               mode: slider
-        button_4_short_release_reset:
-          name: Reset to Schedule/Defaults on Short Release
-          default: true
-          description: |
-            `optional` `boolean`
-
-            Apply schedule/default brightness and color when turning on. Disable to maintain current light settings.
-          selector:
-            boolean: {}
-        button_4_long_release_reset:
-          name: Reset to Schedule/Defaults on Long Release
-          default: true
-          description: |
-            `optional` `boolean`
-
-            Apply schedule/default brightness and color on long release. Disable to maintain current light settings.
-          selector:
-            boolean: {}
-    button_4_auto_adjust:
-      name: Button 4 - Auto-Adjust
-      icon: mdi:auto-fix
+    button_4_light_settings:
+      name: Button 4 - Light Mode Settings
+      icon: mdi:cog
       collapsed: true
       input:
-        button_4_auto_adjust:
-          name: Auto-Adjust on Schedule Change
+        button_4_light_adjustment_mode:
+          name: Light Adjustment Mode
+          default: static
+          description: |
+            `optional` `select`
+
+            Choose where brightness and color temperature values come from:
+            - **Static**: Use the default values configured below
+            - **Adaptive**: Use input_number helpers updated by the Adaptive Lighting Scheduler blueprint
+            - **Schedule**: Use a schedule entity for time-based adjustments
+          selector:
+            select:
+              options:
+                - label: "Static"
+                  value: static
+                - label: "Adaptive"
+                  value: adaptive
+                - label: "Schedule"
+                  value: schedule
+              multiple: false
+        button_4_light_brightness:
+          name: Default Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Default brightness percentage (fallback when adaptive/schedule is not set or lacks this attribute).
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 5
+              unit_of_measurement: "%"
+              mode: slider
+        button_4_light_color:
+          name: Default Color Temperature
+          default: 3333
+          description: |
+            `optional` `color_temp`
+
+            Default color temperature in Kelvin (fallback when adaptive/schedule is not set or lacks this attribute).
+          selector:
+            color_temp:
+              unit: kelvin
+              min: 2000
+        button_4_light_transition:
+          name: Default Transition
+          default: 1
+          description: |
+            `optional` `number`
+
+            Default transition duration in seconds (fallback when schedule is not set or lacks this attribute).
+          selector:
+            number:
+              min: 0
+              max: 10
+              step: 1
+              mode: slider
+        button_4_light_adaptive_brightness:
+          name: Adaptive Brightness Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            Input number helper containing adaptive brightness (0-100). Only used when Light Adjustment Mode is "Adaptive".
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_number
+              multiple: false
+        button_4_light_adaptive_color_temp:
+          name: Adaptive Color Temperature Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            Input number helper containing adaptive color temperature in Kelvin. Only used when Light Adjustment Mode is "Adaptive".
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_number
+              multiple: false
+        button_4_light_schedule:
+          name: Schedule Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            Schedule helper for time-based brightness and color adjustments. Only used when Light Adjustment Mode is "Schedule". **Schedules can be reused between lights.**
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - schedule
+              multiple: false
+        button_4_light_auto_adjust:
+          name: Auto-Adjust on Value Change
           default: false
           description: |
             `optional` `boolean`
 
-            Automatically update lights when schedule changes. Only affects currently on lights.
+            Automatically update lights when adaptive or schedule values change. Only affects currently on lights.
           selector:
             boolean: {}
-        button_4_auto_adjust_transition:
+        button_4_light_auto_adjust_transition:
           name: Auto-Adjust Transition
           default: 300
           description: |
             `optional` `number`
 
-            Transition duration in seconds when auto-adjusting lights on schedule change.
+            Transition duration in seconds when auto-adjusting lights.
           selector:
             number:
               min: 0
@@ -1908,6 +2074,24 @@ blueprint:
               step: 30
               unit_of_measurement: "s"
               mode: slider
+        button_4_short_release_reset:
+          name: Reset to Defaults on Short Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply brightness and color values when turning on. Disable to maintain current light settings.
+          selector:
+            boolean: {}
+        button_4_long_release_reset:
+          name: Reset to Defaults on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply brightness and color values on long release. Disable to maintain current light settings.
+          selector:
+            boolean: {}
     button_4_media:
       name: Button 4 - Media Mode
       icon: mdi:play-box
@@ -2191,23 +2375,61 @@ variables:
     {% endif %}
   button_num: "{{ command | regex_replace(find='[^1-4]', replace='') | default(states(last_pressed), true) }}"
   is_rotation: "{{ command == 'step_with_on_off' }}"
-  rotate_left: "{{ is_rotation and step_mode == 'StepMode.Down' and step_size | int != 255 }}"
-  rotate_right: "{{ is_rotation and step_mode == 'StepMode.Up' and step_size | int != 255 }}"
+  rotate_left: "{{ is_rotation and step_mode == 'StepMode.Down' and step_size | int(0) != 255 }}"
+  rotate_right: "{{ is_rotation and step_mode == 'StepMode.Up' and step_size | int(0) != 255 }}"
   # Button 1 config
   button_1_light: !input button_1_light
+  button_1_adjustment_mode: !input button_1_light_adjustment_mode
+  button_1_adaptive_brightness: !input button_1_light_adaptive_brightness
+  button_1_adaptive_color_temp: !input button_1_light_adaptive_color_temp
   button_1_schedule: !input button_1_light_schedule
   button_1_brightness_input: !input button_1_light_brightness
   button_1_color_input: !input button_1_light_color
   button_1_transition_input: !input button_1_light_transition
   button_1_brightness_pct: >-
-    {% set val = state_attr(button_1_schedule, 'brightness_pct') if button_1_schedule is string and button_1_schedule != '' else none %}
-    {{ val if val is not none else button_1_brightness_input }}
+    {% if button_1_adjustment_mode == 'adaptive' %}
+      {% if button_1_adaptive_brightness not in [none, '', []] %}
+        {{ states(button_1_adaptive_brightness) | int(button_1_brightness_input) }}
+      {% else %}
+        {{ button_1_brightness_input }}
+      {% endif %}
+    {% elif button_1_adjustment_mode == 'schedule' %}
+      {% if button_1_schedule not in [none, '', []] %}
+        {% set val = state_attr(button_1_schedule, 'brightness_pct') %}
+        {{ val if val is not none else button_1_brightness_input }}
+      {% else %}
+        {{ button_1_brightness_input }}
+      {% endif %}
+    {% else %}
+      {{ button_1_brightness_input }}
+    {% endif %}
   button_1_color_temp_kelvin: >-
-    {% set val = state_attr(button_1_schedule, 'color_temp_kelvin') if button_1_schedule is string and button_1_schedule != '' else none %}
-    {{ val if val is not none else button_1_color_input }}
+    {% if button_1_adjustment_mode == 'adaptive' %}
+      {% if button_1_adaptive_color_temp not in [none, '', []] %}
+        {{ states(button_1_adaptive_color_temp) | int(button_1_color_input) }}
+      {% else %}
+        {{ button_1_color_input }}
+      {% endif %}
+    {% elif button_1_adjustment_mode == 'schedule' %}
+      {% if button_1_schedule not in [none, '', []] %}
+        {% set val = state_attr(button_1_schedule, 'color_temp_kelvin') %}
+        {{ val if val is not none else button_1_color_input }}
+      {% else %}
+        {{ button_1_color_input }}
+      {% endif %}
+    {% else %}
+      {{ button_1_color_input }}
+    {% endif %}
   button_1_transition: >-
-    {% set val = state_attr(button_1_schedule, 'transition') if button_1_schedule is string and button_1_schedule != '' else none %}
-    {{ val if val is not none else button_1_transition_input }}
+    {% if button_1_adjustment_mode == 'schedule' %}
+      {% if button_1_schedule not in [none, '', []] %}
+        {{ state_attr(button_1_schedule, 'transition') | default(button_1_transition_input, true) | float }}
+      {% else %}
+        {{ button_1_transition_input | float }}
+      {% endif %}
+    {% else %}
+      {{ button_1_transition_input | float }}
+    {% endif %}
   button_1_short_release_light_mode: !input button_1_short_release_light_mode
   button_1_long_release_light_mode: !input button_1_long_release_light_mode
   button_1_rotate_light_mode: !input button_1_rotate_light_mode
@@ -2230,8 +2452,8 @@ variables:
   button_1_step_size: "{{ (button_1_dimming_speed * 2.5) | int }}"
   button_1_short_release_reset: !input button_1_short_release_reset
   button_1_long_release_reset: !input button_1_long_release_reset
-  button_1_auto_adjust: !input button_1_auto_adjust
-  button_1_auto_adjust_transition: !input button_1_auto_adjust_transition
+  button_1_light_auto_adjust: !input button_1_light_auto_adjust
+  button_1_light_auto_adjust_transition: !input button_1_light_auto_adjust_transition
   button_1_light_entities: >-
     {% set ns = namespace(entities=[]) %}
     {% if button_1_light.entity_id is defined and button_1_light.entity_id | length > 0 %}
@@ -2254,19 +2476,57 @@ variables:
     {{ ns.entities }}
   # Button 2 config
   button_2_light: !input button_2_light
+  button_2_adjustment_mode: !input button_2_light_adjustment_mode
+  button_2_adaptive_brightness: !input button_2_light_adaptive_brightness
+  button_2_adaptive_color_temp: !input button_2_light_adaptive_color_temp
   button_2_schedule: !input button_2_light_schedule
   button_2_brightness_input: !input button_2_light_brightness
   button_2_color_input: !input button_2_light_color
   button_2_transition_input: !input button_2_light_transition
   button_2_brightness_pct: >-
-    {% set val = state_attr(button_2_schedule, 'brightness_pct') if button_2_schedule is string and button_2_schedule != '' else none %}
-    {{ val if val is not none else button_2_brightness_input }}
+    {% if button_2_adjustment_mode == 'adaptive' %}
+      {% if button_2_adaptive_brightness not in [none, '', []] %}
+        {{ states(button_2_adaptive_brightness) | int(button_2_brightness_input) }}
+      {% else %}
+        {{ button_2_brightness_input }}
+      {% endif %}
+    {% elif button_2_adjustment_mode == 'schedule' %}
+      {% if button_2_schedule not in [none, '', []] %}
+        {% set val = state_attr(button_2_schedule, 'brightness_pct') %}
+        {{ val if val is not none else button_2_brightness_input }}
+      {% else %}
+        {{ button_2_brightness_input }}
+      {% endif %}
+    {% else %}
+      {{ button_2_brightness_input }}
+    {% endif %}
   button_2_color_temp_kelvin: >-
-    {% set val = state_attr(button_2_schedule, 'color_temp_kelvin') if button_2_schedule is string and button_2_schedule != '' else none %}
-    {{ val if val is not none else button_2_color_input }}
+    {% if button_2_adjustment_mode == 'adaptive' %}
+      {% if button_2_adaptive_color_temp not in [none, '', []] %}
+        {{ states(button_2_adaptive_color_temp) | int(button_2_color_input) }}
+      {% else %}
+        {{ button_2_color_input }}
+      {% endif %}
+    {% elif button_2_adjustment_mode == 'schedule' %}
+      {% if button_2_schedule not in [none, '', []] %}
+        {% set val = state_attr(button_2_schedule, 'color_temp_kelvin') %}
+        {{ val if val is not none else button_2_color_input }}
+      {% else %}
+        {{ button_2_color_input }}
+      {% endif %}
+    {% else %}
+      {{ button_2_color_input }}
+    {% endif %}
   button_2_transition: >-
-    {% set val = state_attr(button_2_schedule, 'transition') if button_2_schedule is string and button_2_schedule != '' else none %}
-    {{ val if val is not none else button_2_transition_input }}
+    {% if button_2_adjustment_mode == 'schedule' %}
+      {% if button_2_schedule not in [none, '', []] %}
+        {{ state_attr(button_2_schedule, 'transition') | default(button_2_transition_input, true) | float }}
+      {% else %}
+        {{ button_2_transition_input | float }}
+      {% endif %}
+    {% else %}
+      {{ button_2_transition_input | float }}
+    {% endif %}
   button_2_short_release_light_mode: !input button_2_short_release_light_mode
   button_2_long_release_light_mode: !input button_2_long_release_light_mode
   button_2_rotate_light_mode: !input button_2_rotate_light_mode
@@ -2289,8 +2549,8 @@ variables:
   button_2_step_size: "{{ (button_2_dimming_speed * 2.5) | int }}"
   button_2_short_release_reset: !input button_2_short_release_reset
   button_2_long_release_reset: !input button_2_long_release_reset
-  button_2_auto_adjust: !input button_2_auto_adjust
-  button_2_auto_adjust_transition: !input button_2_auto_adjust_transition
+  button_2_light_auto_adjust: !input button_2_light_auto_adjust
+  button_2_light_auto_adjust_transition: !input button_2_light_auto_adjust_transition
   button_2_light_entities: >-
     {% set ns = namespace(entities=[]) %}
     {% if button_2_light.entity_id is defined and button_2_light.entity_id | length > 0 %}
@@ -2313,19 +2573,57 @@ variables:
     {{ ns.entities }}
   # Button 3 config
   button_3_light: !input button_3_light
+  button_3_adjustment_mode: !input button_3_light_adjustment_mode
+  button_3_adaptive_brightness: !input button_3_light_adaptive_brightness
+  button_3_adaptive_color_temp: !input button_3_light_adaptive_color_temp
   button_3_schedule: !input button_3_light_schedule
   button_3_brightness_input: !input button_3_light_brightness
   button_3_color_input: !input button_3_light_color
   button_3_transition_input: !input button_3_light_transition
   button_3_brightness_pct: >-
-    {% set val = state_attr(button_3_schedule, 'brightness_pct') if button_3_schedule is string and button_3_schedule != '' else none %}
-    {{ val if val is not none else button_3_brightness_input }}
+    {% if button_3_adjustment_mode == 'adaptive' %}
+      {% if button_3_adaptive_brightness not in [none, '', []] %}
+        {{ states(button_3_adaptive_brightness) | int(button_3_brightness_input) }}
+      {% else %}
+        {{ button_3_brightness_input }}
+      {% endif %}
+    {% elif button_3_adjustment_mode == 'schedule' %}
+      {% if button_3_schedule not in [none, '', []] %}
+        {% set val = state_attr(button_3_schedule, 'brightness_pct') %}
+        {{ val if val is not none else button_3_brightness_input }}
+      {% else %}
+        {{ button_3_brightness_input }}
+      {% endif %}
+    {% else %}
+      {{ button_3_brightness_input }}
+    {% endif %}
   button_3_color_temp_kelvin: >-
-    {% set val = state_attr(button_3_schedule, 'color_temp_kelvin') if button_3_schedule is string and button_3_schedule != '' else none %}
-    {{ val if val is not none else button_3_color_input }}
+    {% if button_3_adjustment_mode == 'adaptive' %}
+      {% if button_3_adaptive_color_temp not in [none, '', []] %}
+        {{ states(button_3_adaptive_color_temp) | int(button_3_color_input) }}
+      {% else %}
+        {{ button_3_color_input }}
+      {% endif %}
+    {% elif button_3_adjustment_mode == 'schedule' %}
+      {% if button_3_schedule not in [none, '', []] %}
+        {% set val = state_attr(button_3_schedule, 'color_temp_kelvin') %}
+        {{ val if val is not none else button_3_color_input }}
+      {% else %}
+        {{ button_3_color_input }}
+      {% endif %}
+    {% else %}
+      {{ button_3_color_input }}
+    {% endif %}
   button_3_transition: >-
-    {% set val = state_attr(button_3_schedule, 'transition') if button_3_schedule is string and button_3_schedule != '' else none %}
-    {{ val if val is not none else button_3_transition_input }}
+    {% if button_3_adjustment_mode == 'schedule' %}
+      {% if button_3_schedule not in [none, '', []] %}
+        {{ state_attr(button_3_schedule, 'transition') | default(button_3_transition_input, true) | float }}
+      {% else %}
+        {{ button_3_transition_input | float }}
+      {% endif %}
+    {% else %}
+      {{ button_3_transition_input | float }}
+    {% endif %}
   button_3_short_release_light_mode: !input button_3_short_release_light_mode
   button_3_long_release_light_mode: !input button_3_long_release_light_mode
   button_3_rotate_light_mode: !input button_3_rotate_light_mode
@@ -2348,8 +2646,8 @@ variables:
   button_3_step_size: "{{ (button_3_dimming_speed * 2.5) | int }}"
   button_3_short_release_reset: !input button_3_short_release_reset
   button_3_long_release_reset: !input button_3_long_release_reset
-  button_3_auto_adjust: !input button_3_auto_adjust
-  button_3_auto_adjust_transition: !input button_3_auto_adjust_transition
+  button_3_light_auto_adjust: !input button_3_light_auto_adjust
+  button_3_light_auto_adjust_transition: !input button_3_light_auto_adjust_transition
   button_3_light_entities: >-
     {% set ns = namespace(entities=[]) %}
     {% if button_3_light.entity_id is defined and button_3_light.entity_id | length > 0 %}
@@ -2372,19 +2670,57 @@ variables:
     {{ ns.entities }}
   # Button 4 config
   button_4_light: !input button_4_light
+  button_4_adjustment_mode: !input button_4_light_adjustment_mode
+  button_4_adaptive_brightness: !input button_4_light_adaptive_brightness
+  button_4_adaptive_color_temp: !input button_4_light_adaptive_color_temp
   button_4_schedule: !input button_4_light_schedule
   button_4_brightness_input: !input button_4_light_brightness
   button_4_color_input: !input button_4_light_color
   button_4_transition_input: !input button_4_light_transition
   button_4_brightness_pct: >-
-    {% set val = state_attr(button_4_schedule, 'brightness_pct') if button_4_schedule is string and button_4_schedule != '' else none %}
-    {{ val if val is not none else button_4_brightness_input }}
+    {% if button_4_adjustment_mode == 'adaptive' %}
+      {% if button_4_adaptive_brightness not in [none, '', []] %}
+        {{ states(button_4_adaptive_brightness) | int(button_4_brightness_input) }}
+      {% else %}
+        {{ button_4_brightness_input }}
+      {% endif %}
+    {% elif button_4_adjustment_mode == 'schedule' %}
+      {% if button_4_schedule not in [none, '', []] %}
+        {% set val = state_attr(button_4_schedule, 'brightness_pct') %}
+        {{ val if val is not none else button_4_brightness_input }}
+      {% else %}
+        {{ button_4_brightness_input }}
+      {% endif %}
+    {% else %}
+      {{ button_4_brightness_input }}
+    {% endif %}
   button_4_color_temp_kelvin: >-
-    {% set val = state_attr(button_4_schedule, 'color_temp_kelvin') if button_4_schedule is string and button_4_schedule != '' else none %}
-    {{ val if val is not none else button_4_color_input }}
+    {% if button_4_adjustment_mode == 'adaptive' %}
+      {% if button_4_adaptive_color_temp not in [none, '', []] %}
+        {{ states(button_4_adaptive_color_temp) | int(button_4_color_input) }}
+      {% else %}
+        {{ button_4_color_input }}
+      {% endif %}
+    {% elif button_4_adjustment_mode == 'schedule' %}
+      {% if button_4_schedule not in [none, '', []] %}
+        {% set val = state_attr(button_4_schedule, 'color_temp_kelvin') %}
+        {{ val if val is not none else button_4_color_input }}
+      {% else %}
+        {{ button_4_color_input }}
+      {% endif %}
+    {% else %}
+      {{ button_4_color_input }}
+    {% endif %}
   button_4_transition: >-
-    {% set val = state_attr(button_4_schedule, 'transition') if button_4_schedule is string and button_4_schedule != '' else none %}
-    {{ val if val is not none else button_4_transition_input }}
+    {% if button_4_adjustment_mode == 'schedule' %}
+      {% if button_4_schedule not in [none, '', []] %}
+        {{ state_attr(button_4_schedule, 'transition') | default(button_4_transition_input, true) | float }}
+      {% else %}
+        {{ button_4_transition_input | float }}
+      {% endif %}
+    {% else %}
+      {{ button_4_transition_input | float }}
+    {% endif %}
   button_4_short_release_light_mode: !input button_4_short_release_light_mode
   button_4_long_release_light_mode: !input button_4_long_release_light_mode
   button_4_rotate_light_mode: !input button_4_rotate_light_mode
@@ -2407,8 +2743,8 @@ variables:
   button_4_step_size: "{{ (button_4_dimming_speed * 2.5) | int }}"
   button_4_short_release_reset: !input button_4_short_release_reset
   button_4_long_release_reset: !input button_4_long_release_reset
-  button_4_auto_adjust: !input button_4_auto_adjust
-  button_4_auto_adjust_transition: !input button_4_auto_adjust_transition
+  button_4_light_auto_adjust: !input button_4_light_auto_adjust
+  button_4_light_auto_adjust_transition: !input button_4_light_auto_adjust_transition
   button_4_light_entities: >-
     {% set ns = namespace(entities=[]) %}
     {% if button_4_light.entity_id is defined and button_4_light.entity_id | length > 0 %}
@@ -2451,6 +2787,30 @@ triggers:
   - trigger: state
     entity_id: !input button_4_light_schedule
     id: schedule_4_change
+  - trigger: state
+    entity_id: !input button_1_light_adaptive_brightness
+    id: adaptive_1_brightness_change
+  - trigger: state
+    entity_id: !input button_1_light_adaptive_color_temp
+    id: adaptive_1_color_change
+  - trigger: state
+    entity_id: !input button_2_light_adaptive_brightness
+    id: adaptive_2_brightness_change
+  - trigger: state
+    entity_id: !input button_2_light_adaptive_color_temp
+    id: adaptive_2_color_change
+  - trigger: state
+    entity_id: !input button_3_light_adaptive_brightness
+    id: adaptive_3_brightness_change
+  - trigger: state
+    entity_id: !input button_3_light_adaptive_color_temp
+    id: adaptive_3_color_change
+  - trigger: state
+    entity_id: !input button_4_light_adaptive_brightness
+    id: adaptive_4_brightness_change
+  - trigger: state
+    entity_id: !input button_4_light_adaptive_color_temp
+    id: adaptive_4_color_change
 
 actions:
   - alias: Validate integration type matches trigger
@@ -2507,12 +2867,12 @@ actions:
         data:
           value: "{{ button_num }}"
   - choose:
-      # ========== SCHEDULE AUTO-ADJUST ==========
+      # ========== ADAPTIVE/SCHEDULE AUTO-ADJUST ==========
       - conditions:
-          - "{{ trigger.id == 'schedule_1_change' }}"
-          - "{{ button_1_auto_adjust }}"
+          - "{{ trigger.id in ['adaptive_1_brightness_change', 'adaptive_1_color_change'] }}"
+          - "{{ button_1_adjustment_mode == 'adaptive' }}"
+          - "{{ button_1_light_auto_adjust }}"
           - "{{ button_1_has_light }}"
-          - "{{ button_1_schedule is string and button_1_schedule != '' }}"
         sequence:
           - repeat:
               for_each: "{{ button_1_light_entities }}"
@@ -2526,13 +2886,34 @@ actions:
                       data:
                         brightness_pct: "{{ button_1_brightness_pct }}"
                         color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                        transition: "{{ button_1_auto_adjust_transition }}"
+                        transition: "{{ button_1_light_auto_adjust_transition }}"
+          - stop: Adaptive 1 auto-adjust completed
+      - conditions:
+          - "{{ trigger.id == 'schedule_1_change' }}"
+          - "{{ button_1_adjustment_mode == 'schedule' }}"
+          - "{{ button_1_light_auto_adjust }}"
+          - "{{ button_1_has_light }}"
+          - "{{ button_1_schedule not in [none, '', []] }}"
+        sequence:
+          - repeat:
+              for_each: "{{ button_1_light_entities }}"
+              sequence:
+                - if:
+                    - "{{ is_state(repeat.item, 'on') }}"
+                  then:
+                    - action: light.turn_on
+                      target:
+                        entity_id: "{{ repeat.item }}"
+                      data:
+                        brightness_pct: "{{ button_1_brightness_pct }}"
+                        color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                        transition: "{{ button_1_light_auto_adjust_transition }}"
           - stop: Schedule 1 auto-adjust completed
       - conditions:
-          - "{{ trigger.id == 'schedule_2_change' }}"
-          - "{{ button_2_auto_adjust }}"
+          - "{{ trigger.id in ['adaptive_2_brightness_change', 'adaptive_2_color_change'] }}"
+          - "{{ button_2_adjustment_mode == 'adaptive' }}"
+          - "{{ button_2_light_auto_adjust }}"
           - "{{ button_2_has_light }}"
-          - "{{ button_2_schedule is string and button_2_schedule != '' }}"
         sequence:
           - repeat:
               for_each: "{{ button_2_light_entities }}"
@@ -2546,13 +2927,34 @@ actions:
                       data:
                         brightness_pct: "{{ button_2_brightness_pct }}"
                         color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
-                        transition: "{{ button_2_auto_adjust_transition }}"
+                        transition: "{{ button_2_light_auto_adjust_transition }}"
+          - stop: Adaptive 2 auto-adjust completed
+      - conditions:
+          - "{{ trigger.id == 'schedule_2_change' }}"
+          - "{{ button_2_adjustment_mode == 'schedule' }}"
+          - "{{ button_2_light_auto_adjust }}"
+          - "{{ button_2_has_light }}"
+          - "{{ button_2_schedule not in [none, '', []] }}"
+        sequence:
+          - repeat:
+              for_each: "{{ button_2_light_entities }}"
+              sequence:
+                - if:
+                    - "{{ is_state(repeat.item, 'on') }}"
+                  then:
+                    - action: light.turn_on
+                      target:
+                        entity_id: "{{ repeat.item }}"
+                      data:
+                        brightness_pct: "{{ button_2_brightness_pct }}"
+                        color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                        transition: "{{ button_2_light_auto_adjust_transition }}"
           - stop: Schedule 2 auto-adjust completed
       - conditions:
-          - "{{ trigger.id == 'schedule_3_change' }}"
-          - "{{ button_3_auto_adjust }}"
+          - "{{ trigger.id in ['adaptive_3_brightness_change', 'adaptive_3_color_change'] }}"
+          - "{{ button_3_adjustment_mode == 'adaptive' }}"
+          - "{{ button_3_light_auto_adjust }}"
           - "{{ button_3_has_light }}"
-          - "{{ button_3_schedule is string and button_3_schedule != '' }}"
         sequence:
           - repeat:
               for_each: "{{ button_3_light_entities }}"
@@ -2566,13 +2968,34 @@ actions:
                       data:
                         brightness_pct: "{{ button_3_brightness_pct }}"
                         color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
-                        transition: "{{ button_3_auto_adjust_transition }}"
+                        transition: "{{ button_3_light_auto_adjust_transition }}"
+          - stop: Adaptive 3 auto-adjust completed
+      - conditions:
+          - "{{ trigger.id == 'schedule_3_change' }}"
+          - "{{ button_3_adjustment_mode == 'schedule' }}"
+          - "{{ button_3_light_auto_adjust }}"
+          - "{{ button_3_has_light }}"
+          - "{{ button_3_schedule not in [none, '', []] }}"
+        sequence:
+          - repeat:
+              for_each: "{{ button_3_light_entities }}"
+              sequence:
+                - if:
+                    - "{{ is_state(repeat.item, 'on') }}"
+                  then:
+                    - action: light.turn_on
+                      target:
+                        entity_id: "{{ repeat.item }}"
+                      data:
+                        brightness_pct: "{{ button_3_brightness_pct }}"
+                        color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                        transition: "{{ button_3_light_auto_adjust_transition }}"
           - stop: Schedule 3 auto-adjust completed
       - conditions:
-          - "{{ trigger.id == 'schedule_4_change' }}"
-          - "{{ button_4_auto_adjust }}"
+          - "{{ trigger.id in ['adaptive_4_brightness_change', 'adaptive_4_color_change'] }}"
+          - "{{ button_4_adjustment_mode == 'adaptive' }}"
+          - "{{ button_4_light_auto_adjust }}"
           - "{{ button_4_has_light }}"
-          - "{{ button_4_schedule is string and button_4_schedule != '' }}"
         sequence:
           - repeat:
               for_each: "{{ button_4_light_entities }}"
@@ -2586,7 +3009,28 @@ actions:
                       data:
                         brightness_pct: "{{ button_4_brightness_pct }}"
                         color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
-                        transition: "{{ button_4_auto_adjust_transition }}"
+                        transition: "{{ button_4_light_auto_adjust_transition }}"
+          - stop: Adaptive 4 auto-adjust completed
+      - conditions:
+          - "{{ trigger.id == 'schedule_4_change' }}"
+          - "{{ button_4_adjustment_mode == 'schedule' }}"
+          - "{{ button_4_light_auto_adjust }}"
+          - "{{ button_4_has_light }}"
+          - "{{ button_4_schedule not in [none, '', []] }}"
+        sequence:
+          - repeat:
+              for_each: "{{ button_4_light_entities }}"
+              sequence:
+                - if:
+                    - "{{ is_state(repeat.item, 'on') }}"
+                  then:
+                    - action: light.turn_on
+                      target:
+                        entity_id: "{{ repeat.item }}"
+                      data:
+                        brightness_pct: "{{ button_4_brightness_pct }}"
+                        color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                        transition: "{{ button_4_light_auto_adjust_transition }}"
           - stop: Schedule 4 auto-adjust completed
       # ========== BUTTON 1 ==========
       - conditions: "{{ command == 'button_1_press' }}"
