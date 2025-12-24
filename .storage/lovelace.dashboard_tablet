@@ -1,0 +1,880 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.dashboard_tablet",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "title": "Home",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading_style": "subtitle",
+                  "heading": "Camera's",
+                  "icon": "mdi:cctv"
+                },
+                {
+                  "type": "picture-entity",
+                  "aspect_ratio": "4:3",
+                  "camera_image": "camera.voordeur",
+                  "camera_view": "live",
+                  "entity": "camera.voordeur",
+                  "fit_mode": "cover",
+                  "grid_options": {
+                    "columns": "full"
+                  },
+                  "show_state": false,
+                  "show_name": false,
+                  "tap_action": {
+                    "action": "none"
+                  }
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "icon": "mdi:home-floor-0",
+                  "heading_style": "subtitle",
+                  "badges": [],
+                  "heading": "Begane grond"
+                },
+                {
+                  "square": false,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Eettafel",
+                      "icon": "mdi:table-furniture",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/eettafel"
+                      },
+                      "show_state": false,
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.eettafel_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Entree",
+                      "icon": "mdi:coat-rack",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/entree"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.entree_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Keuken",
+                      "icon": "mdi:countertop-outline",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/keuken"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.keuken_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Looppad",
+                      "icon": "mdi:walk",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/looppad"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.looppad_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Schuur",
+                      "icon": "mdi:garage",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/schuur"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.schuur_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Toilet",
+                      "icon": "mdi:toilet",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/toilet"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.toilet_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Tuin",
+                      "icon": "mdi:flower",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/tuin"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.tuin_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Voordeur",
+                      "icon": "mdi:door-closed",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/voordeur"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.voordeur_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Woonkamer",
+                      "icon": "mdi:sofa",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/woonkamer"
+                      },
+                      "layout_options": {
+                        "grid_columns": 2,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.woonkamer_lampen"
+                    }
+                  ],
+                  "columns": 3
+                },
+                {
+                  "type": "heading",
+                  "icon": "mdi:home-floor-1",
+                  "heading_style": "subtitle",
+                  "badges": [],
+                  "heading": "Eerste verdieping"
+                },
+                {
+                  "square": false,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Badkamer",
+                      "icon": "mdi:shower-head",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/badkamer"
+                      },
+                      "show_state": false,
+                      "layout_options": {
+                        "grid_columns": 2,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.badkamer_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Gang",
+                      "icon": "mdi:stairs",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/gang"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.gang_lampen",
+                      "show_state": false
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Kantoor",
+                      "icon": "mdi:desk",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/kantoor"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.kantoor_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Sauna",
+                      "icon": "mdi:dumbbell",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/sauna"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.sauna_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Slaapkamer",
+                      "icon": "mdi:bed-king",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/slaapkamer"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.slaapkamer_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Meterkast",
+                      "icon": "mdi:server",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/meterkast"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      }
+                    }
+                  ],
+                  "columns": 3
+                },
+                {
+                  "type": "heading",
+                  "icon": "mdi:home-floor-2",
+                  "heading_style": "subtitle",
+                  "badges": [],
+                  "heading": "Tweede verdieping"
+                },
+                {
+                  "square": false,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Dakterras",
+                      "icon": "mdi:balcony",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/dakterras"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.dakterras_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Gameroom",
+                      "icon": "mdi:controller",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/gameroom"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.gameroom_lampen"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Wasruimte",
+                      "icon": "mdi:washing-machine",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/wasruimte"
+                      },
+                      "show_state": false,
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.wasruimte_lampen"
+                    }
+                  ],
+                  "columns": 3
+                },
+                {
+                  "type": "heading",
+                  "icon": "mdi:car",
+                  "heading": "Auto",
+                  "heading_style": "subtitle"
+                },
+                {
+                  "square": false,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.t047zg_charge_state",
+                          "state_not": "charge_in_progress"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "sensor.t047zg_charge_state",
+                          "state_not": "charge_ended"
+                        }
+                      ],
+                      "card": {
+                        "square": false,
+                        "type": "grid",
+                        "cards": [
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "show_state": true,
+                            "icon": "",
+                            "entity": "sensor.t047zg_batterij",
+                            "icon_height": "30px",
+                            "theme": "Enhanced Grey"
+                          },
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "show_state": true,
+                            "icon": "",
+                            "icon_height": "30px",
+                            "entity": "sensor.t047zg_battery_autonomy",
+                            "theme": "Enhanced Grey"
+                          },
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "show_state": true,
+                            "icon": "",
+                            "icon_height": "30px",
+                            "entity": "sensor.t047zg_mileage",
+                            "theme": "Enhanced Grey"
+                          },
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "show_state": true,
+                            "icon": "",
+                            "entity": "binary_sensor.t047zg_stekker",
+                            "icon_height": "30px",
+                            "theme": "Enhanced Grey"
+                          }
+                        ],
+                        "columns": 4
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.t047zg_charge_state",
+                          "state": "charge_in_progress"
+                        }
+                      ],
+                      "card": {
+                        "square": false,
+                        "type": "grid",
+                        "cards": [
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "show_state": true,
+                            "icon": "",
+                            "entity": "sensor.t047zg_batterij",
+                            "icon_height": "30px",
+                            "theme": "Enhanced Orange"
+                          },
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "show_state": true,
+                            "icon": "",
+                            "icon_height": "30px",
+                            "entity": "sensor.t047zg_battery_autonomy",
+                            "theme": "Enhanced Orange"
+                          },
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "show_state": true,
+                            "icon": "",
+                            "icon_height": "30px",
+                            "entity": "sensor.t047zg_charging_remaining_time",
+                            "theme": "Enhanced Orange"
+                          },
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "show_state": true,
+                            "icon": "",
+                            "entity": "binary_sensor.t047zg_stekker",
+                            "icon_height": "30px",
+                            "theme": "Enhanced Orange"
+                          }
+                        ],
+                        "columns": 4
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.t047zg_charge_state",
+                          "state": "charge_ended"
+                        }
+                      ],
+                      "card": {
+                        "square": false,
+                        "type": "grid",
+                        "cards": [
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "show_state": true,
+                            "icon": "",
+                            "entity": "sensor.t047zg_batterij",
+                            "icon_height": "30px",
+                            "theme": "Enhanced Grey"
+                          },
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "show_state": true,
+                            "icon": "",
+                            "icon_height": "30px",
+                            "entity": "sensor.t047zg_battery_autonomy",
+                            "theme": "Enhanced Green"
+                          },
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "show_state": true,
+                            "icon": "",
+                            "icon_height": "30px",
+                            "entity": "sensor.t047zg_mileage",
+                            "theme": "Enhanced Green"
+                          },
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "show_state": true,
+                            "icon": "",
+                            "entity": "binary_sensor.t047zg_stekker",
+                            "icon_height": "30px",
+                            "theme": "Enhanced Green"
+                          }
+                        ],
+                        "columns": 4
+                      }
+                    }
+                  ],
+                  "columns": 1
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "icon": "mdi:multimedia",
+                  "heading": "Media",
+                  "heading_style": "subtitle"
+                },
+                {
+                  "type": "media-control",
+                  "entity": "media_player.slaapkamer"
+                },
+                {
+                  "type": "tile",
+                  "entity": "media_player.badkamer_kef",
+                  "show_entity_picture": false,
+                  "state_content": [
+                    "state",
+                    "source"
+                  ],
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "media-player-volume-buttons"
+                    }
+                  ],
+                  "features_position": "inline"
+                },
+                {
+                  "type": "tile",
+                  "entity": "media_player.gameroom_kef",
+                  "show_entity_picture": false,
+                  "state_content": [
+                    "state",
+                    "source"
+                  ],
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "media-player-volume-buttons"
+                    }
+                  ],
+                  "features_position": "inline"
+                },
+                {
+                  "type": "tile",
+                  "entity": "media_player.kantoor_kef",
+                  "show_entity_picture": false,
+                  "state_content": [
+                    "state",
+                    "source"
+                  ],
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "media-player-volume-buttons"
+                    }
+                  ],
+                  "features_position": "inline"
+                },
+                {
+                  "type": "tile",
+                  "entity": "media_player.keuken_kef",
+                  "show_entity_picture": false,
+                  "state_content": [
+                    "state",
+                    "source"
+                  ],
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "media-player-volume-buttons"
+                    }
+                  ],
+                  "features_position": "inline"
+                },
+                {
+                  "type": "tile",
+                  "entity": "media_player.sauna_kef",
+                  "show_entity_picture": false,
+                  "state_content": [
+                    "state",
+                    "source"
+                  ],
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "media-player-volume-buttons"
+                    }
+                  ],
+                  "features_position": "inline"
+                },
+                {
+                  "type": "tile",
+                  "entity": "media_player.slaapkamer_kef",
+                  "show_entity_picture": false,
+                  "state_content": [
+                    "state",
+                    "source"
+                  ],
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "media-player-volume-buttons"
+                    }
+                  ],
+                  "features_position": "inline"
+                },
+                {
+                  "type": "tile",
+                  "entity": "media_player.woonkamer_kef",
+                  "show_entity_picture": false,
+                  "state_content": [
+                    "state",
+                    "source"
+                  ],
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "media-player-volume-buttons"
+                    }
+                  ],
+                  "features_position": "inline"
+                }
+              ]
+            }
+          ],
+          "type": "sections",
+          "max_columns": 2,
+          "cards": [],
+          "theme": "Enhanced Grey",
+          "badges": [
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "person.alex",
+              "show_entity_picture": true
+            },
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "person.deni",
+              "show_entity_picture": true
+            },
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": false,
+              "show_icon": true,
+              "entity": "alarm_control_panel.alarm",
+              "show_entity_picture": false,
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/lovelace/security"
+              }
+            },
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": false,
+              "show_icon": true,
+              "entity": "sensor.lampen",
+              "show_entity_picture": false,
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/lovelace/lampen"
+              },
+              "color": "light-grey",
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "sensor.lampen",
+                  "below": 1
+                }
+              ]
+            },
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": false,
+              "show_icon": true,
+              "entity": "sensor.lampen",
+              "show_entity_picture": false,
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/lovelace/lampen"
+              },
+              "color": "amber",
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "sensor.lampen",
+                  "above": 0
+                }
+              ]
+            },
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": false,
+              "show_icon": true,
+              "entity": "sensor.schakelaars",
+              "color": "light-grey",
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "sensor.schakelaars",
+                  "below": 1
+                }
+              ],
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/lovelace/schakelaars"
+              }
+            },
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": false,
+              "show_icon": true,
+              "entity": "sensor.schakelaars",
+              "color": "amber",
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "sensor.schakelaars",
+                  "above": 0
+                }
+              ],
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/lovelace/schakelaars"
+              }
+            },
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": false,
+              "show_icon": true,
+              "entity": "fan.ducobox"
+            },
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": false,
+              "show_icon": true,
+              "entity": "sensor.koeling",
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/lovelace/klimaat"
+              },
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "sensor.koeling",
+                  "below": 1
+                },
+                {
+                  "condition": "numeric_state",
+                  "entity": "sensor.verwarming",
+                  "below": 1
+                }
+              ],
+              "color": "light-grey"
+            },
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": false,
+              "show_icon": true,
+              "entity": "sensor.koeling",
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/lovelace/klimaat"
+              },
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "sensor.koeling",
+                  "above": 0
+                }
+              ],
+              "color": "blue"
+            },
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": false,
+              "show_icon": true,
+              "entity": "sensor.verwarming",
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/lovelace/klimaat"
+              },
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "sensor.verwarming",
+                  "above": 0
+                }
+              ],
+              "color": "red"
+            }
+          ],
+          "subview": false
+        }
+      ]
+    }
+  }
+}
