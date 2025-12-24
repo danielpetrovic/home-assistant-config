@@ -1988,7 +1988,7 @@
       - action: media_player.join
         metadata: {}
         target:
-          entity_id: media_player.music_assistant
+          entity_id: media_player.slaapkamer
         data:
           group_members:
           - media_player.sauna
@@ -2021,7 +2021,7 @@
           group_members:
           - media_player.sauna
         target:
-          entity_id: media_player.music_assistant
+          entity_id: media_player.slaapkamer
       - action: media_player.volume_set
         data:
           volume_level: 0.25
@@ -2568,7 +2568,7 @@
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_1_light_auto_adjust: true
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.music_assistant
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2626,7 +2626,7 @@
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_1_light_auto_adjust: true
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.music_assistant
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2738,7 +2738,7 @@
         target:
           entity_id: switch.kantoor_bureau
       button_3_media: media_player.kantoor
-      button_3_media_leader: media_player.music_assistant
+      button_3_media_leader: media_player.slaapkamer
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -2789,7 +2789,7 @@
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_1_light_auto_adjust: true
       button_3_media: media_player.keuken
-      button_3_media_leader: media_player.music_assistant
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2837,7 +2837,7 @@
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_dimmed
       button_1_light_auto_adjust: true
       button_3_media: media_player.sauna
-      button_3_media_leader: media_player.music_assistant
+      button_3_media_leader: media_player.slaapkamer
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -2890,7 +2890,7 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_1_light_auto_adjust: true
-      button_3_media: media_player.music_assistant
+      button_3_media: media_player.slaapkamer
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3624,7 +3624,7 @@
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_1_light_auto_adjust: true
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.music_assistant
+      button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -5150,7 +5150,7 @@
           group_members:
           - media_player.keuken
         target:
-          entity_id: media_player.music_assistant
+          entity_id: media_player.slaapkamer
   mode: parallel
 - id: '1764237963995'
   alias: Kantoor Beweging
