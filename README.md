@@ -1,15 +1,15 @@
-# Home Assistant Configuration
+# 🏠 Home Assistant Configuration
 
 My personal Home Assistant configuration for a comprehensive smart home installation.
 
-## Quick Stats
+## 📊 Quick Stats
 
 - **Automations:** 69 automations across multiple rooms
 - **Blueprints:** 4 custom blueprints
 - **Areas:** 18 areas across 3 floors with climate, lighting, and media control
 - **Primary Protocol:** Zigbee via Zigbee2MQTT (Z2M)
 
-## Key Features
+## ⚡ Key Features
 
 ### Adaptive Lighting
 - Uses the [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting) integration
@@ -42,7 +42,7 @@ My personal Home Assistant configuration for a comprehensive smart home installa
 - Energy monitoring (25+ HomeWizard devices)
 - Shelly Wall Display XL in living room for HA control, alarm, and Unifi Protect camera feeds
 
-## Repository Structure
+## 📁 Repository Structure
 
 ```
 config/
@@ -66,19 +66,19 @@ config/
 └── themes/                   # UI themes
 ```
 
-## Custom Blueprints
+## 🎨 Custom Blueprints
 
 1. **Adaptive Lighting Scheduler** - Dynamic brightness/color temperature throughout the day
 2. **Philips Hue Tap Dial Switch** - 4 buttons + rotary dial with context-aware modes
 3. **Alarm System with Keypad** - Multi-user security system with geofencing
 4. **Niko Battery Switch** - Schedule-based button automation
 
-## Documentation
+## 📖 Documentation
 
 - See [CLAUDE.md](CLAUDE.md) for detailed technical documentation
 - Configuration is organized using the package system for modularity
 - All automations follow consistent naming: `<location>_<function>`
 
-## Updates
+## 🔄 Updates
 
 This repository is regularly updated with changes to my Home Assistant installation.
