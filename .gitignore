@@ -4,7 +4,13 @@
 /.aspnet
 /.claude
 /.cloud
-/.storage
+/.storage/*
+# Exception: Allow dashboard configurations to be committed
+!.storage/lovelace
+!.storage/lovelace.backup
+!.storage/lovelace.dashboard_tablet
+!.storage/lovelace_dashboards
+!.storage/lovelace_resources
 /.vscode
 /addons_config
 /backups
