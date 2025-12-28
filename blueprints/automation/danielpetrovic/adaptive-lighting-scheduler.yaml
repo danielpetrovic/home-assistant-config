@@ -12,6 +12,8 @@ blueprint:
     - **Sun Tracking**: Optional sunrise/sunset awareness for natural transitions
     - **Smooth Ramping**: Gradual transitions between day phases (wake, morning, evening, sleep, night)
     - **Helper Output**: Stores values in input_number entities for use by switches, dashboards, and other automations
+    - **Direct Light Control**: Optionally control lights directly through this blueprint. Works standalone without button automations, or alongside them for centralized adaptive scheduling
+    - **Auto-Adjust**: Automatically update selected lights when schedule changes (only affects lights that are ON)
     - **Multiple Zones**: Create multiple instances with different helper pairs for different lighting zones
 
     *Each configuration option below includes detailed instructions in the automation editor.*
@@ -94,6 +96,20 @@ blueprint:
        color_temp_kelvin: "{{ states('input_number.adaptive_color_temp') | int }}"
        ```
 
+    ## Direct Light Control (Optional)
+
+    You can optionally select lights in the "Direct Light Control" section to have them automatically adjust based on the schedule:
+
+    - **Lights to Control**: Select any lights, devices, or areas you want to control
+    - **Enable Auto-Adjust**: Turn this on to automatically update lights when the schedule changes
+    - **Auto-Adjust Transition**: Set how smoothly lights transition (default: 5 minutes)
+
+    **Two ways to use this:**
+    - **Standalone**: Perfect if you don't use button automations but still want automatic light adjustments throughout the day
+    - **With Button Automations**: Even if you use the button blueprints, you can handle adaptive scheduling here instead of enabling auto-adjust in each button automation. This centralizes your adaptive lighting control in one place
+
+    The lights will only be updated when they're already ON - the blueprint won't turn lights on or off automatically.
+
     ## Requirements
     - Home Assistant 2024.10.0 or later
     - Sun integration (`sun.sun` entity) for sunrise/sunset tracking
@@ -129,6 +145,49 @@ blueprint:
               filter:
                 - domain: input_number
               multiple: false
+    direct_light_control:
+      name: Direct Light Control
+      icon: mdi:lightbulb-auto
+      collapsed: true
+      input:
+        target_lights:
+          name: Lights to Control
+          default: []
+          description: |
+            `optional` `target`
+
+            Select lights to automatically adjust based on the adaptive lighting schedule.
+            These lights will be updated whenever the schedule changes.
+            Leave empty if you only want to use the helper entities with other automations/blueprints.
+          selector:
+            target:
+              entity:
+                - domain:
+                    - light
+        auto_adjust_enabled:
+          name: Enable Auto-Adjust
+          default: false
+          description: |
+            `optional` `boolean`
+
+            Automatically update the selected lights when adaptive values change.
+            Only affects lights that are currently ON.
+          selector:
+            boolean: {}
+        auto_adjust_transition:
+          name: Auto-Adjust Transition
+          default: 300
+          description: |
+            `optional` `number`
+
+            Transition duration in seconds when auto-adjusting lights.
+          selector:
+            number:
+              min: 0
+              max: 600
+              step: 30
+              unit_of_measurement: "s"
+              mode: slider
     time_settings_monday:
       name: "Time Settings - Monday"
       icon: mdi:calendar-today
@@ -136,26 +195,46 @@ blueprint:
       input:
         wake_time_mon:
           name: Wake Time
+          description: |
+            `required` `time`
+
+            Time when morning ramp should start (or wait for sunrise if enabled).
           default: "07:30:00"
           selector:
             time: {}
         morning_time_mon:
           name: Morning Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach maximum values.
           default: "09:00:00"
           selector:
             time: {}
         evening_time_mon:
           name: Evening Time
+          description: |
+            `required` `time`
+
+            Time when evening ramp down should start (or at sunset if enabled).
           default: "18:30:00"
           selector:
             time: {}
         sleep_time_mon:
           name: Sleep Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach minimum values.
           default: "23:30:00"
           selector:
             time: {}
         night_time_mon:
           name: Night Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach night values (lowest).
           default: "00:00:00"
           selector:
             time: {}
@@ -166,26 +245,46 @@ blueprint:
       input:
         wake_time_tue:
           name: Wake Time
+          description: |
+            `required` `time`
+
+            Time when morning ramp should start (or wait for sunrise if enabled).
           default: "07:30:00"
           selector:
             time: {}
         morning_time_tue:
           name: Morning Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach maximum values.
           default: "09:00:00"
           selector:
             time: {}
         evening_time_tue:
           name: Evening Time
+          description: |
+            `required` `time`
+
+            Time when evening ramp down should start (or at sunset if enabled).
           default: "18:30:00"
           selector:
             time: {}
         sleep_time_tue:
           name: Sleep Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach minimum values.
           default: "23:30:00"
           selector:
             time: {}
         night_time_tue:
           name: Night Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach night values (lowest).
           default: "00:00:00"
           selector:
             time: {}
@@ -196,26 +295,46 @@ blueprint:
       input:
         wake_time_wed:
           name: Wake Time
+          description: |
+            `required` `time`
+
+            Time when morning ramp should start (or wait for sunrise if enabled).
           default: "07:30:00"
           selector:
             time: {}
         morning_time_wed:
           name: Morning Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach maximum values.
           default: "09:00:00"
           selector:
             time: {}
         evening_time_wed:
           name: Evening Time
+          description: |
+            `required` `time`
+
+            Time when evening ramp down should start (or at sunset if enabled).
           default: "18:30:00"
           selector:
             time: {}
         sleep_time_wed:
           name: Sleep Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach minimum values.
           default: "23:30:00"
           selector:
             time: {}
         night_time_wed:
           name: Night Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach night values (lowest).
           default: "00:00:00"
           selector:
             time: {}
@@ -226,26 +345,46 @@ blueprint:
       input:
         wake_time_thu:
           name: Wake Time
+          description: |
+            `required` `time`
+
+            Time when morning ramp should start (or wait for sunrise if enabled).
           default: "07:30:00"
           selector:
             time: {}
         morning_time_thu:
           name: Morning Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach maximum values.
           default: "09:00:00"
           selector:
             time: {}
         evening_time_thu:
           name: Evening Time
+          description: |
+            `required` `time`
+
+            Time when evening ramp down should start (or at sunset if enabled).
           default: "18:30:00"
           selector:
             time: {}
         sleep_time_thu:
           name: Sleep Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach minimum values.
           default: "23:30:00"
           selector:
             time: {}
         night_time_thu:
           name: Night Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach night values (lowest).
           default: "00:00:00"
           selector:
             time: {}
@@ -256,26 +395,46 @@ blueprint:
       input:
         wake_time_fri:
           name: Wake Time
+          description: |
+            `required` `time`
+
+            Time when morning ramp should start (or wait for sunrise if enabled).
           default: "07:30:00"
           selector:
             time: {}
         morning_time_fri:
           name: Morning Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach maximum values.
           default: "09:00:00"
           selector:
             time: {}
         evening_time_fri:
           name: Evening Time
+          description: |
+            `required` `time`
+
+            Time when evening ramp down should start (or at sunset if enabled).
           default: "18:30:00"
           selector:
             time: {}
         sleep_time_fri:
           name: Sleep Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach minimum values.
           default: "23:30:00"
           selector:
             time: {}
         night_time_fri:
           name: Night Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach night values (lowest).
           default: "00:00:00"
           selector:
             time: {}
@@ -286,26 +445,46 @@ blueprint:
       input:
         wake_time_sat:
           name: Wake Time
+          description: |
+            `required` `time`
+
+            Time when morning ramp should start (or wait for sunrise if enabled).
           default: "08:30:00"
           selector:
             time: {}
         morning_time_sat:
           name: Morning Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach maximum values.
           default: "10:00:00"
           selector:
             time: {}
         evening_time_sat:
           name: Evening Time
+          description: |
+            `required` `time`
+
+            Time when evening ramp down should start (or at sunset if enabled).
           default: "18:30:00"
           selector:
             time: {}
         sleep_time_sat:
           name: Sleep Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach minimum values.
           default: "23:30:00"
           selector:
             time: {}
         night_time_sat:
           name: Night Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach night values (lowest).
           default: "00:00:00"
           selector:
             time: {}
@@ -316,26 +495,46 @@ blueprint:
       input:
         wake_time_sun:
           name: Wake Time
+          description: |
+            `required` `time`
+
+            Time when morning ramp should start (or wait for sunrise if enabled).
           default: "08:30:00"
           selector:
             time: {}
         morning_time_sun:
           name: Morning Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach maximum values.
           default: "10:00:00"
           selector:
             time: {}
         evening_time_sun:
           name: Evening Time
+          description: |
+            `required` `time`
+
+            Time when evening ramp down should start (or at sunset if enabled).
           default: "18:30:00"
           selector:
             time: {}
         sleep_time_sun:
           name: Sleep Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach minimum values.
           default: "23:30:00"
           selector:
             time: {}
         night_time_sun:
           name: Night Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach night values (lowest).
           default: "00:00:00"
           selector:
             time: {}
@@ -348,7 +547,7 @@ blueprint:
           name: Maximum Brightness
           default: 100
           description: |
-            `optional` `number`
+            `required` `number`
 
             Brightness at morning time (daytime maximum).
           selector:
@@ -362,7 +561,7 @@ blueprint:
           name: Minimum Brightness
           default: 50
           description: |
-            `optional` `number`
+            `required` `number`
 
             Brightness at sleep time (evening).
           selector:
@@ -376,7 +575,7 @@ blueprint:
           name: Night Brightness
           default: 25
           description: |
-            `optional` `number`
+            `required` `number`
 
             Brightness at night time (lowest).
           selector:
@@ -395,7 +594,7 @@ blueprint:
           name: Maximum Color Temperature
           default: 4000
           description: |
-            `optional` `color_temp`
+            `required` `color_temp`
 
             Color temperature at morning time (coolest/daylight).
           selector:
@@ -407,7 +606,7 @@ blueprint:
           name: Minimum Color Temperature
           default: 2700
           description: |
-            `optional` `color_temp`
+            `required` `color_temp`
 
             Color temperature at sleep time (warm).
           selector:
@@ -419,7 +618,7 @@ blueprint:
           name: Night Color Temperature
           default: 2200
           description: |
-            `optional` `color_temp`
+            `required` `color_temp`
 
             Color temperature at night time (warmest).
           selector:
@@ -723,6 +922,33 @@ blueprint:
 variables:
   brightness_helper: !input brightness_helper
   color_temp_helper: !input color_temp_helper
+  target_lights: !input target_lights
+  auto_adjust_enabled: !input auto_adjust_enabled
+  auto_adjust_transition: !input auto_adjust_transition
+  has_light_target: >-
+    {{ target_lights.entity_id | default([]) | length > 0
+    or target_lights.device_id | default([]) | length > 0
+    or target_lights.area_id | default([]) | length > 0 }}
+  light_entities: >-
+    {% set ns = namespace(entities=[]) %}
+    {% if target_lights.entity_id is defined and target_lights.entity_id | length > 0 %}
+      {% if target_lights.entity_id is string %}
+        {% set ns.entities = [target_lights.entity_id] %}
+      {% else %}
+        {% set ns.entities = target_lights.entity_id %}
+      {% endif %}
+    {% elif target_lights.device_id is defined and target_lights.device_id | length > 0 %}
+      {% set devices = [target_lights.device_id] if target_lights.device_id is string else target_lights.device_id %}
+      {% for device in devices %}
+        {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% elif target_lights.area_id is defined and target_lights.area_id | length > 0 %}
+      {% set areas = [target_lights.area_id] if target_lights.area_id is string else target_lights.area_id %}
+      {% for area in areas %}
+        {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% endif %}
+    {{ ns.entities }}
   max_brightness: !input max_brightness
   min_brightness: !input min_brightness
   night_brightness: !input night_brightness
@@ -973,3 +1199,19 @@ actions:
       entity_id: "{{ color_temp_helper }}"
     data:
       value: "{{ calculated_color_temp }}"
+  - if:
+      - "{{ auto_adjust_enabled and has_light_target }}"
+    then:
+      - repeat:
+          for_each: "{{ light_entities }}"
+          sequence:
+            - if:
+                - "{{ is_state(repeat.item, 'on') }}"
+              then:
+                - action: light.turn_on
+                  target:
+                    entity_id: "{{ repeat.item }}"
+                  data:
+                    brightness_pct: "{{ calculated_brightness }}"
+                    color_temp_kelvin: "{{ calculated_color_temp }}"
+                    transition: "{{ auto_adjust_transition }}"
