@@ -160,7 +160,8 @@ lights_green:
       effect: breathe
       transition: 1
     target:
-      entity_id: light.alarm
+      entity_id:
+      - light.alarm_lampen
   - delay:
       hours: 0
       minutes: 0
@@ -175,7 +176,8 @@ lights_green:
         int }}'
       transition: 1
     target:
-      entity_id: light.eettafel_lamp_onder
+      entity_id:
+      - light.alarm_lampen
   - delay:
       hours: 0
       minutes: 0
@@ -227,7 +229,8 @@ lights_blue:
       effect: breathe
       transition: 1
     target:
-      entity_id: light.alarm
+      entity_id:
+      - light.alarm_lampen
   - delay:
       hours: 0
       minutes: 0
@@ -242,7 +245,8 @@ lights_blue:
         int }}'
       transition: 1
     target:
-      entity_id: light.eettafel_lamp_onder
+      entity_id:
+      - light.alarm_lampen
   - delay:
       hours: 0
       minutes: 0
@@ -294,7 +298,8 @@ lights_red:
       effect: breathe
       transition: 1
     target:
-      entity_id: light.alarm
+      entity_id:
+      - light.alarm_lampen
   - delay:
       hours: 0
       minutes: 0
@@ -309,7 +314,8 @@ lights_red:
         int }}'
       transition: 1
     target:
-      entity_id: light.eettafel_lamp_onder
+      entity_id:
+      - light.alarm_lampen
   - delay:
       hours: 0
       minutes: 0
@@ -361,7 +367,8 @@ lights_orange:
       effect: breathe
       transition: 1
     target:
-      entity_id: light.alarm
+      entity_id:
+      - light.alarm_lampen
   - delay:
       hours: 0
       minutes: 0
@@ -376,7 +383,8 @@ lights_orange:
         int }}'
       transition: 1
     target:
-      entity_id: light.eettafel_lamp_onder
+      entity_id:
+      - light.alarm_lampen
   - delay:
       hours: 0
       minutes: 0
@@ -444,6 +452,11 @@ alarm_disarmed:
     data: {}
     target:
       entity_id: button.alarm_sirene_stop_alarm
+  - action: fan.set_preset_mode
+    data:
+      preset_mode: Auto
+    target:
+      entity_id: fan.ducobox
   alias: Alarm - Disarmed
   description: ''
   icon: mdi:shield-off
@@ -557,3 +570,33 @@ lights_preset_adaptive_color:
     data:
       color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'') |
         int }}'
+fan_away:
+  sequence:
+  - action: fan.set_preset_mode
+    data:
+      preset_mode: Auto
+    target:
+      entity_id: fan.ducobox
+  alias: Fan - Away
+  description: ''
+  icon: mdi:fan-speed-1
+fan_home:
+  sequence:
+  - action: fan.set_preset_mode
+    data:
+      preset_mode: Auto
+    target:
+      entity_id: fan.ducobox
+  alias: Fan - Home
+  description: ''
+  icon: mdi:fan-auto
+fan_night:
+  sequence:
+  - action: fan.set_preset_mode
+    data:
+      preset_mode: Manual 2 Forced
+    target:
+      entity_id: fan.ducobox
+  alias: Fan - Night
+  description: ''
+  icon: mdi:fan-speed-2

@@ -4,14 +4,20 @@
   triggers:
   - entity_id:
     - light.badkamer_lamp
-    to: 'on'
+    to:
+    - 'on'
     id: lights on
     trigger: state
+    from:
+    - 'off'
   - entity_id:
     - light.badkamer_lamp
-    to: 'off'
+    to:
+    - 'off'
     id: lights off
     trigger: state
+    from:
+    - 'on'
   - trigger: time
     at: 06:00:00
     id: 06:00
@@ -1528,13 +1534,13 @@
           entity_id: light.schuur_lampen
       - if:
         - condition: state
-          entity_id: binary_sensor.tuin_deursensor
+          entity_id: binary_sensor.tuin_deursensor_contact
           state: 'on'
         then:
         - wait_for_trigger:
           - trigger: state
             entity_id:
-            - binary_sensor.tuin_deursensor
+            - binary_sensor.tuin_deursensor_contact
             to: 'off'
             from: 'on'
         - target:
@@ -1888,9 +1894,9 @@
   actions:
   - action: light.toggle
     data:
-      brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'') | int
+      brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'') | int
         }}'
-      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'') |
+      color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'') |
         int }}'
       transition: 1
     metadata: {}
@@ -2087,12 +2093,15 @@
   alias: Badkamer Deur
   description: ''
   triggers:
-  - entity_id:
+  - alias: door open
+    entity_id:
     - binary_sensor.badkamer_deursensor_contact
-    to: 'on'
+    to:
+    - 'on'
     id: door open
-    alias: door open
     trigger: state
+    from:
+    - 'off'
   conditions: []
   actions:
   - action: light.toggle
@@ -2494,7 +2503,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
       - turn_on
@@ -2516,7 +2524,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -2536,7 +2543,6 @@
       button_3_light_adjustment_mode: adaptive
       button_3_light_adaptive_brightness: input_number.adaptive_brightness_dimmed
       button_3_light_adaptive_color_temp: input_number.adaptive_color_temp_dimmed
-      button_3_light_auto_adjust: true
       button_4_short_release:
       - action: input_select.select_previous
         data:
@@ -2566,7 +2572,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_3_media: media_player.gameroom
       button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
@@ -2624,7 +2629,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_3_media: media_player.gameroom
       button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
@@ -2682,7 +2686,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_3_light:
         entity_id: light.gameroom_lampen
       button_3_light_schedule: schedule.lights_bright
@@ -2730,7 +2733,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_1_double:
       - action: switch.toggle
         metadata: {}
@@ -2787,7 +2789,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_3_media: media_player.keuken
       button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
@@ -2833,9 +2834,8 @@
       button_1_light:
         entity_id: light.sauna_lamp
       button_1_light_adjustment_mode: adaptive
-      button_1_light_adaptive_brightness: input_number.adaptive_brightness_dimmed
-      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_dimmed
-      button_1_light_auto_adjust: true
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.sauna
       button_3_media_leader: media_player.slaapkamer
       button_3_media_volume: 25
@@ -2885,11 +2885,10 @@
       last_pressed: input_text.slaapkamer_knop_last_pressed
       button_1_light:
         entity_id:
-        - light.slaapkamer_lamp
+        - light.slaapkamer_lampen
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_3_media: media_player.slaapkamer
       button_2_short_release:
       - action: input_select.select_next
@@ -2935,19 +2934,20 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_2_light:
         entity_id: light.slaapkamer_alex_lamp
       button_2_light_brightness: 5
       button_2_light_color: 2500
       button_3_light:
         entity_id: light.slaapkamer_bed
-      button_3_light_schedule: schedule.lights_bright
       button_4_light:
         entity_id: light.slaapkamer_deni_lamp
       button_4_light_brightness: 5
       button_4_light_color: 2500
       z2m_device_name: Slaapkamer Alex Knop
+      button_3_light_adjustment_mode: adaptive
+      button_3_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_3_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
 - id: '1736812877909'
   alias: Slaapkamer Deni Knop
   description: ''
@@ -2963,7 +2963,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_2_light:
         entity_id: light.slaapkamer_alex_lamp
       button_2_light_brightness: 5
@@ -2971,12 +2970,14 @@
       button_3_light:
         entity_id:
         - light.slaapkamer_bed
-      button_3_light_schedule: schedule.lights_bright
       button_4_light:
         entity_id: light.slaapkamer_deni_lamp
       button_4_light_brightness: 5
       button_4_light_color: 2500
       z2m_device_name: Slaapkamer Deni Knop
+      button_3_light_adjustment_mode: adaptive
+      button_3_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_3_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
 - id: '1736813115022'
   alias: Woonkamer Knop
   description: ''
@@ -2992,7 +2993,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3012,7 +3012,6 @@
       button_3_light_adjustment_mode: adaptive
       button_3_light_adaptive_brightness: input_number.adaptive_brightness_dimmed
       button_3_light_adaptive_color_temp: input_number.adaptive_color_temp_dimmed
-      button_3_light_auto_adjust: true
       button_4_short_release:
       - action: input_select.select_previous
         data:
@@ -3042,7 +3041,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_3_light:
         entity_id: light.tuin_lampen
       button_3_light_schedule: schedule.lights_bright
@@ -3517,28 +3515,21 @@
   alias: Entree Knop
   description: ''
   use_blueprint:
-    path: danielpetrovic/niko-battery-switch-with-1-button.yaml
+    path: danielpetrovic/niko-battery-switch-multi-button.yaml
     input:
       integration_type:
       - z2m
       z2m_device_name: Entree Knop
       button_1_light:
-        entity_id: light.entree_lampen
-      button_1_double_press:
-      - action: automation.toggle
-        metadata: {}
-        data: {}
-        target:
-          entity_id: automation.entree_beweging
+        entity_id: light.entree_lamp
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_schedule_auto_adjust: true
 - id: '1755899171238'
   alias: Toilet Knop
   description: ''
   use_blueprint:
-    path: danielpetrovic/niko-battery-switch-with-1-button.yaml
+    path: danielpetrovic/niko-battery-switch-multi-button.yaml
     input:
       integration_type:
       - z2m
@@ -3548,7 +3539,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_1_on_light_mode:
       - toggle
       button_1_off_light_mode:
@@ -3574,7 +3564,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_3_light:
         entity_id: light.tuin_lampen
       button_3_light_schedule: schedule.lights_bright
@@ -3622,7 +3611,6 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_1_light_auto_adjust: true
       button_3_media: media_player.gameroom
       button_3_media_leader: media_player.slaapkamer
       button_3_short_release_media_mode:
@@ -4918,7 +4906,7 @@
   alias: Verlichting
   description: Alle logica voor verlichting
   triggers:
-  - at: 00:00:00
+  - at: 00:01:00
     id: 00:00
     trigger: time
   - at: 01:00:00
@@ -4995,6 +4983,18 @@
         data:
           brightness_pct: 100
           transition: 3600
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+            | int }}'
+          transition: 900
+        metadata: {}
+        target:
+          entity_id:
+          - light.eettafel_lamp_boven
+          - light.woonkamer_lamp_boven
     - alias: not dark
       conditions:
       - condition: trigger
@@ -5017,99 +5017,6 @@
     enabled: true
   mode: queued
   max: 10
-- id: '1761751867278'
-  alias: Ventilatie
-  description: Ventilatie logica op basis van tijd en aanwezigheid
-  triggers:
-  - at: 00:00:00
-    trigger: time
-  - at: 07:00:00
-    trigger: time
-  - at: 08:00:00
-    trigger: time
-  - entity_id: binary_sensor.presence
-    trigger: state
-  conditions: []
-  actions:
-  - choose:
-    - alias: Away
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.presence
-        state: 'off'
-      sequence:
-      - action: fan.set_preset_mode
-        data:
-          preset_mode: Away
-        target:
-          entity_id: fan.ducobox
-    - alias: Home
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.presence
-        state: 'on'
-      sequence:
-      - choose:
-        - alias: weekday
-          conditions:
-          - condition: time
-            weekday:
-            - mon
-            - tue
-            - wed
-            - thu
-            - fri
-          sequence:
-          - choose:
-            - alias: night
-              conditions:
-              - condition: time
-                before: 07:00:00
-              sequence:
-              - action: fan.set_preset_mode
-                data:
-                  preset_mode: Manual 2 Forced
-                target:
-                  entity_id: fan.ducobox
-            - alias: day
-              conditions:
-              - condition: time
-                after: 07:00:00
-              sequence:
-              - action: fan.set_preset_mode
-                data:
-                  preset_mode: Auto
-                target:
-                  entity_id: fan.ducobox
-        - alias: weekend
-          conditions:
-          - condition: time
-            weekday:
-            - sat
-            - sun
-          sequence:
-          - choose:
-            - alias: night
-              conditions:
-              - condition: time
-                before: 08:00:00
-              sequence:
-              - action: fan.set_preset_mode
-                data:
-                  preset_mode: Manual 2 Forced
-                target:
-                  entity_id: fan.ducobox
-            - alias: day
-              conditions:
-              - condition: time
-                after: 08:00:00
-              sequence:
-              - action: fan.set_preset_mode
-                data:
-                  preset_mode: Auto
-                target:
-                  entity_id: fan.ducobox
-  mode: single
 - id: '1761894045234'
   alias: Keuken Media
   description: ''
@@ -5314,7 +5221,7 @@
     - action: select.select_option
       metadata: {}
       data:
-        option: consumer_products_cleaning_robot_enum_type_cleaning_mode_intelligent_mode
+        option: consumer_products_cleaning_robot_enum_type_cleaning_mode_mop_after_vacuum
       target:
         entity_id: select.bart_schoonmaakmodus
     - action: select.select_option
@@ -5432,12 +5339,14 @@
         {user_name}.
       alarm_scripts_away:
       - script.alarm_away
+      - script.fan_away
       - script.music_away
       alarm_camera_away: camera.entree
       alarm_camera_away_click_action: /lovelace/entree
       alarm_notifications_armed_home: Het Alarm is ingesteld op Thuis modus door {user_name}.
       alarm_scripts_home:
       - script.alarm_home
+      - script.fan_home
       - script.music_home
       alarm_sensor_night:
       - binary_sensor.dakterras_deursensor_contact
@@ -5448,6 +5357,7 @@
         {user_name}.
       alarm_scripts_night:
       - script.alarm_night
+      - script.fan_night
       - script.music_night
       alarm_camera_night: camera.entree
       alarm_camera_night_click_action: /lovelace/entree
@@ -5461,6 +5371,7 @@
       alarm_notifications_disarmed: Het Alarm is uitgeschakeld door {user_name}.
       alarm_scripts_disarmed:
       - script.alarm_disarmed
+      - script.fan_home
       - script.music_home
       alarm_notifications_triggered: '{trigger_name} heeft het alarm geactiveerd!
         Het alarm gaat af!'
@@ -5520,9 +5431,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
             | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
             | int }}'
           transition: 3
         metadata: {}
@@ -5656,6 +5567,27 @@
     input:
       brightness_helper: input_number.adaptive_brightness_bright
       color_temp_helper: input_number.adaptive_color_temp_bright
+      target_lights:
+        entity_id:
+        - light.badkamer_lamp
+        - light.dakterras_lamp
+        - light.eettafel_lamp_boven
+        - light.gameroom_lamp_boven
+        - light.gameroom_lamp_links
+        - light.gameroom_lamp_rechts
+        - light.kantoor_lamp
+        - light.keuken_lampen
+        - light.keukenkast_lampen
+        - light.sauna_lamp
+        - light.schuur_lampen
+        - light.slaapkamer_lamp
+        - light.slaapkamer_bed
+        - light.toilet_lamp
+        - light.tuin_lampen
+        - light.voordeur_lamp
+        - light.wasruimte_lamp
+        - light.woonkamer_lamp_boven
+      auto_adjust_enabled: true
 - id: '1766509365106'
   alias: Adaptive Lighting Scheduler Dimmed
   description: ''
@@ -5667,3 +5599,12 @@
       max_brightness: 50
       min_brightness: 25
       night_brightness: 10
+      target_lights:
+        entity_id:
+        - light.eettafel_lamp_onder
+        - light.entree_lamp
+        - light.gameroom_lamp_onder
+        - light.gang_trap_1_lamp
+        - light.gang_trap_2_lamp
+        - light.gang_lamp
+      auto_adjust_enabled: true
