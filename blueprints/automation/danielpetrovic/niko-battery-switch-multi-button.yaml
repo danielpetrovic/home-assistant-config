@@ -1816,54 +1816,59 @@ actions:
             if:
               - "{{ 'dim' in active_dimmer_light_mode and has_light_target }}"
             then:
-              - parallel:
-                  - sequence:
-                      - wait_for_trigger:
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              command: stop
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              command: "on"
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              command: "off"
-                          - trigger: mqtt
-                            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                        timeout: "30"
-                        continue_on_timeout: true
-                      - variables:
-                          stop_flag: true
-                  - sequence:
-                      - repeat:
-                          count: "{{ active_light_count }}"
+              - repeat:
+                  count: "{{ active_light_count }}"
+                  sequence:
+                    - choose:
+                        - conditions:
+                            - "{{ active_dimmer_reset_to_defaults }}"
                           sequence:
-                            - choose:
-                                - conditions:
-                                    - "{{ active_dimmer_reset_to_defaults }}"
-                                  sequence:
-                                    - action: light.turn_on
-                                      target: "{{ active_button_light }}"
-                                      data:
-                                        brightness_step: "{{ active_light_step_size }}"
-                                        color_temp_kelvin: "{{ active_color_temp_kelvin }}"
-                              default:
-                                - action: light.turn_on
-                                  target: "{{ active_button_light }}"
-                                  data:
-                                    brightness_step: "{{ active_light_step_size }}"
-                            - delay:
-                                seconds: "{{ active_dimming_delay }}"
-                            - if:
-                                - "{{ stop_flag }}"
-                              then:
-                                - stop: Stop flag set
+                            - action: light.turn_on
+                              target: "{{ active_button_light }}"
+                              data:
+                                brightness_step: "{{ active_light_step_size }}"
+                                color_temp_kelvin: "{{ active_color_temp_kelvin }}"
+                      default:
+                        - action: light.turn_on
+                          target: "{{ active_button_light }}"
+                          data:
+                            brightness_step: "{{ active_light_step_size }}"
+                    - wait_for_trigger:
+                        - trigger: event
+                          event_type: zha_event
+                          event_data:
+                            device_id: !input zha_remote
+                            command: stop
+                        - trigger: event
+                          event_type: zha_event
+                          event_data:
+                            device_id: !input zha_remote
+                            command: "on"
+                        - trigger: event
+                          event_type: zha_event
+                          event_data:
+                            device_id: !input zha_remote
+                            command: "off"
+                        - trigger: mqtt
+                          topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                      timeout:
+                        milliseconds: "{{ (active_dimming_delay * 1000) | int }}"
+                      continue_on_timeout: true
+                    - if:
+                        - condition: template
+                          value_template: >-
+                            {% if wait.trigger is none %}
+                              false
+                            {% elif wait.trigger.platform == 'event' %}
+                              {{ wait.trigger.event.data.command in ['stop', 'on', 'off'] }}
+                            {% elif wait.trigger.platform == 'mqtt' %}
+                              {% set action = wait.trigger.payload_json.action | default('') %}
+                              {{ action.startswith('on') or action.startswith('off') or action.startswith('brightness_stop') }}
+                            {% else %}
+                              false
+                            {% endif %}
+                      then:
+                        - stop: Button released or new button pressed
               - stop: Done increase brightness
       - conditions:
           - "{{ is_button_event }}"
@@ -1894,54 +1899,59 @@ actions:
             if:
               - "{{ 'dim' in active_dimmer_light_mode and has_light_target }}"
             then:
-              - parallel:
-                  - sequence:
-                      - wait_for_trigger:
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              command: stop
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              command: "on"
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              command: "off"
-                          - trigger: mqtt
-                            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                        timeout: "30"
-                        continue_on_timeout: true
-                      - variables:
-                          stop_flag: true
-                  - sequence:
-                      - repeat:
-                          count: "{{ active_light_count }}"
+              - repeat:
+                  count: "{{ active_light_count }}"
+                  sequence:
+                    - choose:
+                        - conditions:
+                            - "{{ active_dimmer_reset_to_defaults }}"
                           sequence:
-                            - choose:
-                                - conditions:
-                                    - "{{ active_dimmer_reset_to_defaults }}"
-                                  sequence:
-                                    - action: light.turn_on
-                                      target: "{{ active_button_light }}"
-                                      data:
-                                        brightness_step: "{{ 0 - active_light_step_size }}"
-                                        color_temp_kelvin: "{{ active_color_temp_kelvin }}"
-                              default:
-                                - action: light.turn_on
-                                  target: "{{ active_button_light }}"
-                                  data:
-                                    brightness_step: "{{ 0 - active_light_step_size }}"
-                            - delay:
-                                seconds: "{{ active_dimming_delay }}"
-                            - if:
-                                - "{{ stop_flag }}"
-                              then:
-                                - stop: Stop flag set
+                            - action: light.turn_on
+                              target: "{{ active_button_light }}"
+                              data:
+                                brightness_step: "{{ 0 - active_light_step_size }}"
+                                color_temp_kelvin: "{{ active_color_temp_kelvin }}"
+                      default:
+                        - action: light.turn_on
+                          target: "{{ active_button_light }}"
+                          data:
+                            brightness_step: "{{ 0 - active_light_step_size }}"
+                    - wait_for_trigger:
+                        - trigger: event
+                          event_type: zha_event
+                          event_data:
+                            device_id: !input zha_remote
+                            command: stop
+                        - trigger: event
+                          event_type: zha_event
+                          event_data:
+                            device_id: !input zha_remote
+                            command: "on"
+                        - trigger: event
+                          event_type: zha_event
+                          event_data:
+                            device_id: !input zha_remote
+                            command: "off"
+                        - trigger: mqtt
+                          topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                      timeout:
+                        milliseconds: "{{ (active_dimming_delay * 1000) | int }}"
+                      continue_on_timeout: true
+                    - if:
+                        - condition: template
+                          value_template: >-
+                            {% if wait.trigger is none %}
+                              false
+                            {% elif wait.trigger.platform == 'event' %}
+                              {{ wait.trigger.event.data.command in ['stop', 'on', 'off'] }}
+                            {% elif wait.trigger.platform == 'mqtt' %}
+                              {% set action = wait.trigger.payload_json.action | default('') %}
+                              {{ action.startswith('on') or action.startswith('off') or action.startswith('brightness_stop') }}
+                            {% else %}
+                              false
+                            {% endif %}
+                      then:
+                        - stop: Button released or new button pressed
               - stop: Done decrease brightness
       - conditions:
           - "{{ is_button_event }}"
@@ -2007,11 +2017,7 @@ actions:
           {{ wait.trigger.event.data.endpoint_id | default(1) }}
         {% elif wait.trigger.platform == 'mqtt' %}
           {% set action = wait.trigger.payload_json.action | default('') %}
-          {% if action.endswith('_left') or action == 'on' or action == 'off' or action.startswith('brightness_') %}
-            1
-          {% elif action.endswith('_right') %}
-            2
-          {% elif action.endswith('_top_left') %}
+          {% if action.endswith('_top_left') %}
             1
           {% elif action.endswith('_bottom_left') %}
             2
@@ -2019,6 +2025,10 @@ actions:
             3
           {% elif action.endswith('_bottom_right') %}
             4
+          {% elif action.endswith('_left') or action == 'on' or action == 'off' or action.startswith('brightness_') %}
+            1
+          {% elif action.endswith('_right') %}
+            2
           {% else %}
             1
           {% endif %}
