@@ -775,7 +775,7 @@
               "show_name": false,
               "show_state": false,
               "show_icon": true,
-              "entity": "fan.ducobox"
+              "entity": "fan.ducobox_ventilation"
             },
             {
               "type": "entity",
@@ -6177,7 +6177,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "sensor.ducobox_humidity",
+                      "entity": "sensor.ducobox_relative_humidity",
                       "name": " ",
                       "color": "blue",
                       "show_entity_picture": false,
@@ -6197,7 +6197,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.woonkamer_carbon_dioxide",
+                      "entity": "sensor.woonkamer_co2",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "green",
@@ -7195,7 +7195,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "sensor.ducobox_humidity",
+                      "entity": "sensor.ducobox_relative_humidity",
                       "name": " ",
                       "color": "blue",
                       "show_entity_picture": false,
@@ -7215,7 +7215,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.badkamer_carbon_dioxide",
+                      "entity": "sensor.badkamer_co2",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "green",
@@ -8264,7 +8264,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "sensor.ducobox_humidity",
+                      "entity": "sensor.ducobox_relative_humidity",
                       "name": " ",
                       "color": "blue",
                       "show_entity_picture": false,
@@ -8284,7 +8284,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.kantoor_carbon_dioxide",
+                      "entity": "sensor.kantoor_co2",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "green",
@@ -8781,7 +8781,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "sensor.ducobox_humidity",
+                      "entity": "sensor.ducobox_relative_humidity",
                       "name": " ",
                       "color": "blue",
                       "show_entity_picture": false,
@@ -8801,7 +8801,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.sauna_carbon_dioxide",
+                      "entity": "sensor.sauna_co2",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "green",
@@ -9299,7 +9299,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "sensor.ducobox_humidity",
+                      "entity": "sensor.ducobox_relative_humidity",
                       "name": " ",
                       "color": "blue",
                       "show_entity_picture": false,
@@ -9319,7 +9319,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.slaapkamer_carbon_dioxide",
+                      "entity": "sensor.slaapkamer_co2",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "green",
@@ -10703,7 +10703,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "sensor.ducobox_humidity",
+                      "entity": "sensor.ducobox_relative_humidity",
                       "name": " ",
                       "color": "blue",
                       "show_entity_picture": false,
@@ -10723,7 +10723,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.gameroom_carbon_dioxide",
+                      "entity": "sensor.gameroom_co2",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "green",
@@ -12096,7 +12096,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.ducobox_humidity",
+                      "entity": "sensor.ducobox_relative_humidity",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "blue",

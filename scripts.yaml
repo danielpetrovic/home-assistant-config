@@ -55,6 +55,7 @@ music_night:
     metadata: {}
     data:
       group_members:
+      - media_player.badkamer
       - media_player.keuken
       - media_player.sauna
     target:
@@ -115,6 +116,7 @@ music_home:
     metadata: {}
     data:
       group_members:
+      - media_player.badkamer
       - media_player.keuken
       - media_player.sauna
     target:
@@ -574,9 +576,9 @@ fan_away:
   sequence:
   - action: fan.set_preset_mode
     data:
-      preset_mode: Auto
+      preset_mode: Away
     target:
-      entity_id: fan.ducobox
+      entity_id: fan.ducobox_ventilation
   alias: Fan - Away
   description: ''
   icon: mdi:fan-speed-1
@@ -586,7 +588,7 @@ fan_home:
     data:
       preset_mode: Auto
     target:
-      entity_id: fan.ducobox
+      entity_id: fan.ducobox_ventilation
   alias: Fan - Home
   description: ''
   icon: mdi:fan-auto
@@ -596,7 +598,7 @@ fan_night:
     data:
       preset_mode: Manual 2 Forced
     target:
-      entity_id: fan.ducobox
+      entity_id: fan.ducobox_ventilation
   alias: Fan - Night
   description: ''
   icon: mdi:fan-speed-2
