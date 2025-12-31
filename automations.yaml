@@ -2,25 +2,65 @@
   alias: Badkamer Media
   description: ''
   triggers:
-  - entity_id:
-    - light.badkamer_lamp
-    to:
-    - 'on'
+  - alias: lights on
     id: lights on
     trigger: state
+    entity_id:
+    - light.badkamer_lamp
     from:
     - 'off'
-  - entity_id:
+    to:
+    - 'on'
+  - alias: lights off
+    id: lights off
+    trigger: state
+    entity_id:
     - light.badkamer_lamp
     to:
     - 'off'
-    id: lights off
-    trigger: state
     from:
     - 'on'
-  - trigger: time
-    at: 06:00:00
-    id: 06:00
+  - alias: player idle
+    id: player idle
+    trigger: state
+    entity_id:
+    - media_player.badkamer_kef
+    from:
+    - playing
+    to:
+    - idle
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+  - alias: shower on
+    id: shower on
+    trigger: numeric_state
+    entity_id:
+    - sensor.watergebruik
+    above: 7.5
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  - alias: shower off
+    id: shower off
+    trigger: numeric_state
+    entity_id:
+    - sensor.watergebruik
+    below: 7.5
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+  - alias: 01:00
+    id: 01:00
+    trigger: time
+    at: 01:00:00
+  - alias: 07:00
+    id: 07:00
+    trigger: time
+    at: 07:00:00
   conditions: []
   actions:
   - alias: Lights
@@ -31,19 +71,6 @@
         id:
         - lights on
       sequence:
-      - action: media_player.join
-        data:
-          group_members:
-          - media_player.badkamer
-        metadata: {}
-        target:
-          entity_id: media_player.slaapkamer
-        enabled: true
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 0
       - action: media_player.volume_set
         metadata: {}
         data:
@@ -62,29 +89,90 @@
           volume_level: 0.25
         target:
           entity_id: media_player.badkamer
+    - conditions:
+      - condition: trigger
+        id:
+        - shower on
+      - condition: state
+        entity_id: light.badkamer_lamp
+        state:
+        - 'on'
+      sequence:
+      - data:
+          volume_level: 0.45
+        target:
+          entity_id: media_player.badkamer
+        action: media_player.volume_set
+      alias: shower on - volume up
+    - conditions:
+      - condition: trigger
+        id:
+        - shower off
+      - condition: state
+        entity_id: light.badkamer_lamp
+        state:
+        - 'on'
+      sequence:
+      - data:
+          volume_level: 0.35
+        target:
+          entity_id: media_player.badkamer
+        action: media_player.volume_set
+      alias: shower off - volume down
+    - conditions:
+      - condition: trigger
+        id:
+        - player idle
+      - condition: state
+        entity_id: media_player.slaapkamer
+        state:
+        - playing
+      sequence:
+      - action: media_player.unjoin
+        metadata: {}
+        target:
+          entity_id: media_player.badkamer
+        data: {}
       - delay:
           hours: 0
           minutes: 0
-          seconds: 6
+          seconds: 1
           milliseconds: 0
-        enabled: true
+      - action: media_player.join
+        metadata: {}
+        target:
+          entity_id: media_player.slaapkamer
+        data:
+          group_members:
+          - media_player.badkamer
+      alias: player idle
+    - conditions:
+      - condition: trigger
+        id:
+        - 01:00
+      sequence:
+      - action: media_player.unjoin
+        metadata: {}
+        data: {}
+        target:
+          entity_id: media_player.badkamer
       - action: media_player.turn_off
         metadata: {}
         data: {}
         target:
           entity_id: media_player.badkamer
-        enabled: true
-  - alias: Time
-    choose:
     - conditions:
       - condition: trigger
         id:
-        - 06:00
+        - 07:00
       sequence:
-      - action: unifi.reconnect_client
+      - action: media_player.join
         metadata: {}
         data:
-          device_id: 7ff037c01f437519717d932cedd8bb25
+          group_members:
+          - media_player.badkamer
+        target:
+          entity_id: media_player.slaapkamer
   mode: restart
 - id: '1704667361587'
   alias: Tuin Raambekleding
@@ -113,11 +201,12 @@
         entity_id: input_select.tuin_raambekleding
         state: 090%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.tuin_gordijn_my_position
+          entity_id: cover.tuin_gordijn
       - alias: Deur open?
         choose:
         - conditions:
@@ -153,11 +242,12 @@
         entity_id: input_select.tuin_raambekleding
         state: 080%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.tuin_gordijn_my_position
+          entity_id: cover.tuin_gordijn
       - alias: Deur open?
         choose:
         - conditions:
@@ -193,11 +283,12 @@
         entity_id: input_select.tuin_raambekleding
         state: 060%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.tuin_gordijn_my_position
+          entity_id: cover.tuin_gordijn
       - alias: Deur open?
         choose:
         - conditions:
@@ -233,11 +324,12 @@
         entity_id: input_select.tuin_raambekleding
         state: 040%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.tuin_gordijn_my_position
+          entity_id: cover.tuin_gordijn
       - alias: Deur open?
         choose:
         - conditions:
@@ -273,11 +365,12 @@
         entity_id: input_select.tuin_raambekleding
         state: 020%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.tuin_gordijn_my_position
+          entity_id: cover.tuin_gordijn
       - alias: Deur open?
         choose:
         - conditions:
@@ -313,11 +406,12 @@
         entity_id: input_select.tuin_raambekleding
         state: 000%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.tuin_gordijn_my_position
+          entity_id: cover.tuin_gordijn
       - alias: Deur open?
         choose:
         - conditions:
@@ -377,11 +471,12 @@
         entity_id: input_select.dakterras_raambekleding
         state: 090%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.dakterras_gordijn_my_position
+          entity_id: cover.dakterras_gordijn
       - alias: Deur open?
         choose:
         - conditions:
@@ -417,11 +512,12 @@
         entity_id: input_select.dakterras_raambekleding
         state: 080%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.dakterras_gordijn_my_position
+          entity_id: cover.dakterras_gordijn
       - alias: Deur open?
         choose:
         - conditions:
@@ -457,11 +553,12 @@
         entity_id: input_select.dakterras_raambekleding
         state: 060%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.dakterras_gordijn_my_position
+          entity_id: cover.dakterras_gordijn
       - alias: Deur open?
         choose:
         - conditions:
@@ -497,11 +594,12 @@
         entity_id: input_select.dakterras_raambekleding
         state: 040%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.dakterras_gordijn_my_position
+          entity_id: cover.dakterras_gordijn
       - alias: Deur open?
         choose:
         - conditions:
@@ -537,11 +635,12 @@
         entity_id: input_select.dakterras_raambekleding
         state: 020%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.dakterras_gordijn_my_position
+          entity_id: cover.dakterras_gordijn
       - alias: Deur open?
         choose:
         - conditions:
@@ -639,11 +738,12 @@
         entity_id: input_select.keuken_raambekleding
         state: 090%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.keuken_gordijn_my_position
+          entity_id: cover.keuken_gordijn
       - action: cover.set_cover_position
         data:
           position: 90
@@ -655,11 +755,12 @@
         entity_id: input_select.keuken_raambekleding
         state: 080%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.keuken_gordijn_my_position
+          entity_id: cover.keuken_gordijn
       - action: cover.set_cover_position
         data:
           position: 80
@@ -671,11 +772,12 @@
         entity_id: input_select.keuken_raambekleding
         state: 060%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.keuken_gordijn_my_position
+          entity_id: cover.keuken_gordijn
       - action: cover.set_cover_position
         data:
           position: 60
@@ -687,11 +789,12 @@
         entity_id: input_select.keuken_raambekleding
         state: 040%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.keuken_gordijn_my_position
+          entity_id: cover.keuken_gordijn
       - action: cover.set_cover_position
         data:
           position: 40
@@ -703,11 +806,12 @@
         entity_id: input_select.keuken_raambekleding
         state: 020%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.keuken_gordijn_my_position
+          entity_id: cover.keuken_gordijn
       - action: cover.set_cover_position
         data:
           position: 20
@@ -719,11 +823,12 @@
         entity_id: input_select.keuken_raambekleding
         state: 000%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.keuken_gordijn_my_position
+          entity_id: cover.keuken_gordijn
       - action: cover.close_cover
         data: {}
         metadata: {}
@@ -759,11 +864,12 @@
         entity_id: input_select.woonkamer_raambekleding
         state: 090%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.woonkamer_gordijn_my_position
+          entity_id: cover.woonkamer_gordijn
       - action: cover.set_cover_position
         data:
           position: 90
@@ -775,11 +881,12 @@
         entity_id: input_select.woonkamer_raambekleding
         state: 080%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.woonkamer_gordijn_my_position
+          entity_id: cover.woonkamer_gordijn
       - action: cover.set_cover_position
         data:
           position: 80
@@ -791,11 +898,12 @@
         entity_id: input_select.woonkamer_raambekleding
         state: 060%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.woonkamer_gordijn_my_position
+          entity_id: cover.woonkamer_gordijn
       - action: cover.set_cover_position
         data:
           position: 60
@@ -807,11 +915,12 @@
         entity_id: input_select.woonkamer_raambekleding
         state: 040%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.woonkamer_gordijn_my_position
+          entity_id: cover.woonkamer_gordijn
       - action: cover.set_cover_position
         data:
           position: 40
@@ -823,11 +932,12 @@
         entity_id: input_select.woonkamer_raambekleding
         state: 020%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.woonkamer_gordijn_my_position
+          entity_id: cover.woonkamer_gordijn
       - action: cover.set_cover_position
         data:
           position: 20
@@ -839,11 +949,12 @@
         entity_id: input_select.woonkamer_raambekleding
         state: 000%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.woonkamer_gordijn_my_position
+          entity_id: cover.woonkamer_gordijn
       - action: cover.close_cover
         data: {}
         metadata: {}
@@ -872,26 +983,20 @@
         metadata: {}
         target:
           entity_id:
-          - cover.gameroom_gordijn_links1
-          - cover.gameroom_gordijn_links2
+          - cover.gameroom_gordijnen
           - cover.gameroom_rolluik_links
-          - cover.gameroom_gordijn_rechts1
-          - cover.gameroom_gordijn_rechts2
           - cover.gameroom_rolluik_rechts
     - conditions:
       - condition: state
         entity_id: input_select.gameroom_raambekleding
         state: 090%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id:
-          - button.gameroom_gordijn_links1_my_position
-          - button.gameroom_gordijn_links2_my_position
-          - button.gameroom_gordijn_rechts1_my_position
-          - button.gameroom_gordijn_rechts2_my_position
+          entity_id: cover.gameroom_gordijnen
       - action: cover.set_cover_position
         data:
           position: 60
@@ -911,15 +1016,12 @@
         entity_id: input_select.gameroom_raambekleding
         state: 080%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id:
-          - button.gameroom_gordijn_links1_my_position
-          - button.gameroom_gordijn_links2_my_position
-          - button.gameroom_gordijn_rechts1_my_position
-          - button.gameroom_gordijn_rechts2_my_position
+          entity_id: cover.gameroom_gordijnen
       - action: cover.set_cover_position
         data:
           position: 40
@@ -939,15 +1041,12 @@
         entity_id: input_select.gameroom_raambekleding
         state: 060%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id:
-          - button.gameroom_gordijn_links1_my_position
-          - button.gameroom_gordijn_links2_my_position
-          - button.gameroom_gordijn_rechts1_my_position
-          - button.gameroom_gordijn_rechts2_my_position
+          entity_id: cover.gameroom_gordijnen
       - action: cover.set_cover_position
         data:
           position: 30
@@ -967,15 +1066,12 @@
         entity_id: input_select.gameroom_raambekleding
         state: 040%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id:
-          - button.gameroom_gordijn_links1_my_position
-          - button.gameroom_gordijn_links2_my_position
-          - button.gameroom_gordijn_rechts1_my_position
-          - button.gameroom_gordijn_rechts2_my_position
+          entity_id: cover.gameroom_gordijnen
       - action: cover.set_cover_position
         data:
           position: 20
@@ -995,15 +1091,12 @@
         entity_id: input_select.gameroom_raambekleding
         state: 020%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id:
-          - button.gameroom_gordijn_links1_my_position
-          - button.gameroom_gordijn_links2_my_position
-          - button.gameroom_gordijn_rechts1_my_position
-          - button.gameroom_gordijn_rechts2_my_position
+          entity_id: cover.gameroom_gordijnen
       - action: cover.set_cover_position
         data:
           position: 20
@@ -1017,15 +1110,12 @@
         entity_id: input_select.gameroom_raambekleding
         state: 000%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id:
-          - button.gameroom_gordijn_links1_my_position
-          - button.gameroom_gordijn_links2_my_position
-          - button.gameroom_gordijn_rechts1_my_position
-          - button.gameroom_gordijn_rechts2_my_position
+          entity_id: cover.gameroom_gordijnen
       - action: cover.close_cover
         data: {}
         metadata: {}
@@ -1062,11 +1152,12 @@
         entity_id: input_select.gang_raambekleding
         state: 090%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.gang_gordijn_my_position
+          entity_id: cover.gang_gordijn
       - action: cover.set_cover_position
         data:
           position: 90
@@ -1078,11 +1169,12 @@
         entity_id: input_select.gang_raambekleding
         state: 080%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.gang_gordijn_my_position
+          entity_id: cover.gang_gordijn
       - action: cover.set_cover_position
         data:
           position: 80
@@ -1094,11 +1186,12 @@
         entity_id: input_select.gang_raambekleding
         state: 060%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.gang_gordijn_my_position
+          entity_id: cover.gang_gordijn
       - action: cover.set_cover_position
         data:
           position: 60
@@ -1110,11 +1203,12 @@
         entity_id: input_select.gang_raambekleding
         state: 040%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.gang_gordijn_my_position
+          entity_id: cover.gang_gordijn
       - action: cover.set_cover_position
         data:
           position: 40
@@ -1126,11 +1220,12 @@
         entity_id: input_select.gang_raambekleding
         state: 020%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.gang_gordijn_my_position
+          entity_id: cover.gang_gordijn
       - action: cover.set_cover_position
         data:
           position: 20
@@ -1178,11 +1273,12 @@
         entity_id: input_select.sauna_raambekleding
         state: 090%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.sauna_gordijn_my_position
+          entity_id: cover.sauna_gordijn
       - action: cover.set_cover_position
         data:
           position: 90
@@ -1194,11 +1290,12 @@
         entity_id: input_select.sauna_raambekleding
         state: 080%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.sauna_gordijn_my_position
+          entity_id: cover.sauna_gordijn
       - action: cover.set_cover_position
         data:
           position: 80
@@ -1210,11 +1307,12 @@
         entity_id: input_select.sauna_raambekleding
         state: 060%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.sauna_gordijn_my_position
+          entity_id: cover.sauna_gordijn
       - action: cover.set_cover_position
         data:
           position: 60
@@ -1226,11 +1324,12 @@
         entity_id: input_select.sauna_raambekleding
         state: 040%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.sauna_gordijn_my_position
+          entity_id: cover.sauna_gordijn
       - action: cover.set_cover_position
         data:
           position: 40
@@ -1242,11 +1341,12 @@
         entity_id: input_select.sauna_raambekleding
         state: 020%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.sauna_gordijn_my_position
+          entity_id: cover.sauna_gordijn
       - action: cover.set_cover_position
         data:
           position: 20
@@ -1287,21 +1387,19 @@
         metadata: {}
         target:
           entity_id:
-          - cover.kantoor_gordijn_links
-          - cover.kantoor_gordijn_rechts
+          - cover.kantoor_gordijnen
           - cover.kantoor_rolluik
     - conditions:
       - condition: state
         entity_id: input_select.kantoor_raambekleding
         state: 090%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id:
-          - button.kantoor_gordijn_links_my_position
-          - button.kantoor_gordijn_rechts_my_position
+          entity_id: cover.kantoor_gordijnen
       - action: cover.set_cover_position
         data:
           position: 90
@@ -1314,13 +1412,12 @@
         entity_id: input_select.kantoor_raambekleding
         state: 080%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id:
-          - button.kantoor_gordijn_links_my_position
-          - button.kantoor_gordijn_rechts_my_position
+          entity_id: cover.kantoor_gordijnen
       - action: cover.set_cover_position
         data:
           position: 80
@@ -1333,13 +1430,12 @@
         entity_id: input_select.kantoor_raambekleding
         state: 060%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id:
-          - button.kantoor_gordijn_links_my_position
-          - button.kantoor_gordijn_rechts_my_position
+          entity_id: cover.kantoor_gordijnen
       - action: cover.set_cover_position
         data:
           position: 60
@@ -1352,13 +1448,12 @@
         entity_id: input_select.kantoor_raambekleding
         state: 040%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id:
-          - button.kantoor_gordijn_links_my_position
-          - button.kantoor_gordijn_rechts_my_position
+          entity_id: cover.kantoor_gordijnen
       - action: cover.set_cover_position
         data:
           position: 40
@@ -1371,13 +1466,12 @@
         entity_id: input_select.kantoor_raambekleding
         state: 020%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id:
-          - button.kantoor_gordijn_links_my_position
-          - button.kantoor_gordijn_rechts_my_position
+          entity_id: cover.kantoor_gordijnen
       - action: cover.set_cover_position
         data:
           position: 20
@@ -1390,18 +1484,12 @@
         entity_id: input_select.kantoor_raambekleding
         state: 000%
       sequence:
-      - action: button.press
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - button.kantoor_gordijn_links_my_position
-          - button.kantoor_gordijn_rechts_my_position
       - action: cover.close_cover
         data: {}
         metadata: {}
         target:
           entity_id:
+          - cover.kantoor_gordijnen
           - cover.kantoor_rolluik
   mode: queued
   max: 10
@@ -1582,12 +1670,12 @@
         entity_id: input_select.slaapkamer_raambekleding
         state: 100%
       sequence:
-      - action: cover.open_cover
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
-        data: {}
         target:
-          entity_id:
-          - cover.slaapkamer_gordijn
+          entity_id: cover.slaapkamer_gordijn
       - action: cover.set_cover_position
         data:
           position: 20
@@ -1602,11 +1690,12 @@
         entity_id: input_select.slaapkamer_raambekleding
         state: 020%
       sequence:
-      - action: button.press
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
-          entity_id: button.slaapkamer_gordijn_my_position
+          entity_id: cover.slaapkamer_gordijn
       - action: cover.set_cover_position
         data:
           position: 20
@@ -3310,7 +3399,7 @@
           notification_icon: mdi:doorbell-video
           priority: high
           ttl: 0
-      enabled: false
+      enabled: true
     - alias: Woonkamer TV
       if:
       - condition: not
@@ -3439,57 +3528,6 @@
           entity_id:
           - light.slaapkamer_bed
       alias: motion clear
-  mode: restart
-- id: '1751181775994'
-  alias: Badkamer Media water
-  description: ''
-  triggers:
-  - entity_id:
-    - sensor.watergebruik
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-    above: 7.5
-    id: shower on
-    trigger: numeric_state
-  - entity_id:
-    - sensor.watergebruik
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 10
-    below: 7.5
-    id: shower off
-    trigger: numeric_state
-  conditions:
-  - condition: state
-    entity_id: light.badkamer_lampen
-    state: 'on'
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - shower on
-      sequence:
-      - data:
-          volume_level: 0.45
-        target:
-          entity_id: media_player.badkamer
-        action: media_player.volume_set
-      alias: shower on - volume up
-    - conditions:
-      - condition: trigger
-        id:
-        - shower off
-      sequence:
-      - data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.badkamer
-        action: media_player.volume_set
-      alias: shower off - volume down
   mode: restart
 - id: '1753111025679'
   alias: Kantoor Energie
@@ -5607,4 +5645,26 @@
         - light.gang_trap_1_lamp
         - light.gang_trap_2_lamp
         - light.gang_lamp
+        - light.woonkamer_lamp_onder
       auto_adjust_enabled: true
+- id: '1767044874987'
+  alias: Woonkamer Tablet
+  description: ''
+  triggers:
+  - trigger: homeassistant
+    event: start
+    id: ha start
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - ha start
+      sequence:
+      - action: button.press
+        metadata: {}
+        data: {}
+        target:
+          entity_id: button.woonkamer_tablet_herstarten
+  mode: single
