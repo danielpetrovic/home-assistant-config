@@ -3563,6 +3563,12 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_double_press:
+      - action: automation.toggle
+        metadata: {}
+        target:
+          entity_id: automation.entree_beweging
+        data: {}
 - id: '1755899171238'
   alias: Toilet Knop
   description: ''
