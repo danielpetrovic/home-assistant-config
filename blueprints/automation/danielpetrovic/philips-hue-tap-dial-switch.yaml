@@ -2436,7 +2436,7 @@ variables:
   button_1_media: !input button_1_media
   button_1_media_leader: !input button_1_media_leader
   button_1_volume: !input button_1_media_volume
-  button_1_current_volume: "{{ state_attr(button_1_media, 'volume_level') | default(button_1_volume / 100, true) if button_1_media is string and button_1_media != '' else button_1_volume / 100 }}"
+  button_1_current_volume: "{{ state_attr(button_1_media, 'volume_level') | default((button_1_volume | default(35)) / 100, true) if button_1_media is string and button_1_media != '' else (button_1_volume | default(35)) / 100 }}"
   button_1_short_release_media_mode: !input button_1_short_release_media_mode
   button_1_short_release_media_control: !input button_1_short_release_media_control
   button_1_long_release_media_mode: !input button_1_long_release_media_mode
@@ -2533,7 +2533,7 @@ variables:
   button_2_media: !input button_2_media
   button_2_media_leader: !input button_2_media_leader
   button_2_volume: !input button_2_media_volume
-  button_2_current_volume: "{{ state_attr(button_2_media, 'volume_level') | default(button_2_volume / 100, true) if button_2_media is string and button_2_media != '' else button_2_volume / 100 }}"
+  button_2_current_volume: "{{ state_attr(button_2_media, 'volume_level') | default((button_2_volume | default(35)) / 100, true) if button_2_media is string and button_2_media != '' else (button_2_volume | default(35)) / 100 }}"
   button_2_short_release_media_mode: !input button_2_short_release_media_mode
   button_2_short_release_media_control: !input button_2_short_release_media_control
   button_2_long_release_media_mode: !input button_2_long_release_media_mode
@@ -2630,7 +2630,7 @@ variables:
   button_3_media: !input button_3_media
   button_3_media_leader: !input button_3_media_leader
   button_3_volume: !input button_3_media_volume
-  button_3_current_volume: "{{ state_attr(button_3_media, 'volume_level') | default(button_3_volume / 100, true) if button_3_media is string and button_3_media != '' else button_3_volume / 100 }}"
+  button_3_current_volume: "{{ state_attr(button_3_media, 'volume_level') | default((button_3_volume | default(35)) / 100, true) if button_3_media is string and button_3_media != '' else (button_3_volume | default(35)) / 100 }}"
   button_3_short_release_media_mode: !input button_3_short_release_media_mode
   button_3_short_release_media_control: !input button_3_short_release_media_control
   button_3_long_release_media_mode: !input button_3_long_release_media_mode
@@ -2727,7 +2727,7 @@ variables:
   button_4_media: !input button_4_media
   button_4_media_leader: !input button_4_media_leader
   button_4_volume: !input button_4_media_volume
-  button_4_current_volume: "{{ state_attr(button_4_media, 'volume_level') | default(button_4_volume / 100, true) if button_4_media is string and button_4_media != '' else button_4_volume / 100 }}"
+  button_4_current_volume: "{{ state_attr(button_4_media, 'volume_level') | default((button_4_volume | default(35)) / 100, true) if button_4_media is string and button_4_media != '' else (button_4_volume | default(35)) / 100 }}"
   button_4_short_release_media_mode: !input button_4_short_release_media_mode
   button_4_short_release_media_control: !input button_4_short_release_media_control
   button_4_long_release_media_mode: !input button_4_long_release_media_mode
@@ -3125,7 +3125,7 @@ actions:
                         target:
                           entity_id: "{{ button_1_media }}"
                         data:
-                          volume_level: "{{ button_1_volume / 100 }}"
+                          volume_level: "{{ (button_1_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_1_hold' }}"
         sequence: !input button_1_hold
       - conditions: "{{ command == 'button_1_long_release' }}"
@@ -3218,7 +3218,7 @@ actions:
                         target:
                           entity_id: "{{ button_1_media }}"
                         data:
-                          volume_level: "{{ button_1_volume / 100 }}"
+                          volume_level: "{{ (button_1_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_1_double_press' }}"
         sequence:
           - sequence: !input button_1_double
@@ -3268,7 +3268,7 @@ actions:
                         target:
                           entity_id: "{{ button_1_media }}"
                         data:
-                          volume_level: "{{ button_1_volume / 100 }}"
+                          volume_level: "{{ (button_1_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_1_triple_press' }}"
         sequence:
           - sequence: !input button_1_triple
@@ -3318,7 +3318,7 @@ actions:
                         target:
                           entity_id: "{{ button_1_media }}"
                         data:
-                          volume_level: "{{ button_1_volume / 100 }}"
+                          volume_level: "{{ (button_1_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_1_quadruple_press' }}"
         sequence: !input button_1_quadruple
       - conditions: "{{ command == 'button_1_quintuple_press' }}"
@@ -3331,7 +3331,7 @@ actions:
               - action: light.turn_on
                 target: "{{ button_1_light }}"
                 data:
-                  brightness_step: "-{{ (step_size * button_1_step_size / 10) | int }}"
+                  brightness_step: "-{{ (step_size | int(0) * button_1_step_size / 10) | int }}"
                   transition: "{{ button_1_transition }}"
           - if: "{{ button_1_has_media and 'volume' in button_1_rotate_media_mode }}"
             then:
@@ -3348,7 +3348,7 @@ actions:
               - action: light.turn_on
                 target: "{{ button_1_light }}"
                 data:
-                  brightness_step: "{{ (step_size * button_1_step_size / 10) | int }}"
+                  brightness_step: "{{ (step_size | int(0) * button_1_step_size / 10) | int }}"
                   transition: "{{ button_1_transition }}"
           - if: "{{ button_1_has_media and 'volume' in button_1_rotate_media_mode }}"
             then:
@@ -3450,7 +3450,7 @@ actions:
                         target:
                           entity_id: "{{ button_2_media }}"
                         data:
-                          volume_level: "{{ button_2_volume / 100 }}"
+                          volume_level: "{{ (button_2_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_2_hold' }}"
         sequence: !input button_2_hold
       - conditions: "{{ command == 'button_2_long_release' }}"
@@ -3543,7 +3543,7 @@ actions:
                         target:
                           entity_id: "{{ button_2_media }}"
                         data:
-                          volume_level: "{{ button_2_volume / 100 }}"
+                          volume_level: "{{ (button_2_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_2_double_press' }}"
         sequence:
           - sequence: !input button_2_double
@@ -3593,7 +3593,7 @@ actions:
                         target:
                           entity_id: "{{ button_2_media }}"
                         data:
-                          volume_level: "{{ button_2_volume / 100 }}"
+                          volume_level: "{{ (button_2_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_2_triple_press' }}"
         sequence:
           - sequence: !input button_2_triple
@@ -3643,7 +3643,7 @@ actions:
                         target:
                           entity_id: "{{ button_2_media }}"
                         data:
-                          volume_level: "{{ button_2_volume / 100 }}"
+                          volume_level: "{{ (button_2_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_2_quadruple_press' }}"
         sequence: !input button_2_quadruple
       - conditions: "{{ command == 'button_2_quintuple_press' }}"
@@ -3656,7 +3656,7 @@ actions:
               - action: light.turn_on
                 target: "{{ button_2_light }}"
                 data:
-                  brightness_step: "-{{ (step_size * button_2_step_size / 10) | int }}"
+                  brightness_step: "-{{ (step_size | int(0) * button_2_step_size / 10) | int }}"
                   transition: "{{ button_2_transition }}"
           - if: "{{ button_2_has_media and 'volume' in button_2_rotate_media_mode }}"
             then:
@@ -3673,7 +3673,7 @@ actions:
               - action: light.turn_on
                 target: "{{ button_2_light }}"
                 data:
-                  brightness_step: "{{ (step_size * button_2_step_size / 10) | int }}"
+                  brightness_step: "{{ (step_size | int(0) * button_2_step_size / 10) | int }}"
                   transition: "{{ button_2_transition }}"
           - if: "{{ button_2_has_media and 'volume' in button_2_rotate_media_mode }}"
             then:
@@ -3775,7 +3775,7 @@ actions:
                         target:
                           entity_id: "{{ button_3_media }}"
                         data:
-                          volume_level: "{{ button_3_volume / 100 }}"
+                          volume_level: "{{ (button_3_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_3_hold' }}"
         sequence: !input button_3_hold
       - conditions: "{{ command == 'button_3_long_release' }}"
@@ -3868,7 +3868,7 @@ actions:
                         target:
                           entity_id: "{{ button_3_media }}"
                         data:
-                          volume_level: "{{ button_3_volume / 100 }}"
+                          volume_level: "{{ (button_3_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_3_double_press' }}"
         sequence:
           - sequence: !input button_3_double
@@ -3918,7 +3918,7 @@ actions:
                         target:
                           entity_id: "{{ button_3_media }}"
                         data:
-                          volume_level: "{{ button_3_volume / 100 }}"
+                          volume_level: "{{ (button_3_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_3_triple_press' }}"
         sequence:
           - sequence: !input button_3_triple
@@ -3968,7 +3968,7 @@ actions:
                         target:
                           entity_id: "{{ button_3_media }}"
                         data:
-                          volume_level: "{{ button_3_volume / 100 }}"
+                          volume_level: "{{ (button_3_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_3_quadruple_press' }}"
         sequence: !input button_3_quadruple
       - conditions: "{{ command == 'button_3_quintuple_press' }}"
@@ -3981,7 +3981,7 @@ actions:
               - action: light.turn_on
                 target: "{{ button_3_light }}"
                 data:
-                  brightness_step: "-{{ (step_size * button_3_step_size / 10) | int }}"
+                  brightness_step: "-{{ (step_size | int(0) * button_3_step_size / 10) | int }}"
                   transition: "{{ button_3_transition }}"
           - if: "{{ button_3_has_media and 'volume' in button_3_rotate_media_mode }}"
             then:
@@ -3998,7 +3998,7 @@ actions:
               - action: light.turn_on
                 target: "{{ button_3_light }}"
                 data:
-                  brightness_step: "{{ (step_size * button_3_step_size / 10) | int }}"
+                  brightness_step: "{{ (step_size | int(0) * button_3_step_size / 10) | int }}"
                   transition: "{{ button_3_transition }}"
           - if: "{{ button_3_has_media and 'volume' in button_3_rotate_media_mode }}"
             then:
@@ -4100,7 +4100,7 @@ actions:
                         target:
                           entity_id: "{{ button_4_media }}"
                         data:
-                          volume_level: "{{ button_4_volume / 100 }}"
+                          volume_level: "{{ (button_4_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_4_hold' }}"
         sequence: !input button_4_hold
       - conditions: "{{ command == 'button_4_long_release' }}"
@@ -4193,7 +4193,7 @@ actions:
                         target:
                           entity_id: "{{ button_4_media }}"
                         data:
-                          volume_level: "{{ button_4_volume / 100 }}"
+                          volume_level: "{{ (button_4_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_4_double_press' }}"
         sequence:
           - sequence: !input button_4_double
@@ -4243,7 +4243,7 @@ actions:
                         target:
                           entity_id: "{{ button_4_media }}"
                         data:
-                          volume_level: "{{ button_4_volume / 100 }}"
+                          volume_level: "{{ (button_4_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_4_triple_press' }}"
         sequence:
           - sequence: !input button_4_triple
@@ -4293,7 +4293,7 @@ actions:
                         target:
                           entity_id: "{{ button_4_media }}"
                         data:
-                          volume_level: "{{ button_4_volume / 100 }}"
+                          volume_level: "{{ (button_4_volume | default(35)) / 100 }}"
       - conditions: "{{ command == 'button_4_quadruple_press' }}"
         sequence: !input button_4_quadruple
       - conditions: "{{ command == 'button_4_quintuple_press' }}"
@@ -4306,7 +4306,7 @@ actions:
               - action: light.turn_on
                 target: "{{ button_4_light }}"
                 data:
-                  brightness_step: "-{{ (step_size * button_4_step_size / 10) | int }}"
+                  brightness_step: "-{{ (step_size | int(0) * button_4_step_size / 10) | int }}"
                   transition: "{{ button_4_transition }}"
           - if: "{{ button_4_has_media and 'volume' in button_4_rotate_media_mode }}"
             then:
@@ -4323,7 +4323,7 @@ actions:
               - action: light.turn_on
                 target: "{{ button_4_light }}"
                 data:
-                  brightness_step: "{{ (step_size * button_4_step_size / 10) | int }}"
+                  brightness_step: "{{ (step_size | int(0) * button_4_step_size / 10) | int }}"
                   transition: "{{ button_4_transition }}"
           - if: "{{ button_4_has_media and 'volume' in button_4_rotate_media_mode }}"
             then:
