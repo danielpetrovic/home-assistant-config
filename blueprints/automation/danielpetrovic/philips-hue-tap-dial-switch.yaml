@@ -111,8 +111,8 @@ blueprint:
           description: |
             `optional` `text`
 
-            MQTT base topic for Zigbee2MQTT installation. Default is `zigbee2mqtt`. Leave empty if not using Z2M.
-          default: "zigbee2mqtt"
+            MQTT base topic for Zigbee2MQTT installation (usually `zigbee2mqtt`). Leave empty if not using Z2M.
+          default: ""
           selector:
             text: {}
         z2m_device_name:
