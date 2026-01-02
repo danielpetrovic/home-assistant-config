@@ -79,6 +79,8 @@ blueprint:
         - **2026.01.1: Workday Integration & Documentation Updates**
           - Added Workday/Non-Workday schedule mode with automatic holiday detection
           - Choose between per-day schedules or simple workday/non-workday split
+          - Fixed "Already running" errors by removing unnecessary sun.sun trigger
+          - Added mode: restart to handle edge cases of overlapping triggers
           - Added GitHub Repository, Blueprint Code, and Version badges to description
           - Added Version History section for tracking changes
           - Updated formatting with section icons throughout
@@ -1409,10 +1411,10 @@ variables:
 triggers:
   - trigger: time_pattern
     minutes: "/5"
-  - trigger: state
-    entity_id: sun.sun
   - trigger: homeassistant
     event: start
+
+mode: restart
 
 actions:
   - action: input_number.set_value

@@ -5,86 +5,141 @@ blueprint:
   description: |
     # Philips Hue Tap Dial Switch (Z2M / ZHA)
 
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.3-blue?style=for-the-badge)
+
     This blueprint enables comprehensive control of a Philips Hue Tap Dial Switch through Zigbee2MQTT or ZHA integration, supporting custom actions, light automation, and media player control.
 
-    ## Key Features
+    ## ✨ Key Features
     - **Multiple Integration Options**: Choose Zigbee2MQTT (Z2M), ZHA, or both
     - **4 Buttons**: Each with short press, long press, and multi-press support (Z2M: double, ZHA: double/triple/quad/quint)
     - **Rotary Dial**: Context-aware based on last button pressed
     - **Custom Mode**: Program buttons to execute personalized home automation routines
     - **Light Mode**: Control lights with brightness, color temperature, and transitions
     - **Media Mode**: Control media players with volume, playback, and grouping
-    - **Schedule Support**: Time-based brightness and color temperature adjustments
-    - **Auto-Adjust**: Optionally enable automatic light adjustment when your schedule changes
+    - **Adaptive Lighting Support**: Integrates with Home Assistant schedule helpers and adaptive lighting sensors for dynamic brightness and color temperature adjustments throughout the day
+    - **Auto-Adjust**: Optionally enable automatic light adjustment when your schedule changes - lights will smoothly transition to match the current schedule settings
+    - **Configurable Dimming Speed**: Adjust how fast lights dim with the dial
 
     *Each configuration option below includes detailed instructions in the automation editor.*
 
-    ## Schedule Helper Configuration
-
-    Create time-based brightness and color adjustments using Home Assistant schedule helpers.
-
-    ### Setting up Packages (Optional)
-    Organize schedules into packages for easier management. Create a `packages` folder in `/config/` and add to your configuration:
-
-    ```yaml
-    homeassistant:
-      packages: !include_dir_named packages
-    ```
-
-    ### Schedule YAML Example
-    Create `/config/packages/lights.yaml` with your schedules:
-
-    ```yaml
-    schedule:
-      lights_bright:
-        name: "Lights Bright"
-        icon: mdi:lightbulb-auto
-        monday:
-          - from: "00:00:00"
-            to: "09:00:00"
-            data:
-              brightness_pct: 30
-              color_temp_kelvin: 3333
-          - from: "09:00:00"
-            to: "23:00:00"
-            data:
-              brightness_pct: 90
-              color_temp_kelvin: 3333
-          - from: "23:00:00"
-            to: "24:00:00"
-            data:
-              brightness_pct: 30
-              color_temp_kelvin: 3333
-        # Repeat pattern for tuesday through sunday
-    ```
-
-    You can create multiple schedules with different brightness levels (e.g., `lights_bright` and `lights_dimmed`) for different scenarios.
-
-    ## Schedule Flexibility
-
-    **Optional Fields:** If a schedule lacks certain data fields (like `transition`), the blueprint reverts to default values configured in the automation. This allows selective override of specific parameters while maintaining other preset defaults.
-
-    **Supported Schedule Attributes:**
-    - `brightness_pct`: Brightness percentage (0-100)
-    - `color_temp_kelvin`: Color temperature in Kelvin
-    - `transition`: Optional transition time in seconds
-
-    ## Auto-Adjust Feature
-
-    When enabled, the blueprint automatically updates lights when the schedule changes (e.g., when moving from morning to afternoon time block):
-    - Only affects lights that are currently ON
-    - Configurable transition duration (default: 5 minutes)
-    - Applies current schedule's brightness and color temperature
-    - Can be enabled/disabled per button
-
-    ## Requirements
-    - Home Assistant 2024.10.0 or later
-    - Zigbee2MQTT (Z2M) and/or Zigbee Home Automation (ZHA)
-    - Philips Hue Tap Dial Switch (RDM002)
+    ## 📋 Requirements
+    - **Home Assistant**: Version 2024.10.0 or later
+    - **Zigbee Integration**: Zigbee2MQTT (Z2M) and/or Zigbee Home Automation (ZHA)
+    - **Compatible Model**: Philips Hue Tap Dial Switch (RDM002)
+    - **Text Helper**: One per switch (for dial context)
   domain: automation
   homeassistant:
     min_version: 2024.10.0
   input:
+    version_info:
+      name: Version History
+      description: |
+        - **2026.01.3: Fix NoneType division errors in volume control and documentation improvements**
+          - Fixed: Added `| int(0)` filter to all 8 volume_level templates for dial rotation
+          - Fixed: Prevents "TypeError: unsupported operand type(s) for /: 'NoneType' and 'int'" errors
+          - Improved: Matches protective pattern already used in brightness templates
+          - Improved: Added badges and reorganized documentation with better structure
+          - Improved: Moved Version History and Schedule Helper Configuration to collapsed input sections
+
+        - **2026.01.2: Fix NoneType multiplication and division errors in templates**
+          - Fixed: "TypeError: unsupported operand type(s) for *: 'NoneType' and 'int'" errors during dial rotation by adding int(0) default to step_size in brightness calculations
+          - Fixed: "TypeError: unsupported operand type(s) for /: 'NoneType' and 'int'" errors in media volume calculations by adding default(35) to button_X_volume
+          - Improved: All brightness_step calculations now use: (step_size | int(0) * button_X_step_size / 10)
+          - Improved: All current_volume calculations now use: (button_X_volume | default(35)) / 100
+          - Note: These errors occurred in automations created before input defaults were added, or when trigger data doesn't include expected parameters
+
+        - **2026.01.1: Fix Z2M MQTT subscription error for ZHA-only users**
+          - Fixed: Z2M MQTT subscription errors when using ZHA-only configuration
+          - Improved: Conditional MQTT trigger based on integration selection
+
+        - **2025.12.2: Add adaptive lighting support to Philips Hue Tap Dial blueprint**
+          - Added: Adaptive lighting mode with schedule helper and sensor integration
+          - Added: Auto-adjust feature for automatic light updates on schedule changes
+          - Enhanced: Support for brightness and color temperature from schedules and sensors
+
+        - **2025.12.1: Major update - Z2M support, Auto-Adjust, Reset to Defaults, Dimming Speed**
+          - Added: Zigbee2MQTT (Z2M) integration support alongside ZHA
+          - Added: Auto-adjust lights when schedule changes
+          - Added: Reset to defaults button action
+          - Added: Configurable dimming speed per button
+          - Improved: Documentation and organization
+
+        - **2025.04.0: Change variables to be unique per button**
+          - Changed: Made all variables unique per button for better isolation
+
+        - **2025.02.0: Big v2 update with a lot of changes**
+          - Major: Complete rewrite with many new features and improvements
+
+        - **2025.01.1: Lights mode without schedules, cleanup of old syntax**
+          - Added: Lights mode without requiring schedules
+          - Improved: Code cleanup and syntax updates
+
+        - **2025.01.0: Initial Version**
+          - First release with basic Philips Hue Tap Dial Switch support
+      collapsed: true
+      icon: mdi:history
+      input: {}
+    schedule_helper_info:
+      name: Schedule Helper Configuration
+      description: |
+        Create time-based brightness and color adjustments using Home Assistant schedule helpers.
+
+        ### Setting up Packages (Optional)
+        Organize schedules into packages for easier management. Create a `packages` folder in `/config/` and add to your configuration:
+
+        ```yaml
+        homeassistant:
+          packages: !include_dir_named packages
+        ```
+
+        ### Schedule YAML Example
+        Create `/config/packages/lights.yaml` with your schedules:
+
+        ```yaml
+        schedule:
+          lights_bright:
+            name: "Lights Bright"
+            icon: mdi:lightbulb-auto
+            monday:
+              - from: "00:00:00"
+                to: "09:00:00"
+                data:
+                  brightness_pct: 30
+                  color_temp_kelvin: 3333
+              - from: "09:00:00"
+                to: "23:00:00"
+                data:
+                  brightness_pct: 90
+                  color_temp_kelvin: 3333
+              - from: "23:00:00"
+                to: "24:00:00"
+                data:
+                  brightness_pct: 30
+                  color_temp_kelvin: 3333
+            # Repeat pattern for tuesday through sunday
+        ```
+
+        You can create multiple schedules with different brightness levels (e.g., `lights_bright` and `lights_dimmed`) for different scenarios.
+
+        ### Schedule Flexibility
+
+        **Optional Fields:** If a schedule lacks certain data fields (like `transition`), the blueprint reverts to default values configured in the automation. This allows selective override of specific parameters while maintaining other preset defaults.
+
+        **Supported Schedule Attributes:**
+        - `brightness_pct`: Brightness percentage (0-100)
+        - `color_temp_kelvin`: Color temperature in Kelvin
+        - `transition`: Optional transition time in seconds
+
+        ### Auto-Adjust Feature
+
+        When enabled, the blueprint automatically updates lights when the schedule changes (e.g., when moving from morning to afternoon time block):
+        - Only affects lights that are currently ON
+        - Configurable transition duration (default: 5 minutes)
+        - Applies current schedule's brightness and color temperature
+        - Can be enabled/disabled per button
+      collapsed: true
+      icon: mdi:calendar-clock
+      input: {}
     integration_type:
       name: Integration Type
       description: |
@@ -3339,7 +3394,7 @@ actions:
                 target:
                   entity_id: "{{ button_1_media }}"
                 data:
-                  volume_level: "{{ [0, button_1_current_volume - (step_size / 8 / 100)] | max }}"
+                  volume_level: "{{ [0, button_1_current_volume - (step_size | int(0) / 8 / 100)] | max }}"
       - conditions: "{{ rotate_right and states(last_pressed) == '1' }}"
         sequence:
           - sequence: !input button_1_rotate_right
@@ -3356,7 +3411,7 @@ actions:
                 target:
                   entity_id: "{{ button_1_media }}"
                 data:
-                  volume_level: "{{ [1, button_1_current_volume + (step_size / 8 / 100)] | min }}"
+                  volume_level: "{{ [1, button_1_current_volume + (step_size | int(0) / 8 / 100)] | min }}"
       # ========== BUTTON 2 ==========
       - conditions: "{{ command == 'button_2_press' }}"
         sequence: !input button_2_press
@@ -3664,7 +3719,7 @@ actions:
                 target:
                   entity_id: "{{ button_2_media }}"
                 data:
-                  volume_level: "{{ [0, button_2_current_volume - (step_size / 8 / 100)] | max }}"
+                  volume_level: "{{ [0, button_2_current_volume - (step_size | int(0) / 8 / 100)] | max }}"
       - conditions: "{{ rotate_right and states(last_pressed) == '2' }}"
         sequence:
           - sequence: !input button_2_rotate_right
@@ -3681,7 +3736,7 @@ actions:
                 target:
                   entity_id: "{{ button_2_media }}"
                 data:
-                  volume_level: "{{ [1, button_2_current_volume + (step_size / 8 / 100)] | min }}"
+                  volume_level: "{{ [1, button_2_current_volume + (step_size | int(0) / 8 / 100)] | min }}"
       # ========== BUTTON 3 ==========
       - conditions: "{{ command == 'button_3_press' }}"
         sequence: !input button_3_press
@@ -3989,7 +4044,7 @@ actions:
                 target:
                   entity_id: "{{ button_3_media }}"
                 data:
-                  volume_level: "{{ [0, button_3_current_volume - (step_size / 8 / 100)] | max }}"
+                  volume_level: "{{ [0, button_3_current_volume - (step_size | int(0) / 8 / 100)] | max }}"
       - conditions: "{{ rotate_right and states(last_pressed) == '3' }}"
         sequence:
           - sequence: !input button_3_rotate_right
@@ -4006,7 +4061,7 @@ actions:
                 target:
                   entity_id: "{{ button_3_media }}"
                 data:
-                  volume_level: "{{ [1, button_3_current_volume + (step_size / 8 / 100)] | min }}"
+                  volume_level: "{{ [1, button_3_current_volume + (step_size | int(0) / 8 / 100)] | min }}"
       # ========== BUTTON 4 ==========
       - conditions: "{{ command == 'button_4_press' }}"
         sequence: !input button_4_press
@@ -4314,7 +4369,7 @@ actions:
                 target:
                   entity_id: "{{ button_4_media }}"
                 data:
-                  volume_level: "{{ [0, button_4_current_volume - (step_size / 8 / 100)] | max }}"
+                  volume_level: "{{ [0, button_4_current_volume - (step_size | int(0) / 8 / 100)] | max }}"
       - conditions: "{{ rotate_right and states(last_pressed) == '4' }}"
         sequence:
           - sequence: !input button_4_rotate_right
@@ -4331,4 +4386,4 @@ actions:
                 target:
                   entity_id: "{{ button_4_media }}"
                 data:
-                  volume_level: "{{ [1, button_4_current_volume + (step_size / 8 / 100)] | min }}"
+                  volume_level: "{{ [1, button_4_current_volume + (step_size | int(0) / 8 / 100)] | min }}"
