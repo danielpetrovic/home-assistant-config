@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Adaptive Lighting Scheduler
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/adaptive-lighting-scheduler.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.1-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/adaptive-lighting-scheduler.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.2-blue?style=for-the-badge)
 
     This blueprint calculates optimal brightness and color temperature values throughout the day and stores them in input_number helpers for use by other automations and blueprints.
 
@@ -76,6 +76,10 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.01.2: Bug Fix - "Already Running" Errors**
+          - Fixed automation triggering twice simultaneously causing "Already running" errors
+          - Removed unnecessary sun.sun state trigger (time_pattern every 5 minutes is sufficient)
+          - Added mode: restart to handle edge cases of overlapping triggers
         - **2026.01.1: Workday Integration & Documentation Updates**
           - Added Workday/Non-Workday schedule mode with automatic holiday detection
           - Choose between per-day schedules or simple workday/non-workday split
