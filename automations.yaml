@@ -5731,6 +5731,7 @@
     input:
       brightness_helper: input_number.adaptive_brightness_bright
       color_temp_helper: input_number.adaptive_color_temp_bright
+      schedule_mode: workday
       target_lights:
         entity_id:
         - light.badkamer_lamp
@@ -5752,6 +5753,7 @@
         - light.wasruimte_lamp
         - light.woonkamer_lamp_boven
       auto_adjust_enabled: true
+      workday_sensor: binary_sensor.workday_sensor
 - id: '1766509365106'
   alias: Adaptive Lighting Scheduler Dimmed
   description: ''
@@ -5760,6 +5762,7 @@
     input:
       brightness_helper: input_number.adaptive_brightness_dimmed
       color_temp_helper: input_number.adaptive_color_temp_dimmed
+      schedule_mode: workday
       max_brightness: 50
       min_brightness: 25
       night_brightness: 10
@@ -5773,6 +5776,7 @@
         - light.gang_lamp
         - light.woonkamer_lamp_onder
       auto_adjust_enabled: true
+      workday_sensor: binary_sensor.workday_sensor
 - id: '1767044874987'
   alias: Woonkamer Tablet
   description: ''
