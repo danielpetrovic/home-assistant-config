@@ -5,10 +5,12 @@ blueprint:
   description: |
     # Adaptive Lighting Scheduler
 
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/adaptive-lighting-scheduler.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.1-blue?style=for-the-badge)
+
     This blueprint calculates optimal brightness and color temperature values throughout the day and stores them in input_number helpers for use by other automations and blueprints.
 
-    ## Key Features
-    - **Schedule-Based**: Configure different times for each day of the week (weekdays vs weekends)
+    ## ✨ Key Features
+    - **Flexible Scheduling**: Choose between per-day schedules or simple workday/non-workday mode with automatic holiday detection
     - **Sun Tracking**: Optional sunrise/sunset awareness for natural transitions
     - **Smooth Ramping**: Gradual transitions between day phases (wake, morning, evening, sleep, night)
     - **Helper Output**: Stores values in input_number entities for use by switches, dashboards, and other automations
@@ -18,7 +20,11 @@ blueprint:
 
     *Each configuration option below includes detailed instructions in the automation editor.*
 
-    ## How It Works
+    ## ⚙️ How It Works
+
+    **Choose your scheduling mode:**
+    - **Per Day Schedule**: Configure each day individually (Monday-Sunday) for maximum flexibility
+    - **Workday/Non-Workday**: Simple two-schedule mode that automatically detects holidays using the Workday integration
 
     Set fixed times for your daily routine, with optional sun-based adjustments:
 
@@ -28,15 +34,13 @@ blueprint:
     - **Evening → Sleep**: Ramp down to min (optionally start at sunset)
     - **Sleep → Night**: Ramp down to night values
 
-    Each day of the week has its own time settings, allowing different schedules for weekdays vs weekends.
-
     With sunrise tracking enabled:
     - Summer (sunrise 05:00, wake 07:30, morning 09:00): Ramp 07:30 → 09:00
     - Winter (sunrise 08:47, wake 07:30, morning 09:00): Ramp 08:47 → 09:00
 
     Brightness and color temperature values are shared across all days.
 
-    ## Example (Default Weekday Settings)
+    ## 📅 Example (Default Weekday Settings)
 
     | Time | Brightness | Color Temp | Phase |
     |------|------------|------------|-------|
@@ -46,57 +50,7 @@ blueprint:
     | 18:30 - 23:30 | 100% → 50% | 4000K → 2700K | Evening ramp |
     | 23:30 - 00:00 | 50% → 25% | 2700K → 2200K | Sleep ramp |
 
-    ## Setup
-
-    ### Setting up Packages (Optional)
-    Organize helpers into packages for easier management. Create a `packages` folder in `/config/` and add to your configuration:
-
-    ```yaml
-    homeassistant:
-      packages: !include_dir_named packages
-    ```
-
-    ### Helper YAML Example
-    Create `/config/packages/adaptive_lighting.yaml` with your helpers:
-
-    ```yaml
-    input_number:
-      adaptive_brightness:
-        name: "Adaptive Brightness"
-        icon: mdi:brightness-percent
-        min: 0
-        max: 100
-        step: 1
-        unit_of_measurement: "%"
-      adaptive_color_temp:
-        name: "Adaptive Color Temperature"
-        icon: mdi:temperature-kelvin
-        min: 2000
-        max: 6500
-        step: 100
-        unit_of_measurement: "K"
-    ```
-
-    You can create multiple helper pairs for different lighting zones (e.g., `adaptive_brightness_bright` and `adaptive_brightness_dimmed`).
-
-    ### GUI Alternative
-    Create two input_number helpers via Settings → Devices & Services → Helpers:
-    - Brightness: Min 0, Max 100, Step 1
-    - Color Temperature: Min 2000, Max 6500, Step 100
-
-    ### After Creating Helpers
-
-    1. Create an automation from this blueprint
-
-    2. Configure times for each day (defaults provided for weekdays and weekends)
-
-    3. Reference helpers in other automations or blueprints:
-       ```yaml
-       brightness_pct: "{{ states('input_number.adaptive_brightness') | int }}"
-       color_temp_kelvin: "{{ states('input_number.adaptive_color_temp') | int }}"
-       ```
-
-    ## Direct Light Control (Optional)
+    ## 💡 Direct Light Control (Optional)
 
     You can optionally select lights in the "Direct Light Control" section to have them automatically adjust based on the schedule:
 
@@ -110,14 +64,89 @@ blueprint:
 
     The lights will only be updated when they're already ON - the blueprint won't turn lights on or off automatically.
 
-    ## Requirements
-    - Home Assistant 2024.10.0 or later
-    - Sun integration (`sun.sun` entity) for sunrise/sunset tracking
+    ## 📋 Requirements
+    - **Home Assistant**: Version 2024.10.0 or later
+    - **Sun Integration**: sun.sun entity for sunrise/sunset tracking
+    - **Workday Integration**: Optional, only needed for Workday/Non-Workday mode with automatic holiday detection
 
   domain: automation
   homeassistant:
     min_version: 2024.10.0
   input:
+    version_info:
+      name: Version History
+      description: |
+        - **2026.01.1: Workday Integration & Documentation Updates**
+          - Added Workday/Non-Workday schedule mode with automatic holiday detection
+          - Choose between per-day schedules or simple workday/non-workday split
+          - Added GitHub Repository, Blueprint Code, and Version badges to description
+          - Added Version History section for tracking changes
+          - Updated formatting with section icons throughout
+          - Moved Setup/Helper Configuration to collapsible input group
+        - **2025.12.2: Direct Light Control**
+          - Added direct light control functionality
+          - Added auto-adjust feature for automatic light updates
+          - Added comprehensive documentation and examples
+        - **2025.12.1: Initial Release**
+          - Schedule-based adaptive lighting with per-day configuration
+          - Sun tracking support for sunrise/sunset awareness
+          - Smooth ramping between day phases
+      collapsed: true
+      icon: mdi:history
+      input: {}
+    helper_configuration:
+      name: Helper Configuration
+      description: |
+        ## Setting up Packages (Optional)
+        Organize helpers into packages for easier management. Create a `packages` folder in `/config/` and add to your configuration:
+
+        ```yaml
+        homeassistant:
+          packages: !include_dir_named packages
+        ```
+
+        ## Helper YAML Example
+        Create `/config/packages/adaptive_lighting.yaml` with your helpers:
+
+        ```yaml
+        input_number:
+          adaptive_brightness:
+            name: "Adaptive Brightness"
+            icon: mdi:brightness-percent
+            min: 0
+            max: 100
+            step: 1
+            unit_of_measurement: "%"
+          adaptive_color_temp:
+            name: "Adaptive Color Temperature"
+            icon: mdi:temperature-kelvin
+            min: 2000
+            max: 6500
+            step: 100
+            unit_of_measurement: "K"
+        ```
+
+        You can create multiple helper pairs for different lighting zones (e.g., `adaptive_brightness_bright` and `adaptive_brightness_dimmed`).
+
+        ## GUI Alternative
+        Create two input_number helpers via Settings → Devices & Services → Helpers:
+        - Brightness: Min 0, Max 100, Step 1
+        - Color Temperature: Min 2000, Max 6500, Step 100
+
+        ## After Creating Helpers
+
+        1. Create an automation from this blueprint
+
+        2. Configure times for each day (defaults provided for weekdays and weekends)
+
+        3. Reference helpers in other automations or blueprints:
+           ```yaml
+           brightness_pct: "{{ states('input_number.adaptive_brightness') | int }}"
+           color_temp_kelvin: "{{ states('input_number.adaptive_color_temp') | int }}"
+           ```
+      collapsed: true
+      icon: mdi:cog-outline
+      input: {}
     output_helpers:
       name: Output Helpers
       icon: mdi:export
@@ -188,8 +217,29 @@ blueprint:
               step: 30
               unit_of_measurement: "s"
               mode: slider
+    schedule_mode_settings:
+      name: Schedule Mode
+      icon: mdi:calendar-clock
+      collapsed: true
+      input:
+        schedule_mode:
+          name: Scheduling Type
+          default: "per_day"
+          description: |
+            `required` `select`
+
+            Choose how to configure your daily schedule:
+            - **Per Day Schedule**: Configure each day individually (Monday-Sunday) for maximum flexibility
+            - **Workday/Non-Workday**: Use just two schedules that automatically switch based on workdays and holidays
+          selector:
+            select:
+              options:
+                - label: "Per Day Schedule"
+                  value: "per_day"
+                - label: "Workday/Non-Workday"
+                  value: "workday"
     time_settings_monday:
-      name: "Time Settings - Monday"
+      name: Monday
       icon: mdi:calendar-today
       collapsed: true
       input:
@@ -239,7 +289,7 @@ blueprint:
           selector:
             time: {}
     time_settings_tuesday:
-      name: "Time Settings - Tuesday"
+      name: Tuesday
       icon: mdi:calendar-today
       collapsed: true
       input:
@@ -289,7 +339,7 @@ blueprint:
           selector:
             time: {}
     time_settings_wednesday:
-      name: "Time Settings - Wednesday"
+      name: Wednesday
       icon: mdi:calendar-today
       collapsed: true
       input:
@@ -339,7 +389,7 @@ blueprint:
           selector:
             time: {}
     time_settings_thursday:
-      name: "Time Settings - Thursday"
+      name: Thursday
       icon: mdi:calendar-today
       collapsed: true
       input:
@@ -389,7 +439,7 @@ blueprint:
           selector:
             time: {}
     time_settings_friday:
-      name: "Time Settings - Friday"
+      name: Friday
       icon: mdi:calendar-today
       collapsed: true
       input:
@@ -439,7 +489,7 @@ blueprint:
           selector:
             time: {}
     time_settings_saturday:
-      name: "Time Settings - Saturday"
+      name: Saturday
       icon: mdi:calendar-today
       collapsed: true
       input:
@@ -489,7 +539,7 @@ blueprint:
           selector:
             time: {}
     time_settings_sunday:
-      name: "Time Settings - Sunday"
+      name: Sunday
       icon: mdi:calendar-today
       collapsed: true
       input:
@@ -530,6 +580,130 @@ blueprint:
           selector:
             time: {}
         night_time_sun:
+          name: Night Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach night values (lowest).
+          default: "00:00:00"
+          selector:
+            time: {}
+    workday_settings:
+      name: Workday Settings
+      icon: mdi:briefcase
+      collapsed: true
+      input:
+        workday_sensor:
+          name: Workday Sensor
+          default: ""
+          description: |
+            `optional` `entity`
+
+            Select a binary sensor from the Workday integration. Required when using Workday/Non-Workday mode.
+
+            The sensor should be **on** during workdays and **off** during non-workdays (weekends/holidays).
+
+            **Setup Instructions:**
+            1. Install the Workday integration via Settings → Devices & Services → Add Integration
+            2. Configure your country and optionally add custom holidays
+            3. Select the created binary sensor here
+          selector:
+            entity:
+              filter:
+                - domain: binary_sensor
+              multiple: false
+    time_settings_workday:
+      name: Workdays
+      icon: mdi:calendar-clock
+      collapsed: true
+      input:
+        wake_time_workday:
+          name: Wake Time
+          description: |
+            `required` `time`
+
+            Time when morning ramp should start (or wait for sunrise if enabled).
+          default: "07:30:00"
+          selector:
+            time: {}
+        morning_time_workday:
+          name: Morning Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach maximum values.
+          default: "09:00:00"
+          selector:
+            time: {}
+        evening_time_workday:
+          name: Evening Time
+          description: |
+            `required` `time`
+
+            Time when evening ramp down should start (or at sunset if enabled).
+          default: "18:30:00"
+          selector:
+            time: {}
+        sleep_time_workday:
+          name: Sleep Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach minimum values.
+          default: "23:30:00"
+          selector:
+            time: {}
+        night_time_workday:
+          name: Night Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach night values (lowest).
+          default: "00:00:00"
+          selector:
+            time: {}
+    time_settings_weekend:
+      name: Non-Workdays
+      icon: mdi:calendar-weekend
+      collapsed: true
+      input:
+        wake_time_weekend:
+          name: Wake Time
+          description: |
+            `required` `time`
+
+            Time when morning ramp should start (or wait for sunrise if enabled).
+          default: "08:30:00"
+          selector:
+            time: {}
+        morning_time_weekend:
+          name: Morning Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach maximum values.
+          default: "10:00:00"
+          selector:
+            time: {}
+        evening_time_weekend:
+          name: Evening Time
+          description: |
+            `required` `time`
+
+            Time when evening ramp down should start (or at sunset if enabled).
+          default: "18:30:00"
+          selector:
+            time: {}
+        sleep_time_weekend:
+          name: Sleep Time
+          description: |
+            `required` `time`
+
+            Time when brightness/color should reach minimum values.
+          default: "23:30:00"
+          selector:
+            time: {}
+        night_time_weekend:
           name: Night Time
           description: |
             `required` `time`
@@ -920,6 +1094,18 @@ blueprint:
       input: {}
 
 variables:
+  schedule_mode: !input schedule_mode
+  workday_sensor: !input workday_sensor
+  wake_time_workday: !input wake_time_workday
+  morning_time_workday: !input morning_time_workday
+  evening_time_workday: !input evening_time_workday
+  sleep_time_workday: !input sleep_time_workday
+  night_time_workday: !input night_time_workday
+  wake_time_weekend: !input wake_time_weekend
+  morning_time_weekend: !input morning_time_weekend
+  evening_time_weekend: !input evening_time_weekend
+  sleep_time_weekend: !input sleep_time_weekend
+  night_time_weekend: !input night_time_weekend
   brightness_helper: !input brightness_helper
   color_temp_helper: !input color_temp_helper
   target_lights: !input target_lights
@@ -997,50 +1183,90 @@ variables:
   sleep_time_sun: !input sleep_time_sun
   night_time_sun: !input night_time_sun
   wake_time: >-
-    {% set day = now().weekday() %}
-    {% if day == 0 %}{{ wake_time_mon }}
-    {% elif day == 1 %}{{ wake_time_tue }}
-    {% elif day == 2 %}{{ wake_time_wed }}
-    {% elif day == 3 %}{{ wake_time_thu }}
-    {% elif day == 4 %}{{ wake_time_fri }}
-    {% elif day == 5 %}{{ wake_time_sat }}
-    {% else %}{{ wake_time_sun }}{% endif %}
+    {% if schedule_mode == 'workday' %}
+      {% if workday_sensor != '' and is_state(workday_sensor, 'on') %}
+        {{ wake_time_workday }}
+      {% else %}
+        {{ wake_time_weekend }}
+      {% endif %}
+    {% else %}
+      {% set day = now().weekday() %}
+      {% if day == 0 %}{{ wake_time_mon }}
+      {% elif day == 1 %}{{ wake_time_tue }}
+      {% elif day == 2 %}{{ wake_time_wed }}
+      {% elif day == 3 %}{{ wake_time_thu }}
+      {% elif day == 4 %}{{ wake_time_fri }}
+      {% elif day == 5 %}{{ wake_time_sat }}
+      {% else %}{{ wake_time_sun }}{% endif %}
+    {% endif %}
   morning_time: >-
-    {% set day = now().weekday() %}
-    {% if day == 0 %}{{ morning_time_mon }}
-    {% elif day == 1 %}{{ morning_time_tue }}
-    {% elif day == 2 %}{{ morning_time_wed }}
-    {% elif day == 3 %}{{ morning_time_thu }}
-    {% elif day == 4 %}{{ morning_time_fri }}
-    {% elif day == 5 %}{{ morning_time_sat }}
-    {% else %}{{ morning_time_sun }}{% endif %}
+    {% if schedule_mode == 'workday' %}
+      {% if workday_sensor != '' and is_state(workday_sensor, 'on') %}
+        {{ morning_time_workday }}
+      {% else %}
+        {{ morning_time_weekend }}
+      {% endif %}
+    {% else %}
+      {% set day = now().weekday() %}
+      {% if day == 0 %}{{ morning_time_mon }}
+      {% elif day == 1 %}{{ morning_time_tue }}
+      {% elif day == 2 %}{{ morning_time_wed }}
+      {% elif day == 3 %}{{ morning_time_thu }}
+      {% elif day == 4 %}{{ morning_time_fri }}
+      {% elif day == 5 %}{{ morning_time_sat }}
+      {% else %}{{ morning_time_sun }}{% endif %}
+    {% endif %}
   evening_time: >-
-    {% set day = now().weekday() %}
-    {% if day == 0 %}{{ evening_time_mon }}
-    {% elif day == 1 %}{{ evening_time_tue }}
-    {% elif day == 2 %}{{ evening_time_wed }}
-    {% elif day == 3 %}{{ evening_time_thu }}
-    {% elif day == 4 %}{{ evening_time_fri }}
-    {% elif day == 5 %}{{ evening_time_sat }}
-    {% else %}{{ evening_time_sun }}{% endif %}
+    {% if schedule_mode == 'workday' %}
+      {% if workday_sensor != '' and is_state(workday_sensor, 'on') %}
+        {{ evening_time_workday }}
+      {% else %}
+        {{ evening_time_weekend }}
+      {% endif %}
+    {% else %}
+      {% set day = now().weekday() %}
+      {% if day == 0 %}{{ evening_time_mon }}
+      {% elif day == 1 %}{{ evening_time_tue }}
+      {% elif day == 2 %}{{ evening_time_wed }}
+      {% elif day == 3 %}{{ evening_time_thu }}
+      {% elif day == 4 %}{{ evening_time_fri }}
+      {% elif day == 5 %}{{ evening_time_sat }}
+      {% else %}{{ evening_time_sun }}{% endif %}
+    {% endif %}
   sleep_time: >-
-    {% set day = now().weekday() %}
-    {% if day == 0 %}{{ sleep_time_mon }}
-    {% elif day == 1 %}{{ sleep_time_tue }}
-    {% elif day == 2 %}{{ sleep_time_wed }}
-    {% elif day == 3 %}{{ sleep_time_thu }}
-    {% elif day == 4 %}{{ sleep_time_fri }}
-    {% elif day == 5 %}{{ sleep_time_sat }}
-    {% else %}{{ sleep_time_sun }}{% endif %}
+    {% if schedule_mode == 'workday' %}
+      {% if workday_sensor != '' and is_state(workday_sensor, 'on') %}
+        {{ sleep_time_workday }}
+      {% else %}
+        {{ sleep_time_weekend }}
+      {% endif %}
+    {% else %}
+      {% set day = now().weekday() %}
+      {% if day == 0 %}{{ sleep_time_mon }}
+      {% elif day == 1 %}{{ sleep_time_tue }}
+      {% elif day == 2 %}{{ sleep_time_wed }}
+      {% elif day == 3 %}{{ sleep_time_thu }}
+      {% elif day == 4 %}{{ sleep_time_fri }}
+      {% elif day == 5 %}{{ sleep_time_sat }}
+      {% else %}{{ sleep_time_sun }}{% endif %}
+    {% endif %}
   night_time: >-
-    {% set day = now().weekday() %}
-    {% if day == 0 %}{{ night_time_mon }}
-    {% elif day == 1 %}{{ night_time_tue }}
-    {% elif day == 2 %}{{ night_time_wed }}
-    {% elif day == 3 %}{{ night_time_thu }}
-    {% elif day == 4 %}{{ night_time_fri }}
-    {% elif day == 5 %}{{ night_time_sat }}
-    {% else %}{{ night_time_sun }}{% endif %}
+    {% if schedule_mode == 'workday' %}
+      {% if workday_sensor != '' and is_state(workday_sensor, 'on') %}
+        {{ night_time_workday }}
+      {% else %}
+        {{ night_time_weekend }}
+      {% endif %}
+    {% else %}
+      {% set day = now().weekday() %}
+      {% if day == 0 %}{{ night_time_mon }}
+      {% elif day == 1 %}{{ night_time_tue }}
+      {% elif day == 2 %}{{ night_time_wed }}
+      {% elif day == 3 %}{{ night_time_thu }}
+      {% elif day == 4 %}{{ night_time_fri }}
+      {% elif day == 5 %}{{ night_time_sat }}
+      {% else %}{{ night_time_sun }}{% endif %}
+    {% endif %}
   calculated_brightness: >-
     {% set now_ts = now().timestamp() %}
     {% set today_midnight = today_at('00:00').timestamp() %}
