@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.4-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.5-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -55,6 +55,13 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.01.5: Fix Z2M double-click detection and button 4 dimming**
+          - Fixed: Z2M double-click detection now works for buttons 2, 3, and 4
+          - Fixed: Button 4 dimming now works on Z2M (was completely non-functional)
+          - Fixed: second_button parsing logic now checks button-specific suffixes before generic prefixes
+          - Fixed: MQTT trigger now filters for action messages only (prevents spurious triggers on battery/linkquality updates)
+          - Improved: Correct identification of compound action names like on_bottom_right, off_bottom_right across all device types (1/2/4-button models)
+
         - **2026.01.4: Fix continuous dimming and Z2M support**
           - Fixed: ZHA continuous dimming now works properly (was stopping after one step)
           - Fixed: Z2M dimming now functional with proper MQTT payload filtering
@@ -1446,6 +1453,7 @@ triggers:
     id: zha_button
   - trigger: mqtt
     topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+    value_template: "{{ value_json.action is defined }}"
     alias: z2m_button
     id: z2m_button
   - trigger: state
@@ -2742,10 +2750,12 @@ actions:
             3
           {% elif action.endswith('_bottom_right') %}
             4
-          {% elif action.endswith('_left') or action.startswith('on') or action.startswith('off') or action.startswith('brightness_') %}
+          {% elif action.endswith('_left') %}
             1
           {% elif action.endswith('_right') %}
             2
+          {% elif action.startswith('on') or action.startswith('off') or action.startswith('brightness_') %}
+            1
           {% else %}
             1
           {% endif %}
