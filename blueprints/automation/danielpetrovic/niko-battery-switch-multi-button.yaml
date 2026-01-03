@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.3-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.4-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -55,6 +55,13 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.01.4: Fix continuous dimming and Z2M support**
+          - Fixed: ZHA continuous dimming now works properly (was stopping after one step)
+          - Fixed: Z2M dimming now functional with proper MQTT payload filtering
+          - Fixed: Removed unfiltered MQTT triggers that caught random messages (battery, linkquality)
+          - Fixed: stop_flag now only sets when actual stop command received (not on timeout)
+          - Improved: Cleaner trigger filtering - single ZHA event + filtered MQTT per button
+
         - **2026.01.3: Fix ZHA dimming and command parsing**
           - Fixed: ZHA dimming/brightening not working due to variable scope issue in command parsing
           - Improved: Command parsing now accesses trigger data directly instead of pre-extracted variables
@@ -2012,24 +2019,18 @@ actions:
                               device_id: !input zha_remote
                               endpoint_id: 1
                               command: stop
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 1
-                              command: "on"
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 1
-                              command: "off"
                           - trigger: mqtt
                             topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                            value_template: >-
+                              {{ value_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}
+                            payload: 'True'
                         timeout: "30"
                         continue_on_timeout: true
-                      - variables:
-                          stop_flag: true
+                      - if:
+                          - "{{ wait.trigger is not none }}"
+                        then:
+                          - variables:
+                              stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_1_light_count }}"
@@ -2105,24 +2106,18 @@ actions:
                               device_id: !input zha_remote
                               endpoint_id: 2
                               command: stop
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 2
-                              command: "on"
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 2
-                              command: "off"
                           - trigger: mqtt
                             topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                            value_template: >-
+                              {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}
+                            payload: 'True'
                         timeout: "30"
                         continue_on_timeout: true
-                      - variables:
-                          stop_flag: true
+                      - if:
+                          - "{{ wait.trigger is not none }}"
+                        then:
+                          - variables:
+                              stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_2_light_count }}"
@@ -2198,24 +2193,18 @@ actions:
                               device_id: !input zha_remote
                               endpoint_id: 3
                               command: stop
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 3
-                              command: "on"
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 3
-                              command: "off"
                           - trigger: mqtt
                             topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                            value_template: >-
+                              {{ value_json.action | default('') in ['brightness_stop_top_right'] }}
+                            payload: 'True'
                         timeout: "30"
                         continue_on_timeout: true
-                      - variables:
-                          stop_flag: true
+                      - if:
+                          - "{{ wait.trigger is not none }}"
+                        then:
+                          - variables:
+                              stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_3_light_count }}"
@@ -2291,24 +2280,18 @@ actions:
                               device_id: !input zha_remote
                               endpoint_id: 4
                               command: stop
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 4
-                              command: "on"
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 4
-                              command: "off"
                           - trigger: mqtt
                             topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                            value_template: >-
+                              {{ value_json.action | default('') in ['brightness_stop_bottom_right'] }}
+                            payload: 'True'
                         timeout: "30"
                         continue_on_timeout: true
-                      - variables:
-                          stop_flag: true
+                      - if:
+                          - "{{ wait.trigger is not none }}"
+                        then:
+                          - variables:
+                              stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_4_light_count }}"
@@ -2384,24 +2367,18 @@ actions:
                               device_id: !input zha_remote
                               endpoint_id: 1
                               command: stop
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 1
-                              command: "on"
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 1
-                              command: "off"
                           - trigger: mqtt
                             topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                            value_template: >-
+                              {{ value_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}
+                            payload: 'True'
                         timeout: "30"
                         continue_on_timeout: true
-                      - variables:
-                          stop_flag: true
+                      - if:
+                          - "{{ wait.trigger is not none }}"
+                        then:
+                          - variables:
+                              stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_1_light_count }}"
@@ -2477,24 +2454,18 @@ actions:
                               device_id: !input zha_remote
                               endpoint_id: 2
                               command: stop
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 2
-                              command: "on"
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 2
-                              command: "off"
                           - trigger: mqtt
                             topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                            value_template: >-
+                              {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}
+                            payload: 'True'
                         timeout: "30"
                         continue_on_timeout: true
-                      - variables:
-                          stop_flag: true
+                      - if:
+                          - "{{ wait.trigger is not none }}"
+                        then:
+                          - variables:
+                              stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_2_light_count }}"
@@ -2570,24 +2541,18 @@ actions:
                               device_id: !input zha_remote
                               endpoint_id: 3
                               command: stop
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 3
-                              command: "on"
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 3
-                              command: "off"
                           - trigger: mqtt
                             topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                            value_template: >-
+                              {{ value_json.action | default('') in ['brightness_stop_top_right'] }}
+                            payload: 'True'
                         timeout: "30"
                         continue_on_timeout: true
-                      - variables:
-                          stop_flag: true
+                      - if:
+                          - "{{ wait.trigger is not none }}"
+                        then:
+                          - variables:
+                              stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_3_light_count }}"
@@ -2663,24 +2628,18 @@ actions:
                               device_id: !input zha_remote
                               endpoint_id: 4
                               command: stop
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 4
-                              command: "on"
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 4
-                              command: "off"
                           - trigger: mqtt
                             topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                            value_template: >-
+                              {{ value_json.action | default('') in ['brightness_stop_bottom_right'] }}
+                            payload: 'True'
                         timeout: "30"
                         continue_on_timeout: true
-                      - variables:
-                          stop_flag: true
+                      - if:
+                          - "{{ wait.trigger is not none }}"
+                        then:
+                          - variables:
+                              stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_4_light_count }}"
