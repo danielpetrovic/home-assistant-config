@@ -1185,12 +1185,12 @@
         entity_id: input_select.gang_raambekleding
         state: 060%
       sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
+      - action: cover.close_cover
+        data: {}
         metadata: {}
         target:
-          entity_id: cover.gang_gordijn
+          entity_id:
+          - cover.gang_gordijn
       - action: cover.set_cover_position
         data:
           position: 60
@@ -1202,12 +1202,12 @@
         entity_id: input_select.gang_raambekleding
         state: 040%
       sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
+      - action: cover.close_cover
+        data: {}
         metadata: {}
         target:
-          entity_id: cover.gang_gordijn
+          entity_id:
+          - cover.gang_gordijn
       - action: cover.set_cover_position
         data:
           position: 40
@@ -1219,12 +1219,12 @@
         entity_id: input_select.gang_raambekleding
         state: 020%
       sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
+      - action: cover.close_cover
+        data: {}
         metadata: {}
         target:
-          entity_id: cover.gang_gordijn
+          entity_id:
+          - cover.gang_gordijn
       - action: cover.set_cover_position
         data:
           position: 20
