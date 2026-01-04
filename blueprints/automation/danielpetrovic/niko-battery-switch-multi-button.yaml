@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.7-blue?style=for-the-badge)
+    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.8-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -48,6 +48,7 @@ blueprint:
     - **Home Assistant**: Version 2024.10.0 or later
     - **Zigbee Integration**: Zigbee2MQTT (Z2M) and/or Zigbee Home Automation (ZHA)
     - **Compatible Models**: 552-720X1, 552-720X2, or 552-720X4
+    - **Text Helper**: One per switch (for double-click guard)
   domain: automation
   homeassistant:
     min_version: 2024.10.0
@@ -55,6 +56,19 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.01.8: Fix random dimming stops and improve trace debugging**
+          - **BREAKING:** Added required input_text helper for double-click guard (see Helper Configuration section)
+          - Fixed: Random dimming stops when holding multiple buttons simultaneously
+          - Fixed: Double-click mistriggers - second press no longer also executes as single press
+          - Changed: Replaced global stop_flag with button-specific flags (button_1_stop_flag through button_4_stop_flag)
+          - Changed: Implemented helper-based guard to allow multi-button usage while preventing double-execution
+          - Changed: Double-press timeout now automatic based on integration (ZHA: 300ms, Z2M: 600ms) - removed manual configuration
+          - Improved: Each button's dimming operation now isolated from other buttons in queued mode
+          - Improved: Multiple buttons can now be pressed in rapid succession without blocking (likely fixes 4-button issues)
+          - Improved: Refactored on/off handlers from nested structure (4 options) to flat structure (8 separate options)
+          - Improved: Traces now show explicitly "Button 1 on" vs "Button 1 off" instead of generic "Button 1 on/off"
+          - Improved: Added descriptive aliases throughout for easier trace debugging (variable assignments, conditions, button handlers)
+
         - **2026.01.7: Increase double-click timeout default for Z2M compatibility**
           - Changed: Default timeout increased from 300ms to 500ms
           - Improved: Better compatibility with Z2M's MQTT protocol latency (50-200ms vs ZHA's 10-50ms direct event latency)
@@ -123,6 +137,129 @@ blueprint:
       collapsed: true
       icon: mdi:history
       input: {}
+    device_model:
+      name: Device Model
+      description: |
+        `required`
+
+        Select your Niko switch model. This determines how many button sections are available.
+      default: "1_button"
+      selector:
+        select:
+          options:
+            - label: "1 Button (552-720X1)"
+              value: "1_button"
+            - label: "2 Buttons (552-720X2)"
+              value: "2_button"
+            - label: "4 Buttons (552-720X4)"
+              value: "4_button"
+          multiple: false
+    integration_type:
+      name: Integration Type
+      description: |
+        `required`
+
+        Select which integration(s) to use for the Niko switch. You can select Z2M, ZHA, or both.
+      default: []
+      selector:
+        select:
+          options:
+            - label: Zigbee2MQTT (Z2M)
+              value: z2m
+            - label: Zigbee Home Automation (ZHA)
+              value: zha
+          multiple: true
+    helper_info:
+      name: Text Helper Configuration
+      description: |
+        ### Creating the Last Pressed Helper
+
+        The last pressed helper is required to prevent double-click mistriggers. It allows the blueprint to distinguish between different buttons while preventing the second press of a double-click from also executing as a single press.
+
+        **Option 1: Create via UI**
+        1. Go to Settings → Devices & Services → Helpers
+        2. Click "+ Create Helper" → Text
+        3. Configure:
+           - Name: `[Location] Knop Last Pressed` (e.g., "Entree Knop Last Pressed")
+           - Icon: `mdi:gesture-double-tap` (optional)
+           - Min length: 0
+           - Max length: 1
+           - Mode: Text
+           - Pattern: `[1-4]` (validates button number)
+
+        **Option 2: Create via YAML** (in `configuration.yaml` or packages):
+        ```yaml
+        input_text:
+          entree_knop_last_pressed:
+            name: Entree Knop Last Pressed
+            icon: mdi:gesture-double-tap
+            min: 0
+            max: 1
+            mode: text
+            pattern: "[1-4]"
+        ```
+
+        **Important:** Each switch requires its own unique helper. The helper will automatically update during double-click detection - do not modify it manually.
+      collapsed: true
+      icon: mdi:form-textbox
+      input: {}
+    last_pressed:
+      name: Last Pressed Input Text Helper
+      description: |
+        `required` `entity`
+
+        Create an input text helper within Home Assistant to prevent double-click mistriggers. This helper tracks the last button that started double-click detection, allowing multi-button usage while preventing the second press from also executing as a single press. **Each switch requires a unique helper!**
+
+        See "Text Helper Configuration" section above for setup instructions.
+      selector:
+        entity:
+          filter:
+            - domain:
+                - input_text
+          multiple: false
+    z2m:
+      name: Zigbee2MQTT (Z2M)
+      description: Configure Zigbee2MQTT integration settings.
+      icon: mdi:zigbee
+      collapsed: true
+      input:
+        z2m_base_topic:
+          name: Base Topic
+          description: |
+            `optional` `text`
+
+            MQTT base topic for Zigbee2MQTT installation (usually `zigbee2mqtt`). Leave empty if not using Z2M.
+          default: ""
+          selector:
+            text: {}
+        z2m_device_name:
+          name: Device Friendly Name
+          description: |
+            `optional` `text`
+
+            Friendly name of your Niko switch in Z2M (case-sensitive, as shown in Z2M UI). Leave empty if not using Z2M.
+          default: ""
+          selector:
+            text: {}
+    zha:
+      name: Zigbee Home Automation (ZHA)
+      description: Configure ZHA integration settings.
+      icon: mdi:zigbee
+      collapsed: true
+      input:
+        zha_remote:
+          name: Remote Device (ZHA)
+          description: |
+            `optional` `device`
+
+            Select the Niko switch device from ZHA. Leave empty if not using ZHA.
+          default: {}
+          selector:
+            device:
+              filter:
+                - integration: zha
+                  manufacturer: NIKO NV
+              multiple: false
     schedule_helper_info:
       name: Schedule Helper Configuration
       description: |
@@ -184,97 +321,6 @@ blueprint:
       collapsed: true
       icon: mdi:calendar-clock
       input: {}
-    device_model:
-      name: Device Model
-      description: |
-        `required`
-
-        Select your Niko switch model. This determines how many button sections are available.
-      default: "1_button"
-      selector:
-        select:
-          options:
-            - label: "1 Button (552-720X1)"
-              value: "1_button"
-            - label: "2 Buttons (552-720X2)"
-              value: "2_button"
-            - label: "4 Buttons (552-720X4)"
-              value: "4_button"
-          multiple: false
-    double_press_timeout:
-      name: Double Press Timeout
-      description: |
-        `optional` `number`
-
-        Time window (in milliseconds) to detect a double press. You have this amount of time to press the opposite action (on→off or off→on) to trigger the double-press action.
-
-        **Note:** Z2M users may need 700-1000ms due to MQTT protocol latency.
-      default: 500
-      selector:
-        number:
-          min: 100
-          max: 1000
-          step: 50
-          unit_of_measurement: "ms"
-          mode: slider
-    integration_type:
-      name: Integration Type
-      description: |
-        `required`
-
-        Select which integration(s) to use for the Niko switch. You can select Z2M, ZHA, or both.
-      default: []
-      selector:
-        select:
-          options:
-            - label: Zigbee2MQTT (Z2M)
-              value: z2m
-            - label: Zigbee Home Automation (ZHA)
-              value: zha
-          multiple: true
-    z2m:
-      name: Zigbee2MQTT (Z2M)
-      description: Configure Zigbee2MQTT integration settings.
-      icon: mdi:zigbee
-      collapsed: true
-      input:
-        z2m_base_topic:
-          name: Base Topic
-          description: |
-            `optional` `text`
-
-            MQTT base topic for Zigbee2MQTT installation (usually `zigbee2mqtt`). Leave empty if not using Z2M.
-          default: ""
-          selector:
-            text: {}
-        z2m_device_name:
-          name: Device Friendly Name
-          description: |
-            `optional` `text`
-
-            Friendly name of your Niko switch in Z2M (case-sensitive, as shown in Z2M UI). Leave empty if not using Z2M.
-          default: ""
-          selector:
-            text: {}
-    zha:
-      name: Zigbee Home Automation (ZHA)
-      description: Configure ZHA integration settings.
-      icon: mdi:zigbee
-      collapsed: true
-      input:
-        zha_remote:
-          name: Remote Device (ZHA)
-          description: |
-            `optional` `device`
-
-            Select the Niko switch device from ZHA. Leave empty if not using ZHA.
-          default: {}
-          selector:
-            device:
-              filter:
-                - integration: zha
-                  manufacturer: NIKO NV
-              multiple: false
     button_1_custom:
       name: Button 1 - Custom Actions
       icon: mdi:numeric-1-circle-outline
@@ -1447,12 +1493,22 @@ trigger_variables:
   z2m_device_name: !input z2m_device_name
   device_model: !input device_model
 variables:
-  stop_flag: false
+  button_1_stop_flag: false
+  button_2_stop_flag: false
+  button_3_stop_flag: false
+  button_4_stop_flag: false
   integration_type: !input integration_type
   z2m_base_topic: !input z2m_base_topic
   z2m_device_name: !input z2m_device_name
   device_model: !input device_model
-  double_press_timeout: !input double_press_timeout
+  # Auto-set timeout based on integration: Z2M needs more time for MQTT latency
+  double_press_timeout: >-
+    {% if 'z2m' in integration_type %}
+      600
+    {% else %}
+      300
+    {% endif %}
+  last_pressed: !input last_pressed
   button_1_light: !input button_1_light
   button_2_light: !input button_2_light
   button_3_light: !input button_3_light
@@ -1506,7 +1562,8 @@ triggers:
     entity_id: !input button_4_light_adaptive_color_temp
     id: adaptive_change_4_color
 actions:
-  - variables:
+  - alias: "Parse trigger and set initial variables"
+    variables:
       # Command parsing - handles both Z2M MQTT payloads and ZHA events
       # Unified command - normalize Z2M actions to match ZHA command format with button prefix
       command: >-
@@ -1632,10 +1689,13 @@ actions:
          (trigger.id == 'z2m_button' and 'z2m' in integration_type) or
          trigger.id.startswith('adaptive_change') or
          trigger.id.startswith('schedule_change') }}
-  - choose:
+    alias: "Check if valid trigger type (ZHA/Z2M/adaptive/schedule)"
+  - alias: "Handle auto-adjust and brightness triggers"
+    choose:
       # ========== BUTTON 1 AUTO-ADJUST ==========
       - conditions:
           - "{{ trigger.id in ['adaptive_change_1_brightness', 'adaptive_change_1_color', 'schedule_change_1'] }}"
+        alias: "Button 1 auto-adjust"
         sequence:
           - variables:
               button_1_light_adjustment_mode: !input button_1_light_adjustment_mode
@@ -1725,6 +1785,7 @@ actions:
       # ========== BUTTON 2 AUTO-ADJUST ==========
       - conditions:
           - "{{ trigger.id in ['adaptive_change_2_brightness', 'adaptive_change_2_color', 'schedule_change_2'] }}"
+        alias: "Button 2 auto-adjust"
         sequence:
           - variables:
               button_2_light_adjustment_mode: !input button_2_light_adjustment_mode
@@ -1814,6 +1875,7 @@ actions:
       # ========== BUTTON 3 AUTO-ADJUST ==========
       - conditions:
           - "{{ trigger.id in ['adaptive_change_3_brightness', 'adaptive_change_3_color', 'schedule_change_3'] }}"
+        alias: "Button 3 auto-adjust"
         sequence:
           - variables:
               button_3_light_adjustment_mode: !input button_3_light_adjustment_mode
@@ -1903,6 +1965,7 @@ actions:
       # ========== BUTTON 4 AUTO-ADJUST ==========
       - conditions:
           - "{{ trigger.id in ['adaptive_change_4_brightness', 'adaptive_change_4_color', 'schedule_change_4'] }}"
+        alias: "Button 4 auto-adjust"
         sequence:
           - variables:
               button_4_light_adjustment_mode: !input button_4_light_adjustment_mode
@@ -2051,7 +2114,7 @@ actions:
                           - "{{ wait.trigger is not none }}"
                         then:
                           - variables:
-                              stop_flag: true
+                              button_1_stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_1_light_count }}"
@@ -2073,7 +2136,7 @@ actions:
                             - delay:
                                 seconds: "{{ button_1_dimming_delay }}"
                             - if:
-                                - "{{ stop_flag }}"
+                                - "{{ button_1_stop_flag }}"
                               then:
                                 - stop: Stop flag set
       # ========== BUTTON 2 BRIGHTNESS UP ==========
@@ -2138,7 +2201,7 @@ actions:
                           - "{{ wait.trigger is not none }}"
                         then:
                           - variables:
-                              stop_flag: true
+                              button_2_stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_2_light_count }}"
@@ -2160,7 +2223,7 @@ actions:
                             - delay:
                                 seconds: "{{ button_2_dimming_delay }}"
                             - if:
-                                - "{{ stop_flag }}"
+                                - "{{ button_2_stop_flag }}"
                               then:
                                 - stop: Stop flag set
       # ========== BUTTON 3 BRIGHTNESS UP ==========
@@ -2225,7 +2288,7 @@ actions:
                           - "{{ wait.trigger is not none }}"
                         then:
                           - variables:
-                              stop_flag: true
+                              button_3_stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_3_light_count }}"
@@ -2247,7 +2310,7 @@ actions:
                             - delay:
                                 seconds: "{{ button_3_dimming_delay }}"
                             - if:
-                                - "{{ stop_flag }}"
+                                - "{{ button_3_stop_flag }}"
                               then:
                                 - stop: Stop flag set
       # ========== BUTTON 4 BRIGHTNESS UP ==========
@@ -2312,7 +2375,7 @@ actions:
                           - "{{ wait.trigger is not none }}"
                         then:
                           - variables:
-                              stop_flag: true
+                              button_4_stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_4_light_count }}"
@@ -2334,7 +2397,7 @@ actions:
                             - delay:
                                 seconds: "{{ button_4_dimming_delay }}"
                             - if:
-                                - "{{ stop_flag }}"
+                                - "{{ button_4_stop_flag }}"
                               then:
                                 - stop: Stop flag set
       # ========== BUTTON 1 BRIGHTNESS DOWN ==========
@@ -2399,7 +2462,7 @@ actions:
                           - "{{ wait.trigger is not none }}"
                         then:
                           - variables:
-                              stop_flag: true
+                              button_1_stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_1_light_count }}"
@@ -2421,7 +2484,7 @@ actions:
                             - delay:
                                 seconds: "{{ button_1_dimming_delay }}"
                             - if:
-                                - "{{ stop_flag }}"
+                                - "{{ button_1_stop_flag }}"
                               then:
                                 - stop: Stop flag set
       # ========== BUTTON 2 BRIGHTNESS DOWN ==========
@@ -2486,7 +2549,7 @@ actions:
                           - "{{ wait.trigger is not none }}"
                         then:
                           - variables:
-                              stop_flag: true
+                              button_2_stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_2_light_count }}"
@@ -2508,7 +2571,7 @@ actions:
                             - delay:
                                 seconds: "{{ button_2_dimming_delay }}"
                             - if:
-                                - "{{ stop_flag }}"
+                                - "{{ button_2_stop_flag }}"
                               then:
                                 - stop: Stop flag set
       # ========== BUTTON 3 BRIGHTNESS DOWN ==========
@@ -2573,7 +2636,7 @@ actions:
                           - "{{ wait.trigger is not none }}"
                         then:
                           - variables:
-                              stop_flag: true
+                              button_3_stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_3_light_count }}"
@@ -2595,7 +2658,7 @@ actions:
                             - delay:
                                 seconds: "{{ button_3_dimming_delay }}"
                             - if:
-                                - "{{ stop_flag }}"
+                                - "{{ button_3_stop_flag }}"
                               then:
                                 - stop: Stop flag set
       # ========== BUTTON 4 BRIGHTNESS DOWN ==========
@@ -2660,7 +2723,7 @@ actions:
                           - "{{ wait.trigger is not none }}"
                         then:
                           - variables:
-                              stop_flag: true
+                              button_4_stop_flag: true
                   - sequence:
                       - repeat:
                           count: "{{ button_4_light_count }}"
@@ -2682,7 +2745,7 @@ actions:
                             - delay:
                                 seconds: "{{ button_4_dimming_delay }}"
                             - if:
-                                - "{{ stop_flag }}"
+                                - "{{ button_4_stop_flag }}"
                               then:
                                 - stop: Stop flag set
       # ========== BUTTON 1 BRIGHTNESS STOP ==========
@@ -2714,11 +2777,25 @@ actions:
           - alias: Custom Action
             sequence: !input button_4_stop
   - condition: "{{ is_button_event }}"
+    alias: "Check if button event (not schedule/adaptive trigger)"
   - condition: "{{ button_action in ['on', 'off'] }}"
+    alias: "Check if on/off action (not dimming)"
   - condition: >-
-      {{ this.attributes.last_triggered is none or
+      {{ states(last_pressed) == '' or
+         states(last_pressed) != button_num|string or
          (now() - this.attributes.last_triggered).total_seconds() > (double_press_timeout / 1000) }}
-  - variables:
+    alias: "Check if different button or double-click timeout expired"
+  - action: input_text.set_value
+    target:
+      entity_id: "{{ last_pressed }}"
+    data:
+      value: "{{ button_num }}"
+    alias: "Store button number for guard"
+  - wait_template: "{{ states(last_pressed) == button_num|string }}"
+    timeout: 1
+    alias: "Wait for helper state to commit"
+  - alias: "Store first press details"
+    variables:
       first_action: "{{ button_action }}"
       first_button: "{{ button_num }}"
   - wait_for_trigger:
@@ -2726,12 +2803,15 @@ actions:
         event_type: zha_event
         event_data:
           device_id: !input zha_remote
+        alias: "ZHA second press"
       - trigger: mqtt
         topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
         value_template: "{{ value_json.action is defined }}"
+        alias: "Z2M second press"
     timeout: "{{ double_press_timeout / 1000 }}"
     continue_on_timeout: true
-  - variables:
+  - alias: "Parse second press action"
+    variables:
       # Parse second trigger action - only need on/off for double-click detection
       second_action: >-
         {% if wait.trigger is none %}
@@ -2776,32 +2856,40 @@ actions:
         {% endif %}
   - if:
       - "{{ second_action in ['on', 'off'] and second_action != first_action and second_button == first_button }}"
+    alias: "Validate double-click: opposite action on same button"
     then:
       - choose:
           - conditions:
               - "{{ first_button == 1 }}"
+            alias: "Button 1 double-press"
             sequence:
               - sequence: !input button_1_double_press
           - conditions:
               - "{{ first_button == 2 }}"
+            alias: "Button 2 double-press"
             sequence:
               - sequence: !input button_2_double_press
           - conditions:
               - "{{ first_button == 3 }}"
+            alias: "Button 3 double-press"
             sequence:
               - sequence: !input button_3_double_press
           - conditions:
               - "{{ first_button == 4 }}"
+            alias: "Button 4 double-press"
             sequence:
               - sequence: !input button_4_double_press
       - stop: Double Press detected
   # ========== BUTTON-SPECIFIC ON/OFF HANDLERS ==========
   - choose:
-      # ========== BUTTON 1 ON/OFF ==========
+      # ========== BUTTON 1 ON ==========
       - conditions:
           - "{{ first_button == 1 }}"
+          - "{{ first_action == 'on' }}"
+        alias: "Button 1 on"
         sequence:
-          - variables:
+          - alias: "Set button 1 configuration variables"
+            variables:
               button_1_has_light: >-
                 {{ button_1_light.entity_id | default([]) | length > 0
                 or button_1_light.device_id | default([]) | length > 0
@@ -2815,6 +2903,122 @@ actions:
               button_1_light_transition: !input button_1_light_transition
               button_1_on_light_mode: !input button_1_on_light_mode
               button_1_on_reset_to_defaults: !input button_1_on_reset_to_defaults
+              button_1_color_temp_kelvin: >-
+                {% if button_1_light_adjustment_mode == 'adaptive' %}
+                  {% if button_1_light_adaptive_color_temp not in [none, '', []] %}
+                    {{ states(button_1_light_adaptive_color_temp) | int(button_1_light_color) }}
+                  {% else %}
+                    {{ button_1_light_color }}
+                  {% endif %}
+                {% elif button_1_light_adjustment_mode == 'schedule' %}
+                  {% if button_1_light_schedule not in [none, '', null, []] %}
+                    {% set val = state_attr(button_1_light_schedule, 'color_temp_kelvin') %}
+                    {{ val if val is not none else button_1_light_color }}
+                  {% else %}
+                    {{ button_1_light_color }}
+                  {% endif %}
+                {% else %}
+                  {{ button_1_light_color }}
+                {% endif %}
+              button_1_brightness_pct: >-
+                {% if button_1_light_adjustment_mode == 'adaptive' %}
+                  {% if button_1_light_adaptive_brightness not in [none, '', []] %}
+                    {{ states(button_1_light_adaptive_brightness) | int(button_1_light_brightness) }}
+                  {% else %}
+                    {{ button_1_light_brightness }}
+                  {% endif %}
+                {% elif button_1_light_adjustment_mode == 'schedule' %}
+                  {% if button_1_light_schedule not in [none, '', null, []] %}
+                    {% set val = state_attr(button_1_light_schedule, 'brightness_pct') %}
+                    {{ val if val is not none else button_1_light_brightness }}
+                  {% else %}
+                    {{ button_1_light_brightness }}
+                  {% endif %}
+                {% else %}
+                  {{ button_1_light_brightness }}
+                {% endif %}
+              button_1_transition: >-
+                {% if button_1_light_adjustment_mode == 'schedule' %}
+                  {% if button_1_light_schedule not in [none, '', null, []] %}
+                    {{ state_attr(button_1_light_schedule, 'transition') | default(button_1_light_transition, true) | float }}
+                  {% else %}
+                    {{ button_1_light_transition | float }}
+                  {% endif %}
+                {% else %}
+                  {{ button_1_light_transition | float }}
+                {% endif %}
+          - alias: Custom Action
+            sequence: !input button_1_on
+          - alias: Light Mode
+            if:
+              - "{{ button_1_has_light }}"
+            then:
+              - parallel:
+                  - alias: turn_on
+                    if:
+                      - "{{ 'turn_on' in button_1_on_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions:
+                              - "{{ button_1_on_reset_to_defaults }}"
+                            sequence:
+                              - action: light.turn_on
+                                data:
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                                target: "{{ button_1_light }}"
+                        default:
+                          - action: light.turn_on
+                            data:
+                              transition: "{{ button_1_transition }}"
+                            target: "{{ button_1_light }}"
+                  - alias: turn_off
+                    if:
+                      - "{{ 'turn_off' in button_1_on_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        data:
+                          transition: "{{ button_1_transition }}"
+                        target: "{{ button_1_light }}"
+                  - alias: toggle
+                    if:
+                      - "{{ 'toggle' in button_1_on_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions:
+                              - "{{ button_1_on_reset_to_defaults }}"
+                            sequence:
+                              - action: light.toggle
+                                data:
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                                target: "{{ button_1_light }}"
+                        default:
+                          - action: light.toggle
+                            data:
+                              transition: "{{ button_1_transition }}"
+                            target: "{{ button_1_light }}"
+      # ========== BUTTON 1 OFF ==========
+      - conditions:
+          - "{{ first_button == 1 }}"
+          - "{{ first_action == 'off' }}"
+        alias: "Button 1 off"
+        sequence:
+          - alias: "Set button 1 configuration variables"
+            variables:
+              button_1_has_light: >-
+                {{ button_1_light.entity_id | default([]) | length > 0
+                or button_1_light.device_id | default([]) | length > 0
+                or button_1_light.area_id | default([]) | length > 0 }}
+              button_1_light_adjustment_mode: !input button_1_light_adjustment_mode
+              button_1_light_adaptive_brightness: !input button_1_light_adaptive_brightness
+              button_1_light_brightness: !input button_1_light_brightness
+              button_1_light_schedule: !input button_1_light_schedule
+              button_1_light_adaptive_color_temp: !input button_1_light_adaptive_color_temp
+              button_1_light_color: !input button_1_light_color
+              button_1_light_transition: !input button_1_light_transition
               button_1_off_light_mode: !input button_1_off_light_mode
               button_1_off_reset_to_defaults: !input button_1_off_reset_to_defaults
               button_1_color_temp_kelvin: >-
@@ -2861,124 +3065,67 @@ actions:
                 {% else %}
                   {{ button_1_light_transition | float }}
                 {% endif %}
-          - choose:
-              - conditions:
-                  - "{{ first_action == 'on' }}"
-                sequence:
-                  - alias: Custom Action
-                    sequence: !input button_1_on
-                  - alias: Light Mode
+          - alias: Custom Action
+            sequence: !input button_1_off
+          - alias: Light Mode
+            if:
+              - "{{ button_1_has_light }}"
+            then:
+              - parallel:
+                  - alias: turn_on
                     if:
-                      - "{{ button_1_has_light }}"
+                      - "{{ 'turn_on' in button_1_off_light_mode }}"
                     then:
-                      - parallel:
-                          - alias: turn_on
-                            if:
-                              - "{{ 'turn_on' in button_1_on_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_1_on_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.turn_on
-                                        data:
-                                          brightness_pct: "{{ button_1_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                                          transition: "{{ button_1_transition }}"
-                                        target: "{{ button_1_light }}"
-                                default:
-                                  - action: light.turn_on
-                                    data:
-                                      transition: "{{ button_1_transition }}"
-                                    target: "{{ button_1_light }}"
-                          - alias: turn_off
-                            if:
-                              - "{{ 'turn_off' in button_1_on_light_mode }}"
-                            then:
-                              - action: light.turn_off
+                      - choose:
+                          - conditions:
+                              - "{{ button_1_off_reset_to_defaults }}"
+                            sequence:
+                              - action: light.turn_on
                                 data:
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
                                   transition: "{{ button_1_transition }}"
                                 target: "{{ button_1_light }}"
-                          - alias: toggle
-                            if:
-                              - "{{ 'toggle' in button_1_on_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_1_on_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.toggle
-                                        data:
-                                          brightness_pct: "{{ button_1_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                                          transition: "{{ button_1_transition }}"
-                                        target: "{{ button_1_light }}"
-                                default:
-                                  - action: light.toggle
-                                    data:
-                                      transition: "{{ button_1_transition }}"
-                                    target: "{{ button_1_light }}"
-              - conditions:
-                  - "{{ first_action == 'off' }}"
-                sequence:
-                  - alias: Custom Action
-                    sequence: !input button_1_off
-                  - alias: Light Mode
+                        default:
+                          - action: light.turn_on
+                            data:
+                              transition: "{{ button_1_transition }}"
+                            target: "{{ button_1_light }}"
+                  - alias: turn_off
                     if:
-                      - "{{ button_1_has_light }}"
+                      - "{{ 'turn_off' in button_1_off_light_mode }}"
                     then:
-                      - parallel:
-                          - alias: turn_on
-                            if:
-                              - "{{ 'turn_on' in button_1_off_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_1_off_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.turn_on
-                                        data:
-                                          brightness_pct: "{{ button_1_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                                          transition: "{{ button_1_transition }}"
-                                        target: "{{ button_1_light }}"
-                                default:
-                                  - action: light.turn_on
-                                    data:
-                                      transition: "{{ button_1_transition }}"
-                                    target: "{{ button_1_light }}"
-                          - alias: turn_off
-                            if:
-                              - "{{ 'turn_off' in button_1_off_light_mode }}"
-                            then:
-                              - action: light.turn_off
+                      - action: light.turn_off
+                        data:
+                          transition: "{{ button_1_transition }}"
+                        target: "{{ button_1_light }}"
+                  - alias: toggle
+                    if:
+                      - "{{ 'toggle' in button_1_off_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions:
+                              - "{{ button_1_off_reset_to_defaults }}"
+                            sequence:
+                              - action: light.toggle
                                 data:
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
                                   transition: "{{ button_1_transition }}"
                                 target: "{{ button_1_light }}"
-                          - alias: toggle
-                            if:
-                              - "{{ 'toggle' in button_1_off_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_1_off_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.toggle
-                                        data:
-                                          brightness_pct: "{{ button_1_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                                          transition: "{{ button_1_transition }}"
-                                        target: "{{ button_1_light }}"
-                                default:
-                                  - action: light.toggle
-                                    data:
-                                      transition: "{{ button_1_transition }}"
-                                    target: "{{ button_1_light }}"
-      # ========== BUTTON 2 ON/OFF ==========
+                        default:
+                          - action: light.toggle
+                            data:
+                              transition: "{{ button_1_transition }}"
+                            target: "{{ button_1_light }}"
+      # ========== BUTTON 2 ON ==========
       - conditions:
           - "{{ first_button == 2 }}"
+          - "{{ first_action == 'on' }}"
+        alias: "Button 2 on"
         sequence:
-          - variables:
+          - alias: "Set button 2 configuration variables"
+            variables:
               button_2_has_light: >-
                 {{ button_2_light.entity_id | default([]) | length > 0
                 or button_2_light.device_id | default([]) | length > 0
@@ -2992,6 +3139,122 @@ actions:
               button_2_light_transition: !input button_2_light_transition
               button_2_on_light_mode: !input button_2_on_light_mode
               button_2_on_reset_to_defaults: !input button_2_on_reset_to_defaults
+              button_2_color_temp_kelvin: >-
+                {% if button_2_light_adjustment_mode == 'adaptive' %}
+                  {% if button_2_light_adaptive_color_temp not in [none, '', []] %}
+                    {{ states(button_2_light_adaptive_color_temp) | int(button_2_light_color) }}
+                  {% else %}
+                    {{ button_2_light_color }}
+                  {% endif %}
+                {% elif button_2_light_adjustment_mode == 'schedule' %}
+                  {% if button_2_light_schedule not in [none, '', null, []] %}
+                    {% set val = state_attr(button_2_light_schedule, 'color_temp_kelvin') %}
+                    {{ val if val is not none else button_2_light_color }}
+                  {% else %}
+                    {{ button_2_light_color }}
+                  {% endif %}
+                {% else %}
+                  {{ button_2_light_color }}
+                {% endif %}
+              button_2_brightness_pct: >-
+                {% if button_2_light_adjustment_mode == 'adaptive' %}
+                  {% if button_2_light_adaptive_brightness not in [none, '', []] %}
+                    {{ states(button_2_light_adaptive_brightness) | int(button_2_light_brightness) }}
+                  {% else %}
+                    {{ button_2_light_brightness }}
+                  {% endif %}
+                {% elif button_2_light_adjustment_mode == 'schedule' %}
+                  {% if button_2_light_schedule not in [none, '', null, []] %}
+                    {% set val = state_attr(button_2_light_schedule, 'brightness_pct') %}
+                    {{ val if val is not none else button_2_light_brightness }}
+                  {% else %}
+                    {{ button_2_light_brightness }}
+                  {% endif %}
+                {% else %}
+                  {{ button_2_light_brightness }}
+                {% endif %}
+              button_2_transition: >-
+                {% if button_2_light_adjustment_mode == 'schedule' %}
+                  {% if button_2_light_schedule not in [none, '', null, []] %}
+                    {{ state_attr(button_2_light_schedule, 'transition') | default(button_2_light_transition, true) | float }}
+                  {% else %}
+                    {{ button_2_light_transition | float }}
+                  {% endif %}
+                {% else %}
+                  {{ button_2_light_transition | float }}
+                {% endif %}
+          - alias: Custom Action
+            sequence: !input button_2_on
+          - alias: Light Mode
+            if:
+              - "{{ button_2_has_light }}"
+            then:
+              - parallel:
+                  - alias: turn_on
+                    if:
+                      - "{{ 'turn_on' in button_2_on_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions:
+                              - "{{ button_2_on_reset_to_defaults }}"
+                            sequence:
+                              - action: light.turn_on
+                                data:
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                                target: "{{ button_2_light }}"
+                        default:
+                          - action: light.turn_on
+                            data:
+                              transition: "{{ button_2_transition }}"
+                            target: "{{ button_2_light }}"
+                  - alias: turn_off
+                    if:
+                      - "{{ 'turn_off' in button_2_on_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        data:
+                          transition: "{{ button_2_transition }}"
+                        target: "{{ button_2_light }}"
+                  - alias: toggle
+                    if:
+                      - "{{ 'toggle' in button_2_on_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions:
+                              - "{{ button_2_on_reset_to_defaults }}"
+                            sequence:
+                              - action: light.toggle
+                                data:
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                                target: "{{ button_2_light }}"
+                        default:
+                          - action: light.toggle
+                            data:
+                              transition: "{{ button_2_transition }}"
+                            target: "{{ button_2_light }}"
+      # ========== BUTTON 2 OFF ==========
+      - conditions:
+          - "{{ first_button == 2 }}"
+          - "{{ first_action == 'off' }}"
+        alias: "Button 2 off"
+        sequence:
+          - alias: "Set button 2 configuration variables"
+            variables:
+              button_2_has_light: >-
+                {{ button_2_light.entity_id | default([]) | length > 0
+                or button_2_light.device_id | default([]) | length > 0
+                or button_2_light.area_id | default([]) | length > 0 }}
+              button_2_light_adjustment_mode: !input button_2_light_adjustment_mode
+              button_2_light_adaptive_brightness: !input button_2_light_adaptive_brightness
+              button_2_light_brightness: !input button_2_light_brightness
+              button_2_light_schedule: !input button_2_light_schedule
+              button_2_light_adaptive_color_temp: !input button_2_light_adaptive_color_temp
+              button_2_light_color: !input button_2_light_color
+              button_2_light_transition: !input button_2_light_transition
               button_2_off_light_mode: !input button_2_off_light_mode
               button_2_off_reset_to_defaults: !input button_2_off_reset_to_defaults
               button_2_color_temp_kelvin: >-
@@ -3038,124 +3301,67 @@ actions:
                 {% else %}
                   {{ button_2_light_transition | float }}
                 {% endif %}
-          - choose:
-              - conditions:
-                  - "{{ first_action == 'on' }}"
-                sequence:
-                  - alias: Custom Action
-                    sequence: !input button_2_on
-                  - alias: Light Mode
+          - alias: Custom Action
+            sequence: !input button_2_off
+          - alias: Light Mode
+            if:
+              - "{{ button_2_has_light }}"
+            then:
+              - parallel:
+                  - alias: turn_on
                     if:
-                      - "{{ button_2_has_light }}"
+                      - "{{ 'turn_on' in button_2_off_light_mode }}"
                     then:
-                      - parallel:
-                          - alias: turn_on
-                            if:
-                              - "{{ 'turn_on' in button_2_on_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_2_on_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.turn_on
-                                        data:
-                                          brightness_pct: "{{ button_2_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
-                                          transition: "{{ button_2_transition }}"
-                                        target: "{{ button_2_light }}"
-                                default:
-                                  - action: light.turn_on
-                                    data:
-                                      transition: "{{ button_2_transition }}"
-                                    target: "{{ button_2_light }}"
-                          - alias: turn_off
-                            if:
-                              - "{{ 'turn_off' in button_2_on_light_mode }}"
-                            then:
-                              - action: light.turn_off
+                      - choose:
+                          - conditions:
+                              - "{{ button_2_off_reset_to_defaults }}"
+                            sequence:
+                              - action: light.turn_on
                                 data:
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
                                   transition: "{{ button_2_transition }}"
                                 target: "{{ button_2_light }}"
-                          - alias: toggle
-                            if:
-                              - "{{ 'toggle' in button_2_on_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_2_on_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.toggle
-                                        data:
-                                          brightness_pct: "{{ button_2_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
-                                          transition: "{{ button_2_transition }}"
-                                        target: "{{ button_2_light }}"
-                                default:
-                                  - action: light.toggle
-                                    data:
-                                      transition: "{{ button_2_transition }}"
-                                    target: "{{ button_2_light }}"
-              - conditions:
-                  - "{{ first_action == 'off' }}"
-                sequence:
-                  - alias: Custom Action
-                    sequence: !input button_2_off
-                  - alias: Light Mode
+                        default:
+                          - action: light.turn_on
+                            data:
+                              transition: "{{ button_2_transition }}"
+                            target: "{{ button_2_light }}"
+                  - alias: turn_off
                     if:
-                      - "{{ button_2_has_light }}"
+                      - "{{ 'turn_off' in button_2_off_light_mode }}"
                     then:
-                      - parallel:
-                          - alias: turn_on
-                            if:
-                              - "{{ 'turn_on' in button_2_off_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_2_off_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.turn_on
-                                        data:
-                                          brightness_pct: "{{ button_2_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
-                                          transition: "{{ button_2_transition }}"
-                                        target: "{{ button_2_light }}"
-                                default:
-                                  - action: light.turn_on
-                                    data:
-                                      transition: "{{ button_2_transition }}"
-                                    target: "{{ button_2_light }}"
-                          - alias: turn_off
-                            if:
-                              - "{{ 'turn_off' in button_2_off_light_mode }}"
-                            then:
-                              - action: light.turn_off
+                      - action: light.turn_off
+                        data:
+                          transition: "{{ button_2_transition }}"
+                        target: "{{ button_2_light }}"
+                  - alias: toggle
+                    if:
+                      - "{{ 'toggle' in button_2_off_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions:
+                              - "{{ button_2_off_reset_to_defaults }}"
+                            sequence:
+                              - action: light.toggle
                                 data:
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
                                   transition: "{{ button_2_transition }}"
                                 target: "{{ button_2_light }}"
-                          - alias: toggle
-                            if:
-                              - "{{ 'toggle' in button_2_off_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_2_off_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.toggle
-                                        data:
-                                          brightness_pct: "{{ button_2_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
-                                          transition: "{{ button_2_transition }}"
-                                        target: "{{ button_2_light }}"
-                                default:
-                                  - action: light.toggle
-                                    data:
-                                      transition: "{{ button_2_transition }}"
-                                    target: "{{ button_2_light }}"
-      # ========== BUTTON 3 ON/OFF ==========
+                        default:
+                          - action: light.toggle
+                            data:
+                              transition: "{{ button_2_transition }}"
+                            target: "{{ button_2_light }}"
+      # ========== BUTTON 3 ON ==========
       - conditions:
           - "{{ first_button == 3 }}"
+          - "{{ first_action == 'on' }}"
+        alias: "Button 3 on"
         sequence:
-          - variables:
+          - alias: "Set button 3 configuration variables"
+            variables:
               button_3_has_light: >-
                 {{ button_3_light.entity_id | default([]) | length > 0
                 or button_3_light.device_id | default([]) | length > 0
@@ -3169,6 +3375,122 @@ actions:
               button_3_light_transition: !input button_3_light_transition
               button_3_on_light_mode: !input button_3_on_light_mode
               button_3_on_reset_to_defaults: !input button_3_on_reset_to_defaults
+              button_3_color_temp_kelvin: >-
+                {% if button_3_light_adjustment_mode == 'adaptive' %}
+                  {% if button_3_light_adaptive_color_temp not in [none, '', []] %}
+                    {{ states(button_3_light_adaptive_color_temp) | int(button_3_light_color) }}
+                  {% else %}
+                    {{ button_3_light_color }}
+                  {% endif %}
+                {% elif button_3_light_adjustment_mode == 'schedule' %}
+                  {% if button_3_light_schedule not in [none, '', null, []] %}
+                    {% set val = state_attr(button_3_light_schedule, 'color_temp_kelvin') %}
+                    {{ val if val is not none else button_3_light_color }}
+                  {% else %}
+                    {{ button_3_light_color }}
+                  {% endif %}
+                {% else %}
+                  {{ button_3_light_color }}
+                {% endif %}
+              button_3_brightness_pct: >-
+                {% if button_3_light_adjustment_mode == 'adaptive' %}
+                  {% if button_3_light_adaptive_brightness not in [none, '', []] %}
+                    {{ states(button_3_light_adaptive_brightness) | int(button_3_light_brightness) }}
+                  {% else %}
+                    {{ button_3_light_brightness }}
+                  {% endif %}
+                {% elif button_3_light_adjustment_mode == 'schedule' %}
+                  {% if button_3_light_schedule not in [none, '', null, []] %}
+                    {% set val = state_attr(button_3_light_schedule, 'brightness_pct') %}
+                    {{ val if val is not none else button_3_light_brightness }}
+                  {% else %}
+                    {{ button_3_light_brightness }}
+                  {% endif %}
+                {% else %}
+                  {{ button_3_light_brightness }}
+                {% endif %}
+              button_3_transition: >-
+                {% if button_3_light_adjustment_mode == 'schedule' %}
+                  {% if button_3_light_schedule not in [none, '', null, []] %}
+                    {{ state_attr(button_3_light_schedule, 'transition') | default(button_3_light_transition, true) | float }}
+                  {% else %}
+                    {{ button_3_light_transition | float }}
+                  {% endif %}
+                {% else %}
+                  {{ button_3_light_transition | float }}
+                {% endif %}
+          - alias: Custom Action
+            sequence: !input button_3_on
+          - alias: Light Mode
+            if:
+              - "{{ button_3_has_light }}"
+            then:
+              - parallel:
+                  - alias: turn_on
+                    if:
+                      - "{{ 'turn_on' in button_3_on_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions:
+                              - "{{ button_3_on_reset_to_defaults }}"
+                            sequence:
+                              - action: light.turn_on
+                                data:
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                                target: "{{ button_3_light }}"
+                        default:
+                          - action: light.turn_on
+                            data:
+                              transition: "{{ button_3_transition }}"
+                            target: "{{ button_3_light }}"
+                  - alias: turn_off
+                    if:
+                      - "{{ 'turn_off' in button_3_on_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        data:
+                          transition: "{{ button_3_transition }}"
+                        target: "{{ button_3_light }}"
+                  - alias: toggle
+                    if:
+                      - "{{ 'toggle' in button_3_on_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions:
+                              - "{{ button_3_on_reset_to_defaults }}"
+                            sequence:
+                              - action: light.toggle
+                                data:
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                                target: "{{ button_3_light }}"
+                        default:
+                          - action: light.toggle
+                            data:
+                              transition: "{{ button_3_transition }}"
+                            target: "{{ button_3_light }}"
+      # ========== BUTTON 3 OFF ==========
+      - conditions:
+          - "{{ first_button == 3 }}"
+          - "{{ first_action == 'off' }}"
+        alias: "Button 3 off"
+        sequence:
+          - alias: "Set button 3 configuration variables"
+            variables:
+              button_3_has_light: >-
+                {{ button_3_light.entity_id | default([]) | length > 0
+                or button_3_light.device_id | default([]) | length > 0
+                or button_3_light.area_id | default([]) | length > 0 }}
+              button_3_light_adjustment_mode: !input button_3_light_adjustment_mode
+              button_3_light_adaptive_brightness: !input button_3_light_adaptive_brightness
+              button_3_light_brightness: !input button_3_light_brightness
+              button_3_light_schedule: !input button_3_light_schedule
+              button_3_light_adaptive_color_temp: !input button_3_light_adaptive_color_temp
+              button_3_light_color: !input button_3_light_color
+              button_3_light_transition: !input button_3_light_transition
               button_3_off_light_mode: !input button_3_off_light_mode
               button_3_off_reset_to_defaults: !input button_3_off_reset_to_defaults
               button_3_color_temp_kelvin: >-
@@ -3215,124 +3537,67 @@ actions:
                 {% else %}
                   {{ button_3_light_transition | float }}
                 {% endif %}
-          - choose:
-              - conditions:
-                  - "{{ first_action == 'on' }}"
-                sequence:
-                  - alias: Custom Action
-                    sequence: !input button_3_on
-                  - alias: Light Mode
+          - alias: Custom Action
+            sequence: !input button_3_off
+          - alias: Light Mode
+            if:
+              - "{{ button_3_has_light }}"
+            then:
+              - parallel:
+                  - alias: turn_on
                     if:
-                      - "{{ button_3_has_light }}"
+                      - "{{ 'turn_on' in button_3_off_light_mode }}"
                     then:
-                      - parallel:
-                          - alias: turn_on
-                            if:
-                              - "{{ 'turn_on' in button_3_on_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_3_on_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.turn_on
-                                        data:
-                                          brightness_pct: "{{ button_3_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
-                                          transition: "{{ button_3_transition }}"
-                                        target: "{{ button_3_light }}"
-                                default:
-                                  - action: light.turn_on
-                                    data:
-                                      transition: "{{ button_3_transition }}"
-                                    target: "{{ button_3_light }}"
-                          - alias: turn_off
-                            if:
-                              - "{{ 'turn_off' in button_3_on_light_mode }}"
-                            then:
-                              - action: light.turn_off
+                      - choose:
+                          - conditions:
+                              - "{{ button_3_off_reset_to_defaults }}"
+                            sequence:
+                              - action: light.turn_on
                                 data:
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
                                   transition: "{{ button_3_transition }}"
                                 target: "{{ button_3_light }}"
-                          - alias: toggle
-                            if:
-                              - "{{ 'toggle' in button_3_on_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_3_on_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.toggle
-                                        data:
-                                          brightness_pct: "{{ button_3_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
-                                          transition: "{{ button_3_transition }}"
-                                        target: "{{ button_3_light }}"
-                                default:
-                                  - action: light.toggle
-                                    data:
-                                      transition: "{{ button_3_transition }}"
-                                    target: "{{ button_3_light }}"
-              - conditions:
-                  - "{{ first_action == 'off' }}"
-                sequence:
-                  - alias: Custom Action
-                    sequence: !input button_3_off
-                  - alias: Light Mode
+                        default:
+                          - action: light.turn_on
+                            data:
+                              transition: "{{ button_3_transition }}"
+                            target: "{{ button_3_light }}"
+                  - alias: turn_off
                     if:
-                      - "{{ button_3_has_light }}"
+                      - "{{ 'turn_off' in button_3_off_light_mode }}"
                     then:
-                      - parallel:
-                          - alias: turn_on
-                            if:
-                              - "{{ 'turn_on' in button_3_off_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_3_off_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.turn_on
-                                        data:
-                                          brightness_pct: "{{ button_3_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
-                                          transition: "{{ button_3_transition }}"
-                                        target: "{{ button_3_light }}"
-                                default:
-                                  - action: light.turn_on
-                                    data:
-                                      transition: "{{ button_3_transition }}"
-                                    target: "{{ button_3_light }}"
-                          - alias: turn_off
-                            if:
-                              - "{{ 'turn_off' in button_3_off_light_mode }}"
-                            then:
-                              - action: light.turn_off
+                      - action: light.turn_off
+                        data:
+                          transition: "{{ button_3_transition }}"
+                        target: "{{ button_3_light }}"
+                  - alias: toggle
+                    if:
+                      - "{{ 'toggle' in button_3_off_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions:
+                              - "{{ button_3_off_reset_to_defaults }}"
+                            sequence:
+                              - action: light.toggle
                                 data:
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
                                   transition: "{{ button_3_transition }}"
                                 target: "{{ button_3_light }}"
-                          - alias: toggle
-                            if:
-                              - "{{ 'toggle' in button_3_off_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_3_off_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.toggle
-                                        data:
-                                          brightness_pct: "{{ button_3_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
-                                          transition: "{{ button_3_transition }}"
-                                        target: "{{ button_3_light }}"
-                                default:
-                                  - action: light.toggle
-                                    data:
-                                      transition: "{{ button_3_transition }}"
-                                    target: "{{ button_3_light }}"
-      # ========== BUTTON 4 ON/OFF ==========
+                        default:
+                          - action: light.toggle
+                            data:
+                              transition: "{{ button_3_transition }}"
+                            target: "{{ button_3_light }}"
+      # ========== BUTTON 4 ON ==========
       - conditions:
           - "{{ first_button == 4 }}"
+          - "{{ first_action == 'on' }}"
+        alias: "Button 4 on"
         sequence:
-          - variables:
+          - alias: "Set button 4 configuration variables"
+            variables:
               button_4_has_light: >-
                 {{ button_4_light.entity_id | default([]) | length > 0
                 or button_4_light.device_id | default([]) | length > 0
@@ -3346,6 +3611,122 @@ actions:
               button_4_light_transition: !input button_4_light_transition
               button_4_on_light_mode: !input button_4_on_light_mode
               button_4_on_reset_to_defaults: !input button_4_on_reset_to_defaults
+              button_4_color_temp_kelvin: >-
+                {% if button_4_light_adjustment_mode == 'adaptive' %}
+                  {% if button_4_light_adaptive_color_temp not in [none, '', []] %}
+                    {{ states(button_4_light_adaptive_color_temp) | int(button_4_light_color) }}
+                  {% else %}
+                    {{ button_4_light_color }}
+                  {% endif %}
+                {% elif button_4_light_adjustment_mode == 'schedule' %}
+                  {% if button_4_light_schedule not in [none, '', null, []] %}
+                    {% set val = state_attr(button_4_light_schedule, 'color_temp_kelvin') %}
+                    {{ val if val is not none else button_4_light_color }}
+                  {% else %}
+                    {{ button_4_light_color }}
+                  {% endif %}
+                {% else %}
+                  {{ button_4_light_color }}
+                {% endif %}
+              button_4_brightness_pct: >-
+                {% if button_4_light_adjustment_mode == 'adaptive' %}
+                  {% if button_4_light_adaptive_brightness not in [none, '', []] %}
+                    {{ states(button_4_light_adaptive_brightness) | int(button_4_light_brightness) }}
+                  {% else %}
+                    {{ button_4_light_brightness }}
+                  {% endif %}
+                {% elif button_4_light_adjustment_mode == 'schedule' %}
+                  {% if button_4_light_schedule not in [none, '', null, []] %}
+                    {% set val = state_attr(button_4_light_schedule, 'brightness_pct') %}
+                    {{ val if val is not none else button_4_light_brightness }}
+                  {% else %}
+                    {{ button_4_light_brightness }}
+                  {% endif %}
+                {% else %}
+                  {{ button_4_light_brightness }}
+                {% endif %}
+              button_4_transition: >-
+                {% if button_4_light_adjustment_mode == 'schedule' %}
+                  {% if button_4_light_schedule not in [none, '', null, []] %}
+                    {{ state_attr(button_4_light_schedule, 'transition') | default(button_4_light_transition, true) | float }}
+                  {% else %}
+                    {{ button_4_light_transition | float }}
+                  {% endif %}
+                {% else %}
+                  {{ button_4_light_transition | float }}
+                {% endif %}
+          - alias: Custom Action
+            sequence: !input button_4_on
+          - alias: Light Mode
+            if:
+              - "{{ button_4_has_light }}"
+            then:
+              - parallel:
+                  - alias: turn_on
+                    if:
+                      - "{{ 'turn_on' in button_4_on_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions:
+                              - "{{ button_4_on_reset_to_defaults }}"
+                            sequence:
+                              - action: light.turn_on
+                                data:
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                                target: "{{ button_4_light }}"
+                        default:
+                          - action: light.turn_on
+                            data:
+                              transition: "{{ button_4_transition }}"
+                            target: "{{ button_4_light }}"
+                  - alias: turn_off
+                    if:
+                      - "{{ 'turn_off' in button_4_on_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        data:
+                          transition: "{{ button_4_transition }}"
+                        target: "{{ button_4_light }}"
+                  - alias: toggle
+                    if:
+                      - "{{ 'toggle' in button_4_on_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions:
+                              - "{{ button_4_on_reset_to_defaults }}"
+                            sequence:
+                              - action: light.toggle
+                                data:
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                                target: "{{ button_4_light }}"
+                        default:
+                          - action: light.toggle
+                            data:
+                              transition: "{{ button_4_transition }}"
+                            target: "{{ button_4_light }}"
+      # ========== BUTTON 4 OFF ==========
+      - conditions:
+          - "{{ first_button == 4 }}"
+          - "{{ first_action == 'off' }}"
+        alias: "Button 4 off"
+        sequence:
+          - alias: "Set button 4 configuration variables"
+            variables:
+              button_4_has_light: >-
+                {{ button_4_light.entity_id | default([]) | length > 0
+                or button_4_light.device_id | default([]) | length > 0
+                or button_4_light.area_id | default([]) | length > 0 }}
+              button_4_light_adjustment_mode: !input button_4_light_adjustment_mode
+              button_4_light_adaptive_brightness: !input button_4_light_adaptive_brightness
+              button_4_light_brightness: !input button_4_light_brightness
+              button_4_light_schedule: !input button_4_light_schedule
+              button_4_light_adaptive_color_temp: !input button_4_light_adaptive_color_temp
+              button_4_light_color: !input button_4_light_color
+              button_4_light_transition: !input button_4_light_transition
               button_4_off_light_mode: !input button_4_off_light_mode
               button_4_off_reset_to_defaults: !input button_4_off_reset_to_defaults
               button_4_color_temp_kelvin: >-
@@ -3392,116 +3773,56 @@ actions:
                 {% else %}
                   {{ button_4_light_transition | float }}
                 {% endif %}
-          - choose:
-              - conditions:
-                  - "{{ first_action == 'on' }}"
-                sequence:
-                  - alias: Custom Action
-                    sequence: !input button_4_on
-                  - alias: Light Mode
+          - alias: Custom Action
+            sequence: !input button_4_off
+          - alias: Light Mode
+            if:
+              - "{{ button_4_has_light }}"
+            then:
+              - parallel:
+                  - alias: turn_on
                     if:
-                      - "{{ button_4_has_light }}"
+                      - "{{ 'turn_on' in button_4_off_light_mode }}"
                     then:
-                      - parallel:
-                          - alias: turn_on
-                            if:
-                              - "{{ 'turn_on' in button_4_on_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_4_on_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.turn_on
-                                        data:
-                                          brightness_pct: "{{ button_4_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
-                                          transition: "{{ button_4_transition }}"
-                                        target: "{{ button_4_light }}"
-                                default:
-                                  - action: light.turn_on
-                                    data:
-                                      transition: "{{ button_4_transition }}"
-                                    target: "{{ button_4_light }}"
-                          - alias: turn_off
-                            if:
-                              - "{{ 'turn_off' in button_4_on_light_mode }}"
-                            then:
-                              - action: light.turn_off
+                      - choose:
+                          - conditions:
+                              - "{{ button_4_off_reset_to_defaults }}"
+                            sequence:
+                              - action: light.turn_on
                                 data:
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
                                   transition: "{{ button_4_transition }}"
                                 target: "{{ button_4_light }}"
-                          - alias: toggle
-                            if:
-                              - "{{ 'toggle' in button_4_on_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_4_on_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.toggle
-                                        data:
-                                          brightness_pct: "{{ button_4_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
-                                          transition: "{{ button_4_transition }}"
-                                        target: "{{ button_4_light }}"
-                                default:
-                                  - action: light.toggle
-                                    data:
-                                      transition: "{{ button_4_transition }}"
-                                    target: "{{ button_4_light }}"
-              - conditions:
-                  - "{{ first_action == 'off' }}"
-                sequence:
-                  - alias: Custom Action
-                    sequence: !input button_4_off
-                  - alias: Light Mode
+                        default:
+                          - action: light.turn_on
+                            data:
+                              transition: "{{ button_4_transition }}"
+                            target: "{{ button_4_light }}"
+                  - alias: turn_off
                     if:
-                      - "{{ button_4_has_light }}"
+                      - "{{ 'turn_off' in button_4_off_light_mode }}"
                     then:
-                      - parallel:
-                          - alias: turn_on
-                            if:
-                              - "{{ 'turn_on' in button_4_off_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_4_off_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.turn_on
-                                        data:
-                                          brightness_pct: "{{ button_4_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
-                                          transition: "{{ button_4_transition }}"
-                                        target: "{{ button_4_light }}"
-                                default:
-                                  - action: light.turn_on
-                                    data:
-                                      transition: "{{ button_4_transition }}"
-                                    target: "{{ button_4_light }}"
-                          - alias: turn_off
-                            if:
-                              - "{{ 'turn_off' in button_4_off_light_mode }}"
-                            then:
-                              - action: light.turn_off
+                      - action: light.turn_off
+                        data:
+                          transition: "{{ button_4_transition }}"
+                        target: "{{ button_4_light }}"
+                  - alias: toggle
+                    if:
+                      - "{{ 'toggle' in button_4_off_light_mode }}"
+                    then:
+                      - choose:
+                          - conditions:
+                              - "{{ button_4_off_reset_to_defaults }}"
+                            sequence:
+                              - action: light.toggle
                                 data:
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
                                   transition: "{{ button_4_transition }}"
                                 target: "{{ button_4_light }}"
-                          - alias: toggle
-                            if:
-                              - "{{ 'toggle' in button_4_off_light_mode }}"
-                            then:
-                              - choose:
-                                  - conditions:
-                                      - "{{ button_4_off_reset_to_defaults }}"
-                                    sequence:
-                                      - action: light.toggle
-                                        data:
-                                          brightness_pct: "{{ button_4_brightness_pct }}"
-                                          color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
-                                          transition: "{{ button_4_transition }}"
-                                        target: "{{ button_4_light }}"
-                                default:
-                                  - action: light.toggle
-                                    data:
-                                      transition: "{{ button_4_transition }}"
-                                    target: "{{ button_4_light }}"
+                        default:
+                          - action: light.toggle
+                            data:
+                              transition: "{{ button_4_transition }}"
+                            target: "{{ button_4_light }}"
