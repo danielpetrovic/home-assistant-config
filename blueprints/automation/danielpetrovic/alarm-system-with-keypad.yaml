@@ -4,6 +4,8 @@ blueprint:
   description: |
     # Alarm System with Keypad support (Z2M / ZHA / Dashboard)
 
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/alarm-system-with-keypad.yaml) [![Community Discussion](https://img.shields.io/badge/Community-Discussion-41bdf5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://community.home-assistant.io/t/alarm-system-with-zigbee-z2m-zha-keypad-support-kepzb-110/958295) ![Version](https://img.shields.io/badge/Version-2026.01.1-blue?style=for-the-badge)
+
     A comprehensive alarm system blueprint for Home Assistant with multiple keypad integration options. No custom components required.
 
     ## Features
@@ -82,6 +84,15 @@ blueprint:
         name: Alarm Last User Name
         icon: mdi:account
         max: 255
+
+    # Template Sensor for Presence Tracking (optional - for automation features)
+    template:
+      - binary_sensor:
+          - name: "Presence"
+            unique_id: presence
+            device_class: presence
+            state: >
+              {{ (states('zone.home') | int) > 0 }}
     ```
 
     **3. Restart Home Assistant** to load the new entities.
@@ -89,10 +100,6 @@ blueprint:
     **4. Configure this blueprint** using the created entities.
 
     The field descriptions below reference this `/config/packages/alarm.yaml` file.
-
-    ## Version Information
-    For changelog, version-specific issues, and community discussion, visit:
-    https://community.home-assistant.io/t/alarm-system-with-zigbee-z2m-zha-keypad-support-kepzb-110/958295
   domain: automation
   source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/alarm-system-with-keypad.yaml
   input:
@@ -162,6 +169,47 @@ blueprint:
             - label: Dashboard (Custom On-Screen Keypad)
               value: dashboard
           multiple: true
+
+    version_info:
+      name: Version History
+      description: |
+        - **2026.01.1: Bug Fix & Documentation Updates**
+          - Fixed triggered mode notifications not being sent (config exclusion bug)
+          - Added badge-style buttons to blueprint header (GitHub, Blueprint Code, Community, Version)
+          - Added Version History section for tracking changes
+          - Added template binary sensor for presence tracking to package YAML example
+        - **2025.12.11: Sensor Trigger Template Fix**
+          - Fixed invalid trigger enabled templates causing sensor triggers to fail
+        - **2025.12.10: Dashboard Keypad Support**
+          - Added dashboard keypad support with script-based implementation
+          - Added complete Lovelace YAML examples for on-screen keypad
+        - **2025.12.9: Schedule Validation Fix**
+          - Fixed schedule day validation and refactor descriptions
+        - **2025.12.8: Alarm Action Template Fix**
+          - Fixed dynamic alarm action template to use correct service names
+        - **2025.12.7: Initial Release Patch**
+          - Small fixes after initial release
+        - **2025.12.6: Initial Combined Release**
+          - First combined Z2M/ZHA Blueprint version
+          - Merged separate Z2M and ZHA blueprints into one
+          - Added two-tier code system (user codes + master code)
+          - Added emergency mode support
+        - **2025.12.5: Logic Optimization**
+          - Optimized automation logic with template-driven approach
+        - **2025.12.4: Flexible Scheduling**
+          - Replaced fixed disarm/night schedules with flexible mode selection
+        - **2025.12.3: Notification System Extension**
+          - Extended notification system with critical alerts and channel control
+        - **2025.12.2: Presence Automation**
+          - Added presence-based alarm automation with flexible scheduling
+        - **2025.12.1: Notification Optimization**
+          - Optimized alarm system blueprint notifications
+        - **2025.12.0: First Combined Version**
+          - First combined Z2M/ZHA Blueprint version (merged from separate blueprints)
+          - **Breaking Changes**: No upgrade path from old versions - setup required
+      collapsed: true
+      icon: mdi:history
+      input: {}
 
     z2m:
       name: Zigbee2MQTT (Z2M)
@@ -2672,7 +2720,7 @@ actions:
               clickAction: !input alarm_camera_triggered_click_action
           current_state: "{{ states(alarm_main) }}"
           current_scripts: "{{ scripts_config.get(current_state, []) }}"
-          config: "{{ state_config.get(current_state) if current_state not in ['pending', 'triggered'] else none }}"
+          config: "{{ state_config.get(current_state) if current_state not in ['pending'] else none }}"
       - parallel:
           # Run scripts for this state
           - if:
