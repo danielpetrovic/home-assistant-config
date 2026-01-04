@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.6-blue?style=for-the-badge)
+    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.7-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -55,6 +55,11 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.01.7: Increase double-click timeout default for Z2M compatibility**
+          - Changed: Default timeout increased from 300ms to 500ms
+          - Improved: Better compatibility with Z2M's MQTT protocol latency (50-200ms vs ZHA's 10-50ms direct event latency)
+          - Note: Z2M users with slower button presses may still need 700-1000ms in automation settings
+
         - **2026.01.6: Fix double-click detection and prevent MQTT mistriggers**
           - Fixed: Added MQTT value_template filter to wait_for_trigger to prevent spurious triggers from battery/linkquality updates
           - Fixed: Refactored second trigger parsing to directly extract action and button number with explicit matching
@@ -202,7 +207,9 @@ blueprint:
         `optional` `number`
 
         Time window (in milliseconds) to detect a double press. You have this amount of time to press the opposite action (on→off or off→on) to trigger the double-press action.
-      default: 300
+
+        **Note:** Z2M users may need 700-1000ms due to MQTT protocol latency.
+      default: 500
       selector:
         number:
           min: 100
