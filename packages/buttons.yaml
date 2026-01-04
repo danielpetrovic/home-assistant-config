@@ -13,6 +13,13 @@ input_text:
     max: 1
     mode: text
     pattern: "[1-4]"
+  entree_knop_last_pressed:
+    name: Entree Knop Last Pressed
+    icon: mdi:gesture-double-tap
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
   gameroom_bureau_knop_last_pressed:
     name: Gameroom Bureau Knop Last Pressed
     icon: mdi:knob
@@ -72,6 +79,13 @@ input_text:
   schuur_tuin_knop_last_pressed:
     name: Schuur Tuin Knop Last Pressed
     icon: mdi:knob
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  toilet_knop_last_pressed:
+    name: Toilet Knop Last Pressed
+    icon: mdi:gesture-double-tap
     min: 0
     max: 1
     mode: text
