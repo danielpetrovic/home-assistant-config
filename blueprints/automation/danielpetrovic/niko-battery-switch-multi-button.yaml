@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.5-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.6-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -55,6 +55,12 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.01.6: Fix double-click detection and prevent MQTT mistriggers**
+          - Fixed: Added MQTT value_template filter to wait_for_trigger to prevent spurious triggers from battery/linkquality updates
+          - Fixed: Refactored second trigger parsing to directly extract action and button number with explicit matching
+          - Improved: Eliminated startswith/endswith on raw MQTT data, using explicit action lists instead
+          - Improved: Cleaner variable naming (removed unnecessary intermediate second_command variable)
+
         - **2026.01.5: Fix Z2M double-click detection and button 4 dimming**
           - Fixed: Z2M double-click detection now works for buttons 2, 3, and 4
           - Fixed: Button 4 dimming now works on Z2M (was completely non-functional)
@@ -2715,26 +2721,29 @@ actions:
           device_id: !input zha_remote
       - trigger: mqtt
         topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+        value_template: "{{ value_json.action is defined }}"
     timeout: "{{ double_press_timeout / 1000 }}"
     continue_on_timeout: true
   - variables:
+      # Parse second trigger action - only need on/off for double-click detection
       second_action: >-
         {% if wait.trigger is none %}
           none
         {% elif wait.trigger.platform == 'event' %}
           {{ wait.trigger.event.data.command }}
         {% elif wait.trigger.platform == 'mqtt' %}
-          {% set action = wait.trigger.payload_json.action | default('none') %}
-          {% if action.startswith('on') %}
+          {% set action = wait.trigger.payload_json.action | default('') %}
+          {% if action in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] %}
             on
-          {% elif action.startswith('off') %}
+          {% elif action in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] %}
             off
           {% else %}
-            {{ action }}
+            none
           {% endif %}
         {% else %}
           none
         {% endif %}
+      # Parse second trigger button number
       second_button: >-
         {% if wait.trigger is none %}
           0
@@ -2742,20 +2751,16 @@ actions:
           {{ wait.trigger.event.data.endpoint_id | default(1) }}
         {% elif wait.trigger.platform == 'mqtt' %}
           {% set action = wait.trigger.payload_json.action | default('') %}
-          {% if action.endswith('_top_left') %}
+          {% if action in ['on', 'off'] %}
             1
-          {% elif action.endswith('_bottom_left') %}
+          {% elif action in ['on_left', 'off_left', 'on_top_left', 'off_top_left'] %}
+            1
+          {% elif action in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] %}
             2
-          {% elif action.endswith('_top_right') %}
+          {% elif action in ['on_top_right', 'off_top_right'] %}
             3
-          {% elif action.endswith('_bottom_right') %}
+          {% elif action in ['on_bottom_right', 'off_bottom_right'] %}
             4
-          {% elif action.endswith('_left') %}
-            1
-          {% elif action.endswith('_right') %}
-            2
-          {% elif action.startswith('on') or action.startswith('off') or action.startswith('brightness_') %}
-            1
           {% else %}
             1
           {% endif %}
