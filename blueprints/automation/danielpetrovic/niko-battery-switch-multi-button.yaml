@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.8-blue?style=for-the-badge)
+    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.9-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -48,7 +48,6 @@ blueprint:
     - **Home Assistant**: Version 2024.10.0 or later
     - **Zigbee Integration**: Zigbee2MQTT (Z2M) and/or Zigbee Home Automation (ZHA)
     - **Compatible Models**: 552-720X1, 552-720X2, or 552-720X4
-    - **Text Helper**: One per switch (for double-click guard)
   domain: automation
   homeassistant:
     min_version: 2024.10.0
@@ -56,6 +55,17 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.01.9: Remove helper requirement, add auto-detected elapsed validation, and Z2M simulated brightness**
+          - **BREAKING:** Removed text helper requirement - delete the helper you created for v2026.01.8
+          - Fixed: Double-click detection now works reliably on Z2M without helpers
+          - Fixed: Z2M dimming now uses simulated_brightness when configured (auto-detected, smooth dimming that stops on release)
+          - Changed: Double-press timeout fixed at 300ms for both ZHA and Z2M (was 600ms for Z2M)
+          - Improved: Auto-detects Z2M elapsed field for accurate double-click timing (no configuration needed)
+          - Improved: Auto-detects Z2M simulated_brightness for smooth dimming (no blueprint config needed, just enable in Z2M device settings)
+          - Improved: Removed guard condition that was blocking Z2M double-click detection
+          - Improved: Simpler, cleaner code with ~250 lines removed from helper logic
+          - Note: Z2M users can enable simulated_brightness on device (delta: 20, interval: 200) for best dimming experience
+
         - **2026.01.8: Fix random dimming stops and improve trace debugging**
           - **BREAKING:** Added required input_text helper for double-click guard (see Helper Configuration section)
           - Fixed: Random dimming stops when holding multiple buttons simultaneously
@@ -169,54 +179,6 @@ blueprint:
             - label: Zigbee Home Automation (ZHA)
               value: zha
           multiple: true
-    helper_info:
-      name: Text Helper Configuration
-      description: |
-        ### Creating the Last Pressed Helper
-
-        The last pressed helper is required to prevent double-click mistriggers. It allows the blueprint to distinguish between different buttons while preventing the second press of a double-click from also executing as a single press.
-
-        **Option 1: Create via UI**
-        1. Go to Settings → Devices & Services → Helpers
-        2. Click "+ Create Helper" → Text
-        3. Configure:
-           - Name: `[Location] Knop Last Pressed` (e.g., "Entree Knop Last Pressed")
-           - Icon: `mdi:gesture-double-tap` (optional)
-           - Min length: 0
-           - Max length: 1
-           - Mode: Text
-           - Pattern: `[1-4]` (validates button number)
-
-        **Option 2: Create via YAML** (in `configuration.yaml` or packages):
-        ```yaml
-        input_text:
-          entree_knop_last_pressed:
-            name: Entree Knop Last Pressed
-            icon: mdi:gesture-double-tap
-            min: 0
-            max: 1
-            mode: text
-            pattern: "[1-4]"
-        ```
-
-        **Important:** Each switch requires its own unique helper. The helper will automatically update during double-click detection - do not modify it manually.
-      collapsed: true
-      icon: mdi:form-textbox
-      input: {}
-    last_pressed:
-      name: Last Pressed Input Text Helper
-      description: |
-        `required` `entity`
-
-        Create an input text helper within Home Assistant to prevent double-click mistriggers. This helper tracks the last button that started double-click detection, allowing multi-button usage while preventing the second press from also executing as a single press. **Each switch requires a unique helper!**
-
-        See "Text Helper Configuration" section above for setup instructions.
-      selector:
-        entity:
-          filter:
-            - domain:
-                - input_text
-          multiple: false
     z2m:
       name: Zigbee2MQTT (Z2M)
       description: Configure Zigbee2MQTT integration settings.
@@ -1501,14 +1463,6 @@ variables:
   z2m_base_topic: !input z2m_base_topic
   z2m_device_name: !input z2m_device_name
   device_model: !input device_model
-  # Auto-set timeout based on integration: Z2M needs more time for MQTT latency
-  double_press_timeout: >-
-    {% if 'z2m' in integration_type %}
-      600
-    {% else %}
-      300
-    {% endif %}
-  last_pressed: !input last_pressed
   button_1_light: !input button_1_light
   button_2_light: !input button_2_light
   button_3_light: !input button_3_light
@@ -2094,51 +2048,91 @@ actions:
           - if:
               - "{{ 'dim' in button_1_dimmer_light_mode and button_1_has_light }}"
             then:
-              - parallel:
-                  - sequence:
-                      - wait_for_trigger:
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 1
-                              command: stop
-                          - trigger: mqtt
-                            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                            value_template: >-
-                              {{ value_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}
-                            payload: 'True'
-                        timeout: "30"
-                        continue_on_timeout: true
-                      - if:
-                          - "{{ wait.trigger is not none }}"
-                        then:
-                          - variables:
-                              button_1_stop_flag: true
-                  - sequence:
+              # Try Z2M simulated brightness first (auto-detect)
+              - choose:
+                  - conditions:
+                      - "{{ 'z2m' in integration_type }}"
+                    sequence:
+                      # Subscribe to Z2M MQTT and check if brightness appears
                       - repeat:
-                          count: "{{ button_1_light_count }}"
+                          until:
+                            - "{{ true == false }}"
                           sequence:
-                            - choose:
-                                - conditions:
-                                    - "{{ button_1_dimmer_reset_to_defaults }}"
-                                  sequence:
+                            - wait_for_trigger:
+                                - trigger: mqtt
+                                  topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                  value_template: >-
+                                    {{ value_json.brightness is defined or
+                                       (value_json.action is defined and 'brightness_stop' in value_json.action) }}
+                              timeout: 30
+                              continue_on_timeout: true
+                            # Stop if timeout or stop action received
+                            - if:
+                                - condition: template
+                                  value_template: >-
+                                    {{ wait.trigger is none or
+                                       (wait.trigger.payload_json.action is defined and 'brightness_stop' in wait.trigger.payload_json.action) }}
+                              then:
+                                - stop: "Dimming stopped"
+                            # If brightness field exists, apply it to light
+                            - if:
+                                - condition: template
+                                  value_template: "{{ wait.trigger.payload_json.brightness is defined }}"
+                              then:
+                                - action: light.turn_on
+                                  target: "{{ button_1_light }}"
+                                  data:
+                                    brightness: "{{ wait.trigger.payload_json.brightness }}"
+                                    transition: 0
+                              # If no brightness field after first message, break and use fallback
+                              else:
+                                - stop: "No simulated brightness, using fallback"
+                # Fallback: use existing loop-based dimming
+                default:
+                  - parallel:
+                      - sequence:
+                          - wait_for_trigger:
+                              - trigger: event
+                                event_type: zha_event
+                                event_data:
+                                  device_id: !input zha_remote
+                                  endpoint_id: 1
+                                  command: stop
+                              - trigger: mqtt
+                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                value_template: >-
+                                  {{ value_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}
+                            timeout: "30"
+                            continue_on_timeout: true
+                          - if:
+                              - "{{ wait.trigger is not none }}"
+                            then:
+                              - variables:
+                                  button_1_stop_flag: true
+                      - sequence:
+                          - repeat:
+                              count: "{{ button_1_light_count }}"
+                              sequence:
+                                - choose:
+                                    - conditions:
+                                        - "{{ button_1_dimmer_reset_to_defaults }}"
+                                      sequence:
+                                        - action: light.turn_on
+                                          target: "{{ button_1_light }}"
+                                          data:
+                                            brightness_step: "{{ button_1_light_step_size }}"
+                                            color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  default:
                                     - action: light.turn_on
                                       target: "{{ button_1_light }}"
                                       data:
                                         brightness_step: "{{ button_1_light_step_size }}"
-                                        color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                              default:
-                                - action: light.turn_on
-                                  target: "{{ button_1_light }}"
-                                  data:
-                                    brightness_step: "{{ button_1_light_step_size }}"
-                            - delay:
-                                seconds: "{{ button_1_dimming_delay }}"
-                            - if:
-                                - "{{ button_1_stop_flag }}"
-                              then:
-                                - stop: Stop flag set
+                                - delay:
+                                    seconds: "{{ button_1_dimming_delay }}"
+                                - if:
+                                    - "{{ button_1_stop_flag }}"
+                                  then:
+                                    - stop: Stop flag set
       # ========== BUTTON 2 BRIGHTNESS UP ==========
       - conditions:
           - "{{ is_button_event }}"
@@ -2181,51 +2175,86 @@ actions:
           - if:
               - "{{ 'dim' in button_2_dimmer_light_mode and button_2_has_light }}"
             then:
-              - parallel:
-                  - sequence:
-                      - wait_for_trigger:
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 2
-                              command: stop
-                          - trigger: mqtt
-                            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                            value_template: >-
-                              {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}
-                            payload: 'True'
-                        timeout: "30"
-                        continue_on_timeout: true
-                      - if:
-                          - "{{ wait.trigger is not none }}"
-                        then:
-                          - variables:
-                              button_2_stop_flag: true
-                  - sequence:
+              # Try Z2M simulated brightness first (auto-detect)
+              - choose:
+                  - conditions:
+                      - "{{ 'z2m' in integration_type }}"
+                    sequence:
                       - repeat:
-                          count: "{{ button_2_light_count }}"
+                          until:
+                            - "{{ true == false }}"
                           sequence:
-                            - choose:
-                                - conditions:
-                                    - "{{ button_2_dimmer_reset_to_defaults }}"
-                                  sequence:
+                            - wait_for_trigger:
+                                - trigger: mqtt
+                                  topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                  value_template: >-
+                                    {{ value_json.brightness is defined or
+                                       (value_json.action is defined and 'brightness_stop' in value_json.action) }}
+                              timeout: 30
+                              continue_on_timeout: true
+                            - if:
+                                - condition: template
+                                  value_template: >-
+                                    {{ wait.trigger is none or
+                                       (wait.trigger.payload_json.action is defined and 'brightness_stop' in wait.trigger.payload_json.action) }}
+                              then:
+                                - stop: "Dimming stopped"
+                            - if:
+                                - condition: template
+                                  value_template: "{{ wait.trigger.payload_json.brightness is defined }}"
+                              then:
+                                - action: light.turn_on
+                                  target: "{{ button_2_light }}"
+                                  data:
+                                    brightness: "{{ wait.trigger.payload_json.brightness }}"
+                                    transition: 0
+                              else:
+                                - stop: "No simulated brightness, using fallback"
+                default:
+                  - parallel:
+                      - sequence:
+                          - wait_for_trigger:
+                              - trigger: event
+                                event_type: zha_event
+                                event_data:
+                                  device_id: !input zha_remote
+                                  endpoint_id: 2
+                                  command: stop
+                              - trigger: mqtt
+                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                value_template: >-
+                                  {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}
+                            timeout: "30"
+                            continue_on_timeout: true
+                          - if:
+                              - "{{ wait.trigger is not none }}"
+                            then:
+                              - variables:
+                                  button_2_stop_flag: true
+                      - sequence:
+                          - repeat:
+                              count: "{{ button_2_light_count }}"
+                              sequence:
+                                - choose:
+                                    - conditions:
+                                        - "{{ button_2_dimmer_reset_to_defaults }}"
+                                      sequence:
+                                        - action: light.turn_on
+                                          target: "{{ button_2_light }}"
+                                          data:
+                                            brightness_step: "{{ button_2_light_step_size }}"
+                                            color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  default:
                                     - action: light.turn_on
                                       target: "{{ button_2_light }}"
                                       data:
                                         brightness_step: "{{ button_2_light_step_size }}"
-                                        color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
-                              default:
-                                - action: light.turn_on
-                                  target: "{{ button_2_light }}"
-                                  data:
-                                    brightness_step: "{{ button_2_light_step_size }}"
-                            - delay:
-                                seconds: "{{ button_2_dimming_delay }}"
-                            - if:
-                                - "{{ button_2_stop_flag }}"
-                              then:
-                                - stop: Stop flag set
+                                - delay:
+                                    seconds: "{{ button_2_dimming_delay }}"
+                                - if:
+                                    - "{{ button_2_stop_flag }}"
+                                  then:
+                                    - stop: Stop flag set
       # ========== BUTTON 3 BRIGHTNESS UP ==========
       - conditions:
           - "{{ is_button_event }}"
@@ -2268,51 +2297,86 @@ actions:
           - if:
               - "{{ 'dim' in button_3_dimmer_light_mode and button_3_has_light }}"
             then:
-              - parallel:
-                  - sequence:
-                      - wait_for_trigger:
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 3
-                              command: stop
-                          - trigger: mqtt
-                            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                            value_template: >-
-                              {{ value_json.action | default('') in ['brightness_stop_top_right'] }}
-                            payload: 'True'
-                        timeout: "30"
-                        continue_on_timeout: true
-                      - if:
-                          - "{{ wait.trigger is not none }}"
-                        then:
-                          - variables:
-                              button_3_stop_flag: true
-                  - sequence:
+              # Try Z2M simulated brightness first (auto-detect)
+              - choose:
+                  - conditions:
+                      - "{{ 'z2m' in integration_type }}"
+                    sequence:
                       - repeat:
-                          count: "{{ button_3_light_count }}"
+                          until:
+                            - "{{ true == false }}"
                           sequence:
-                            - choose:
-                                - conditions:
-                                    - "{{ button_3_dimmer_reset_to_defaults }}"
-                                  sequence:
+                            - wait_for_trigger:
+                                - trigger: mqtt
+                                  topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                  value_template: >-
+                                    {{ value_json.brightness is defined or
+                                       (value_json.action is defined and 'brightness_stop' in value_json.action) }}
+                              timeout: 30
+                              continue_on_timeout: true
+                            - if:
+                                - condition: template
+                                  value_template: >-
+                                    {{ wait.trigger is none or
+                                       (wait.trigger.payload_json.action is defined and 'brightness_stop' in wait.trigger.payload_json.action) }}
+                              then:
+                                - stop: "Dimming stopped"
+                            - if:
+                                - condition: template
+                                  value_template: "{{ wait.trigger.payload_json.brightness is defined }}"
+                              then:
+                                - action: light.turn_on
+                                  target: "{{ button_3_light }}"
+                                  data:
+                                    brightness: "{{ wait.trigger.payload_json.brightness }}"
+                                    transition: 0
+                              else:
+                                - stop: "No simulated brightness, using fallback"
+                default:
+                  - parallel:
+                      - sequence:
+                          - wait_for_trigger:
+                              - trigger: event
+                                event_type: zha_event
+                                event_data:
+                                  device_id: !input zha_remote
+                                  endpoint_id: 3
+                                  command: stop
+                              - trigger: mqtt
+                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                value_template: >-
+                                  {{ value_json.action | default('') in ['brightness_stop_top_right'] }}
+                            timeout: "30"
+                            continue_on_timeout: true
+                          - if:
+                              - "{{ wait.trigger is not none }}"
+                            then:
+                              - variables:
+                                  button_3_stop_flag: true
+                      - sequence:
+                          - repeat:
+                              count: "{{ button_3_light_count }}"
+                              sequence:
+                                - choose:
+                                    - conditions:
+                                        - "{{ button_3_dimmer_reset_to_defaults }}"
+                                      sequence:
+                                        - action: light.turn_on
+                                          target: "{{ button_3_light }}"
+                                          data:
+                                            brightness_step: "{{ button_3_light_step_size }}"
+                                            color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  default:
                                     - action: light.turn_on
                                       target: "{{ button_3_light }}"
                                       data:
                                         brightness_step: "{{ button_3_light_step_size }}"
-                                        color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
-                              default:
-                                - action: light.turn_on
-                                  target: "{{ button_3_light }}"
-                                  data:
-                                    brightness_step: "{{ button_3_light_step_size }}"
-                            - delay:
-                                seconds: "{{ button_3_dimming_delay }}"
-                            - if:
-                                - "{{ button_3_stop_flag }}"
-                              then:
-                                - stop: Stop flag set
+                                - delay:
+                                    seconds: "{{ button_3_dimming_delay }}"
+                                - if:
+                                    - "{{ button_3_stop_flag }}"
+                                  then:
+                                    - stop: Stop flag set
       # ========== BUTTON 4 BRIGHTNESS UP ==========
       - conditions:
           - "{{ is_button_event }}"
@@ -2355,51 +2419,86 @@ actions:
           - if:
               - "{{ 'dim' in button_4_dimmer_light_mode and button_4_has_light }}"
             then:
-              - parallel:
-                  - sequence:
-                      - wait_for_trigger:
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 4
-                              command: stop
-                          - trigger: mqtt
-                            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                            value_template: >-
-                              {{ value_json.action | default('') in ['brightness_stop_bottom_right'] }}
-                            payload: 'True'
-                        timeout: "30"
-                        continue_on_timeout: true
-                      - if:
-                          - "{{ wait.trigger is not none }}"
-                        then:
-                          - variables:
-                              button_4_stop_flag: true
-                  - sequence:
+              # Try Z2M simulated brightness first (auto-detect)
+              - choose:
+                  - conditions:
+                      - "{{ 'z2m' in integration_type }}"
+                    sequence:
                       - repeat:
-                          count: "{{ button_4_light_count }}"
+                          until:
+                            - "{{ true == false }}"
                           sequence:
-                            - choose:
-                                - conditions:
-                                    - "{{ button_4_dimmer_reset_to_defaults }}"
-                                  sequence:
+                            - wait_for_trigger:
+                                - trigger: mqtt
+                                  topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                  value_template: >-
+                                    {{ value_json.brightness is defined or
+                                       (value_json.action is defined and 'brightness_stop' in value_json.action) }}
+                              timeout: 30
+                              continue_on_timeout: true
+                            - if:
+                                - condition: template
+                                  value_template: >-
+                                    {{ wait.trigger is none or
+                                       (wait.trigger.payload_json.action is defined and 'brightness_stop' in wait.trigger.payload_json.action) }}
+                              then:
+                                - stop: "Dimming stopped"
+                            - if:
+                                - condition: template
+                                  value_template: "{{ wait.trigger.payload_json.brightness is defined }}"
+                              then:
+                                - action: light.turn_on
+                                  target: "{{ button_4_light }}"
+                                  data:
+                                    brightness: "{{ wait.trigger.payload_json.brightness }}"
+                                    transition: 0
+                              else:
+                                - stop: "No simulated brightness, using fallback"
+                default:
+                  - parallel:
+                      - sequence:
+                          - wait_for_trigger:
+                              - trigger: event
+                                event_type: zha_event
+                                event_data:
+                                  device_id: !input zha_remote
+                                  endpoint_id: 4
+                                  command: stop
+                              - trigger: mqtt
+                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                value_template: >-
+                                  {{ value_json.action | default('') in ['brightness_stop_bottom_right'] }}
+                            timeout: "30"
+                            continue_on_timeout: true
+                          - if:
+                              - "{{ wait.trigger is not none }}"
+                            then:
+                              - variables:
+                                  button_4_stop_flag: true
+                      - sequence:
+                          - repeat:
+                              count: "{{ button_4_light_count }}"
+                              sequence:
+                                - choose:
+                                    - conditions:
+                                        - "{{ button_4_dimmer_reset_to_defaults }}"
+                                      sequence:
+                                        - action: light.turn_on
+                                          target: "{{ button_4_light }}"
+                                          data:
+                                            brightness_step: "{{ button_4_light_step_size }}"
+                                            color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  default:
                                     - action: light.turn_on
                                       target: "{{ button_4_light }}"
                                       data:
                                         brightness_step: "{{ button_4_light_step_size }}"
-                                        color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
-                              default:
-                                - action: light.turn_on
-                                  target: "{{ button_4_light }}"
-                                  data:
-                                    brightness_step: "{{ button_4_light_step_size }}"
-                            - delay:
-                                seconds: "{{ button_4_dimming_delay }}"
-                            - if:
-                                - "{{ button_4_stop_flag }}"
-                              then:
-                                - stop: Stop flag set
+                                - delay:
+                                    seconds: "{{ button_4_dimming_delay }}"
+                                - if:
+                                    - "{{ button_4_stop_flag }}"
+                                  then:
+                                    - stop: Stop flag set
       # ========== BUTTON 1 BRIGHTNESS DOWN ==========
       - conditions:
           - "{{ is_button_event }}"
@@ -2442,51 +2541,91 @@ actions:
           - if:
               - "{{ 'dim' in button_1_dimmer_light_mode and button_1_has_light }}"
             then:
-              - parallel:
-                  - sequence:
-                      - wait_for_trigger:
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 1
-                              command: stop
-                          - trigger: mqtt
-                            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                            value_template: >-
-                              {{ value_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}
-                            payload: 'True'
-                        timeout: "30"
-                        continue_on_timeout: true
-                      - if:
-                          - "{{ wait.trigger is not none }}"
-                        then:
-                          - variables:
-                              button_1_stop_flag: true
-                  - sequence:
+              # Try Z2M simulated brightness first (auto-detect)
+              - choose:
+                  - conditions:
+                      - "{{ 'z2m' in integration_type }}"
+                    sequence:
+                      # Subscribe to Z2M MQTT and check if brightness appears
                       - repeat:
-                          count: "{{ button_1_light_count }}"
+                          until:
+                            - "{{ true == false }}"
                           sequence:
-                            - choose:
-                                - conditions:
-                                    - "{{ button_1_dimmer_reset_to_defaults }}"
-                                  sequence:
+                            - wait_for_trigger:
+                                - trigger: mqtt
+                                  topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                  value_template: >-
+                                    {{ value_json.brightness is defined or
+                                       (value_json.action is defined and 'brightness_stop' in value_json.action) }}
+                              timeout: 30
+                              continue_on_timeout: true
+                            # Stop if timeout or stop action received
+                            - if:
+                                - condition: template
+                                  value_template: >-
+                                    {{ wait.trigger is none or
+                                       (wait.trigger.payload_json.action is defined and 'brightness_stop' in wait.trigger.payload_json.action) }}
+                              then:
+                                - stop: "Dimming stopped"
+                            # If brightness field exists, apply it to light
+                            - if:
+                                - condition: template
+                                  value_template: "{{ wait.trigger.payload_json.brightness is defined }}"
+                              then:
+                                - action: light.turn_on
+                                  target: "{{ button_1_light }}"
+                                  data:
+                                    brightness: "{{ wait.trigger.payload_json.brightness }}"
+                                    transition: 0
+                              # If no brightness field after first message, break and use fallback
+                              else:
+                                - stop: "No simulated brightness, using fallback"
+                # Fallback: use existing loop-based dimming
+                default:
+                  - parallel:
+                      - sequence:
+                          - wait_for_trigger:
+                              - trigger: event
+                                event_type: zha_event
+                                event_data:
+                                  device_id: !input zha_remote
+                                  endpoint_id: 1
+                                  command: stop
+                              - trigger: mqtt
+                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                value_template: >-
+                                  {{ value_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}
+                            timeout: "30"
+                            continue_on_timeout: true
+                          - if:
+                              - "{{ wait.trigger is not none }}"
+                            then:
+                              - variables:
+                                  button_1_stop_flag: true
+                      - sequence:
+                          - repeat:
+                              count: "{{ button_1_light_count }}"
+                              sequence:
+                                - choose:
+                                    - conditions:
+                                        - "{{ button_1_dimmer_reset_to_defaults }}"
+                                      sequence:
+                                        - action: light.turn_on
+                                          target: "{{ button_1_light }}"
+                                          data:
+                                            brightness_step: "{{ 0 - button_1_light_step_size }}"
+                                            color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  default:
                                     - action: light.turn_on
                                       target: "{{ button_1_light }}"
                                       data:
                                         brightness_step: "{{ 0 - button_1_light_step_size }}"
-                                        color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                              default:
-                                - action: light.turn_on
-                                  target: "{{ button_1_light }}"
-                                  data:
-                                    brightness_step: "{{ 0 - button_1_light_step_size }}"
-                            - delay:
-                                seconds: "{{ button_1_dimming_delay }}"
-                            - if:
-                                - "{{ button_1_stop_flag }}"
-                              then:
-                                - stop: Stop flag set
+                                - delay:
+                                    seconds: "{{ button_1_dimming_delay }}"
+                                - if:
+                                    - "{{ button_1_stop_flag }}"
+                                  then:
+                                    - stop: Stop flag set
       # ========== BUTTON 2 BRIGHTNESS DOWN ==========
       - conditions:
           - "{{ is_button_event }}"
@@ -2529,51 +2668,86 @@ actions:
           - if:
               - "{{ 'dim' in button_2_dimmer_light_mode and button_2_has_light }}"
             then:
-              - parallel:
-                  - sequence:
-                      - wait_for_trigger:
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 2
-                              command: stop
-                          - trigger: mqtt
-                            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                            value_template: >-
-                              {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}
-                            payload: 'True'
-                        timeout: "30"
-                        continue_on_timeout: true
-                      - if:
-                          - "{{ wait.trigger is not none }}"
-                        then:
-                          - variables:
-                              button_2_stop_flag: true
-                  - sequence:
+              # Try Z2M simulated brightness first (auto-detect)
+              - choose:
+                  - conditions:
+                      - "{{ 'z2m' in integration_type }}"
+                    sequence:
                       - repeat:
-                          count: "{{ button_2_light_count }}"
+                          until:
+                            - "{{ true == false }}"
                           sequence:
-                            - choose:
-                                - conditions:
-                                    - "{{ button_2_dimmer_reset_to_defaults }}"
-                                  sequence:
+                            - wait_for_trigger:
+                                - trigger: mqtt
+                                  topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                  value_template: >-
+                                    {{ value_json.brightness is defined or
+                                       (value_json.action is defined and 'brightness_stop' in value_json.action) }}
+                              timeout: 30
+                              continue_on_timeout: true
+                            - if:
+                                - condition: template
+                                  value_template: >-
+                                    {{ wait.trigger is none or
+                                       (wait.trigger.payload_json.action is defined and 'brightness_stop' in wait.trigger.payload_json.action) }}
+                              then:
+                                - stop: "Dimming stopped"
+                            - if:
+                                - condition: template
+                                  value_template: "{{ wait.trigger.payload_json.brightness is defined }}"
+                              then:
+                                - action: light.turn_on
+                                  target: "{{ button_2_light }}"
+                                  data:
+                                    brightness: "{{ wait.trigger.payload_json.brightness }}"
+                                    transition: 0
+                              else:
+                                - stop: "No simulated brightness, using fallback"
+                default:
+                  - parallel:
+                      - sequence:
+                          - wait_for_trigger:
+                              - trigger: event
+                                event_type: zha_event
+                                event_data:
+                                  device_id: !input zha_remote
+                                  endpoint_id: 2
+                                  command: stop
+                              - trigger: mqtt
+                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                value_template: >-
+                                  {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}
+                            timeout: "30"
+                            continue_on_timeout: true
+                          - if:
+                              - "{{ wait.trigger is not none }}"
+                            then:
+                              - variables:
+                                  button_2_stop_flag: true
+                      - sequence:
+                          - repeat:
+                              count: "{{ button_2_light_count }}"
+                              sequence:
+                                - choose:
+                                    - conditions:
+                                        - "{{ button_2_dimmer_reset_to_defaults }}"
+                                      sequence:
+                                        - action: light.turn_on
+                                          target: "{{ button_2_light }}"
+                                          data:
+                                            brightness_step: "{{ 0 - button_2_light_step_size }}"
+                                            color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  default:
                                     - action: light.turn_on
                                       target: "{{ button_2_light }}"
                                       data:
                                         brightness_step: "{{ 0 - button_2_light_step_size }}"
-                                        color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
-                              default:
-                                - action: light.turn_on
-                                  target: "{{ button_2_light }}"
-                                  data:
-                                    brightness_step: "{{ 0 - button_2_light_step_size }}"
-                            - delay:
-                                seconds: "{{ button_2_dimming_delay }}"
-                            - if:
-                                - "{{ button_2_stop_flag }}"
-                              then:
-                                - stop: Stop flag set
+                                - delay:
+                                    seconds: "{{ button_2_dimming_delay }}"
+                                - if:
+                                    - "{{ button_2_stop_flag }}"
+                                  then:
+                                    - stop: Stop flag set
       # ========== BUTTON 3 BRIGHTNESS DOWN ==========
       - conditions:
           - "{{ is_button_event }}"
@@ -2616,51 +2790,86 @@ actions:
           - if:
               - "{{ 'dim' in button_3_dimmer_light_mode and button_3_has_light }}"
             then:
-              - parallel:
-                  - sequence:
-                      - wait_for_trigger:
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 3
-                              command: stop
-                          - trigger: mqtt
-                            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                            value_template: >-
-                              {{ value_json.action | default('') in ['brightness_stop_top_right'] }}
-                            payload: 'True'
-                        timeout: "30"
-                        continue_on_timeout: true
+              # Try Z2M simulated brightness first (auto-detect)
+              - choose:
+                  - conditions:
+                      - "{{ 'z2m' in integration_type }}"
+                    sequence:
+                      - repeat:
+                          until:
+                            - "{{ true == false }}"
+                          sequence:
+                            - wait_for_trigger:
+                                - trigger: mqtt
+                                  topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                  value_template: >-
+                                    {{ value_json.brightness is defined or
+                                       (value_json.action is defined and 'brightness_stop' in value_json.action) }}
+                              timeout: 30
+                              continue_on_timeout: true
+                            - if:
+                                - condition: template
+                                  value_template: >-
+                                    {{ wait.trigger is none or
+                                       (wait.trigger.payload_json.action is defined and 'brightness_stop' in wait.trigger.payload_json.action) }}
+                              then:
+                                - stop: "Dimming stopped"
+                            - if:
+                                - condition: template
+                                  value_template: "{{ wait.trigger.payload_json.brightness is defined }}"
+                              then:
+                                - action: light.turn_on
+                                  target: "{{ button_3_light }}"
+                                  data:
+                                    brightness: "{{ wait.trigger.payload_json.brightness }}"
+                                    transition: 0
+                              else:
+                                - stop: "No simulated brightness, using fallback"
+                default:
+                  - parallel:
+                      - sequence:
+                          - wait_for_trigger:
+                              - trigger: event
+                                event_type: zha_event
+                                event_data:
+                                  device_id: !input zha_remote
+                                  endpoint_id: 3
+                                  command: stop
+                              - trigger: mqtt
+                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                value_template: >-
+                                  {{ value_json.action | default('') in ['brightness_stop_top_right'] }}
+                            timeout: "30"
+                            continue_on_timeout: true
                       - if:
                           - "{{ wait.trigger is not none }}"
                         then:
                           - variables:
                               button_3_stop_flag: true
-                  - sequence:
-                      - repeat:
-                          count: "{{ button_3_light_count }}"
-                          sequence:
-                            - choose:
-                                - conditions:
-                                    - "{{ button_3_dimmer_reset_to_defaults }}"
-                                  sequence:
+                      - sequence:
+                          - repeat:
+                              count: "{{ button_3_light_count }}"
+                              sequence:
+                                - choose:
+                                    - conditions:
+                                        - "{{ button_3_dimmer_reset_to_defaults }}"
+                                      sequence:
+                                        - action: light.turn_on
+                                          target: "{{ button_3_light }}"
+                                          data:
+                                            brightness_step: "{{ 0 - button_3_light_step_size }}"
+                                            color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  default:
                                     - action: light.turn_on
                                       target: "{{ button_3_light }}"
                                       data:
                                         brightness_step: "{{ 0 - button_3_light_step_size }}"
-                                        color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
-                              default:
-                                - action: light.turn_on
-                                  target: "{{ button_3_light }}"
-                                  data:
-                                    brightness_step: "{{ 0 - button_3_light_step_size }}"
-                            - delay:
-                                seconds: "{{ button_3_dimming_delay }}"
-                            - if:
-                                - "{{ button_3_stop_flag }}"
-                              then:
-                                - stop: Stop flag set
+                                - delay:
+                                    seconds: "{{ button_3_dimming_delay }}"
+                                - if:
+                                    - "{{ button_3_stop_flag }}"
+                                  then:
+                                    - stop: Stop flag set
       # ========== BUTTON 4 BRIGHTNESS DOWN ==========
       - conditions:
           - "{{ is_button_event }}"
@@ -2703,51 +2912,86 @@ actions:
           - if:
               - "{{ 'dim' in button_4_dimmer_light_mode and button_4_has_light }}"
             then:
-              - parallel:
-                  - sequence:
-                      - wait_for_trigger:
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input zha_remote
-                              endpoint_id: 4
-                              command: stop
-                          - trigger: mqtt
-                            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                            value_template: >-
-                              {{ value_json.action | default('') in ['brightness_stop_bottom_right'] }}
-                            payload: 'True'
-                        timeout: "30"
-                        continue_on_timeout: true
-                      - if:
-                          - "{{ wait.trigger is not none }}"
-                        then:
-                          - variables:
-                              button_4_stop_flag: true
-                  - sequence:
+              # Try Z2M simulated brightness first (auto-detect)
+              - choose:
+                  - conditions:
+                      - "{{ 'z2m' in integration_type }}"
+                    sequence:
                       - repeat:
-                          count: "{{ button_4_light_count }}"
+                          until:
+                            - "{{ true == false }}"
                           sequence:
-                            - choose:
-                                - conditions:
-                                    - "{{ button_4_dimmer_reset_to_defaults }}"
-                                  sequence:
+                            - wait_for_trigger:
+                                - trigger: mqtt
+                                  topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                  value_template: >-
+                                    {{ value_json.brightness is defined or
+                                       (value_json.action is defined and 'brightness_stop' in value_json.action) }}
+                              timeout: 30
+                              continue_on_timeout: true
+                            - if:
+                                - condition: template
+                                  value_template: >-
+                                    {{ wait.trigger is none or
+                                       (wait.trigger.payload_json.action is defined and 'brightness_stop' in wait.trigger.payload_json.action) }}
+                              then:
+                                - stop: "Dimming stopped"
+                            - if:
+                                - condition: template
+                                  value_template: "{{ wait.trigger.payload_json.brightness is defined }}"
+                              then:
+                                - action: light.turn_on
+                                  target: "{{ button_4_light }}"
+                                  data:
+                                    brightness: "{{ wait.trigger.payload_json.brightness }}"
+                                    transition: 0
+                              else:
+                                - stop: "No simulated brightness, using fallback"
+                default:
+                  - parallel:
+                      - sequence:
+                          - wait_for_trigger:
+                              - trigger: event
+                                event_type: zha_event
+                                event_data:
+                                  device_id: !input zha_remote
+                                  endpoint_id: 4
+                                  command: stop
+                              - trigger: mqtt
+                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                                value_template: >-
+                                  {{ value_json.action | default('') in ['brightness_stop_bottom_right'] }}
+                            timeout: "30"
+                            continue_on_timeout: true
+                          - if:
+                              - "{{ wait.trigger is not none }}"
+                            then:
+                              - variables:
+                                  button_4_stop_flag: true
+                      - sequence:
+                          - repeat:
+                              count: "{{ button_4_light_count }}"
+                              sequence:
+                                - choose:
+                                    - conditions:
+                                        - "{{ button_4_dimmer_reset_to_defaults }}"
+                                      sequence:
+                                        - action: light.turn_on
+                                          target: "{{ button_4_light }}"
+                                          data:
+                                            brightness_step: "{{ 0 - button_4_light_step_size }}"
+                                            color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  default:
                                     - action: light.turn_on
                                       target: "{{ button_4_light }}"
                                       data:
                                         brightness_step: "{{ 0 - button_4_light_step_size }}"
-                                        color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
-                              default:
-                                - action: light.turn_on
-                                  target: "{{ button_4_light }}"
-                                  data:
-                                    brightness_step: "{{ 0 - button_4_light_step_size }}"
-                            - delay:
-                                seconds: "{{ button_4_dimming_delay }}"
-                            - if:
-                                - "{{ button_4_stop_flag }}"
-                              then:
-                                - stop: Stop flag set
+                                - delay:
+                                    seconds: "{{ button_4_dimming_delay }}"
+                                - if:
+                                    - "{{ button_4_stop_flag }}"
+                                  then:
+                                    - stop: Stop flag set
       # ========== BUTTON 1 BRIGHTNESS STOP ==========
       - conditions:
           - "{{ is_button_event }}"
@@ -2780,20 +3024,6 @@ actions:
     alias: "Check if button event (not schedule/adaptive trigger)"
   - condition: "{{ button_action in ['on', 'off'] }}"
     alias: "Check if on/off action (not dimming)"
-  - condition: >-
-      {{ states(last_pressed) == '' or
-         states(last_pressed) != button_num|string or
-         (now() - this.attributes.last_triggered).total_seconds() > (double_press_timeout / 1000) }}
-    alias: "Check if different button or double-click timeout expired"
-  - action: input_text.set_value
-    target:
-      entity_id: "{{ last_pressed }}"
-    data:
-      value: "{{ button_num }}"
-    alias: "Store button number for guard"
-  - wait_template: "{{ states(last_pressed) == button_num|string }}"
-    timeout: 1
-    alias: "Wait for helper state to commit"
   - alias: "Store first press details"
     variables:
       first_action: "{{ button_action }}"
@@ -2808,11 +3038,12 @@ actions:
         topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
         value_template: "{{ value_json.action is defined }}"
         alias: "Z2M second press"
-    timeout: "{{ double_press_timeout / 1000 }}"
+    timeout: 0.3
     continue_on_timeout: true
   - alias: "Parse second press action"
     variables:
       # Parse second trigger action - only need on/off for double-click detection
+      # Auto-detect elapsed field from Z2M for accurate timing validation
       second_action: >-
         {% if wait.trigger is none %}
           none
@@ -2820,12 +3051,18 @@ actions:
           {{ wait.trigger.event.data.command }}
         {% elif wait.trigger.platform == 'mqtt' %}
           {% set action = wait.trigger.payload_json.action | default('') %}
-          {% if action in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] %}
-            on
-          {% elif action in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] %}
-            off
-          {% else %}
+          {% set elapsed = wait.trigger.payload_json.elapsed | default(none) %}
+          {# If elapsed exists, validate it's within 300ms. If not, accept trigger. #}
+          {% if elapsed is not none and elapsed > 300 %}
             none
+          {% else %}
+            {% if action in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] %}
+              on
+            {% elif action in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] %}
+              off
+            {% else %}
+              none
+            {% endif %}
           {% endif %}
         {% else %}
           none
