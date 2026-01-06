@@ -64,7 +64,7 @@ blueprint:
           - Improved: Auto-detects Z2M simulated_brightness for smooth dimming (no blueprint config needed, just enable in Z2M device settings)
           - Improved: Removed guard condition that was blocking Z2M double-click detection
           - Improved: Simpler, cleaner code with ~250 lines removed from helper logic
-          - Note: Z2M users can enable simulated_brightness on device (delta: 20, interval: 200) for best dimming experience
+          - Improved: Added comprehensive documentation for Z2M advanced features (simulated_brightness and elapsed field setup instructions)
 
         - **2026.01.8: Fix random dimming stops and improve trace debugging**
           - **BREAKING:** Added required input_text helper for double-click guard (see Helper Configuration section)
@@ -222,6 +222,32 @@ blueprint:
                 - integration: zha
                   manufacturer: NIKO NV
               multiple: false
+    z2m_advanced_features:
+      name: Z2M Advanced Features Setup
+      description: |
+        Optional Z2M configuration for enhanced dimming and double-click detection. The blueprint automatically detects and uses these features when configured, otherwise falls back to standard behavior.
+
+        ### Simulated Brightness
+
+        Enables smooth, continuous dimming that stops immediately on button release. Automatically detected by blueprint when enabled.
+
+        **Setup in Z2M Web Interface:**
+        1. Navigate to your Niko switch device
+        2. Go to "Exposes" or "Settings" tab
+        3. Enable "Simulated brightness" with:
+           - **Delta**: `20`
+           - **Interval**: `200`
+
+        ### Elapsed Field
+
+        Improves double-click reliability by validating trigger timing. Automatically used by blueprint when enabled.
+
+        **Setup in Z2M Web Interface:**
+        1. Go to "Settings" → "Settings" → "Advanced"
+        2. Enable "Elapsed" option
+      collapsed: true
+      icon: mdi:zigbee
+      input: {}
     schedule_helper_info:
       name: Schedule Helper Configuration
       description: |
