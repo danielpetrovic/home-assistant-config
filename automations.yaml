@@ -3638,7 +3638,6 @@
       - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Entree Knop
-      last_pressed: input_text.entree_knop_last_pressed
       button_1_light:
         entity_id:
         - light.entree_lamp
@@ -3661,7 +3660,6 @@
       - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Toilet Knop
-      last_pressed: input_text.toilet_knop_last_pressed
       button_1_light:
         entity_id: light.toilet_lampen
       button_1_light_adjustment_mode: adaptive
@@ -5037,7 +5035,7 @@
   - at: 00:01:00
     id: 00:00
     trigger: time
-  - at: 01:00:00
+  - at: 01:01:00
     id: 01:00
     trigger: time
   - entity_id: sensor.climate_luminosity
