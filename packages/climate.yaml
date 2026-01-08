@@ -1,9 +1,43 @@
+sensor:
+  - platform: statistics
+    name: "Outdoor Luminosity"
+    unique_id: outdoor_luminosity
+    entity_id: sensor.roof_terrace_sensor_illuminance
+    state_characteristic: mean
+    max_age:
+      minutes: 5
+    precision: 0
+  - platform: statistics
+    name: "Outdoor Temperature Max"
+    unique_id: outdoor_temperature_max
+    entity_id: sensor.roof_terrace_sensor_temperature
+    state_characteristic: value_max
+    max_age:
+      hours: 96
+    precision: 2
+  - platform: statistics
+    name: "Outdoor Temperature Min"
+    unique_id: outdoor_temperature_min
+    entity_id: sensor.roof_terrace_sensor_temperature
+    state_characteristic: value_min
+    max_age:
+      hours: 168
+    precision: 2
+  - platform: statistics
+    name: "Outdoor Temperature Mean"
+    unique_id: outdoor_temperature_mean
+    entity_id: sensor.roof_terrace_sensor_temperature
+    state_characteristic: mean
+    max_age:
+      hours: 168
+    precision: 2
+
 climate:
   - platform: generic_thermostat
-    name: Badkamer Verwarming
-    unique_id: badkamer_verwarming
-    heater: switch.badkamer_verwarming
-    target_sensor: sensor.badkamer_temperature
+    name: Bathroom Heating
+    unique_id: bathroom_heating
+    heater: switch.bathroom_heating
+    target_sensor: sensor.bathroom_temperature
     min_temp: 16
     max_temp: 22
     ac_mode: false
@@ -13,9 +47,9 @@ climate:
     min_cycle_duration:
       hours: 1
   - platform: generic_thermostat
-    name: Gameroom Verwarming
-    unique_id: gameroom_verwarming
-    heater: switch.gameroom_verwarming
+    name: Gameroom Heating
+    unique_id: gameroom_heating
+    heater: switch.gameroom_heating
     target_sensor: sensor.gameroom_temperature
     min_temp: 16
     max_temp: 22
@@ -26,10 +60,10 @@ climate:
     min_cycle_duration:
       hours: 1
   - platform: generic_thermostat
-    name: Kantoor Verwarming
-    unique_id: kantoor_verwarming
-    heater: switch.kantoor_verwarming
-    target_sensor: sensor.kantoor_temperature
+    name: Office Heating
+    unique_id: office_heating
+    heater: switch.office_heating
+    target_sensor: sensor.office_temperature
     min_temp: 16
     max_temp: 22
     ac_mode: false
@@ -39,10 +73,10 @@ climate:
     min_cycle_duration:
       hours: 1
   - platform: generic_thermostat
-    name: Sauna Verwarming
-    unique_id: sauna_verwarming
-    heater: switch.sauna_verwarming
-    target_sensor: sensor.sauna_temperature
+    name: Gym Heating
+    unique_id: gym_heating
+    heater: switch.gym_heating
+    target_sensor: sensor.gym_temperature
     min_temp: 16
     max_temp: 22
     ac_mode: false
@@ -52,10 +86,10 @@ climate:
     min_cycle_duration:
       hours: 1
   - platform: generic_thermostat
-    name: Slaapkamer Verwarming
-    unique_id: slaapkamer_verwarming
-    heater: switch.slaapkamer_verwarming
-    target_sensor: sensor.slaapkamer_temperature
+    name: Bedroom Heating
+    unique_id: bedroom_heating
+    heater: switch.bedroom_heating
+    target_sensor: sensor.bedroom_temperature
     min_temp: 16
     max_temp: 22
     ac_mode: false
@@ -65,10 +99,10 @@ climate:
     min_cycle_duration:
       hours: 1
   - platform: generic_thermostat
-    name: Woonkamer Verwarming
-    unique_id: woonkamer_verwarming
-    heater: switch.woonkamer_verwarming
-    target_sensor: sensor.woonkamer_temperature
+    name: Living Room Heating
+    unique_id: living_room_heating
+    heater: switch.living_room_heating
+    target_sensor: sensor.living_room_temperature
     min_temp: 16
     max_temp: 22
     ac_mode: false
@@ -78,8 +112,8 @@ climate:
     min_cycle_duration:
       hours: 1
 schedule:
-  badkamer_klimaat:
-    name: "Badkamer Klimaat"
+  bathroom_climate:
+    name: "Bathroom Climate"
     icon: mdi:thermostat-cog
     monday:
       - from: "06:00:00"
@@ -102,8 +136,8 @@ schedule:
     sunday:
       - from: "06:00:00"
         to: "10:00:00"
-  gameroom_klimaat:
-    name: "Gameroom Klimaat"
+  gameroom_climate:
+    name: "Gameroom Climate"
     icon: mdi:thermostat-cog
     monday:
       - from: "06:00:00"
@@ -120,8 +154,8 @@ schedule:
     friday:
       - from: "06:00:00"
         to: "18:00:00"
-  kantoor_klimaat:
-    name: "Kantoor Klimaat"
+  office_climate:
+    name: "Office Climate"
     icon: mdi:thermostat-cog
     monday:
       - from: "06:00:00"
@@ -138,8 +172,8 @@ schedule:
     friday:
       - from: "06:00:00"
         to: "18:00:00"
-  sauna_klimaat:
-    name: "Sauna Klimaat"
+  gym_climate:
+    name: "Gym Climate"
     icon: mdi:thermostat-cog
     monday:
       - from: "06:00:00"
@@ -162,8 +196,8 @@ schedule:
     sunday:
       - from: "06:00:00"
         to: "10:00:00"
-  slaapkamer_klimaat:
-    name: "Slaapkamer Klimaat"
+  bedroom_climate:
+    name: "Bedroom Climate"
     icon: mdi:thermostat-cog
     monday:
       - from: "06:00:00"
@@ -200,8 +234,8 @@ schedule:
         to: "10:00:00"
       - from: "20:00:00"
         to: "24:00:00"
-  woonkamer_klimaat:
-    name: "Woonkamer Klimaat"
+  living_room_climate:
+    name: "Living Room Climate"
     icon: mdi:thermostat-cog
     monday:
       - from: "06:00:00"
@@ -236,28 +270,161 @@ schedule:
         to: "24:00:00"
 template:
   - sensor:
-      - name: "Koeling"
-        unique_id: koeling
+      - name: "Cooling"
+        unique_id: cooling
         state: >
           {% set climates = [
-            states('climate.gameroom_airco'),
-            states('climate.kantoor_airco'),
-            states('climate.slaapkamer_airco'),
-            states('climate.woonkamer_airco'),
+            states('climate.gameroom_cooling'),
+            states('climate.office_cooling'),
+            states('climate.bedroom_cooling'),
+            states('climate.living_room_cooling'),
           ] %}
           {{ climates | select('eq', 'cool') | list | count }}
         icon: mdi:snowflake-thermometer
   - sensor:
-      - name: "Verwarming"
-        unique_id: verwarming
+      - name: "Heating"
+        unique_id: heating
         icon: mdi:sun-thermometer
         state: >
           {% set climates = [
-            states('climate.badkamer_verwarming'),
-            states('climate.gameroom_verwarming'),
-            states('climate.kantoor_verwarming'),
-            states('climate.sauna_verwarming'),
-            states('climate.slaapkamer_verwarming'),
-            states('climate.woonkamer_verwarming'),
+            states('climate.bathroom_heating'),
+            states('climate.gameroom_heating'),
+            states('climate.office_heating'),
+            states('climate.gym_heating'),
+            states('climate.bedroom_heating'),
+            states('climate.living_room_heating'),
           ] %}
           {{ climates | select('eq', 'heat') | list | count }}
+  - sensor:
+      - name: "Daylight Duration"
+        unique_id: daylight_duration
+        unit_of_measurement: "h"
+        state_class: measurement
+        state: >
+          {% set sunrise = as_timestamp(state_attr('sun.sun', 'next_rising')) %}
+          {% set sunset = as_timestamp(state_attr('sun.sun', 'next_setting')) %}
+          {% if sunrise < sunset %}
+            {{ ((sunset - sunrise) / 3600) | round(2) }}
+          {% else %}
+            {{ ((sunset + 86400 - sunrise) / 3600) | round(2) }}
+          {% endif %}
+        icon: mdi:sun-clock
+  - sensor:
+      - name: "Climate Heat Stress"
+        unique_id: climate_heat_stress_percent
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >
+          {% set T = states('sensor.roof_terrace_sensor_temperature') | float(0) %}
+          {% set lux = states('sensor.roof_terrace_sensor_illuminance') | float(0) %}
+          {% set solar = lux / 100 %}
+          {% set rh = states('sensor.roof_terrace_sensor_humidity') | float(0) %}
+          {% set wind = states('sensor.roof_terrace_sensor_wind_speed') | float(0) %}
+          {% set precipitation = states('sensor.roof_terrace_sensor_precipitation') | float(0) %}
+
+          {% set base = T + (solar / 100) + (rh / 10) %}
+          {% set cooled = base - (wind / 2) %}
+          {% set adjusted = cooled - (3 if precipitation > 0 else 0) %}
+
+          {% set min_val = 18 %}
+          {% set max_val = 42 %}
+          {% set scaled = ((adjusted - min_val) / (max_val - min_val)) %}
+
+          {# Tuned sigmoid curve using Euler's number approximation #}
+          {% set sigmoid = 1 / (1 + (2.71828 ** (-4 * (scaled - 0.5)))) %}
+          {% set percent = sigmoid * 100 %}
+          {{ [percent, 0] | max | round(0) }}
+        icon: mdi:weather-sunny-alert
+  - sensor:
+      - name: "Climate Humidex"
+        unique_id: climate_humidex
+        unit_of_measurement: "°C"
+        state_class: measurement
+        state: >
+          {% set T = states('sensor.roof_terrace_sensor_temperature') | float(0) %}
+          {% set RH = states('sensor.roof_terrace_sensor_humidity') | float(0) %}
+          {# Calculate dewpoint using Magnus formula #}
+          {% set a = 17.27 %}
+          {% set b = 237.7 %}
+          {% set alpha = (a * T) / (b + T) + (RH / 100) | log %}
+          {% set Td = (b * alpha) / (a - alpha) %}
+          {% set e = 6.11 * (2.718281828 ** (5417.7530 * ((1/273.15) - (1/(273.15 + Td))))) %}
+          {{ (T + (0.5555 * (e - 10))) | round(1) }}
+        icon: mdi:thermometer-water
+  - sensor:
+      - name: "Climate Luminosity"
+        unique_id: climate_luminosity
+        state: >
+          {% set lux = states('sensor.outdoor_luminosity') | int(0) %}
+          {% if lux < 1000 %}
+            dark
+          {% elif lux < 5000 %}
+            low
+          {% elif lux < 20000 %}
+            mid
+          {% elif lux < 50000 %}
+            high
+          {% else %}
+            peak
+          {% endif %}
+        icon: mdi:white-balance-sunny
+  - sensor:
+      - name: "Climate Mode"
+        unique_id: climate_mode
+        state: >
+          {% set hs = states('sensor.climate_heat_stress_percent') | float(0) %}
+          {% set humidex = states('sensor.climate_humidex') | float(0) %}
+          {% set daylight_h = states('sensor.daylight_duration') | float(0) %}
+          {% set min7 = states('sensor.outdoor_temperature_min') | float(0) %}
+          {% set max4 = states('sensor.outdoor_temperature_max') | float(0) %}
+
+          {% set warm_enter_humidex = 29 %}
+          {% set warm_exit_humidex  = 27 %}
+          {% set warm_enter_hs = 75 %}
+          {% set warm_exit_hs  = 65 %}
+          {% set cold_enter_humidex = 17 %}
+          {% set cold_exit_humidex  = 19 %}
+          {% set cold_enter_hs = 25 %}
+          {% set cold_exit_hs  = 35 %}
+
+          {% set last = states('sensor.climate_mode') | lower %}
+          {% if last in ['unknown','unavailable','none',''] %}
+            {% set last = 'mild' %}
+          {% endif %}
+
+          {% if last == 'warm' %}
+            {% if (humidex <= warm_exit_humidex and hs <= warm_exit_hs) %}
+              {% if humidex <= cold_enter_humidex and hs <= cold_enter_hs and min7 <= 10 %}
+                cold
+              {% else %}
+                mild
+              {% endif %}
+            {% else %}
+              warm
+            {% endif %}
+
+          {% elif last == 'cold' %}
+            {% if (humidex >= cold_exit_humidex or hs >= cold_exit_hs) %}
+              {% if (humidex >= warm_enter_humidex or hs >= warm_enter_hs)
+                    and max4 >= 25
+                    and daylight_h > 13 %}
+                warm
+              {% else %}
+                mild
+              {% endif %}
+            {% else %}
+              cold
+            {% endif %}
+
+          {% else %}
+            {% if (humidex >= warm_enter_humidex or hs >= warm_enter_hs)
+                  and max4 >= 25
+                  and daylight_h > 13 %}
+              warm
+            {% elif humidex <= cold_enter_humidex and hs <= cold_enter_hs and min7 <= 10 %}
+              cold
+            {% else %}
+              mild
+            {% endif %}
+          {% endif %}
+        icon: mdi:sun-snowflake-variant

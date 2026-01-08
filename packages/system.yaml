@@ -1,0 +1,12 @@
+input_text:
+  base_url:
+    name: "Home Assistant Base URL"
+    icon: mdi:link
+
+template:
+  - sensor:
+      - name: "Switches"
+        unique_id: switches
+        state: >
+          {{ states.switch | selectattr('state', 'eq', 'on') | list | count }}
+        icon: mdi:toggle-switch
