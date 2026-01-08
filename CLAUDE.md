@@ -1,6 +1,8 @@
+@.claude/CLAUDE.md
+
 # Home Assistant Configuration - Context for AI Assistants
 
-This repository contains a Home Assistant configuration for a Dutch residential smart home installation.
+This repository contains a Home Assistant configuration for a residential smart home installation.
 
 ## System Overview
 
@@ -25,10 +27,11 @@ config/
 ├── packages/                      # Modular configuration
 │   ├── alarm.yaml                 # Manual alarm panel with keypad
 │   ├── buttons.yaml               # Button press state tracking
-│   ├── climate.yaml               # Thermostats & schedules
+│   ├── climate.yaml               # Climate control, weather sensors & schedules
 │   ├── covers.yaml                # Window covering presets
-│   ├── lights.yaml                # Adaptive lighting system
-│   └── duco.yaml                  # DucoBox ventilation REST API
+│   ├── duco.yaml                  # DucoBox ventilation REST API
+│   ├── lights.yaml                # Adaptive lighting system & sensors
+│   └── system.yaml                # System-wide helpers & counters
 ├── blueprints/automation/         # Custom automation blueprints
 │   ├── danielpetrovic/            # Author: danielpetrovic (3 blueprints)
 │   └── panhans/                   # Author: panhans (1 blueprint)
@@ -37,55 +40,55 @@ config/
 
 ## Areas (18 Total - 3 Floors)
 
-The installation uses Dutch area naming organized across 3 floors:
+The installation is organized across 3 floors:
 
 ### Ground Floor (BG) - 10 Areas
 
-| Dutch | English | Icon | Devices |
-|-------|---------|------|---------|
-| Eettafel | Dining Table | mdi:table-furniture | Lighting, controls |
-| Entree | Entrance | mdi:coat-rack | Motion sensors |
-| Keuken | Kitchen | mdi:countertop-outline | Media, sensors |
-| Looppad | Alleyway | mdi:walk | Motion sensors |
-| Meterkast | Utility Closet | mdi:server-network | Network equipment |
-| Schuur | Shed | mdi:garage | Outdoor equipment |
-| Toilet | Toilet | mdi:toilet | Door sensors |
-| Tuin | Garden | mdi:flower | Outdoor devices |
-| Voordeur | Front Door | mdi:door-closed | Security |
-| Woonkamer | Living Room | mdi:sofa | Full automation zone |
+| Area | Icon | Devices |
+|------|------|---------|
+| Dining Table | mdi:table-furniture | Lighting, controls |
+| Entrance | mdi:coat-rack | Motion sensors |
+| Kitchen | mdi:countertop-outline | Media, sensors |
+| Alleyway | mdi:walk | Motion sensors |
+| Utility Closet | mdi:server-network | Network equipment |
+| Shed | mdi:garage | Outdoor equipment |
+| Toilet | mdi:toilet | Door sensors |
+| Garden | mdi:flower | Outdoor devices |
+| Front Door | mdi:door-closed | Security |
+| Living Room | mdi:sofa | Full automation zone |
 
 ### First Floor (01) - 5 Areas
 
-| Dutch | English | Icon | Devices |
-|-------|---------|------|---------|
-| Badkamer | Bathroom | mdi:shower-head | Climate, lighting |
-| Gang | Hallway | mdi:stairs | Motion, lighting |
-| Kantoor | Office | mdi:desk | Climate, media, automation |
-| Sauna | Sauna | mdi:dumbbell | Climate, media, lighting |
-| Slaapkamer | Bedroom | mdi:bed-king | Climate, dual sensors |
+| Area | Icon | Devices |
+|------|------|---------|
+| Bathroom | mdi:shower-head | Climate, lighting |
+| Hallway | mdi:stairs | Motion, lighting |
+| Office | mdi:desk | Climate, media, automation |
+| Gym | mdi:dumbbell | Climate, media, lighting |
+| Bedroom | mdi:bed-king | Climate, dual sensors |
 
 ### Second Floor (02) - 3 Areas
 
-| Dutch | English | Icon | Devices |
-|-------|---------|------|---------|
-| Dakterras | Roof Terrace | mdi:balcony | Outdoor controls |
-| Gameroom | Gameroom | mdi:controller | Climate, media, automation |
-| Wasruimte | Laundry Room | mdi:washing-machine | Lighting, sensors |
+| Area | Icon | Devices |
+|------|------|---------|
+| Roof Terrace | mdi:balcony | Outdoor controls |
+| Gameroom | mdi:controller | Climate, media, automation |
+| Laundry Room | mdi:washing-machine | Lighting, sensors |
 
 ## Naming Conventions
 
 ### Standard Pattern
 
-`<location>_<device_type>` (e.g., `light.woonkamer_lamp`, `climate.kantoor_verwarming`)
+`<location>_<device_type>` (e.g., `light.living_room_light`, `climate.office_heating`)
 
 ### Device Type Suffixes
-- `_lamp` / `_lamp_onder` - Lights (upper/lower variants)
-- `_verwarming` - Heating
-- `_airco` - Air conditioning
-- `_gordijn` - Curtains (Somfy RTS)
-- `_rolluik` - Blinds (Somfy IO)
-- `_deursensor_contact` - Door sensors
-- `_beweging` - Motion sensors
+- `_light` / `_light_lower` - Lights (upper/lower variants)
+- `_heating` - Heating
+- `_ac` - Air conditioning
+- `_curtain` - Curtains (Somfy RTS)
+- `_blind` - Blinds (Somfy IO)
+- `_door_sensor_contact` - Door sensors
+- `_motion` - Motion sensors
 
 ## Key Integrations
 
@@ -101,13 +104,13 @@ The installation uses Dutch area naming organized across 3 floors:
 
 | Location | Model | Notes |
 |----------|-------|-------|
-| Badkamer | LSX II LT | Compact model without analogue input |
-| Gameroom | LSX II | Full-featured bookshelf |
-| Kantoor | LSX II | Full-featured bookshelf |
-| Keuken | LSX II | Full-featured bookshelf |
-| Sauna | LSX II | Full-featured bookshelf |
-| Slaapkamer | LSX II | Full-featured bookshelf |
-| Woonkamer | XIO Soundbar | 5.1.2 soundbar system |
+| Bathroom | LSX II LT | Bookshelf |
+| Gameroom | LSX II | Bookshelf |
+| Office | LSX II | Bookshelf |
+| Kitchen | LSX II | Bookshelf |
+| Gym | LSX II | Bookshelf |
+| Bedroom | LSX II | Bookshelf |
+| Living Room | XIO Soundbar | 5.1.2 soundbar system |
 
 **Features:**
 - Playlist management (Classical, Dance, Eurovision, Hip Hop, Jazz, Metal, Pop, R&B, Rock)
@@ -124,14 +127,38 @@ The installation uses Dutch area naming organized across 3 floors:
 - REST-based integration via HTTP
 - 7 sensor nodes (temp, humidity, CO2)
 - 6 preset modes: Auto, Away, Manual 1/2/3 (with forced variants)
-- Room monitoring: Woonkamer, Slaapkamer, Sauna, Kantoor, Gameroom, Badkamer
+- Room monitoring: Living Room, Bedroom, Gym, Office, Gameroom, Bathroom
 
 ### Climate Control
-- **6 Heating Zones:** Badkamer, Gameroom, Kantoor, Sauna, Slaapkamer, Woonkamer
-- **4 AC Units:** Gameroom, Kantoor, Slaapkamer, Woonkamer
-- **3 Underfloor Heating Circulation Pumps:** Monitored via HomeWizard Energy Sockets (Verwarmingspomp 0, 1, 2)
+- **6 Heating Zones:** Bathroom, Gameroom, Office, Gym, Bedroom, Living Room
+- **4 AC Units:** Gameroom, Office, Bedroom, Living Room
+- **3 Underfloor Heating Circulation Pumps:** Monitored via HomeWizard Energy Sockets (Heating Pump 0, 1, 2)
 - Generic thermostat platform (1h min cycle, 0.5°C step, 16-22°C range)
 - Schedule-based activation (weekday/weekend patterns)
+
+**Weather Statistics Sensors:**
+- `sensor.outdoor_luminosity` - 5-minute mean of illuminance (source: Ecowitt WS90 Powered by Shelly via Zigbee)
+- `sensor.outdoor_temperature_max` - 96-hour maximum outdoor temperature
+- `sensor.outdoor_temperature_min` - 168-hour (7-day) minimum outdoor temperature
+- `sensor.outdoor_temperature_mean` - 168-hour (7-day) mean outdoor temperature
+
+**Climate Template Sensors:**
+- `sensor.cooling` - Count of AC units actively cooling
+- `sensor.heating` - Count of heating zones actively heating
+- `sensor.daylight_duration` - Hours between sunrise and sunset
+- `sensor.climate_heat_stress` - Calculated heat stress percentage (0-100%) based on temperature, solar radiation, humidity, wind, and rain
+- `sensor.climate_humidex` - Humidex calculation (feels-like temperature in °C)
+- `sensor.climate_luminosity` - Categorized outdoor brightness (dark/low/mid/high/peak)
+- `sensor.climate_mode` - State machine for seasonal climate mode (warm/mild/cold) with hysteresis
+
+### System Sensors
+
+**Entity Counters:**
+- `sensor.lights` - Automatic count of all lights currently on (dynamic, no hardcoded list)
+- `sensor.switches` - Automatic count of all switches currently on (dynamic, no hardcoded list)
+
+**Configuration Helpers:**
+- `input_text.base_url` - Home Assistant base URL for external access
 
 ### HomeWizard Energy Monitoring (25+ devices)
 
@@ -139,38 +166,38 @@ The installation uses Dutch area naming organized across 3 floors:
 - Main electricity meter (P1 port)
 
 **Wi-Fi kWh Meters 1-phase (9):**
-- Zonnepanelen (Solar panels)
-- Airco (Air conditioning)
-- Schuur (Shed)
-- Quooker (Instant hot water tap)
-- Sauna
-- Vaatwasser (Dishwasher)
-- Oven Combi (Combination oven)
-- Oven Stoom (Steam oven)
-- Meterkast (Utility closet)
+- Solar panels
+- Air conditioning
+- Shed
+- Instant hot water tap
+- Gym
+- Dishwasher
+- Combination oven
+- Steam oven
+- Utility closet
 
 **Wi-Fi Energy Sockets (13):**
-- Wasmachine (Washing machine)
-- Wasdroger (Dryer)
-- Keuken Media + Koelkast + Vriezer (Kitchen media + Fridge + Freezer)
-- WtW (Heat recovery ventilation)
-- Woonkamer Media (Living room media)
-- Slaapkamer Media (Bedroom media)
-- Gameroom Media
+- Washing machine
+- Dryer
+- Kitchen media + Fridge + Freezer
+- Heat recovery ventilation
+- Living room media
+- Bedroom media
+- Gameroom media
 - Alex PC
 - Deni PC
-- Vriezer Groot (Large freezer)
-- Verwarmingspomp 0, 1, 2 (Underfloor heating circulation pumps)
+- Large freezer
+- Heating pump 0, 1, 2 (Underfloor heating circulation pumps)
 
 **Wi-Fi Watermeter (1):**
-- Watermeter (Water consumption)
+- Water meter (Water consumption)
 
 ## Automation Architecture
 
 ### 69 Total Automations Organized by Category
 
 1. **Media/Entertainment (5)** - Time-based and on-demand playback
-2. **Window Coverings (20 covers, 10 locations)** - Somfy RTS (gordijn/curtains) & Somfy IO (rolluik/blinds)
+2. **Window Coverings (20 covers, 10 locations)** - Somfy RTS (curtains) & Somfy IO (blinds)
 3. **Door Sensors (5)** - Light triggers and state tracking
 4. **Motion Detection (9)** - Selected rooms with motion sensors (not all rooms)
 5. **Heating Control (3)** - Underfloor heating circulation pump automation
@@ -213,11 +240,15 @@ The installation uses Dutch area naming organized across 3 floors:
 - Emergency SOS button
 - Requires HA 2024.8.0+
 
-### 4. Niko Battery Switch (894 lines)
+### 4. Niko Battery Switch (Multi-Button) (~1011 lines)
 - Author: danielpetrovic
-- Model: 552-720X1
+- Models: 552-720X1 (1-button), 552-720X2 (2-button), 552-720X4 (4-button)
 - On/Off, long-press dimming, double-press custom
 - Schedule-based automation with auto-adjust
+- Z2M simulated brightness support (auto-detected, smooth continuous dimming)
+- Auto-detects Z2M elapsed field for improved double-click reliability
+- No helper requirements (removed in v2026.01.9)
+- Unified 300ms double-press timeout (ZHA & Z2M)
 - Requires HA 2024.10.0+
 
 ## Adaptive Lighting System
@@ -238,10 +269,10 @@ Uses the [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting) in
 
 | Location | Weekdays | Weekends |
 |----------|----------|----------|
-| Badkamer/Sauna | 06:00-10:00 | 06:00-10:00 |
-| Kantoor/Gameroom | 06:00-18:00 | Off |
-| Slaapkamer | 06:00-10:00, 20:00-24:00 | 06:00-10:00, 20:00-24:00 |
-| Woonkamer | 06:00-10:00, 16:00-24:00 | 06:00-24:00 |
+| Bathroom/Gym | 06:00-10:00 | 06:00-10:00 |
+| Office/Gameroom | 06:00-18:00 | Off |
+| Bedroom | 06:00-10:00, 20:00-24:00 | 06:00-10:00, 20:00-24:00 |
+| Living Room | 06:00-10:00, 16:00-24:00 | 06:00-24:00 |
 
 ## Alarm System
 
@@ -269,8 +300,13 @@ Uses the [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting) in
 
 ## Development Patterns
 
+### Configuration Philosophy
+- **All helpers in YAML:** Template sensors, statistics sensors, and input helpers are defined in package files, not through the GUI
+- **YAML-first approach:** GUI helpers have been migrated to YAML for version control and documentation
+- **Preserve unique_id:** When migrating from GUI to YAML, always keep the exact same `unique_id` to maintain historical data
+
 ### When Adding Automations
-1. Follow naming: `<location>_<function>` (e.g., `Woonkamer Klimaat`)
+1. Follow naming: `<location>_<function>` (e.g., `Living Room Climate`)
 2. Use mode: restart (unless specific queuing needed)
 3. Leverage blueprints for common patterns
 4. Add aliases to choose actions for clarity
@@ -281,6 +317,12 @@ Uses the [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting) in
 3. Update relevant schedules if time-based
 4. Consider blueprint integration
 
+### When Adding Helpers
+1. Define in appropriate package file (not GUI)
+2. Use template sensors with `unique_id` for entity registry tracking
+3. Add `state_class: measurement` for numeric sensors that need long-term statistics
+4. Statistics sensors inherit unit from source sensor (don't specify `unit_of_measurement`)
+
 ### When Modifying Schedules
 1. Update both `lights_bright` and `lights_dimmed` if adaptive lighting
 2. Maintain weekday/weekend patterns
@@ -289,10 +331,11 @@ Uses the [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting) in
 ### Package Organization
 - **alarm.yaml** - Security and access control
 - **buttons.yaml** - Physical button state tracking
-- **climate.yaml** - HVAC thermostats and schedules
+- **climate.yaml** - HVAC thermostats and schedules, weather statistics sensors (outdoor luminosity, temperature min/max/mean), climate template sensors (daylight duration, heat stress, humidex, luminosity categories, climate mode)
 - **covers.yaml** - Window covering presets
-- **lights.yaml** - Adaptive lighting helpers and schedules
 - **duco.yaml** - Ventilation system integration
+- **lights.yaml** - Adaptive lighting helpers and schedules, automatic light counter sensor
+- **system.yaml** - System-wide helpers (base URL input_text), automatic entity counters (switches)
 
 ## Git Practices
 
@@ -310,7 +353,7 @@ Uses the [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting) in
 ## Control Interfaces
 
 ### Shelly Wall Display XL (Living Room)
-- **Location:** Woonkamer (Living Room)
+- **Location:** Living Room
 - **Functions:**
   - Full Home Assistant dashboard access
   - Alarm control panel

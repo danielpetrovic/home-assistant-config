@@ -1,12 +1,12 @@
 - id: '1692023997035'
-  alias: Badkamer Media
+  alias: Bathroom Media
   description: ''
   triggers:
   - alias: lights on
     id: lights on
     trigger: state
     entity_id:
-    - light.badkamer_lamp
+    - light.bathroom_light
     from:
     - 'off'
     to:
@@ -15,7 +15,7 @@
     id: lights off
     trigger: state
     entity_id:
-    - light.badkamer_lamp
+    - light.bathroom_light
     to:
     - 'off'
     from:
@@ -48,7 +48,7 @@
     id: player idle
     trigger: state
     entity_id:
-    - media_player.badkamer_kef
+    - media_player.bathroom_kef
     from:
     - playing
     to:
@@ -75,7 +75,7 @@
         data:
           volume_level: 0.35
         target:
-          entity_id: media_player.badkamer
+          entity_id: media_player.bathroom
     - alias: lights off - speaker off
       conditions:
       - condition: trigger
@@ -87,20 +87,20 @@
         data:
           volume_level: 0.25
         target:
-          entity_id: media_player.badkamer
+          entity_id: media_player.bathroom
     - conditions:
       - condition: trigger
         id:
         - shower on
       - condition: state
-        entity_id: light.badkamer_lamp
+        entity_id: light.bathroom_light
         state:
         - 'on'
       sequence:
       - data:
           volume_level: 0.45
         target:
-          entity_id: media_player.badkamer
+          entity_id: media_player.bathroom
         action: media_player.volume_set
       alias: shower on - volume up
     - conditions:
@@ -108,14 +108,14 @@
         id:
         - shower off
       - condition: state
-        entity_id: light.badkamer_lamp
+        entity_id: light.bathroom_light
         state:
         - 'on'
       sequence:
       - data:
           volume_level: 0.35
         target:
-          entity_id: media_player.badkamer
+          entity_id: media_player.bathroom
         action: media_player.volume_set
       alias: shower off - volume down
     - conditions:
@@ -127,25 +127,25 @@
         metadata: {}
         data: {}
         target:
-          entity_id: media_player.badkamer
+          entity_id: media_player.bathroom
       - action: media_player.turn_off
         metadata: {}
         data: {}
         target:
-          entity_id: media_player.badkamer
+          entity_id: media_player.bathroom
     - conditions:
       - condition: trigger
         id:
         - player idle
       - condition: state
-        entity_id: media_player.slaapkamer
+        entity_id: media_player.bedroom
         state:
         - playing
       sequence:
       - action: media_player.unjoin
         metadata: {}
         target:
-          entity_id: media_player.badkamer
+          entity_id: media_player.bathroom
         data: {}
       - delay:
           hours: 0
@@ -155,10 +155,10 @@
       - action: media_player.join
         metadata: {}
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.bedroom
         data:
           group_members:
-          - media_player.badkamer
+          - media_player.bathroom
       alias: player idle
     - conditions:
       - condition: trigger
@@ -169,35 +169,35 @@
         metadata: {}
         data:
           group_members:
-          - media_player.badkamer
+          - media_player.bathroom
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.bedroom
   mode: restart
 - id: '1704667361587'
-  alias: Tuin Raambekleding
+  alias: Garden Covers
   description: ''
   triggers:
   - trigger: state
     entity_id:
-    - input_select.tuin_raambekleding
+    - input_select.garden_covers
   conditions: []
   actions:
   - choose:
     - conditions:
       - condition: state
-        entity_id: input_select.tuin_raambekleding
-        state: 100%
+        entity_id: input_select.garden_covers
+        state: Open
       sequence:
       - action: cover.open_cover
         metadata: {}
         data: {}
         target:
           entity_id:
-          - cover.tuin_gordijn
-          - cover.tuin_rolluik
+          - cover.garden_shade
+          - cover.garden_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.tuin_raambekleding
+        entity_id: input_select.garden_covers
         state: 090%
       sequence:
       - action: cover.set_cover_position
@@ -205,12 +205,12 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.tuin_gordijn
-      - alias: Deur open?
+          entity_id: cover.garden_shade
+      - alias: Door open?
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor_contact
+            entity_id: binary_sensor.garden_door_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -218,15 +218,15 @@
               position: 90
             metadata: {}
             target:
-              entity_id: cover.tuin_rolluik
+              entity_id: cover.garden_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor_contact
+            entity_id: binary_sensor.garden_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.tuin_deursensor_contact
+              - binary_sensor.garden_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -235,10 +235,10 @@
               position: 90
             metadata: {}
             target:
-              entity_id: cover.tuin_rolluik
+              entity_id: cover.garden_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.tuin_raambekleding
+        entity_id: input_select.garden_covers
         state: 080%
       sequence:
       - action: cover.set_cover_position
@@ -246,12 +246,12 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.tuin_gordijn
-      - alias: Deur open?
+          entity_id: cover.garden_shade
+      - alias: Door open?
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor_contact
+            entity_id: binary_sensor.garden_door_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -259,15 +259,15 @@
               position: 80
             metadata: {}
             target:
-              entity_id: cover.tuin_rolluik
+              entity_id: cover.garden_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor_contact
+            entity_id: binary_sensor.garden_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.tuin_deursensor_contact
+              - binary_sensor.garden_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -276,10 +276,10 @@
               position: 80
             metadata: {}
             target:
-              entity_id: cover.tuin_rolluik
+              entity_id: cover.garden_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.tuin_raambekleding
+        entity_id: input_select.garden_covers
         state: 060%
       sequence:
       - action: cover.set_cover_position
@@ -287,12 +287,12 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.tuin_gordijn
-      - alias: Deur open?
+          entity_id: cover.garden_shade
+      - alias: Door open?
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor_contact
+            entity_id: binary_sensor.garden_door_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -300,15 +300,15 @@
               position: 60
             metadata: {}
             target:
-              entity_id: cover.tuin_rolluik
+              entity_id: cover.garden_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor_contact
+            entity_id: binary_sensor.garden_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.tuin_deursensor_contact
+              - binary_sensor.garden_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -317,10 +317,10 @@
               position: 60
             metadata: {}
             target:
-              entity_id: cover.tuin_rolluik
+              entity_id: cover.garden_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.tuin_raambekleding
+        entity_id: input_select.garden_covers
         state: 040%
       sequence:
       - action: cover.set_cover_position
@@ -328,12 +328,12 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.tuin_gordijn
-      - alias: Deur open?
+          entity_id: cover.garden_shade
+      - alias: Door open?
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor_contact
+            entity_id: binary_sensor.garden_door_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -341,15 +341,15 @@
               position: 40
             metadata: {}
             target:
-              entity_id: cover.tuin_rolluik
+              entity_id: cover.garden_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor_contact
+            entity_id: binary_sensor.garden_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.tuin_deursensor_contact
+              - binary_sensor.garden_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -358,10 +358,10 @@
               position: 40
             metadata: {}
             target:
-              entity_id: cover.tuin_rolluik
+              entity_id: cover.garden_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.tuin_raambekleding
+        entity_id: input_select.garden_covers
         state: 020%
       sequence:
       - action: cover.set_cover_position
@@ -369,12 +369,12 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.tuin_gordijn
-      - alias: Deur open?
+          entity_id: cover.garden_shade
+      - alias: Door open?
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor_contact
+            entity_id: binary_sensor.garden_door_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -382,15 +382,15 @@
               position: 20
             metadata: {}
             target:
-              entity_id: cover.tuin_rolluik
+              entity_id: cover.garden_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor_contact
+            entity_id: binary_sensor.garden_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.tuin_deursensor_contact
+              - binary_sensor.garden_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -399,23 +399,23 @@
               position: 20
             metadata: {}
             target:
-              entity_id: cover.tuin_rolluik
+              entity_id: cover.garden_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.tuin_raambekleding
-        state: 000%
+        entity_id: input_select.garden_covers
+        state: Closed
       sequence:
       - action: cover.set_cover_position
         data:
           position: 50
         metadata: {}
         target:
-          entity_id: cover.tuin_gordijn
-      - alias: Deur open?
+          entity_id: cover.garden_shade
+      - alias: Door open?
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor_contact
+            entity_id: binary_sensor.garden_door_contact
             state: 'off'
           sequence:
           - action: cover.close_cover
@@ -423,15 +423,15 @@
             metadata: {}
             target:
               entity_id:
-              - cover.tuin_rolluik
+              - cover.garden_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.tuin_deursensor_contact
+            entity_id: binary_sensor.garden_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.tuin_deursensor_contact
+              - binary_sensor.garden_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -440,34 +440,34 @@
             metadata: {}
             target:
               entity_id:
-              - cover.tuin_rolluik
+              - cover.garden_shutter
   mode: queued
   max: 10
 - id: '1705102075842'
-  alias: Dakterras Raambekleding
+  alias: Roof Terrace Covers
   description: ''
   triggers:
   - trigger: state
     entity_id:
-    - input_select.dakterras_raambekleding
+    - input_select.roof_terrace_covers
   conditions: []
   actions:
   - choose:
     - conditions:
       - condition: state
-        entity_id: input_select.dakterras_raambekleding
-        state: 100%
+        entity_id: input_select.roof_terrace_covers
+        state: Open
       sequence:
       - action: cover.open_cover
         metadata: {}
         data: {}
         target:
           entity_id:
-          - cover.dakterras_gordijn
-          - cover.dakterras_rolluik
+          - cover.roof_terrace_shade
+          - cover.roof_terrace_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.dakterras_raambekleding
+        entity_id: input_select.roof_terrace_covers
         state: 090%
       sequence:
       - action: cover.set_cover_position
@@ -475,12 +475,12 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.dakterras_gordijn
-      - alias: Deur open?
+          entity_id: cover.roof_terrace_shade
+      - alias: Door open?
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor_contact
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -488,15 +488,15 @@
               position: 90
             metadata: {}
             target:
-              entity_id: cover.dakterras_rolluik
+              entity_id: cover.roof_terrace_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor_contact
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.dakterras_deursensor_contact
+              - binary_sensor.roof_terrace_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -505,10 +505,10 @@
               position: 90
             metadata: {}
             target:
-              entity_id: cover.dakterras_rolluik
+              entity_id: cover.roof_terrace_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.dakterras_raambekleding
+        entity_id: input_select.roof_terrace_covers
         state: 080%
       sequence:
       - action: cover.set_cover_position
@@ -516,12 +516,12 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.dakterras_gordijn
-      - alias: Deur open?
+          entity_id: cover.roof_terrace_shade
+      - alias: Door open?
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor_contact
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -529,15 +529,15 @@
               position: 80
             metadata: {}
             target:
-              entity_id: cover.dakterras_rolluik
+              entity_id: cover.roof_terrace_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor_contact
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.dakterras_deursensor_contact
+              - binary_sensor.roof_terrace_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -546,10 +546,10 @@
               position: 80
             metadata: {}
             target:
-              entity_id: cover.dakterras_rolluik
+              entity_id: cover.roof_terrace_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.dakterras_raambekleding
+        entity_id: input_select.roof_terrace_covers
         state: 060%
       sequence:
       - action: cover.set_cover_position
@@ -557,12 +557,12 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.dakterras_gordijn
-      - alias: Deur open?
+          entity_id: cover.roof_terrace_shade
+      - alias: Door open?
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor_contact
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -570,15 +570,15 @@
               position: 60
             metadata: {}
             target:
-              entity_id: cover.dakterras_rolluik
+              entity_id: cover.roof_terrace_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor_contact
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.dakterras_deursensor_contact
+              - binary_sensor.roof_terrace_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -587,10 +587,10 @@
               position: 60
             metadata: {}
             target:
-              entity_id: cover.dakterras_rolluik
+              entity_id: cover.roof_terrace_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.dakterras_raambekleding
+        entity_id: input_select.roof_terrace_covers
         state: 040%
       sequence:
       - action: cover.set_cover_position
@@ -598,12 +598,12 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.dakterras_gordijn
-      - alias: Deur open?
+          entity_id: cover.roof_terrace_shade
+      - alias: Door open?
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor_contact
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -611,15 +611,15 @@
               position: 40
             metadata: {}
             target:
-              entity_id: cover.dakterras_rolluik
+              entity_id: cover.roof_terrace_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor_contact
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.dakterras_deursensor_contact
+              - binary_sensor.roof_terrace_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -628,10 +628,10 @@
               position: 40
             metadata: {}
             target:
-              entity_id: cover.dakterras_rolluik
+              entity_id: cover.roof_terrace_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.dakterras_raambekleding
+        entity_id: input_select.roof_terrace_covers
         state: 020%
       sequence:
       - action: cover.set_cover_position
@@ -639,12 +639,12 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.dakterras_gordijn
-      - alias: Deur open?
+          entity_id: cover.roof_terrace_shade
+      - alias: Door open?
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor_contact
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -652,15 +652,15 @@
               position: 20
             metadata: {}
             target:
-              entity_id: cover.dakterras_rolluik
+              entity_id: cover.roof_terrace_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor_contact
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.dakterras_deursensor_contact
+              - binary_sensor.roof_terrace_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -669,37 +669,37 @@
               position: 20
             metadata: {}
             target:
-              entity_id: cover.dakterras_rolluik
+              entity_id: cover.roof_terrace_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.dakterras_raambekleding
-        state: 000%
+        entity_id: input_select.roof_terrace_covers
+        state: Closed
       sequence:
       - action: cover.close_cover
         data: {}
         metadata: {}
         target:
-          entity_id: cover.dakterras_gordijn
-      - alias: Deur open?
+          entity_id: cover.roof_terrace_shade
+      - alias: Door open?
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor_contact
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'off'
           sequence:
           - action: cover.close_cover
             data: {}
             metadata: {}
             target:
-              entity_id: cover.dakterras_rolluik
+              entity_id: cover.roof_terrace_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.dakterras_deursensor_contact
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.dakterras_deursensor_contact
+              - binary_sensor.roof_terrace_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -707,34 +707,34 @@
             data: {}
             metadata: {}
             target:
-              entity_id: cover.dakterras_rolluik
+              entity_id: cover.roof_terrace_shutter
   mode: queued
   max: 10
 - id: '1705102234298'
-  alias: Keuken Raambekleding
+  alias: Kitchen Covers
   description: ''
   triggers:
   - trigger: state
     entity_id:
-    - input_select.keuken_raambekleding
+    - input_select.kitchen_covers
   conditions: []
   actions:
   - choose:
     - conditions:
       - condition: state
-        entity_id: input_select.keuken_raambekleding
-        state: 100%
+        entity_id: input_select.kitchen_covers
+        state: Open
       sequence:
       - action: cover.open_cover
         metadata: {}
         data: {}
         target:
           entity_id:
-          - cover.keuken_gordijn
-          - cover.keuken_rolluik
+          - cover.kitchen_shade
+          - cover.kitchen_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.keuken_raambekleding
+        entity_id: input_select.kitchen_covers
         state: 090%
       sequence:
       - action: cover.set_cover_position
@@ -742,16 +742,16 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.keuken_gordijn
+          entity_id: cover.kitchen_shade
       - action: cover.set_cover_position
         data:
           position: 90
         metadata: {}
         target:
-          entity_id: cover.keuken_rolluik
+          entity_id: cover.kitchen_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.keuken_raambekleding
+        entity_id: input_select.kitchen_covers
         state: 080%
       sequence:
       - action: cover.set_cover_position
@@ -759,16 +759,16 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.keuken_gordijn
+          entity_id: cover.kitchen_shade
       - action: cover.set_cover_position
         data:
           position: 80
         metadata: {}
         target:
-          entity_id: cover.keuken_rolluik
+          entity_id: cover.kitchen_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.keuken_raambekleding
+        entity_id: input_select.kitchen_covers
         state: 060%
       sequence:
       - action: cover.set_cover_position
@@ -776,16 +776,16 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.keuken_gordijn
+          entity_id: cover.kitchen_shade
       - action: cover.set_cover_position
         data:
           position: 60
         metadata: {}
         target:
-          entity_id: cover.keuken_rolluik
+          entity_id: cover.kitchen_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.keuken_raambekleding
+        entity_id: input_select.kitchen_covers
         state: 040%
       sequence:
       - action: cover.set_cover_position
@@ -793,16 +793,16 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.keuken_gordijn
+          entity_id: cover.kitchen_shade
       - action: cover.set_cover_position
         data:
           position: 40
         metadata: {}
         target:
-          entity_id: cover.keuken_rolluik
+          entity_id: cover.kitchen_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.keuken_raambekleding
+        entity_id: input_select.kitchen_covers
         state: 020%
       sequence:
       - action: cover.set_cover_position
@@ -810,57 +810,57 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.keuken_gordijn
+          entity_id: cover.kitchen_shade
       - action: cover.set_cover_position
         data:
           position: 20
         metadata: {}
         target:
-          entity_id: cover.keuken_rolluik
+          entity_id: cover.kitchen_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.keuken_raambekleding
-        state: 000%
+        entity_id: input_select.kitchen_covers
+        state: Closed
       sequence:
       - action: cover.set_cover_position
         data:
           position: 50
         metadata: {}
         target:
-          entity_id: cover.keuken_gordijn
+          entity_id: cover.kitchen_shade
       - action: cover.close_cover
         data: {}
         metadata: {}
         target:
           entity_id:
-          - cover.keuken_rolluik
+          - cover.kitchen_shutter
   mode: queued
   max: 10
 - id: '1705102376305'
-  alias: Woonkamer Raambekleding
+  alias: Living Room Covers
   description: ''
   triggers:
   - trigger: state
     entity_id:
-    - input_select.woonkamer_raambekleding
+    - input_select.living_room_covers
   conditions: []
   actions:
   - choose:
     - conditions:
       - condition: state
-        entity_id: input_select.woonkamer_raambekleding
-        state: 100%
+        entity_id: input_select.living_room_covers
+        state: Open
       sequence:
       - action: cover.open_cover
         metadata: {}
         data: {}
         target:
           entity_id:
-          - cover.woonkamer_gordijn
-          - cover.woonkamer_rolluik
+          - cover.living_room_shade
+          - cover.living_room_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.woonkamer_raambekleding
+        entity_id: input_select.living_room_covers
         state: 090%
       sequence:
       - action: cover.set_cover_position
@@ -868,16 +868,16 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.woonkamer_gordijn
+          entity_id: cover.living_room_shade
       - action: cover.set_cover_position
         data:
           position: 90
         metadata: {}
         target:
-          entity_id: cover.woonkamer_rolluik
+          entity_id: cover.living_room_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.woonkamer_raambekleding
+        entity_id: input_select.living_room_covers
         state: 080%
       sequence:
       - action: cover.set_cover_position
@@ -885,16 +885,16 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.woonkamer_gordijn
+          entity_id: cover.living_room_shade
       - action: cover.set_cover_position
         data:
           position: 80
         metadata: {}
         target:
-          entity_id: cover.woonkamer_rolluik
+          entity_id: cover.living_room_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.woonkamer_raambekleding
+        entity_id: input_select.living_room_covers
         state: 060%
       sequence:
       - action: cover.set_cover_position
@@ -902,16 +902,16 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.woonkamer_gordijn
+          entity_id: cover.living_room_shade
       - action: cover.set_cover_position
         data:
           position: 60
         metadata: {}
         target:
-          entity_id: cover.woonkamer_rolluik
+          entity_id: cover.living_room_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.woonkamer_raambekleding
+        entity_id: input_select.living_room_covers
         state: 040%
       sequence:
       - action: cover.set_cover_position
@@ -919,16 +919,16 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.woonkamer_gordijn
+          entity_id: cover.living_room_shade
       - action: cover.set_cover_position
         data:
           position: 40
         metadata: {}
         target:
-          entity_id: cover.woonkamer_rolluik
+          entity_id: cover.living_room_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.woonkamer_raambekleding
+        entity_id: input_select.living_room_covers
         state: 020%
       sequence:
       - action: cover.set_cover_position
@@ -936,575 +936,45 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.woonkamer_gordijn
+          entity_id: cover.living_room_shade
       - action: cover.set_cover_position
         data:
           position: 20
         metadata: {}
         target:
-          entity_id: cover.woonkamer_rolluik
+          entity_id: cover.living_room_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.woonkamer_raambekleding
-        state: 000%
+        entity_id: input_select.living_room_covers
+        state: Closed
       sequence:
       - action: cover.set_cover_position
         data:
           position: 50
         metadata: {}
         target:
-          entity_id: cover.woonkamer_gordijn
+          entity_id: cover.living_room_shade
       - action: cover.close_cover
         data: {}
         metadata: {}
         target:
           entity_id:
-          - cover.woonkamer_rolluik
+          - cover.living_room_shutter
   mode: queued
   max: 10
 - id: '1705102591662'
-  alias: Gameroom Raambekleding
+  alias: Gameroom Covers
   description: ''
   triggers:
   - trigger: state
     entity_id:
-    - input_select.gameroom_raambekleding
+    - input_select.gameroom_covers
   conditions: []
   actions:
   - choose:
     - conditions:
       - condition: state
-        entity_id: input_select.gameroom_raambekleding
-        state: 100%
-      sequence:
-      - action: cover.open_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_gordijnen
-          - cover.gameroom_rolluik_links
-          - cover.gameroom_rolluik_rechts
-    - conditions:
-      - condition: state
-        entity_id: input_select.gameroom_raambekleding
-        state: 090%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.gameroom_gordijnen
-      - action: cover.set_cover_position
-        data:
-          position: 60
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_rolluik_links
-      - action: cover.set_cover_position
-        data:
-          position: 90
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_rolluik_rechts
-    - conditions:
-      - condition: state
-        entity_id: input_select.gameroom_raambekleding
-        state: 080%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.gameroom_gordijnen
-      - action: cover.set_cover_position
-        data:
-          position: 40
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_rolluik_links
-      - action: cover.set_cover_position
-        data:
-          position: 80
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_rolluik_rechts
-    - conditions:
-      - condition: state
-        entity_id: input_select.gameroom_raambekleding
-        state: 060%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.gameroom_gordijnen
-      - action: cover.set_cover_position
-        data:
-          position: 30
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_rolluik_links
-      - action: cover.set_cover_position
-        data:
-          position: 60
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_rolluik_rechts
-    - conditions:
-      - condition: state
-        entity_id: input_select.gameroom_raambekleding
-        state: 040%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.gameroom_gordijnen
-      - action: cover.set_cover_position
-        data:
-          position: 20
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_rolluik_links
-      - action: cover.set_cover_position
-        data:
-          position: 40
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_rolluik_rechts
-    - conditions:
-      - condition: state
-        entity_id: input_select.gameroom_raambekleding
-        state: 020%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.gameroom_gordijnen
-      - action: cover.set_cover_position
-        data:
-          position: 20
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_rolluik_links
-          - cover.gameroom_rolluik_rechts
-    - conditions:
-      - condition: state
-        entity_id: input_select.gameroom_raambekleding
-        state: 000%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.gameroom_gordijnen
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_rolluik_links
-          - cover.gameroom_rolluik_rechts
-  mode: queued
-  max: 10
-- id: '1705102937810'
-  alias: Gang Raambekleding
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - input_select.gang_raambekleding
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_select.gang_raambekleding
-        state: 100%
-      sequence:
-      - action: cover.open_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - cover.gang_gordijn
-          - cover.gang_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.gang_raambekleding
-        state: 090%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.gang_gordijn
-      - action: cover.set_cover_position
-        data:
-          position: 90
-        metadata: {}
-        target:
-          entity_id: cover.gang_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.gang_raambekleding
-        state: 080%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.gang_gordijn
-      - action: cover.set_cover_position
-        data:
-          position: 80
-        metadata: {}
-        target:
-          entity_id: cover.gang_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.gang_raambekleding
-        state: 060%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gang_gordijn
-      - action: cover.set_cover_position
-        data:
-          position: 60
-        metadata: {}
-        target:
-          entity_id: cover.gang_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.gang_raambekleding
-        state: 040%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gang_gordijn
-      - action: cover.set_cover_position
-        data:
-          position: 40
-        metadata: {}
-        target:
-          entity_id: cover.gang_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.gang_raambekleding
-        state: 020%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gang_gordijn
-      - action: cover.set_cover_position
-        data:
-          position: 20
-        metadata: {}
-        target:
-          entity_id: cover.gang_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.gang_raambekleding
-        state: 000%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gang_gordijn
-          - cover.gang_rolluik
-  mode: queued
-  max: 10
-- id: '1705102977657'
-  alias: Sauna Raambekleding
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - input_select.sauna_raambekleding
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_select.sauna_raambekleding
-        state: 100%
-      sequence:
-      - action: cover.open_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - cover.sauna_gordijn
-          - cover.sauna_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.sauna_raambekleding
-        state: 090%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.sauna_gordijn
-      - action: cover.set_cover_position
-        data:
-          position: 90
-        metadata: {}
-        target:
-          entity_id: cover.sauna_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.sauna_raambekleding
-        state: 080%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.sauna_gordijn
-      - action: cover.set_cover_position
-        data:
-          position: 80
-        metadata: {}
-        target:
-          entity_id: cover.sauna_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.sauna_raambekleding
-        state: 060%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.sauna_gordijn
-      - action: cover.set_cover_position
-        data:
-          position: 60
-        metadata: {}
-        target:
-          entity_id: cover.sauna_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.sauna_raambekleding
-        state: 040%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.sauna_gordijn
-      - action: cover.set_cover_position
-        data:
-          position: 40
-        metadata: {}
-        target:
-          entity_id: cover.sauna_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.sauna_raambekleding
-        state: 020%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.sauna_gordijn
-      - action: cover.set_cover_position
-        data:
-          position: 20
-        metadata: {}
-        target:
-          entity_id: cover.sauna_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.sauna_raambekleding
-        state: 000%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.sauna_gordijn
-          - cover.sauna_rolluik
-  mode: queued
-  max: 10
-- id: '1705484274062'
-  alias: Kantoor Raambekleding
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - input_select.kantoor_raambekleding
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_select.kantoor_raambekleding
-        state: 100%
-      sequence:
-      - action: cover.open_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.kantoor_gordijnen
-          - cover.kantoor_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.kantoor_raambekleding
-        state: 090%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.kantoor_gordijnen
-      - action: cover.set_cover_position
-        data:
-          position: 90
-        metadata: {}
-        target:
-          entity_id:
-          - cover.kantoor_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.kantoor_raambekleding
-        state: 080%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.kantoor_gordijnen
-      - action: cover.set_cover_position
-        data:
-          position: 80
-        metadata: {}
-        target:
-          entity_id:
-          - cover.kantoor_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.kantoor_raambekleding
-        state: 060%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.kantoor_gordijnen
-      - action: cover.set_cover_position
-        data:
-          position: 60
-        metadata: {}
-        target:
-          entity_id:
-          - cover.kantoor_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.kantoor_raambekleding
-        state: 040%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.kantoor_gordijnen
-      - action: cover.set_cover_position
-        data:
-          position: 40
-        metadata: {}
-        target:
-          entity_id:
-          - cover.kantoor_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.kantoor_raambekleding
-        state: 020%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.kantoor_gordijnen
-      - action: cover.set_cover_position
-        data:
-          position: 20
-        metadata: {}
-        target:
-          entity_id:
-          - cover.kantoor_rolluik
-    - conditions:
-      - condition: state
-        entity_id: input_select.kantoor_raambekleding
-        state: 000%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.kantoor_gordijnen
-          - cover.kantoor_rolluik
-  mode: queued
-  max: 10
-- id: '1705485008582'
-  alias: Schuur Raambekleding
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - input_select.schuur_raambekleding
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_select.schuur_raambekleding
+        entity_id: input_select.gameroom_covers
         state: Open
       sequence:
       - action: cover.open_cover
@@ -1512,74 +982,538 @@
         metadata: {}
         target:
           entity_id:
-          - cover.schuur_looppad_rolluik
-          - cover.schuur_tuin_rolluik
-      - action: light.turn_on
+          - cover.gameroom_shades
+          - cover.gameroom_left_shutter
+          - cover.gameroom_right_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.gameroom_covers
+        state: 090%
+      sequence:
+      - action: cover.set_cover_position
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.gameroom_shades
+      - action: cover.set_cover_position
+        data:
+          position: 60
         metadata: {}
         target:
           entity_id:
-          - light.schuur_lampen
-      - action: scene.create
+          - cover.gameroom_left_shutter
+      - action: cover.set_cover_position
         data:
-          scene_id: tuin_before
-          snapshot_entities:
-          - input_select.tuin_raambekleding
+          position: 90
         metadata: {}
-      - action: input_select.select_option
-        metadata: {}
-        data:
-          option: 100%
         target:
-          entity_id: input_select.tuin_raambekleding
+          entity_id:
+          - cover.gameroom_right_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.schuur_raambekleding
-        state: Looppad
+        entity_id: input_select.gameroom_covers
+        state: 080%
+      sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.gameroom_shades
+      - action: cover.set_cover_position
+        data:
+          position: 40
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gameroom_left_shutter
+      - action: cover.set_cover_position
+        data:
+          position: 80
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gameroom_right_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.gameroom_covers
+        state: 060%
+      sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.gameroom_shades
+      - action: cover.set_cover_position
+        data:
+          position: 30
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gameroom_left_shutter
+      - action: cover.set_cover_position
+        data:
+          position: 60
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gameroom_right_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.gameroom_covers
+        state: 040%
+      sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.gameroom_shades
+      - action: cover.set_cover_position
+        data:
+          position: 20
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gameroom_left_shutter
+      - action: cover.set_cover_position
+        data:
+          position: 40
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gameroom_right_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.gameroom_covers
+        state: 020%
+      sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.gameroom_shades
+      - action: cover.set_cover_position
+        data:
+          position: 20
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gameroom_left_shutter
+          - cover.gameroom_right_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.gameroom_covers
+        state: Closed
+      sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.gameroom_shades
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gameroom_left_shutter
+          - cover.gameroom_right_shutter
+  mode: queued
+  max: 10
+- id: '1705102937810'
+  alias: Hallway Covers
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_select.hallway_covers
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.hallway_covers
+        state: Open
+      sequence:
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - cover.hallway_shade
+          - cover.hallway_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.hallway_covers
+        state: 090%
+      sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.hallway_shade
+      - action: cover.set_cover_position
+        data:
+          position: 90
+        metadata: {}
+        target:
+          entity_id: cover.hallway_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.hallway_covers
+        state: 080%
+      sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.hallway_shade
+      - action: cover.set_cover_position
+        data:
+          position: 80
+        metadata: {}
+        target:
+          entity_id: cover.hallway_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.hallway_covers
+        state: 060%
+      sequence:
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.hallway_shade
+      - action: cover.set_cover_position
+        data:
+          position: 60
+        metadata: {}
+        target:
+          entity_id: cover.hallway_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.hallway_covers
+        state: 040%
+      sequence:
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.hallway_shade
+      - action: cover.set_cover_position
+        data:
+          position: 40
+        metadata: {}
+        target:
+          entity_id: cover.hallway_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.hallway_covers
+        state: 020%
+      sequence:
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.hallway_shade
+      - action: cover.set_cover_position
+        data:
+          position: 20
+        metadata: {}
+        target:
+          entity_id: cover.hallway_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.hallway_covers
+        state: Closed
+      sequence:
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.hallway_shade
+          - cover.hallway_shutter
+  mode: queued
+  max: 10
+- id: '1705102977657'
+  alias: Gym Covers
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_select.gym_covers
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.gym_covers
+        state: Open
+      sequence:
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - cover.gym_curtain
+          - cover.gym_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.gym_covers
+        state: 090%
+      sequence:
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gym_curtain
+      - action: cover.set_cover_position
+        data:
+          position: 90
+        metadata: {}
+        target:
+          entity_id: cover.gym_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.gym_covers
+        state: 080%
+      sequence:
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gym_curtain
+      - action: cover.set_cover_position
+        data:
+          position: 80
+        metadata: {}
+        target:
+          entity_id: cover.gym_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.gym_covers
+        state: 060%
+      sequence:
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gym_curtain
+      - action: cover.set_cover_position
+        data:
+          position: 60
+        metadata: {}
+        target:
+          entity_id: cover.gym_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.gym_covers
+        state: 040%
+      sequence:
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gym_curtain
+      - action: cover.set_cover_position
+        data:
+          position: 40
+        metadata: {}
+        target:
+          entity_id: cover.gym_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.gym_covers
+        state: 020%
+      sequence:
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gym_curtain
+      - action: cover.set_cover_position
+        data:
+          position: 20
+        metadata: {}
+        target:
+          entity_id: cover.gym_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.gym_covers
+        state: Closed
+      sequence:
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.gym_curtain
+          - cover.gym_shutter
+  mode: queued
+  max: 10
+- id: '1705484274062'
+  alias: Office Covers
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_select.office_covers
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.office_covers
+        state: Open
       sequence:
       - action: cover.open_cover
         data: {}
         metadata: {}
         target:
           entity_id:
-          - cover.schuur_looppad_rolluik
+          - cover.office_shades
+          - cover.office_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.office_covers
+        state: 090%
+      sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.office_shades
+      - action: cover.set_cover_position
+        data:
+          position: 90
+        metadata: {}
+        target:
+          entity_id:
+          - cover.office_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.office_covers
+        state: 080%
+      sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.office_shades
+      - action: cover.set_cover_position
+        data:
+          position: 80
+        metadata: {}
+        target:
+          entity_id:
+          - cover.office_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.office_covers
+        state: 060%
+      sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.office_shades
+      - action: cover.set_cover_position
+        data:
+          position: 60
+        metadata: {}
+        target:
+          entity_id:
+          - cover.office_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.office_covers
+        state: 040%
+      sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.office_shades
+      - action: cover.set_cover_position
+        data:
+          position: 40
+        metadata: {}
+        target:
+          entity_id:
+          - cover.office_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.office_covers
+        state: 020%
+      sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.office_shades
+      - action: cover.set_cover_position
+        data:
+          position: 20
+        metadata: {}
+        target:
+          entity_id:
+          - cover.office_shutter
+    - conditions:
+      - condition: state
+        entity_id: input_select.office_covers
+        state: Closed
+      sequence:
       - action: cover.close_cover
         data: {}
         metadata: {}
         target:
           entity_id:
-          - cover.schuur_tuin_rolluik
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
-        metadata: {}
-        target:
-          entity_id:
-          - light.schuur_lampen
+          - cover.office_shades
+          - cover.office_shutter
+  mode: queued
+  max: 10
+- id: '1705485008582'
+  alias: Shed Covers
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_select.shed_covers
+  conditions: []
+  actions:
+  - choose:
     - conditions:
       - condition: state
-        entity_id: input_select.schuur_raambekleding
-        state: Tuin
+        entity_id: input_select.shed_covers
+        state: Open
       sequence:
       - action: cover.open_cover
         data: {}
         metadata: {}
         target:
           entity_id:
-          - cover.schuur_tuin_rolluik
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.schuur_looppad_rolluik
+          - cover.shed_alleyway_shutter
+          - cover.shed_garden_shutter
       - action: light.turn_on
         data:
           brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
@@ -1589,53 +1523,119 @@
         metadata: {}
         target:
           entity_id:
-          - light.schuur_lampen
+          - light.shed_lighten
       - action: scene.create
         data:
-          scene_id: tuin_before
+          scene_id: garden_before
           snapshot_entities:
-          - input_select.tuin_raambekleding
+          - input_select.garden_covers
         metadata: {}
       - action: input_select.select_option
         metadata: {}
         data:
-          option: 100%
+          option: Open
         target:
-          entity_id: input_select.tuin_raambekleding
+          entity_id: input_select.garden_covers
     - conditions:
       - condition: state
-        entity_id: input_select.schuur_raambekleding
-        state: Dicht
+        entity_id: input_select.shed_covers
+        state: Alleyway
+      sequence:
+      - action: cover.open_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.shed_alleyway_shutter
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.shed_garden_shutter
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+            }}'
+        metadata: {}
+        target:
+          entity_id:
+          - light.shed_lighten
+    - conditions:
+      - condition: state
+        entity_id: input_select.shed_covers
+        state: Garden
+      sequence:
+      - action: cover.open_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.shed_garden_shutter
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id:
+          - cover.shed_alleyway_shutter
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+            }}'
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+            }}'
+        metadata: {}
+        target:
+          entity_id:
+          - light.shed_lighten
+      - action: scene.create
+        data:
+          scene_id: garden_before
+          snapshot_entities:
+          - input_select.garden_covers
+        metadata: {}
+      - action: input_select.select_option
+        metadata: {}
+        data:
+          option: Open
+        target:
+          entity_id: input_select.garden_covers
+    - conditions:
+      - condition: state
+        entity_id: input_select.shed_covers
+        state: Closed
       sequence:
       - action: cover.close_cover
         data: {}
         metadata: {}
         target:
           entity_id:
-          - cover.schuur_looppad_rolluik
-          - cover.schuur_tuin_rolluik
+          - cover.shed_alleyway_shutter
+          - cover.shed_garden_shutter
       - action: light.turn_off
         data: {}
         metadata: {}
         target:
-          entity_id: light.schuur_lampen
+          entity_id: light.shed_lighten
       - if:
         - condition: state
-          entity_id: binary_sensor.tuin_deursensor_contact
+          entity_id: binary_sensor.garden_contact_sensor_contact
           state: 'on'
         then:
         - wait_for_trigger:
           - trigger: state
             entity_id:
-            - binary_sensor.tuin_deursensor_contact
+            - binary_sensor.garden_contact_sensor_contact
             to: 'off'
             from: 'on'
         - target:
-            entity_id: scene.tuin_before
+            entity_id: scene.garden_before
           data: {}
           action: scene.turn_on
         - target:
-            entity_id: scene.tuin_before
+            entity_id: scene.garden_before
           data: {}
           action: scene.delete
         else:
@@ -1645,55 +1645,49 @@
             seconds: 15
             milliseconds: 0
         - target:
-            entity_id: scene.tuin_before
+            entity_id: scene.garden_before
           data: {}
           action: scene.turn_on
         - target:
-            entity_id: scene.tuin_before
+            entity_id: scene.garden_before
           data: {}
           action: scene.delete
   mode: queued
   max: 10
 - id: '1705485099900'
-  alias: Slaapkamer Raambekleding
+  alias: Bedroom Covers
   description: ''
   triggers:
   - trigger: state
     entity_id:
-    - input_select.slaapkamer_raambekleding
+    - input_select.bedroom_covers
   conditions: []
   actions:
   - choose:
     - conditions:
       - condition: state
-        entity_id: input_select.slaapkamer_raambekleding
-        state: 100%
+        entity_id: input_select.bedroom_covers
+        state: Open
       sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.slaapkamer_gordijn
-      - action: cover.set_cover_position
-        data:
-          position: 20
+      - action: cover.open_cover
+        data: {}
         metadata: {}
         target:
           entity_id:
-          - cover.slaapkamer_rolluik_links
-          - cover.slaapkamer_rolluik_midden
-          - cover.slaapkamer_rolluik_rechts
+          - cover.bedroom_curtain
+          - cover.bedroom_left_shutter
+          - cover.bedroom_middle_shutter
+          - cover.bedroom_right_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.slaapkamer_raambekleding
+        entity_id: input_select.bedroom_covers
         state:
         - 080%
       sequence:
       - action: cover.close_cover
         metadata: {}
         target:
-          entity_id: cover.slaapkamer_gordijn
+          entity_id: cover.bedroom_curtain
         data: {}
       - action: cover.set_cover_position
         data:
@@ -1701,18 +1695,18 @@
         metadata: {}
         target:
           entity_id:
-          - cover.slaapkamer_rolluik_links
-          - cover.slaapkamer_rolluik_midden
-          - cover.slaapkamer_rolluik_rechts
+          - cover.bedroom_left_shutter
+          - cover.bedroom_middle_shutter
+          - cover.bedroom_right_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.slaapkamer_raambekleding
+        entity_id: input_select.bedroom_covers
         state: 020%
       sequence:
       - action: cover.close_cover
         metadata: {}
         target:
-          entity_id: cover.slaapkamer_gordijn
+          entity_id: cover.bedroom_curtain
         data: {}
       - action: cover.set_cover_position
         data:
@@ -1720,35 +1714,38 @@
         metadata: {}
         target:
           entity_id:
-          - cover.slaapkamer_rolluik_links
-          - cover.slaapkamer_rolluik_midden
-          - cover.slaapkamer_rolluik_rechts
+          - cover.bedroom_left_shutter
+          - cover.bedroom_middle_shutter
+          - cover.bedroom_right_shutter
     - conditions:
       - condition: state
-        entity_id: input_select.slaapkamer_raambekleding
-        state: 000%
+        entity_id: input_select.bedroom_covers
+        state: Closed
       sequence:
       - action: cover.close_cover
         data: {}
         metadata: {}
         target:
           entity_id:
-          - cover.slaapkamer_gordijn
-          - cover.slaapkamer_rolluik_links
-          - cover.slaapkamer_rolluik_midden
-          - cover.slaapkamer_rolluik_rechts
+          - cover.bedroom_curtain
+          - cover.bedroom_left_shutter
+          - cover.bedroom_middle_shutter
+          - cover.bedroom_right_shutter
   mode: queued
   max: 10
 - id: '1705489182686'
-  alias: Toilet Deur
+  alias: Toilet Door
   description: ''
   triggers:
-  - entity_id:
-    - binary_sensor.toilet_deursensor_contact
-    to: 'on'
+  - alias: door open
+    entity_id:
+    - binary_sensor.toilet_door_contact
+    to:
+    - 'on'
     id: door open
-    alias: door open
     trigger: state
+    from:
+    - 'off'
   conditions: []
   actions:
   - action: light.toggle
@@ -1760,23 +1757,26 @@
       transition: 1
     metadata: {}
     target:
-      entity_id: light.toilet_lampen
+      entity_id:
+      - light.toilet_light
   mode: restart
 - id: '1706028727906'
-  alias: Keukenkast Deur
+  alias: Kitchen Cabinet Door
   description: ''
   triggers:
-  - entity_id:
-    - binary_sensor.keukenkast_deursensor_contact
-    to: 'on'
+  - alias: door open
+    entity_id:
+    - binary_sensor.kitchen_cabinet_door_contact
+    to:
+    - 'on'
     id: door open
-    alias: door open
     trigger: state
-  - entity_id:
-    - binary_sensor.keukenkast_deursensor_contact
-    to: 'off'
+  - alias: door closed
+    entity_id:
+    - binary_sensor.kitchen_cabinet_door_contact
+    to:
+    - 'off'
     id: door closed
-    alias: door closed
     trigger: state
   conditions: []
   actions:
@@ -1795,7 +1795,7 @@
           transition: 1
         metadata: {}
         target:
-          entity_id: light.keukenkast_lampen
+          entity_id: light.kitchen_cabinet
       alias: door open - lights on
     - conditions:
       - condition: trigger
@@ -1807,24 +1807,26 @@
           transition: 1
         metadata: {}
         target:
-          entity_id: light.keukenkast_lampen
+          entity_id: light.kitchen_cabinet
       alias: door closed - lights off
   mode: restart
 - id: '1706054418221'
-  alias: Wasruimte Deur
+  alias: Laundry Room Door
   description: ''
   triggers:
-  - entity_id:
-    - binary_sensor.wasruimte_deursensor_contact
-    to: 'on'
+  - alias: door open
+    entity_id:
+    - binary_sensor.laundry_room_door_contact
+    to:
+    - 'on'
     id: door open
-    alias: door open
     trigger: state
-  - entity_id:
-    - binary_sensor.wasruimte_deursensor_contact
-    to: 'off'
+  - alias: door closed
+    entity_id:
+    - binary_sensor.laundry_room_door_contact
+    to:
+    - 'off'
     id: door closed
-    alias: door closed
     trigger: state
   conditions: []
   actions:
@@ -1843,7 +1845,7 @@
           transition: 1
         metadata: {}
         target:
-          entity_id: light.wasruimte_lampen
+          entity_id: light.laundy_room_light
       alias: door open - lights on
     - conditions:
       - condition: trigger
@@ -1855,22 +1857,22 @@
           transition: 1
         metadata: {}
         target:
-          entity_id: light.wasruimte_lampen
+          entity_id: light.laundy_room_light
       alias: door closed - lights off
   mode: restart
 - id: '1706128421603'
-  alias: Entree Beweging
+  alias: Entrance Motion
   description: ''
   triggers:
   - entity_id:
-    - binary_sensor.entree_bewegingssensor_occupancy
+    - binary_sensor.entrance_motion_occupancy
     to: 'on'
     id: motion detected
     alias: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.entree_bewegingssensor_occupancy
+    - binary_sensor.entrance_motion_occupancy
     to:
     - 'off'
     id: motion clear
@@ -1896,7 +1898,7 @@
           transition: 3
         metadata: {}
         target:
-          entity_id: light.entree_lampen
+          entity_id: light.entrance_light
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -1908,22 +1910,22 @@
         data:
           transition: 9
         target:
-          entity_id: light.entree_lampen
+          entity_id: light.entrance_light
       alias: motion clear
   mode: restart
 - id: '1706129781726'
-  alias: Looppad Beweging
+  alias: Alleway Motion
   description: ''
   triggers:
   - entity_id:
-    - binary_sensor.looppad_bewegingssensor_occupancy
+    - binary_sensor.alleyway_motion_occupancy
     to: 'on'
     id: motion detected
     alias: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.looppad_bewegingssensor_occupancy
+    - binary_sensor.alleyway_motion_occupancy
     to:
     - 'off'
     id: motion clear
@@ -1953,7 +1955,9 @@
               color_temp_kelvin: 3333
               transition: 10
             target:
-              entity_id: light.looppad_lampen
+              entity_id:
+              - light.alleyway_house_light
+              - light.alleyway_shed_light
           alias: sunrise-sunset
         - conditions:
           - condition: sun
@@ -1967,7 +1971,9 @@
               color_temp_kelvin: 3333
               transition: 10
             target:
-              entity_id: light.looppad_lampen
+              entity_id:
+              - light.alleyway_house_light
+              - light.alleyway_shed_light
           alias: sunset-sunrise
       alias: motion detected
     - conditions:
@@ -1980,16 +1986,18 @@
         data:
           transition: 10
         target:
-          entity_id: light.looppad_lampen
+          entity_id:
+          - light.alleyway_house_light
+          - light.alleyway_shed_light
       alias: motion clear
   mode: restart
 - id: '1706166372098'
-  alias: Slaapkamer Deur
+  alias: Bedroom Door
   description: ''
   triggers:
   - alias: door open
     entity_id:
-    - binary_sensor.slaapkamer_deursensor_contact
+    - binary_sensor.bedroom_door_contact
     to: 'on'
     id: door open
     trigger: state
@@ -2008,28 +2016,28 @@
       transition: 1
     metadata: {}
     target:
-      entity_id: light.slaapkamer_lampen
+      entity_id: light.bedroom_light
   mode: restart
 - id: '1706166729686'
-  alias: Sauna Media
+  alias: Gym Media
   description: ''
   triggers:
   - alias: lights on
     trigger: state
     entity_id:
-    - light.sauna_lamp
+    - light.gym_light
     to: 'on'
     id: lights on
   - alias: lights off
     trigger: state
     entity_id:
-    - light.sauna_lamp
+    - light.gym_light
     to: 'off'
     id: lights off
   - alias: tv on
     trigger: state
     entity_id:
-    - media_player.sauna_kef
+    - media_player.gym_kef
     attribute: source
     to:
     - tv
@@ -2041,7 +2049,7 @@
   - alias: tv off
     trigger: state
     entity_id:
-    - media_player.sauna_kef
+    - media_player.gym_kef
     attribute: source
     from:
     - tv
@@ -2057,7 +2065,7 @@
     id: player idle
     trigger: state
     entity_id:
-    - media_player.sauna_kef
+    - media_player.gym_kef
     from:
     - playing
     to:
@@ -2082,7 +2090,7 @@
           volume_level: 0.35
         metadata: {}
         target:
-          entity_id: media_player.sauna
+          entity_id: media_player.gym
     - conditions:
       - condition: trigger
         id:
@@ -2093,7 +2101,7 @@
           volume_level: 0.25
         metadata: {}
         target:
-          entity_id: media_player.sauna
+          entity_id: media_player.gym
     - conditions:
       - condition: trigger
         id:
@@ -2102,7 +2110,7 @@
       - action: media_player.unjoin
         metadata: {}
         target:
-          entity_id: media_player.sauna
+          entity_id: media_player.gym
         data: {}
     - conditions:
       - condition: trigger
@@ -2112,10 +2120,10 @@
       - action: media_player.join
         metadata: {}
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.bedroom
         data:
           group_members:
-          - media_player.sauna
+          - media_player.gym
     - conditions:
       - condition: trigger
         id:
@@ -2125,18 +2133,18 @@
         metadata: {}
         data: {}
         target:
-          entity_id: media_player.sauna
+          entity_id: media_player.gym
       - action: media_player.turn_off
         metadata: {}
         data: {}
         target:
-          entity_id: media_player.sauna
+          entity_id: media_player.gym
     - conditions:
       - condition: trigger
         id:
         - player idle
       - condition: state
-        entity_id: media_player.slaapkamer
+        entity_id: media_player.bedroom
         state:
         - playing
       sequence:
@@ -2144,7 +2152,7 @@
         metadata: {}
         data: {}
         target:
-          entity_id: media_player.sauna
+          entity_id: media_player.gym
       - delay:
           hours: 0
           minutes: 0
@@ -2153,10 +2161,10 @@
       - action: media_player.join
         metadata: {}
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.bedroom
         data:
           group_members:
-          - media_player.sauna
+          - media_player.gym
       alias: player idle
     - conditions:
       - condition: trigger
@@ -2167,30 +2175,30 @@
         metadata: {}
         data:
           group_members:
-          - media_player.sauna
+          - media_player.gym
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.bedroom
       - action: media_player.volume_set
         data:
           volume_level: 0.25
         metadata: {}
         target:
-          entity_id: media_player.sauna
+          entity_id: media_player.gym
   mode: queued
   max: 10
 - id: '1706168546378'
-  alias: Gang Beweging
+  alias: Hallway Motion
   description: ''
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.gang_bewegingssensor_occupancy
+    - binary_sensor.hallway_motion_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.gang_bewegingssensor_occupancy
+    - binary_sensor.hallway_motion_occupancy
     to:
     - 'off'
     id: motion clear
@@ -2216,7 +2224,8 @@
           transition: 3
         metadata: {}
         target:
-          entity_id: light.gang_lampen
+          entity_id:
+          - light.hallway_light
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -2228,16 +2237,17 @@
           transition: 9
         metadata: {}
         target:
-          entity_id: light.gang_lampen
+          entity_id:
+          - light.hallway_light
       alias: motion clear
   mode: restart
 - id: '1706196800159'
-  alias: Badkamer Deur
+  alias: Bathroom Door
   description: ''
   triggers:
   - alias: door open
     entity_id:
-    - binary_sensor.badkamer_deursensor_contact
+    - binary_sensor.bathroom_door_contact
     to:
     - 'on'
     id: door open
@@ -2255,20 +2265,20 @@
       transition: 1
     metadata: {}
     target:
-      entity_id: light.badkamer_lampen
+      entity_id: light.bathroom_light
   mode: restart
 - id: '1706219142768'
-  alias: Slaapkamer Media
+  alias: Bedroom Media
   description: ''
   triggers:
   - entity_id:
-    - light.slaapkamer_lamp
+    - light.bedroom_light
     to: 'on'
     id: lights on
     alias: lights on
     trigger: state
   - entity_id:
-    - light.slaapkamer_lamp
+    - light.bedroom_light
     to: 'off'
     id: lights off
     alias: lights off
@@ -2277,7 +2287,7 @@
     id: player idle
     trigger: state
     entity_id:
-    - media_player.slaapkamer_kef
+    - media_player.bedroom_kef
     from:
     - playing
     to:
@@ -2299,7 +2309,7 @@
           volume_level: 0.35
         target:
           entity_id:
-          - media_player.slaapkamer
+          - media_player.bedroom
         action: media_player.volume_set
     - alias: lights off - volume down
       conditions:
@@ -2311,7 +2321,7 @@
           volume_level: 0.25
         target:
           entity_id:
-          - media_player.slaapkamer
+          - media_player.bedroom
         action: media_player.volume_set
     - conditions:
       - condition: trigger
@@ -2321,7 +2331,7 @@
       - action: media_player.media_next_track
         metadata: {}
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.bedroom
         data: {}
       alias: player idle
   mode: parallel
@@ -2332,13 +2342,13 @@
   - alias: heating on
     trigger: state
     entity_id:
-    - switch.woonkamer_verwarming
+    - switch.living_room_heating
     to: 'on'
     id: heating on
   - alias: heating off
     trigger: state
     entity_id:
-    - switch.woonkamer_verwarming
+    - switch.living_room_heating
     to: 'off'
     id: heating off
     for:
@@ -2401,11 +2411,11 @@
   trigger:
   - trigger: state
     entity_id:
-    - switch.badkamer_verwarming
+    - switch.bathroom_heating
     to: 'on'
   - trigger: state
     entity_id:
-    - switch.badkamer_verwarming
+    - switch.bathroom_heating
     to: 'off'
     for:
       hours: 0
@@ -2413,11 +2423,11 @@
       seconds: 0
   - trigger: state
     entity_id:
-    - switch.kantoor_verwarming
+    - switch.office_heating
     to: 'on'
   - trigger: state
     entity_id:
-    - switch.kantoor_verwarming
+    - switch.office_heating
     to: 'off'
     for:
       hours: 0
@@ -2425,11 +2435,11 @@
       seconds: 0
   - trigger: state
     entity_id:
-    - switch.sauna_verwarming
+    - switch.gym_heating
     to: 'on'
   - trigger: state
     entity_id:
-    - switch.sauna_verwarming
+    - switch.gym_heating
     to: 'off'
     for:
       hours: 0
@@ -2437,11 +2447,11 @@
       seconds: 0
   - trigger: state
     entity_id:
-    - switch.slaapkamer_verwarming
+    - switch.bedroom_heating
     to: 'on'
   - trigger: state
     entity_id:
-    - switch.slaapkamer_verwarming
+    - switch.bedroom_heating
     to: 'off'
     for:
       hours: 0
@@ -2457,16 +2467,16 @@
       - condition: or
         conditions:
         - condition: state
-          entity_id: switch.badkamer_verwarming
+          entity_id: switch.bathroom_heating
           state: 'on'
         - condition: state
-          entity_id: switch.kantoor_verwarming
+          entity_id: switch.office_heating
           state: 'on'
         - condition: state
-          entity_id: switch.sauna_verwarming
+          entity_id: switch.gym_heating
           state: 'on'
         - condition: state
-          entity_id: switch.slaapkamer_verwarming
+          entity_id: switch.bedroom_heating
           state: 'on'
       sequence:
       - metadata: {}
@@ -2476,16 +2486,16 @@
         action: switch.turn_on
     - conditions:
       - condition: state
-        entity_id: switch.badkamer_verwarming
+        entity_id: switch.bathroom_heating
         state: 'off'
       - condition: state
-        entity_id: switch.kantoor_verwarming
+        entity_id: switch.office_heating
         state: 'off'
       - condition: state
-        entity_id: switch.sauna_verwarming
+        entity_id: switch.gym_heating
         state: 'off'
       - condition: state
-        entity_id: switch.slaapkamer_verwarming
+        entity_id: switch.bedroom_heating
         state: 'off'
       sequence:
       - metadata: {}
@@ -2524,13 +2534,13 @@
   - alias: heating on
     trigger: state
     entity_id:
-    - switch.gameroom_verwarming
+    - switch.gameroom_heating
     to: 'on'
     id: heating on
   - alias: heating off
     trigger: state
     entity_id:
-    - switch.gameroom_verwarming
+    - switch.gameroom_heating
     to: 'off'
     id: heating off
     for:
@@ -2588,7 +2598,7 @@
         action: switch.turn_off
   mode: restart
 - id: '1713999237361'
-  alias: Gameroom Energie
+  alias: Gameroom Energy
   description: ''
   triggers:
   - trigger: numeric_state
@@ -2655,7 +2665,7 @@
           entity_id: switch.gameroom_bureau
   mode: restart
 - id: '1736811833071'
-  alias: Badkamer Knop
+  alias: Bathroom Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -2663,20 +2673,20 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Badkamer Knop
-      last_pressed: input_text.badkamer_knop_last_pressed
+      z2m_device_name: Bathroom Button
+      last_pressed: input_text.bathroom_button_last_pressed
       button_1_light:
-        entity_id: light.badkamer_lamp
+        entity_id: light.bathroom_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
       - turn_on
       - join
-      button_3_media: media_player.badkamer
+      button_3_media: media_player.bathroom
 - id: '1736811938136'
-  alias: Eettafel Knop
+  alias: Dining Table Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -2684,10 +2694,10 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Eettafel Knop
-      last_pressed: input_text.eettafel_knop_last_pressed
+      z2m_device_name: Dining Table Button
+      last_pressed: input_text.dining_table_button_last_pressed
       button_1_light:
-        entity_id: light.eettafel_lamp_boven
+        entity_id: light.dining_table_above_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
@@ -2697,16 +2707,16 @@
           cycle: false
         metadata: {}
         target:
-          entity_id: input_select.tuin_raambekleding
+          entity_id: input_select.garden_covers
       button_2_long_release:
       - action: input_select.select_option
         data:
-          option: 100%
+          option: Open
         metadata: {}
         target:
-          entity_id: input_select.tuin_raambekleding
+          entity_id: input_select.garden_covers
       button_3_light:
-        entity_id: light.eettafel_lamp_onder
+        entity_id: light.dining_table_below_light
       button_3_light_adjustment_mode: adaptive
       button_3_light_adaptive_brightness: input_number.adaptive_brightness_dimmed
       button_3_light_adaptive_color_temp: input_number.adaptive_color_temp_dimmed
@@ -2716,16 +2726,16 @@
           cycle: false
         metadata: {}
         target:
-          entity_id: input_select.tuin_raambekleding
+          entity_id: input_select.garden_covers
       button_4_long_release:
       - action: input_select.select_option
         data:
-          option: 000%
+          option: Closed
         metadata: {}
         target:
-          entity_id: input_select.tuin_raambekleding
+          entity_id: input_select.garden_covers
 - id: '1736812245757'
-  alias: Gameroom Bureau Knop
+  alias: Gameroom Desk Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -2733,15 +2743,15 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Gameroom Bureau Knop
-      last_pressed: input_text.gameroom_bureau_knop_last_pressed
+      z2m_device_name: Gameroom Desk Button
+      last_pressed: input_text.gameroom_desk_button_last_pressed
       button_1_light:
-        entity_id: light.gameroom_lampen
+        entity_id: light.gameroom_lighten
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2752,17 +2762,17 @@
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
+          - input_select.roof_terrace_covers
+          - input_select.gameroom_covers
       button_2_long_release:
       - action: input_select.select_option
         data:
-          option: 100%
+          option: Open
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
+          - input_select.roof_terrace_covers
+          - input_select.gameroom_covers
       button_4_short_release:
       - action: input_select.select_previous
         data:
@@ -2770,19 +2780,19 @@
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
+          - input_select.roof_terrace_covers
+          - input_select.gameroom_covers
       button_4_long_release:
       - action: input_select.select_option
         data:
-          option: 000%
+          option: Closed
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
+          - input_select.roof_terrace_covers
+          - input_select.gameroom_covers
 - id: '1736812276991'
-  alias: Gameroom Knop
+  alias: Gameroom Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -2790,15 +2800,15 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Gameroom Knop
-      last_pressed: input_text.gameroom_knop_last_pressed
+      z2m_device_name: Gameroom Button
+      last_pressed: input_text.gameroom_button_last_pressed
       button_1_light:
-        entity_id: light.gameroom_lampen
+        entity_id: light.gameroom_lighten
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2809,17 +2819,17 @@
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
+          - input_select.roof_terrace_covers
+          - input_select.gameroom_covers
       button_2_long_release:
       - action: input_select.select_option
         data:
-          option: 100%
+          option: Open
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
+          - input_select.roof_terrace_covers
+          - input_select.gameroom_covers
       button_4_short_release:
       - action: input_select.select_previous
         data:
@@ -2827,19 +2837,19 @@
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
+          - input_select.roof_terrace_covers
+          - input_select.gameroom_covers
       button_4_long_release:
       - action: input_select.select_option
         data:
-          option: 000%
+          option: Closed
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
+          - input_select.roof_terrace_covers
+          - input_select.gameroom_covers
 - id: '1736812360019'
-  alias: Gang Knop
+  alias: Hallway Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -2847,15 +2857,15 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Gang Knop
-      last_pressed: input_text.gang_knop_last_pressed
+      z2m_device_name: Hallway Button
+      last_pressed: input_text.hallway_button_last_pressed
       button_1_light:
-        entity_id: light.gang_lampen
+        entity_id: light.hallway_lighten
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_light:
-        entity_id: light.gameroom_lampen
+        entity_id: light.gameroom_lighten
       button_3_light_schedule: schedule.lights_bright
       button_2_short_release:
       - action: input_select.select_next
@@ -2863,30 +2873,30 @@
           cycle: false
         metadata: {}
         target:
-          entity_id: input_select.gang_raambekleding
+          entity_id: input_select.hallway_covers
       button_2_long_release:
       - action: input_select.select_option
         data:
-          option: 100%
+          option: Open
         metadata: {}
         target:
-          entity_id: input_select.gang_raambekleding
+          entity_id: input_select.hallway_covers
       button_4_short_release:
       - action: input_select.select_previous
         data:
           cycle: false
         metadata: {}
         target:
-          entity_id: input_select.gang_raambekleding
+          entity_id: input_select.hallway_covers
       button_4_long_release:
       - action: input_select.select_option
         data:
-          option: 000%
+          option: Closed
         metadata: {}
         target:
-          entity_id: input_select.gang_raambekleding
+          entity_id: input_select.hallway_covers
 - id: '1736812390460'
-  alias: Kantoor Knop
+  alias: Office Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -2894,10 +2904,11 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Kantoor Knop
-      last_pressed: input_text.kantoor_knop_last_pressed
+      z2m_device_name: Office Button
+      last_pressed: input_text.office_button_last_pressed
       button_1_light:
-        entity_id: light.kantoor_lampen
+        entity_id:
+        - light.office_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
@@ -2906,9 +2917,9 @@
         metadata: {}
         data: {}
         target:
-          entity_id: switch.kantoor_bureau
-      button_3_media: media_player.kantoor
-      button_3_media_leader: media_player.slaapkamer
+          entity_id: switch.office_bureau
+      button_3_media: media_player.office
+      button_3_media_leader: media_player.bedroom
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -2919,79 +2930,30 @@
           cycle: false
         metadata: {}
         target:
-          entity_id: input_select.kantoor_raambekleding
-      button_2_long_release:
-      - action: input_select.select_option
-        data:
-          option: 100%
-        metadata: {}
-        target:
-          entity_id: input_select.kantoor_raambekleding
-      button_4_short_release:
-      - action: input_select.select_previous
-        data:
-          cycle: false
-        metadata: {}
-        target:
-          entity_id: input_select.kantoor_raambekleding
-      button_4_long_release:
-      - action: input_select.select_option
-        data:
-          option: 000%
-        metadata: {}
-        target:
-          entity_id: input_select.kantoor_raambekleding
-- id: '1736812457946'
-  alias: Keuken Knop
-  description: ''
-  use_blueprint:
-    path: danielpetrovic/philips-hue-tap-dial-switch.yaml
-    input:
-      integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Keuken Knop
-      last_pressed: input_text.keuken_knop_last_pressed
-      button_1_light:
-        entity_id: light.keuken_lampen
-      button_1_light_adjustment_mode: adaptive
-      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
-      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_3_media: media_player.keuken
-      button_3_media_leader: media_player.slaapkamer
-      button_3_short_release_media_mode:
-      - turn_on
-      - join
-      button_2_short_release:
-      - action: input_select.select_option
-        data:
-          option: Looppad
-        metadata: {}
-        target:
-          entity_id: input_select.schuur_raambekleding
+          entity_id: input_select.office_covers
       button_2_long_release:
       - action: input_select.select_option
         data:
           option: Open
         metadata: {}
         target:
-          entity_id: input_select.schuur_raambekleding
+          entity_id: input_select.office_covers
       button_4_short_release:
-      - action: input_select.select_option
+      - action: input_select.select_previous
         data:
-          option: Tuin
+          cycle: false
         metadata: {}
         target:
-          entity_id: input_select.schuur_raambekleding
+          entity_id: input_select.office_covers
       button_4_long_release:
       - action: input_select.select_option
         data:
-          option: Dicht
+          option: Closed
         metadata: {}
         target:
-          entity_id: input_select.schuur_raambekleding
-- id: '1736812474175'
-  alias: Sauna Knop
+          entity_id: input_select.office_covers
+- id: '1736812457946'
+  alias: Kitchen Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -2999,15 +2961,65 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Sauna Knop
-      last_pressed: input_text.sauna_knop_last_pressed
+      z2m_device_name: Kitchen Button
+      last_pressed: input_text.kitchen_button_last_pressed
       button_1_light:
-        entity_id: light.sauna_lamp
+        entity_id:
+        - light.kitchen
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_3_media: media_player.sauna
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media: media_player.kitchen
+      button_3_media_leader: media_player.bedroom
+      button_3_short_release_media_mode:
+      - turn_on
+      - join
+      button_2_short_release:
+      - action: input_select.select_option
+        data:
+          option: Alleyway
+        metadata: {}
+        target:
+          entity_id: input_select.shed_covers
+      button_2_long_release:
+      - action: input_select.select_option
+        data:
+          option: Open
+        metadata: {}
+        target:
+          entity_id: input_select.shed_covers
+      button_4_short_release:
+      - action: input_select.select_option
+        data:
+          option: Garden
+        metadata: {}
+        target:
+          entity_id: input_select.shed_covers
+      button_4_long_release:
+      - action: input_select.select_option
+        data:
+          option: Closed
+        metadata: {}
+        target:
+          entity_id: input_select.shed_covers
+- id: '1736812474175'
+  alias: Gym Button
+  description: ''
+  use_blueprint:
+    path: danielpetrovic/philips-hue-tap-dial-switch.yaml
+    input:
+      integration_type:
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Gym Button
+      last_pressed: input_text.gym_button_last_pressed
+      button_1_light:
+        entity_id: light.gym_light
+      button_1_light_adjustment_mode: adaptive
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_3_media: media_player.gym
+      button_3_media_leader: media_player.bedroom
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -3018,30 +3030,30 @@
           cycle: false
         metadata: {}
         target:
-          entity_id: input_select.sauna_raambekleding
+          entity_id: input_select.gym_covers
       button_2_long_release:
       - action: input_select.select_option
         data:
-          option: 100%
+          option: Open
         metadata: {}
         target:
-          entity_id: input_select.sauna_raambekleding
+          entity_id: input_select.gym_covers
       button_4_short_release:
       - action: input_select.select_previous
         data:
           cycle: false
         metadata: {}
         target:
-          entity_id: input_select.sauna_raambekleding
+          entity_id: input_select.gym_covers
       button_4_long_release:
       - action: input_select.select_option
         data:
-          option: 000%
+          option: Closed
         metadata: {}
         target:
-          entity_id: input_select.sauna_raambekleding
+          entity_id: input_select.gym_covers
 - id: '1736812648341'
-  alias: Slaapkamer Knop
+  alias: Bedroom Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -3049,45 +3061,45 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Slaapkamer Knop
-      last_pressed: input_text.slaapkamer_knop_last_pressed
+      z2m_device_name: Bedroom Button
+      last_pressed: input_text.bedroom_button_last_pressed
       button_1_light:
         entity_id:
-        - light.slaapkamer_lampen
+        - light.bedroom_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_3_media: media_player.slaapkamer
+      button_3_media: media_player.bedroom
       button_2_short_release:
       - action: input_select.select_next
         data:
           cycle: false
         metadata: {}
         target:
-          entity_id: input_select.slaapkamer_raambekleding
+          entity_id: input_select.bedroom_covers
       button_2_long_release:
       - action: input_select.select_option
         data:
-          option: 100%
+          option: Open
         metadata: {}
         target:
-          entity_id: input_select.slaapkamer_raambekleding
+          entity_id: input_select.bedroom_covers
       button_4_short_release:
       - action: input_select.select_previous
         data:
           cycle: false
         metadata: {}
         target:
-          entity_id: input_select.slaapkamer_raambekleding
+          entity_id: input_select.bedroom_covers
       button_4_long_release:
       - action: input_select.select_option
         data:
-          option: 000%
+          option: Closed
         metadata: {}
         target:
-          entity_id: input_select.slaapkamer_raambekleding
+          entity_id: input_select.bedroom_covers
 - id: '1736812743223'
-  alias: Slaapkamer Alex Knop
+  alias: Bedroom Alex Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -3095,28 +3107,30 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Slaapkamer Alex Knop
-      last_pressed: input_text.slaapkamer_alex_knop_last_pressed
+      z2m_device_name: Bedroom Alex Button
+      last_pressed: input_text.bedroom_alex_button_last_pressed
       button_1_light:
-        entity_id: light.slaapkamer_lamp
+        entity_id: light.bedroom_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_2_light:
-        entity_id: light.slaapkamer_alex_lamp
+        entity_id: light.bedroom_alex_light
       button_2_light_brightness: 5
       button_2_light_color: 2500
       button_3_light:
-        entity_id: light.slaapkamer_bed
+        entity_id:
+        - light.bedroom_alex_bed_light
+        - light.bedroom_deni_bed_light
       button_3_light_adjustment_mode: adaptive
       button_3_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_3_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_4_light:
-        entity_id: light.slaapkamer_deni_lamp
+        entity_id: light.bedroom_deni_light
       button_4_light_brightness: 5
       button_4_light_color: 2500
 - id: '1736812877909'
-  alias: Slaapkamer Deni Knop
+  alias: Bedroom Deni Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -3124,29 +3138,30 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Slaapkamer Deni Knop
-      last_pressed: input_text.slaapkamer_deni_knop_last_pressed
+      z2m_device_name: Bedroom Deni Button
+      last_pressed: input_text.bedroom_deni_button_last_pressed
       button_1_light:
-        entity_id: light.slaapkamer_lamp
+        entity_id: light.bedroom_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_2_light:
-        entity_id: light.slaapkamer_alex_lamp
+        entity_id: light.bedroom_alex_light
       button_2_light_brightness: 5
       button_2_light_color: 2500
       button_3_light:
         entity_id:
-        - light.slaapkamer_bed
+        - light.bedroom_alex_bed_light
+        - light.bedroom_deni_bed_light
       button_3_light_adjustment_mode: adaptive
       button_3_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_3_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_4_light:
-        entity_id: light.slaapkamer_deni_lamp
+        entity_id: light.bedroom_deni_light
       button_4_light_brightness: 5
       button_4_light_color: 2500
 - id: '1736813115022'
-  alias: Woonkamer Knop
+  alias: Living Room Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -3154,10 +3169,11 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Woonkamer Knop
-      last_pressed: input_text.woonkamer_knop_last_pressed
+      z2m_device_name: Living Room Button
+      last_pressed: input_text.living_room_button_last_pressed
       button_1_light:
-        entity_id: light.woonkamer_lamp_boven
+        entity_id:
+        - light.living_room_above_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
@@ -3167,16 +3183,17 @@
           cycle: false
         metadata: {}
         target:
-          entity_id: input_select.woonkamer_raambekleding
+          entity_id: input_select.living_room_covers
       button_2_long_release:
       - action: input_select.select_option
         data:
-          option: 100%
+          option: Open
         metadata: {}
         target:
-          entity_id: input_select.woonkamer_raambekleding
+          entity_id: input_select.living_room_covers
       button_3_light:
-        entity_id: light.woonkamer_lamp_onder
+        entity_id:
+        - light.living_room_below_light
       button_3_light_adjustment_mode: adaptive
       button_3_light_adaptive_brightness: input_number.adaptive_brightness_dimmed
       button_3_light_adaptive_color_temp: input_number.adaptive_color_temp_dimmed
@@ -3186,16 +3203,16 @@
           cycle: false
         metadata: {}
         target:
-          entity_id: input_select.woonkamer_raambekleding
+          entity_id: input_select.living_room_covers
       button_4_long_release:
       - action: input_select.select_option
         data:
-          option: 000%
+          option: Closed
         metadata: {}
         target:
-          entity_id: input_select.woonkamer_raambekleding
+          entity_id: input_select.living_room_covers
 - id: '1736862489459'
-  alias: Schuur Tuin Knop
+  alias: Shed Garden Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -3203,197 +3220,197 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Schuur Tuin Knop
-      last_pressed: input_text.schuur_tuin_knop_last_pressed
+      z2m_device_name: Shed Garden Button
+      last_pressed: input_text.shed_garden_button_last_pressed
       button_1_light:
-        entity_id: light.schuur_lampen
+        entity_id: light.shed_lighten
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_light:
-        entity_id: light.tuin_lampen
+        entity_id: light.garden_lighten
       button_3_light_schedule: schedule.lights_bright
       button_2_short_release:
       - action: input_select.select_option
         data:
-          option: Looppad
+          option: Alleyway
         metadata: {}
         target:
-          entity_id: input_select.schuur_raambekleding
+          entity_id: input_select.shed_covers
       button_2_long_release:
       - action: input_select.select_option
         data:
           option: Open
         metadata: {}
         target:
-          entity_id: input_select.schuur_raambekleding
+          entity_id: input_select.shed_covers
       button_4_short_release:
       - action: input_select.select_option
         data:
-          option: Tuin
+          option: Garden
         metadata: {}
         target:
-          entity_id: input_select.schuur_raambekleding
+          entity_id: input_select.shed_covers
       button_4_long_release:
       - action: input_select.select_option
         data:
-          option: Dicht
+          option: Closed
         metadata: {}
         target:
-          entity_id: input_select.schuur_raambekleding
+          entity_id: input_select.shed_covers
 - id: '1743325307976'
-  alias: Woonkamer Media
+  alias: Living Room Media
   description: ''
   triggers:
   - entity_id:
-    - remote.woonkamer_tv
+    - remote.living_room_tv
     attribute: current_activity
     trigger: state
     enabled: true
   - trigger: state
     entity_id:
-    - media_player.woonkamer_tv_cast
+    - media_player.living_room_tv_cast
     from:
     to:
     enabled: true
   conditions: []
   actions:
-  - alias: Woonkamer TV
+  - alias: Living Room TV
     choose:
     - conditions:
       - condition: state
-        entity_id: remote.woonkamer_tv
+        entity_id: remote.living_room_tv
         attribute: current_activity
         state: com.google.android.apps.mediashell
       sequence:
       - choose:
         - conditions:
           - condition: state
-            entity_id: media_player.woonkamer_tv_cast
+            entity_id: media_player.living_room_tv_cast
             state: playing
           sequence:
           - data:
               volume_level: 0.01
             target:
-              entity_id: media_player.keuken
+              entity_id: media_player.kitchen
             action: media_player.volume_set
         - conditions:
           - condition: state
-            entity_id: media_player.woonkamer_tv_cast
+            entity_id: media_player.living_room_tv_cast
             state: idle
           sequence:
           - data:
               volume_level: 0.35
             target:
-              entity_id: media_player.keuken
+              entity_id: media_player.kitchen
             action: media_player.volume_set
         - conditions:
           - condition: state
-            entity_id: media_player.woonkamer_tv_cast
+            entity_id: media_player.living_room_tv_cast
             state: paused
           sequence:
           - data:
               volume_level: 0.35
             target:
-              entity_id: media_player.keuken
+              entity_id: media_player.kitchen
             action: media_player.volume_set
       alias: Cast
     - conditions:
       - condition: state
-        entity_id: remote.woonkamer_tv
+        entity_id: remote.living_room_tv
         attribute: current_activity
         state: com.google.android.apps.tv.launcherx
       sequence:
-      - alias: Keuken volume omhoog
+      - alias: Kitchen volume omhoog
         data:
           volume_level: 0.35
         target:
-          entity_id: media_player.keuken
+          entity_id: media_player.kitchen
         action: media_player.volume_set
       alias: Launcher
     - conditions:
       - condition: state
-        entity_id: remote.woonkamer_tv
+        entity_id: remote.living_room_tv
         state: com.netflix.ninja
         attribute: current_activity
       sequence:
       - data:
           volume_level: 0.01
         target:
-          entity_id: media_player.keuken
+          entity_id: media_player.kitchen
         action: media_player.volume_set
       alias: Netflix
     - conditions:
       - condition: state
-        entity_id: remote.woonkamer_tv
+        entity_id: remote.living_room_tv
         attribute: current_activity
         state: nl.nlziet
       sequence:
       - data:
           volume_level: 0.01
         target:
-          entity_id: media_player.keuken
+          entity_id: media_player.kitchen
         action: media_player.volume_set
       alias: NLZIET
     - conditions:
       - condition: state
-        entity_id: remote.woonkamer_tv
+        entity_id: remote.living_room_tv
         attribute: current_activity
         state: com.plexapp.android
       sequence:
       - choose:
         - conditions:
           - condition: state
-            entity_id: media_player.woonkamer_tv_cast
+            entity_id: media_player.living_room_tv_cast
             state: playing
           sequence:
           - data:
               volume_level: 0.01
             target:
-              entity_id: media_player.keuken
+              entity_id: media_player.kitchen
             action: media_player.volume_set
         - conditions:
           - condition: state
-            entity_id: media_player.woonkamer_tv_cast
+            entity_id: media_player.living_room_tv_cast
             state: idle
           sequence:
           - data:
               volume_level: 0.35
             target:
-              entity_id: media_player.keuken
+              entity_id: media_player.kitchen
             action: media_player.volume_set
         - conditions:
           - condition: state
-            entity_id: media_player.woonkamer_tv_cast
+            entity_id: media_player.living_room_tv_cast
             state: paused
           sequence:
           - data:
               volume_level: 0.35
             target:
-              entity_id: media_player.keuken
+              entity_id: media_player.kitchen
             action: media_player.volume_set
       alias: Plex
     - conditions:
       - condition: state
-        entity_id: remote.woonkamer_tv
+        entity_id: remote.living_room_tv
         attribute: current_activity
         state: com.google.android.apps.tv.dreamx
       sequence:
       - data:
           volume_level: 0.35
         target:
-          entity_id: media_player.keuken
+          entity_id: media_player.kitchen
         action: media_player.volume_set
       alias: Screen Saver
     - conditions:
       - condition: state
-        entity_id: remote.woonkamer_tv
+        entity_id: remote.living_room_tv
         attribute: current_activity
         state: com.sony.dtv.tvx
       - condition: not
         conditions:
         - condition: state
-          entity_id: media_player.woonkamer_tv_cast
+          entity_id: media_player.living_room_tv_cast
           attribute: media_title
           state: OSMC HDMI 1
           enabled: true
@@ -3401,55 +3418,55 @@
       - data:
           volume_level: 0.01
         target:
-          entity_id: media_player.keuken
+          entity_id: media_player.kitchen
         action: media_player.volume_set
       alias: TV
     - conditions:
       - condition: state
-        entity_id: remote.woonkamer_tv
+        entity_id: remote.living_room_tv
         attribute: current_activity
         state: com.google.android.youtube.tv
       sequence:
       - choose:
         - conditions:
           - condition: state
-            entity_id: media_player.woonkamer_tv_cast
+            entity_id: media_player.living_room_tv_cast
             state: playing
           sequence:
           - data:
               volume_level: 0.01
             target:
-              entity_id: media_player.keuken
+              entity_id: media_player.kitchen
             action: media_player.volume_set
         - conditions:
           - condition: state
-            entity_id: media_player.woonkamer_tv_cast
+            entity_id: media_player.living_room_tv_cast
             state: idle
           sequence:
           - data:
               volume_level: 0.35
             target:
-              entity_id: media_player.keuken
+              entity_id: media_player.kitchen
             action: media_player.volume_set
         - conditions:
           - condition: state
-            entity_id: media_player.woonkamer_tv_cast
+            entity_id: media_player.living_room_tv_cast
             state: paused
           sequence:
           - data:
               volume_level: 0.35
             target:
-              entity_id: media_player.keuken
+              entity_id: media_player.kitchen
             action: media_player.volume_set
       alias: YouTube
     enabled: true
   mode: restart
 - id: '1745758491686'
-  alias: Voordeur
+  alias: Front Door
   description: ''
   triggers:
   - entity_id:
-    - binary_sensor.voordeur_doorbell
+    - binary_sensor.front_door_doorbell
     to: 'on'
     trigger: state
   conditions: []
@@ -3461,58 +3478,58 @@
     - alias: Announce
       data:
         cache: true
-        media_player_entity_id: media_player.meterkast
-        message: Er heeft iemand aangebeld!
+        media_player_entity_id: media_player.utility_closet
+        message: Someone rang the doorbell!
+      action: tts.speak
       target:
         entity_id: tts.home_assistant_cloud
-      action: tts.speak
     - alias: Notify
       action: notify.notify
       data:
-        message: Er heeft iemand aangebeld!
+        message: Someone rang the doorbell!
         data:
-          channel: Voordeur
-          clickAction: /lovelace/voordeur
-          image: /api/camera_proxy/camera.voordeur
+          channel: Doorbell
+          clickAction: /lovelace/front_door
+          image: /api/camera_proxy/camera.front_door
           importance: high
           notification_icon: mdi:doorbell-video
           priority: high
           ttl: 0
       enabled: true
-    - alias: Woonkamer TV
+    - alias: Living Room TV
       if:
       - condition: not
         conditions:
         - condition: state
-          entity_id: media_player.woonkamer_tv_cast
+          entity_id: media_player.living_room_tv_cast
           state:
           - 'off'
-        alias: Woonkamer TV not off
+        alias: Living Room TV not off
       then:
       - action: media_player.media_pause
         metadata: {}
         target:
-          entity_id: media_player.woonkamer_tv
+          entity_id: media_player.living_room_tv
         data: {}
   variables:
     base_url_https: '{{ states(''input_text.base_url_https'') }}'
     base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
-    image_url: '{{ base_url_https }}{{state_attr(''camera.voordeur'',''entity_picture'')+''&time=''}}{{as_timestamp(now())}}'
-    video_url: '{{ base_url_rtsp }}/voordeur'
+    image_url: '{{ base_url_https }}{{state_attr(''camera.front_door'',''entity_picture'')+''&time=''}}{{as_timestamp(now())}}'
+    video_url: '{{ base_url_rtsp }}/front_door'
   mode: restart
 - id: '1746611445373'
-  alias: Slaapkamer Alex Beweging
+  alias: Bedroom Alex Motion
   description: ''
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.slaapkamer_alex_bewegingssensor_occupancy
+    - binary_sensor.bedroom_alex_motion_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.slaapkamer_alex_bewegingssensor_occupancy
+    - binary_sensor.bedroom_alex_motion_occupancy
     to:
     - 'off'
     id: motion clear
@@ -3538,7 +3555,9 @@
           transition: 10
         metadata: {}
         target:
-          entity_id: light.slaapkamer_bed
+          entity_id:
+          - light.bedroom_alex_bed_light
+          - light.bedroom_deni_bed_light
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -3551,22 +3570,23 @@
         metadata: {}
         target:
           entity_id:
-          - light.slaapkamer_bed
+          - light.bedroom_alex_bed_light
+          - light.bedroom_deni_bed_light
       alias: motion clear
   mode: restart
 - id: '1746611520879'
-  alias: Slaapkamer Deni Beweging
+  alias: Bedroom Deni Motion
   description: ''
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.slaapkamer_deni_bewegingssensor_occupancy
+    - binary_sensor.bedroom_deni_motion_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.slaapkamer_deni_bewegingssensor_occupancy
+    - binary_sensor.bedroom_deni_motion_occupancy
     to:
     - 'off'
     id: motion clear
@@ -3592,7 +3612,9 @@
           transition: 10
         metadata: {}
         target:
-          entity_id: light.slaapkamer_bed
+          entity_id:
+          - light.bedroom_alex_bed_light
+          - light.bedroom_deni_bed_light
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -3605,16 +3627,17 @@
         metadata: {}
         target:
           entity_id:
-          - light.slaapkamer_bed
+          - light.bedroom_alex_bed_light
+          - light.bedroom_deni_bed_light
       alias: motion clear
   mode: restart
 - id: '1753111025679'
-  alias: Kantoor Energie
+  alias: Office Energy
   description: ''
   triggers:
   - trigger: numeric_state
     entity_id:
-    - sensor.kantoor_bureau_power
+    - sensor.office_bureau_power
     for:
       hours: 1
       minutes: 0
@@ -3626,10 +3649,10 @@
     metadata: {}
     data: {}
     target:
-      entity_id: switch.kantoor_bureau
+      entity_id: switch.office_bureau
   mode: restart
 - id: '1755896860214'
-  alias: Entree Knop
+  alias: Entrance Button
   description: ''
   use_blueprint:
     path: danielpetrovic/niko-battery-switch-multi-button.yaml
@@ -3637,10 +3660,10 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Entree Knop
+      z2m_device_name: Entrance Button
       button_1_light:
         entity_id:
-        - light.entree_lamp
+        - light.entrance_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
@@ -3648,10 +3671,10 @@
       - action: automation.toggle
         metadata: {}
         target:
-          entity_id: automation.entree_beweging
+          entity_id: automation.entrance_beweging
         data: {}
 - id: '1755899171238'
-  alias: Toilet Knop
+  alias: Toilet Button
   description: ''
   use_blueprint:
     path: danielpetrovic/niko-battery-switch-multi-button.yaml
@@ -3659,9 +3682,9 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Toilet Knop
+      z2m_device_name: Toilet Button
       button_1_light:
-        entity_id: light.toilet_lampen
+        entity_id: light.toilet_lighten
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
@@ -3674,9 +3697,9 @@
         metadata: {}
         data: {}
         target:
-          entity_id: automation.toilet_deur
+          entity_id: automation.toilet_door
 - id: '1755965337801'
-  alias: Schuur Looppad Knop
+  alias: Shed Alleyway Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -3684,46 +3707,46 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Schuur Looppad Knop
-      last_pressed: input_text.schuur_looppad_knop_last_pressed
+      z2m_device_name: Shed Alleyway Button
+      last_pressed: input_text.shed_alleyway_button_last_pressed
       button_1_light:
-        entity_id: light.schuur_lampen
+        entity_id: light.shed_lighten
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_light:
-        entity_id: light.tuin_lampen
+        entity_id: light.garden_lighten
       button_3_light_schedule: schedule.lights_bright
       button_2_short_release:
       - action: input_select.select_option
         data:
-          option: Looppad
+          option: Alleyway
         metadata: {}
         target:
-          entity_id: input_select.schuur_raambekleding
+          entity_id: input_select.shed_covers
       button_2_long_release:
       - action: input_select.select_option
         data:
           option: Open
         metadata: {}
         target:
-          entity_id: input_select.schuur_raambekleding
+          entity_id: input_select.shed_covers
       button_4_short_release:
       - action: input_select.select_option
         data:
-          option: Tuin
+          option: Garden
         metadata: {}
         target:
-          entity_id: input_select.schuur_raambekleding
+          entity_id: input_select.shed_covers
       button_4_long_release:
       - action: input_select.select_option
         data:
-          option: Dicht
+          option: Closed
         metadata: {}
         target:
-          entity_id: input_select.schuur_raambekleding
+          entity_id: input_select.shed_covers
 - id: '1756122670916'
-  alias: Gameroom Dakterras Knop
+  alias: Roof Terrace Button
   description: ''
   use_blueprint:
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
@@ -3731,15 +3754,15 @@
       integration_type:
       - z2m
       z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Gameroom Dakterras Knop
-      last_pressed: input_text.gameroom_dakterras_knop_last_pressed
+      z2m_device_name: Roof Terrace Button
+      last_pressed: input_text.roof_terrace_button_last_pressed
       button_1_light:
-        entity_id: light.gameroom_lampen
+        entity_id: light.gameroom_lighten
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.slaapkamer
+      button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -3750,17 +3773,17 @@
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
+          - input_select.roof_terrace_covers
+          - input_select.gameroom_covers
       button_2_long_release:
       - action: input_select.select_option
         data:
-          option: 100%
+          option: Open
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
+          - input_select.roof_terrace_covers
+          - input_select.gameroom_covers
       button_4_short_release:
       - action: input_select.select_previous
         data:
@@ -3768,17 +3791,17 @@
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
+          - input_select.roof_terrace_covers
+          - input_select.gameroom_covers
       button_4_long_release:
       - action: input_select.select_option
         data:
-          option: 000%
+          option: Closed
         metadata: {}
         target:
           entity_id:
-          - input_select.dakterras_raambekleding
-          - input_select.gameroom_raambekleding
+          - input_select.roof_terrace_covers
+          - input_select.gameroom_covers
       button_3_double:
       - action: switch.toggle
         metadata: {}
@@ -3786,13 +3809,13 @@
         target:
           entity_id: switch.gameroom_media
 - id: '1757451715340'
-  alias: Woonkamer Klimaat
+  alias: Living Room Climate
   description: ''
   triggers:
   - entity_id: binary_sensor.presence
     id: presence
     trigger: state
-  - entity_id: schedule.woonkamer_klimaat
+  - entity_id: schedule.living_room_climate
     id: schedule
     trigger: state
   - entity_id: sensor.climate_mode
@@ -3810,7 +3833,7 @@
         - schedule
         - climate_mode
       - condition: state
-        entity_id: schedule.woonkamer_klimaat
+        entity_id: schedule.living_room_climate
         state: 'on'
       - condition: state
         entity_id: binary_sensor.presence
@@ -3827,7 +3850,7 @@
             data:
               temperature: 21
             target:
-              entity_id: climate.woonkamer_verwarming
+              entity_id: climate.living_room_heating
         - alias: mild
           conditions:
           - condition: state
@@ -3838,7 +3861,7 @@
             data:
               temperature: 20
             target:
-              entity_id: climate.woonkamer_verwarming
+              entity_id: climate.living_room_heating
         - alias: warm
           conditions:
           - condition: state
@@ -3849,7 +3872,7 @@
             data:
               temperature: 19
             target:
-              entity_id: climate.woonkamer_verwarming
+              entity_id: climate.living_room_heating
     - alias: schedule off or away
       conditions:
       - condition: trigger
@@ -3860,7 +3883,7 @@
       - condition: or
         conditions:
         - condition: state
-          entity_id: schedule.woonkamer_klimaat
+          entity_id: schedule.living_room_climate
           state: 'off'
         - condition: state
           entity_id: binary_sensor.presence
@@ -3877,7 +3900,7 @@
             data:
               temperature: 18
             target:
-              entity_id: climate.woonkamer_verwarming
+              entity_id: climate.living_room_heating
         - alias: mild
           conditions:
           - condition: state
@@ -3888,7 +3911,7 @@
             data:
               temperature: 17
             target:
-              entity_id: climate.woonkamer_verwarming
+              entity_id: climate.living_room_heating
         - alias: warm
           conditions:
           - condition: state
@@ -3899,16 +3922,16 @@
             data:
               temperature: 16
             target:
-              entity_id: climate.woonkamer_verwarming
+              entity_id: climate.living_room_heating
   mode: restart
 - id: '1757451909221'
-  alias: Slaapkamer Klimaat
+  alias: Bedroom Climate
   description: ''
   triggers:
   - entity_id: binary_sensor.presence
     id: presence
     trigger: state
-  - entity_id: schedule.slaapkamer_klimaat
+  - entity_id: schedule.bedroom_climate
     id: schedule
     trigger: state
   - entity_id: sensor.climate_mode
@@ -3926,7 +3949,7 @@
         - schedule
         - climate_mode
       - condition: state
-        entity_id: schedule.slaapkamer_klimaat
+        entity_id: schedule.bedroom_climate
         state: 'on'
       - condition: state
         entity_id: binary_sensor.presence
@@ -3943,7 +3966,7 @@
             data:
               temperature: 21
             target:
-              entity_id: climate.slaapkamer_verwarming
+              entity_id: climate.bedroom_heating
         - alias: mild
           conditions:
           - condition: state
@@ -3954,7 +3977,7 @@
             data:
               temperature: 20
             target:
-              entity_id: climate.slaapkamer_verwarming
+              entity_id: climate.bedroom_heating
         - alias: warm
           conditions:
           - condition: state
@@ -3965,7 +3988,7 @@
             data:
               temperature: 19
             target:
-              entity_id: climate.slaapkamer_verwarming
+              entity_id: climate.bedroom_heating
     - alias: schedule off or away
       conditions:
       - condition: trigger
@@ -3976,7 +3999,7 @@
       - condition: or
         conditions:
         - condition: state
-          entity_id: schedule.slaapkamer_klimaat
+          entity_id: schedule.bedroom_climate
           state: 'off'
         - condition: state
           entity_id: binary_sensor.presence
@@ -3993,7 +4016,7 @@
             data:
               temperature: 18
             target:
-              entity_id: climate.slaapkamer_verwarming
+              entity_id: climate.bedroom_heating
         - alias: mild
           conditions:
           - condition: state
@@ -4004,7 +4027,7 @@
             data:
               temperature: 17
             target:
-              entity_id: climate.slaapkamer_verwarming
+              entity_id: climate.bedroom_heating
         - alias: warm
           conditions:
           - condition: state
@@ -4015,16 +4038,16 @@
             data:
               temperature: 16
             target:
-              entity_id: climate.slaapkamer_verwarming
+              entity_id: climate.bedroom_heating
   mode: restart
 - id: '1757451939527'
-  alias: Kantoor Klimaat
+  alias: Office Climate
   description: ''
   triggers:
   - entity_id: binary_sensor.presence
     id: presence
     trigger: state
-  - entity_id: schedule.kantoor_klimaat
+  - entity_id: schedule.office_climate
     id: schedule
     trigger: state
   - entity_id: sensor.climate_mode
@@ -4042,7 +4065,7 @@
         - schedule
         - climate_mode
       - condition: state
-        entity_id: schedule.kantoor_klimaat
+        entity_id: schedule.office_climate
         state: 'on'
       - condition: state
         entity_id: binary_sensor.presence
@@ -4059,7 +4082,7 @@
             data:
               temperature: 20
             target:
-              entity_id: climate.kantoor_verwarming
+              entity_id: climate.office_heating
         - alias: mild
           conditions:
           - condition: state
@@ -4070,7 +4093,7 @@
             data:
               temperature: 19
             target:
-              entity_id: climate.kantoor_verwarming
+              entity_id: climate.office_heating
         - alias: warm
           conditions:
           - condition: state
@@ -4081,7 +4104,7 @@
             data:
               temperature: 18
             target:
-              entity_id: climate.kantoor_verwarming
+              entity_id: climate.office_heating
     - alias: schedule off or away
       conditions:
       - condition: trigger
@@ -4092,7 +4115,7 @@
       - condition: or
         conditions:
         - condition: state
-          entity_id: schedule.kantoor_klimaat
+          entity_id: schedule.office_climate
           state: 'off'
         - condition: state
           entity_id: binary_sensor.presence
@@ -4109,7 +4132,7 @@
             data:
               temperature: 18
             target:
-              entity_id: climate.kantoor_verwarming
+              entity_id: climate.office_heating
         - alias: mild
           conditions:
           - condition: state
@@ -4120,7 +4143,7 @@
             data:
               temperature: 17
             target:
-              entity_id: climate.kantoor_verwarming
+              entity_id: climate.office_heating
         - alias: warm
           conditions:
           - condition: state
@@ -4131,16 +4154,16 @@
             data:
               temperature: 16
             target:
-              entity_id: climate.kantoor_verwarming
+              entity_id: climate.office_heating
   mode: restart
 - id: '1757451987268'
-  alias: Gameroom Klimaat
+  alias: Gameroom Climate
   description: ''
   triggers:
   - entity_id: binary_sensor.presence
     id: presence
     trigger: state
-  - entity_id: schedule.gameroom_klimaat
+  - entity_id: schedule.gameroom_climate
     id: schedule
     trigger: state
   - entity_id: sensor.climate_mode
@@ -4158,7 +4181,7 @@
         - schedule
         - climate_mode
       - condition: state
-        entity_id: schedule.gameroom_klimaat
+        entity_id: schedule.gameroom_climate
         state: 'on'
       - condition: state
         entity_id: binary_sensor.presence
@@ -4175,7 +4198,7 @@
             data:
               temperature: 20
             target:
-              entity_id: climate.gameroom_verwarming
+              entity_id: climate.gameroom_heating
         - alias: mild
           conditions:
           - condition: state
@@ -4186,7 +4209,7 @@
             data:
               temperature: 19
             target:
-              entity_id: climate.gameroom_verwarming
+              entity_id: climate.gameroom_heating
         - alias: warm
           conditions:
           - condition: state
@@ -4197,7 +4220,7 @@
             data:
               temperature: 18
             target:
-              entity_id: climate.gameroom_verwarming
+              entity_id: climate.gameroom_heating
     - alias: schedule off or away
       conditions:
       - condition: trigger
@@ -4208,7 +4231,7 @@
       - condition: or
         conditions:
         - condition: state
-          entity_id: schedule.gameroom_klimaat
+          entity_id: schedule.gameroom_climate
           state: 'off'
         - condition: state
           entity_id: binary_sensor.presence
@@ -4225,7 +4248,7 @@
             data:
               temperature: 18
             target:
-              entity_id: climate.gameroom_verwarming
+              entity_id: climate.gameroom_heating
         - alias: mild
           conditions:
           - condition: state
@@ -4236,7 +4259,7 @@
             data:
               temperature: 17
             target:
-              entity_id: climate.gameroom_verwarming
+              entity_id: climate.gameroom_heating
         - alias: warm
           conditions:
           - condition: state
@@ -4247,16 +4270,16 @@
             data:
               temperature: 16
             target:
-              entity_id: climate.gameroom_verwarming
+              entity_id: climate.gameroom_heating
   mode: restart
 - id: '1757452017459'
-  alias: Sauna Klimaat
+  alias: Gym Climate
   description: ''
   triggers:
   - entity_id: binary_sensor.presence
     id: presence
     trigger: state
-  - entity_id: schedule.sauna_klimaat
+  - entity_id: schedule.gym_climate
     id: schedule
     trigger: state
   - entity_id: sensor.climate_mode
@@ -4274,7 +4297,7 @@
         - schedule
         - climate_mode
       - condition: state
-        entity_id: schedule.sauna_klimaat
+        entity_id: schedule.gym_climate
         state: 'on'
       - condition: state
         entity_id: binary_sensor.presence
@@ -4291,7 +4314,7 @@
             data:
               temperature: 22
             target:
-              entity_id: climate.sauna_verwarming
+              entity_id: climate.gym_heating
         - alias: mild
           conditions:
           - condition: state
@@ -4302,7 +4325,7 @@
             data:
               temperature: 21
             target:
-              entity_id: climate.sauna_verwarming
+              entity_id: climate.gym_heating
         - alias: warm
           conditions:
           - condition: state
@@ -4313,7 +4336,7 @@
             data:
               temperature: 20
             target:
-              entity_id: climate.sauna_verwarming
+              entity_id: climate.gym_heating
     - alias: schedule off or away
       conditions:
       - condition: trigger
@@ -4324,7 +4347,7 @@
       - condition: or
         conditions:
         - condition: state
-          entity_id: schedule.sauna_klimaat
+          entity_id: schedule.gym_climate
           state: 'off'
         - condition: state
           entity_id: binary_sensor.presence
@@ -4341,7 +4364,7 @@
             data:
               temperature: 18
             target:
-              entity_id: climate.sauna_verwarming
+              entity_id: climate.gym_heating
         - alias: mild
           conditions:
           - condition: state
@@ -4352,7 +4375,7 @@
             data:
               temperature: 17
             target:
-              entity_id: climate.sauna_verwarming
+              entity_id: climate.gym_heating
         - alias: warm
           conditions:
           - condition: state
@@ -4363,16 +4386,16 @@
             data:
               temperature: 16
             target:
-              entity_id: climate.sauna_verwarming
+              entity_id: climate.gym_heating
   mode: restart
 - id: '1757452116318'
-  alias: Badkamer Klimaat
+  alias: Bathroom Climate
   description: ''
   triggers:
   - entity_id: binary_sensor.presence
     id: presence
     trigger: state
-  - entity_id: schedule.badkamer_klimaat
+  - entity_id: schedule.bathroom_climate
     id: schedule
     trigger: state
   - entity_id: sensor.climate_mode
@@ -4390,7 +4413,7 @@
         - schedule
         - climate_mode
       - condition: state
-        entity_id: schedule.badkamer_klimaat
+        entity_id: schedule.bathroom_climate
         state: 'on'
       - condition: state
         entity_id: binary_sensor.presence
@@ -4407,7 +4430,7 @@
             data:
               temperature: 22
             target:
-              entity_id: climate.badkamer_verwarming
+              entity_id: climate.bathroom_heating
         - alias: mild
           conditions:
           - condition: state
@@ -4418,7 +4441,7 @@
             data:
               temperature: 21
             target:
-              entity_id: climate.badkamer_verwarming
+              entity_id: climate.bathroom_heating
         - alias: warm
           conditions:
           - condition: state
@@ -4429,7 +4452,7 @@
             data:
               temperature: 20
             target:
-              entity_id: climate.badkamer_verwarming
+              entity_id: climate.bathroom_heating
     - alias: schedule off or away
       conditions:
       - condition: trigger
@@ -4440,7 +4463,7 @@
       - condition: or
         conditions:
         - condition: state
-          entity_id: schedule.badkamer_klimaat
+          entity_id: schedule.bathroom_climate
           state: 'off'
         - condition: state
           entity_id: binary_sensor.presence
@@ -4457,7 +4480,7 @@
             data:
               temperature: 18
             target:
-              entity_id: climate.badkamer_verwarming
+              entity_id: climate.bathroom_heating
         - alias: mild
           conditions:
           - condition: state
@@ -4468,7 +4491,7 @@
             data:
               temperature: 17
             target:
-              entity_id: climate.badkamer_verwarming
+              entity_id: climate.bathroom_heating
         - alias: warm
           conditions:
           - condition: state
@@ -4479,7 +4502,7 @@
             data:
               temperature: 16
             target:
-              entity_id: climate.badkamer_verwarming
+              entity_id: climate.bathroom_heating
   mode: restart
 - id: '1759521293992'
   alias: Geofence - Notification Extended
@@ -4495,14 +4518,14 @@
         minutes: 0
         seconds: 10
       title_arriving: Home Assistant
-      message_arriving: '{{ person }} arriveert bij {{ zone }}.'
+      message_arriving: '{{ person }} arrives at {{ zone }}.'
       title_leaving: Home Assistant
-      message_leaving: '{{ person }} vertrekt van {{ zone }}.'
+      message_leaving: '{{ person }} leaves {{ zone }}.'
       notify_group: notify
       channel: Geofence
       group: Geofence
 - id: '1761738156612'
-  alias: Raambekleding
+  alias: Covers
   description: All logic for window coverings (time + climate)
   triggers:
   - at: 07:00:00
@@ -4548,18 +4571,18 @@
       - repeat:
           for_each:
           - entities:
-            - input_select.gang_raambekleding
-            - input_select.sauna_raambekleding
+            - input_select.hallway_covers
+            - input_select.gym_covers
             preset: 020%
           - entities:
-            - input_select.gameroom_raambekleding
-            - input_select.kantoor_raambekleding
-            - input_select.woonkamer_raambekleding
+            - input_select.gameroom_covers
+            - input_select.office_covers
+            - input_select.living_room_covers
             preset: 020%
           - entities:
-            - input_select.dakterras_raambekleding
-            - input_select.keuken_raambekleding
-            - input_select.tuin_raambekleding
+            - input_select.roof_terrace_covers
+            - input_select.kitchen_covers
+            - input_select.garden_covers
             preset: 090%
           sequence:
           - target:
@@ -4584,19 +4607,19 @@
       - repeat:
           for_each:
           - entities:
-            - input_select.gang_raambekleding
-            - input_select.sauna_raambekleding
-            - input_select.slaapkamer_raambekleding
+            - input_select.hallway_covers
+            - input_select.gym_covers
+            - input_select.bedroom_covers
             preset: 020%
           - entities:
-            - input_select.gameroom_raambekleding
-            - input_select.kantoor_raambekleding
-            - input_select.woonkamer_raambekleding
+            - input_select.gameroom_covers
+            - input_select.office_covers
+            - input_select.living_room_covers
             preset: 020%
           - entities:
-            - input_select.dakterras_raambekleding
-            - input_select.keuken_raambekleding
-            - input_select.tuin_raambekleding
+            - input_select.roof_terrace_covers
+            - input_select.kitchen_covers
+            - input_select.garden_covers
             preset: 090%
           sequence:
           - target:
@@ -4618,19 +4641,19 @@
       - repeat:
           for_each:
           - entities:
-            - input_select.gang_raambekleding
-            - input_select.sauna_raambekleding
-            - input_select.slaapkamer_raambekleding
+            - input_select.hallway_covers
+            - input_select.gym_covers
+            - input_select.bedroom_covers
             preset: 020%
           - entities:
-            - input_select.gameroom_raambekleding
-            - input_select.kantoor_raambekleding
-            - input_select.woonkamer_raambekleding
+            - input_select.gameroom_covers
+            - input_select.office_covers
+            - input_select.living_room_covers
             preset: 020%
           - entities:
-            - input_select.dakterras_raambekleding
-            - input_select.keuken_raambekleding
-            - input_select.tuin_raambekleding
+            - input_select.roof_terrace_covers
+            - input_select.kitchen_covers
+            - input_select.garden_covers
             preset: 090%
           sequence:
           - target:
@@ -4654,11 +4677,11 @@
       sequence:
       - target:
           entity_id:
-          - input_select.gang_raambekleding
-          - input_select.sauna_raambekleding
-          - input_select.slaapkamer_raambekleding
+          - input_select.hallway_covers
+          - input_select.gym_covers
+          - input_select.bedroom_covers
         data:
-          option: 100%
+          option: Open
         action: input_select.select_option
     - alias: '11:00'
       conditions:
@@ -4671,11 +4694,11 @@
       sequence:
       - target:
           entity_id:
-          - input_select.gang_raambekleding
-          - input_select.sauna_raambekleding
-          - input_select.slaapkamer_raambekleding
+          - input_select.hallway_covers
+          - input_select.gym_covers
+          - input_select.bedroom_covers
         data:
-          option: 100%
+          option: Open
         action: input_select.select_option
     - alias: '18:00'
       conditions:
@@ -4690,20 +4713,20 @@
         - repeat:
             for_each:
             - entities:
-              - input_select.gameroom_raambekleding
-              - input_select.kantoor_raambekleding
-              - input_select.woonkamer_raambekleding
-              preset: 000%
+              - input_select.gameroom_covers
+              - input_select.office_covers
+              - input_select.living_room_covers
+              preset: Closed
             - entities:
-              - input_select.gang_raambekleding
-              - input_select.sauna_raambekleding
-              - input_select.slaapkamer_raambekleding
-              preset: 000%
+              - input_select.hallway_covers
+              - input_select.gym_covers
+              - input_select.bedroom_covers
+              preset: Closed
             - entities:
-              - input_select.dakterras_raambekleding
-              - input_select.keuken_raambekleding
-              - input_select.tuin_raambekleding
-              preset: 000%
+              - input_select.roof_terrace_covers
+              - input_select.kitchen_covers
+              - input_select.garden_covers
+              preset: Closed
             sequence:
             - target:
                 entity_id: '{{ repeat.item.entities }}'
@@ -4715,11 +4738,11 @@
         else:
         - target:
             entity_id:
-            - input_select.gang_raambekleding
-            - input_select.sauna_raambekleding
-            - input_select.slaapkamer_raambekleding
+            - input_select.hallway_covers
+            - input_select.gym_covers
+            - input_select.bedroom_covers
           data:
-            option: 000%
+            option: Closed
           action: input_select.select_option
   - alias: Climate-based logic
     choose:
@@ -4739,14 +4762,14 @@
       - repeat:
           for_each:
           - entities:
-            - input_select.gameroom_raambekleding
-            - input_select.kantoor_raambekleding
-            - input_select.woonkamer_raambekleding
+            - input_select.gameroom_covers
+            - input_select.office_covers
+            - input_select.living_room_covers
             preset: 090%
           - entities:
-            - input_select.dakterras_raambekleding
-            - input_select.keuken_raambekleding
-            - input_select.tuin_raambekleding
+            - input_select.roof_terrace_covers
+            - input_select.kitchen_covers
+            - input_select.garden_covers
             preset: 090%
           sequence:
           - target:
@@ -4779,14 +4802,14 @@
           - repeat:
               for_each:
               - entities:
-                - input_select.gameroom_raambekleding
-                - input_select.kantoor_raambekleding
-                - input_select.woonkamer_raambekleding
+                - input_select.gameroom_covers
+                - input_select.office_covers
+                - input_select.living_room_covers
                 preset: 090%
               - entities:
-                - input_select.dakterras_raambekleding
-                - input_select.keuken_raambekleding
-                - input_select.tuin_raambekleding
+                - input_select.roof_terrace_covers
+                - input_select.kitchen_covers
+                - input_select.garden_covers
                 preset: 090%
               sequence:
               - target:
@@ -4805,14 +4828,14 @@
           - repeat:
               for_each:
               - entities:
-                - input_select.gameroom_raambekleding
-                - input_select.kantoor_raambekleding
-                - input_select.woonkamer_raambekleding
+                - input_select.gameroom_covers
+                - input_select.office_covers
+                - input_select.living_room_covers
                 preset: 080%
               - entities:
-                - input_select.dakterras_raambekleding
-                - input_select.keuken_raambekleding
-                - input_select.tuin_raambekleding
+                - input_select.roof_terrace_covers
+                - input_select.kitchen_covers
+                - input_select.garden_covers
                 preset: 090%
               sequence:
               - target:
@@ -4831,14 +4854,14 @@
           - repeat:
               for_each:
               - entities:
-                - input_select.gameroom_raambekleding
-                - input_select.kantoor_raambekleding
-                - input_select.woonkamer_raambekleding
+                - input_select.gameroom_covers
+                - input_select.office_covers
+                - input_select.living_room_covers
                 preset: 060%
               - entities:
-                - input_select.dakterras_raambekleding
-                - input_select.keuken_raambekleding
-                - input_select.tuin_raambekleding
+                - input_select.roof_terrace_covers
+                - input_select.kitchen_covers
+                - input_select.garden_covers
                 preset: 080%
               sequence:
               - target:
@@ -4857,14 +4880,14 @@
           - repeat:
               for_each:
               - entities:
-                - input_select.gameroom_raambekleding
-                - input_select.kantoor_raambekleding
-                - input_select.woonkamer_raambekleding
+                - input_select.gameroom_covers
+                - input_select.office_covers
+                - input_select.living_room_covers
                 preset: 060%
               - entities:
-                - input_select.dakterras_raambekleding
-                - input_select.keuken_raambekleding
-                - input_select.tuin_raambekleding
+                - input_select.roof_terrace_covers
+                - input_select.kitchen_covers
+                - input_select.garden_covers
                 preset: 080%
               sequence:
               - target:
@@ -4897,14 +4920,14 @@
           - repeat:
               for_each:
               - entities:
-                - input_select.gameroom_raambekleding
-                - input_select.kantoor_raambekleding
-                - input_select.woonkamer_raambekleding
+                - input_select.gameroom_covers
+                - input_select.office_covers
+                - input_select.living_room_covers
                 preset: 080%
               - entities:
-                - input_select.dakterras_raambekleding
-                - input_select.keuken_raambekleding
-                - input_select.tuin_raambekleding
+                - input_select.roof_terrace_covers
+                - input_select.kitchen_covers
+                - input_select.garden_covers
                 preset: 090%
               sequence:
               - target:
@@ -4923,14 +4946,14 @@
           - repeat:
               for_each:
               - entities:
-                - input_select.gameroom_raambekleding
-                - input_select.kantoor_raambekleding
-                - input_select.woonkamer_raambekleding
+                - input_select.gameroom_covers
+                - input_select.office_covers
+                - input_select.living_room_covers
                 preset: 060%
               - entities:
-                - input_select.dakterras_raambekleding
-                - input_select.keuken_raambekleding
-                - input_select.tuin_raambekleding
+                - input_select.roof_terrace_covers
+                - input_select.kitchen_covers
+                - input_select.garden_covers
                 preset: 080%
               sequence:
               - target:
@@ -4949,14 +4972,14 @@
           - repeat:
               for_each:
               - entities:
-                - input_select.gameroom_raambekleding
-                - input_select.kantoor_raambekleding
-                - input_select.woonkamer_raambekleding
+                - input_select.gameroom_covers
+                - input_select.office_covers
+                - input_select.living_room_covers
                 preset: 040%
               - entities:
-                - input_select.dakterras_raambekleding
-                - input_select.keuken_raambekleding
-                - input_select.tuin_raambekleding
+                - input_select.roof_terrace_covers
+                - input_select.kitchen_covers
+                - input_select.garden_covers
                 preset: 080%
               sequence:
               - target:
@@ -4975,14 +4998,14 @@
           - repeat:
               for_each:
               - entities:
-                - input_select.gameroom_raambekleding
-                - input_select.kantoor_raambekleding
-                - input_select.woonkamer_raambekleding
+                - input_select.gameroom_covers
+                - input_select.office_covers
+                - input_select.living_room_covers
                 preset: 020%
               - entities:
-                - input_select.dakterras_raambekleding
-                - input_select.keuken_raambekleding
-                - input_select.tuin_raambekleding
+                - input_select.roof_terrace_covers
+                - input_select.kitchen_covers
+                - input_select.garden_covers
                 preset: 060%
               sequence:
               - target:
@@ -5009,15 +5032,15 @@
         - repeat:
             for_each:
             - entities:
-              - input_select.gameroom_raambekleding
-              - input_select.kantoor_raambekleding
-              - input_select.woonkamer_raambekleding
-              preset: 000%
+              - input_select.gameroom_covers
+              - input_select.office_covers
+              - input_select.living_room_covers
+              preset: Closed
             - entities:
-              - input_select.dakterras_raambekleding
-              - input_select.keuken_raambekleding
-              - input_select.tuin_raambekleding
-              preset: 000%
+              - input_select.roof_terrace_covers
+              - input_select.kitchen_covers
+              - input_select.garden_covers
+              preset: Closed
             sequence:
             - target:
                 entity_id: '{{ repeat.item.entities }}'
@@ -5029,8 +5052,8 @@
   mode: queued
   max: 3
 - id: '1761750325973'
-  alias: Verlichting
-  description: Alle logica voor verlichting
+  alias: Lighting
+  description: All logic for lighting
   triggers:
   - at: 00:01:00
     id: 00:00
@@ -5053,18 +5076,18 @@
       - action: light.turn_off
         target:
           area_id:
-          - dakterras
-          - eettafel
-          - entree
+          - roof_terrace
+          - dining_table
+          - entrance
           - gameroom
-          - gang
-          - kantoor
-          - keuken
-          - sauna
-          - schuur
-          - tuin
-          - wasruimte
-          - woonkamer
+          - hallway
+          - office
+          - kitchen
+          - gym
+          - shed
+          - garden
+          - laundry_room
+          - living_room
         data:
           transition: 60
     - alias: 01:00
@@ -5075,19 +5098,19 @@
       - action: light.turn_off
         target:
           area_id:
-          - dakterras
-          - eettafel
-          - entree
+          - roof_terrace
+          - dining_table
+          - entrance
           - gameroom
-          - gang
-          - kantoor
-          - keuken
-          - sauna
-          - schuur
-          - slaapkamer
-          - tuin
-          - wasruimte
-          - woonkamer
+          - hallway
+          - office
+          - kitchen
+          - gym
+          - shed
+          - bedroom
+          - garden
+          - laundry_room
+          - living_room
         data:
           transition: 60
   - alias: Luminosity
@@ -5105,7 +5128,7 @@
       - action: light.turn_on
         target:
           entity_id:
-          - light.voordeur_lampen
+          - light.front_door_lighten
         data:
           brightness_pct: 100
           transition: 3600
@@ -5119,8 +5142,8 @@
         metadata: {}
         target:
           entity_id:
-          - light.eettafel_lamp_boven
-          - light.woonkamer_lamp_boven
+          - light.dining_table_light_boven
+          - light.living_room_light_boven
     - alias: not dark
       conditions:
       - condition: trigger
@@ -5136,15 +5159,15 @@
       - action: light.turn_off
         target:
           entity_id:
-          - light.looppad_lampen
-          - light.voordeur_lampen
+          - light.alleyway_lighten
+          - light.front_door_lighten
         data:
           transition: 3600
     enabled: true
   mode: queued
   max: 10
 - id: '1761894045234'
-  alias: Keuken Media
+  alias: Kitchen Media
   description: ''
   triggers:
   - trigger: time
@@ -5154,7 +5177,7 @@
     id: player idle
     trigger: state
     entity_id:
-    - media_player.keuken_kef
+    - media_player.kitchen_kef
     from:
     - playing
     to:
@@ -5178,25 +5201,25 @@
         metadata: {}
         data: {}
         target:
-          entity_id: media_player.keuken
+          entity_id: media_player.kitchen
       - action: media_player.turn_off
         metadata: {}
         data: {}
         target:
-          entity_id: media_player.keuken
+          entity_id: media_player.kitchen
     - conditions:
       - condition: trigger
         id:
         - player idle
       - condition: state
-        entity_id: media_player.slaapkamer
+        entity_id: media_player.bedroom
         state:
         - playing
       sequence:
       - action: media_player.unjoin
         metadata: {}
         target:
-          entity_id: media_player.keuken
+          entity_id: media_player.kitchen
         data: {}
       - delay:
           hours: 0
@@ -5206,10 +5229,10 @@
       - action: media_player.join
         metadata: {}
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.bedroom
         data:
           group_members:
-          - media_player.keuken
+          - media_player.kitchen
       alias: player idle
     - conditions:
       - condition: trigger
@@ -5220,23 +5243,23 @@
         metadata: {}
         data:
           group_members:
-          - media_player.keuken
+          - media_player.kitchen
         target:
-          entity_id: media_player.slaapkamer
+          entity_id: media_player.bedroom
   mode: parallel
 - id: '1764237963995'
-  alias: Kantoor Beweging
+  alias: Office Motion
   description: ''
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.kantoor_bewegingssensor_occupancy
+    - binary_sensor.office_motion_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.kantoor_bewegingssensor_occupancy
+    - binary_sensor.office_motion_occupancy
     to:
     - 'off'
     id: motion clear
@@ -5277,7 +5300,8 @@
           transition: 1
         metadata: {}
         target:
-          entity_id: light.kantoor_lampen
+          entity_id:
+          - light.office_light
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -5286,7 +5310,7 @@
       sequence:
       - if:
         - condition: numeric_state
-          entity_id: sensor.kantoor_bureau_power
+          entity_id: sensor.office_desk_power
           above: 30
         then: []
         else:
@@ -5295,22 +5319,23 @@
             transition: 30
           metadata: {}
           target:
-            entity_id: light.kantoor_lampen
+            entity_id:
+            - light.office_light
       alias: motion clear
   mode: restart
 - id: '1764268766514'
-  alias: Keuken Beweging
+  alias: Kitchen Motion
   description: ''
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.keuken_bewegingssensor_occupancy
+    - binary_sensor.kitchen_motion_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.keuken_bewegingssensor_occupancy
+    - binary_sensor.kitchen_motion_occupancy
     to:
     - 'off'
     id: motion clear
@@ -5336,7 +5361,8 @@
           transition: 3
         metadata: {}
         target:
-          entity_id: light.keuken_lampen
+          entity_id:
+          - light.kitchen
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -5348,7 +5374,8 @@
           transition: 30
         metadata: {}
         target:
-          entity_id: light.keuken_lampen
+          entity_id:
+          - light.kitchen
       alias: motion clear
   mode: restart
 - id: '1764313480952'
@@ -5397,18 +5424,18 @@
         entity_id: select.bart_actieve_programma
   mode: single
 - id: '1764429546417'
-  alias: Gameroom Beweging
+  alias: Gameroom Motion
   description: ''
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.gameroom_bewegingssensor_occupancy
+    - binary_sensor.gameroom_motion_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.gameroom_bewegingssensor_occupancy
+    - binary_sensor.gameroom_motion_occupancy
     to:
     - 'off'
     id: motion clear
@@ -5449,7 +5476,10 @@
           transition: 1
         metadata: {}
         target:
-          entity_id: light.gameroom_lampen
+          entity_id:
+          - light.gameroom_above_light
+          - light.gameroom_left_light
+          - light.gameroom_right_light
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -5458,7 +5488,7 @@
       sequence:
       - if:
         - condition: numeric_state
-          entity_id: sensor.gameroom_bureau_power
+          entity_id: sensor.gameroom_desk_power
           above: 30
         then: []
         else:
@@ -5467,7 +5497,10 @@
             transition: 30
           metadata: {}
           target:
-            entity_id: light.gameroom_lampen
+            entity_id:
+            - light.gameroom_above_light
+            - light.gameroom_left_light
+            - light.gameroom_right_light
       alias: motion clear
   mode: restart
 - id: '1764712921094'
@@ -5486,7 +5519,7 @@
       - z2m
       - dashboard
       z2m_base_topic: zigbee2mqtt
-      z2m_alarm_keypad: Alarm Paneel
+      z2m_alarm_keypad: Alarm Keypad
       alarm_presence_sensor: binary_sensor.presence
       alarm_auto_arm_away: true
       alarm_notifications_target:
@@ -5494,69 +5527,52 @@
       - 4e78dc3151bcb7dd0ac4060b7b17158b
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
-      - media_player.meterkast
+      - media_player.utility_closet
       alarm_sensor_away:
-      - binary_sensor.dakterras_deursensor_contact
-      - binary_sensor.entree_deursensor_contact
-      - binary_sensor.tuin_deursensor_contact
-      - binary_sensor.woonkamer_raamsensor_contact
-      alarm_notifications_armed_away: Het Alarm is ingesteld op Afwezig modus door
-        {user_name}.
+      - binary_sensor.entrance_door_contact
+      - binary_sensor.garden_door_contact
+      - binary_sensor.living_room_window_contact
+      - binary_sensor.roof_terrace_door_contact
       alarm_scripts_away:
       - script.alarm_away
       - script.fan_away
       - script.music_away
-      alarm_camera_away: camera.entree
-      alarm_camera_away_click_action: /lovelace/entree
-      alarm_notifications_armed_home: Het Alarm is ingesteld op Thuis modus door {user_name}.
+      alarm_camera_away: camera.entrance
+      alarm_camera_away_click_action: /lovelace/entrance
       alarm_scripts_home:
       - script.alarm_home
       - script.fan_home
       - script.music_home
       alarm_sensor_night:
-      - binary_sensor.dakterras_deursensor_contact
-      - binary_sensor.entree_deursensor_contact
-      - binary_sensor.tuin_deursensor_contact
-      - binary_sensor.woonkamer_raamsensor_contact
-      alarm_notifications_armed_night: Het Alarm is ingesteld op Nacht modus door
-        {user_name}.
+      - binary_sensor.entrance_door_contact
+      - binary_sensor.garden_door_contact
+      - binary_sensor.living_room_window_contact
+      - binary_sensor.roof_terrace_door_contact
       alarm_scripts_night:
       - script.alarm_night
       - script.fan_night
       - script.music_night
-      alarm_camera_night: camera.entree
-      alarm_camera_night_click_action: /lovelace/entree
-      alarm_notifications_arming: Het Alarm wordt ingeschakeld door {user_name}. Verlaat
-        het huis zo snel mogelijk!
-      alarm_notifications_pending: '{trigger_name} heeft het Alarm geactiveerd! Schakel
-        het alarm uit om te voorkomen dat het afgaat!'
+      alarm_camera_night: camera.entrance
+      alarm_camera_night_click_action: /lovelace/entrance
       alarm_notifications_critical_pending: true
       alarm_scripts_pending:
       - script.alarm_pending
-      alarm_notifications_disarmed: Het Alarm is uitgeschakeld door {user_name}.
       alarm_scripts_disarmed:
       - script.alarm_disarmed
       - script.fan_home
       - script.music_home
-      alarm_notifications_triggered: '{trigger_name} heeft het alarm geactiveerd!
-        Het alarm gaat af!'
       alarm_notifications_critical_triggered: true
-      alarm_notifications_always: '{trigger_name} heeft het alarm geactiveerd! Het
-        alarm gaat af!'
       alarm_notifications_critical_always: false
       alarm_sensor_fire:
-      - binary_sensor.entree_brandmelder
-      - binary_sensor.gang_brandmelder
-      - binary_sensor.gameroom_brandmelder
-      - binary_sensor.schuur_brandmelder_smoke
-      alarm_notifications_fire: '{trigger_name} heeft vuur gedetecteerd!'
+      - binary_sensor.entrance_smoke_alarm_smoke
+      - binary_sensor.hallway_smoke_alarm_smoke
+      - binary_sensor.gameroom_smoke_alarm_smoke
+      - binary_sensor.shed_heat_alarm_smoke
       alarm_notifications_critical_fire: true
-      alarm_notifications_gas: '{trigger_name} heeft gas gedetecteerd!'
       alarm_notifications_critical_gas: true
       alarm_sensor_moisture:
-      - binary_sensor.keuken_vochtmelder
-      - binary_sensor.wasruimte_vochtmelder
-      alarm_notifications_moisture: '{trigger_name} heeft vocht gedetecteerd!'
+      - binary_sensor.kitchen_flood_alarm_water_leak
+      - binary_sensor.laundry_room_flood_alarm_water_leak
       alarm_notifications_critical_moisture: true
       alarm_scripts_moisture:
       - script.lights_blue
@@ -5566,18 +5582,18 @@
       alarm_dashboard_code: input_text.alarm_dashboard_code
       alarm_dashboard_action: input_text.alarm_dashboard_action
 - id: '1765450835637'
-  alias: Sauna Beweging
+  alias: Gym Motion
   description: ''
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.sauna_bewegingssensor_occupancy
+    - binary_sensor.gym_motion_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.sauna_bewegingssensor_occupancy
+    - binary_sensor.gym_motion_occupancy
     to:
     - 'off'
     id: motion clear
@@ -5603,7 +5619,7 @@
           transition: 3
         metadata: {}
         target:
-          entity_id: light.sauna_lampen
+          entity_id: light.gym_light
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -5615,22 +5631,22 @@
           transition: 30
         metadata: {}
         target:
-          entity_id: light.sauna_lampen
+          entity_id: light.gym_light
       alias: motion clear
   mode: restart
 - id: '1766088289333'
-  alias: Gang Trap 1 Beweging
+  alias: Hallway Stairs 1 Motion
   description: ''
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.gang_trap_1_bewegingssensor_occupancy
+    - binary_sensor.hallway_stairs_1_motion_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.gang_trap_1_bewegingssensor_occupancy
+    - binary_sensor.hallway_stairs_1_motion_occupancy
     to:
     - 'off'
     id: motion clear
@@ -5656,7 +5672,7 @@
           transition: 3
         metadata: {}
         target:
-          entity_id: light.gang_trap_1_lamp
+          entity_id: light.hallway_stairs_1_light
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -5668,22 +5684,22 @@
           transition: 9
         metadata: {}
         target:
-          entity_id: light.gang_trap_1_lamp
+          entity_id: light.hallway_stairs_1_light
       alias: motion clear
   mode: restart
 - id: '1766320112568'
-  alias: Gang Trap 2 Beweging
+  alias: Hallway Stairs 2 Motion
   description: ''
   triggers:
   - alias: motion detected
     entity_id:
-    - binary_sensor.gang_trap_2_bewegingssensor_occupancy
+    - binary_sensor.hallway_stairs_2_motion_occupancy
     to: 'on'
     id: motion detected
     trigger: state
   - alias: motion clear
     entity_id:
-    - binary_sensor.gang_trap_2_bewegingssensor_occupancy
+    - binary_sensor.hallway_stairs_2_motion_occupancy
     to:
     - 'off'
     id: motion clear
@@ -5709,7 +5725,7 @@
           transition: 3
         metadata: {}
         target:
-          entity_id: light.gang_trap_2_lamp
+          entity_id: light.hallway_stairs_2_light
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -5721,7 +5737,7 @@
           transition: 9
         metadata: {}
         target:
-          entity_id: light.gang_trap_2_lamp
+          entity_id: light.hallway_stairs_2_light
       alias: motion clear
   mode: restart
 - id: '1766509326839'
@@ -5735,24 +5751,28 @@
       schedule_mode: workday
       target_lights:
         entity_id:
-        - light.badkamer_lamp
-        - light.dakterras_lamp
-        - light.eettafel_lamp_boven
-        - light.gameroom_lamp_boven
-        - light.gameroom_lamp_links
-        - light.gameroom_lamp_rechts
-        - light.kantoor_lamp
-        - light.keuken_lampen
-        - light.keukenkast_lampen
-        - light.sauna_lamp
-        - light.schuur_lampen
-        - light.slaapkamer_lamp
-        - light.slaapkamer_bed
-        - light.toilet_lamp
-        - light.tuin_lampen
-        - light.voordeur_lamp
-        - light.wasruimte_lamp
-        - light.woonkamer_lamp_boven
+        - light.bathroom_light
+        - light.roof_terrace_light
+        - light.dining_table_above_light
+        - light.gameroom_above_light
+        - light.gameroom_left_light
+        - light.gameroom_right_light
+        - light.office_light
+        - light.kitchen
+        - light.kitchen_cabinet
+        - light.gym_light
+        - light.shed_left_light
+        - light.shed_middle_light
+        - light.shed_right_light
+        - light.shed_workbench_light
+        - light.bedroom_light
+        - light.bedroom_alex_bed_light
+        - light.bedroom_deni_bed_light
+        - light.toilet_light
+        - light.garden
+        - light.front_door_light
+        - light.laundy_room_light
+        - light.living_room_above_light
       auto_adjust_enabled: true
       workday_sensor: binary_sensor.workday_sensor
 - id: '1766509365106'
@@ -5769,17 +5789,17 @@
       night_brightness: 10
       target_lights:
         entity_id:
-        - light.eettafel_lamp_onder
-        - light.entree_lamp
-        - light.gameroom_lamp_onder
-        - light.gang_trap_1_lamp
-        - light.gang_trap_2_lamp
-        - light.gang_lamp
-        - light.woonkamer_lamp_onder
+        - light.dining_table_below_light
+        - light.entrance_light
+        - light.gameroom_below_light
+        - light.hallway_stairs_1_light
+        - light.hallway_stairs_2_light
+        - light.hallway_light
+        - light.living_room_below_light
       auto_adjust_enabled: true
       workday_sensor: binary_sensor.workday_sensor
 - id: '1767044874987'
-  alias: Woonkamer Tablet
+  alias: Living Room Tablet
   description: ''
   triggers:
   - trigger: homeassistant
@@ -5797,5 +5817,5 @@
         metadata: {}
         data: {}
         target:
-          entity_id: button.woonkamer_tablet_herstarten
+          entity_id: button.living_room_tablet_herstarten
   mode: single

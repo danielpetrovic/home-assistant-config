@@ -1,249 +1,250 @@
 input_number:
-  dakterras_gordijn_position:
-    name: Dakterras Gordijn Position
+  roof_terrace_shade_position:
+    name: Roof Terrace Shade Position
     min: 0
     max: 100
     step: 50
     mode: slider
     unit_of_measurement: "%"
-    icon: mdi:blinds-horizontal
-  gameroom_gordijn_links1_position:
-    name: Gameroom Gordijn Links1 Position
+    icon: mdi:roller-shade
+  gameroom_left_1_shade_position:
+    name: Gameroom Left 1 Shade Position
     min: 0
     max: 100
     step: 50
     mode: slider
     unit_of_measurement: "%"
-    icon: mdi:blinds-horizontal
-  gameroom_gordijn_links2_position:
-    name: Gameroom Gordijn Links2 Position
+    icon: mdi:roller-shade
+  gameroom_left_2_shade_position:
+    name: Gameroom Left 2 Shade Position
     min: 0
     max: 100
     step: 50
     mode: slider
     unit_of_measurement: "%"
-    icon: mdi:blinds-horizontal
-  gameroom_gordijn_rechts1_position:
-    name: Gameroom Gordijn Rechts1 Position
+    icon: mdi:roller-shade
+  gameroom_right_1_shade_position:
+    name: Gameroom Right 1 Shade Position
     min: 0
     max: 100
     step: 50
     mode: slider
     unit_of_measurement: "%"
-    icon: mdi:blinds-horizontal
-  gameroom_gordijn_rechts2_position:
-    name: Gameroom Gordijn Rechts2 Position
+    icon: mdi:roller-shade
+  gameroom_right_2_shade_position:
+    name: Gameroom Right 2 Shade Position
     min: 0
     max: 100
     step: 50
     mode: slider
     unit_of_measurement: "%"
-    icon: mdi:blinds-horizontal
-  gang_gordijn_position:
-    name: Gang Gordijn Position
+    icon: mdi:roller-shade
+  hallway_shade_position:
+    name: Hallway Shade Position
     min: 0
     max: 100
     step: 50
     mode: slider
     unit_of_measurement: "%"
-    icon: mdi:blinds-horizontal
-  kantoor_gordijn_links_position:
-    name: Kantoor Gordijn Links Position
+    icon: mdi:roller-shade
+  office_left_shade_position:
+    name: Office Left Shade Position
     min: 0
     max: 100
     step: 50
     mode: slider
     unit_of_measurement: "%"
-    icon: mdi:blinds-horizontal
-  kantoor_gordijn_rechts_position:
-    name: Kantoor Gordijn Rechts Position
+    icon: mdi:roller-shade
+  office_right_shade_position:
+    name: Office Right Shade Position
     min: 0
     max: 100
     step: 50
     mode: slider
     unit_of_measurement: "%"
-    icon: mdi:blinds-horizontal
-  keuken_gordijn_position:
-    name: Keuken Gordijn Position
+    icon: mdi:roller-shade
+  kitchen_shade_position:
+    name: Kitchen Shade Position
     min: 0
     max: 100
     step: 50
     mode: slider
     unit_of_measurement: "%"
-    icon: mdi:blinds-horizontal
-  sauna_gordijn_position:
-    name: Sauna Gordijn Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:curtains
-  slaapkamer_gordijn_position:
-    name: Slaapkamer Gordijn Position
+    icon: mdi:roller-shade
+  gym_curtain_position:
+    name: Gym Curtain Position
     min: 0
     max: 100
     step: 50
     mode: slider
     unit_of_measurement: "%"
     icon: mdi:curtains
-  tuin_gordijn_position:
-    name: Tuin Gordijn Position
+  bedroom_curtain_position:
+    name: Bedroom Curtain Position
     min: 0
     max: 100
     step: 50
     mode: slider
     unit_of_measurement: "%"
-    icon: mdi:blinds-horizontal
-  woonkamer_gordijn_position:
-    name: Woonkamer Gordijn Position
+    icon: mdi:curtains
+  garden_shade_position:
+    name: Garden Shade Position
     min: 0
     max: 100
     step: 50
     mode: slider
     unit_of_measurement: "%"
-    icon: mdi:blinds-horizontal
+    icon: mdi:roller-shade
+  living_room_shade_position:
+    name: Living Room Shade Position
+    min: 0
+    max: 100
+    step: 50
+    mode: slider
+    unit_of_measurement: "%"
+    icon: mdi:roller-shade
 
 input_select:
-  dakterras_raambekleding:
-    name: Dakterras Raambekleding Preset
+  roof_terrace_covers:
+    name: Roof Terrace Covers Preset
     options:
-      - "000%"
+      - "Closed"
       - "020%"
       - "040%"
       - "060%"
       - "080%"
       - "090%"
-      - "100%"
+      - "Open"
     icon: mdi:window-shutter-auto
-  gameroom_raambekleding:
-    name: Gameroom Raambekleding Preset
+  gameroom_covers:
+    name: Gameroom Covers Preset
     options:
-      - "000%"
+      - "Closed"
       - "020%"
       - "040%"
       - "060%"
       - "080%"
       - "090%"
-      - "100%"
+      - "Open"
     icon: mdi:window-shutter-auto
-  gang_raambekleding:
-    name: Gang Raambekleding Preset
+  hallway_covers:
+    name: Hallway Covers Preset
     options:
-      - "000%"
+      - "Closed"
       - "020%"
       - "040%"
       - "060%"
       - "080%"
       - "090%"
-      - "100%"
+      - "Open"
     icon: mdi:window-shutter-auto
-  kantoor_raambekleding:
-    name: Kantoor Raambekleding Preset
+  office_covers:
+    name: Office Covers Preset
     options:
-      - "000%"
+      - "Closed"
       - "020%"
       - "040%"
       - "060%"
       - "080%"
       - "090%"
-      - "100%"
+      - "Open"
     icon: mdi:window-shutter-auto
-  keuken_raambekleding:
-    name: Keuken Raambekleding Preset
+  kitchen_covers:
+    name: Kitchen Covers Preset
     options:
-      - "000%"
+      - "Closed"
       - "020%"
       - "040%"
       - "060%"
       - "080%"
       - "090%"
-      - "100%"
+      - "Open"
     icon: mdi:window-shutter-auto
-  sauna_raambekleding:
-    name: Sauna Raambekleding Preset
+  gym_covers:
+    name: Gym Covers Preset
     options:
-      - "000%"
+      - "Closed"
       - "020%"
       - "040%"
       - "060%"
       - "080%"
       - "090%"
-      - "100%"
+      - "Open"
     icon: mdi:window-shutter-auto
-  schuur_raambekleding:
-    name: Schuur Raambekleding Preset
+  shed_covers:
+    name: Shed Covers Preset
     options:
       - "Open"
-      - "Looppad"
-      - "Tuin"
-      - "Dicht"
+      - "Alleyway"
+      - "Garden"
+      - "Closed"
     icon: mdi:window-shutter-auto
-  slaapkamer_raambekleding:
-    name: Slaapkamer Raambekleding Preset
+  bedroom_covers:
+    name: Bedroom Covers Preset
     options:
-      - "000%"
+      - "Closed"
       - "020%"
-      - "100%"
+      - "080%"
+      - "Open"
     icon: mdi:window-shutter-auto
-  tuin_raambekleding:
-    name: Tuin Raambekleding Preset
+  garden_covers:
+    name: Garden Covers Preset
     options:
-      - "000%"
+      - "Closed"
       - "020%"
       - "040%"
       - "060%"
       - "080%"
       - "090%"
-      - "100%"
+      - "Open"
     icon: mdi:window-shutter-auto
-  woonkamer_raambekleding:
-    name: Woonkamer Raambekleding Preset
+  living_room_covers:
+    name: Living Room Covers Preset
     options:
-      - "000%"
+      - "Closed"
       - "020%"
       - "040%"
       - "060%"
       - "080%"
       - "090%"
-      - "100%"
+      - "Open"
     icon: mdi:window-shutter-auto
 
 template:
   - cover:
-      - name: "Dakterras Gordijn"
-        unique_id: dakterras_gordijn
+      - name: "Roof Terrace Shade"
+        unique_id: roof_terrace_shade
         device_class: curtain
-        icon: mdi:blinds-horizontal
-        position: "{{ states('input_number.dakterras_gordijn_position') | int }}"
+        icon: mdi:roller-shade
+        position: "{{ states('input_number.roof_terrace_shade_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.dakterras_gordijn_position') | int %}
+          {% set pos = states('input_number.roof_terrace_shade_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.dakterras_gordijn_rts
+              entity_id: cover.roof_terrace_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.dakterras_gordijn_position
+              entity_id: input_number.roof_terrace_shade_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.dakterras_gordijn_rts
+              entity_id: cover.roof_terrace_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.dakterras_gordijn_position
+              entity_id: input_number.roof_terrace_shade_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.dakterras_gordijn_rts
+              entity_id: cover.roof_terrace_shade_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -252,10 +253,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.dakterras_gordijn_rts
+                      entity_id: cover.roof_terrace_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.dakterras_gordijn_position
+                      entity_id: input_number.roof_terrace_shade_position
                     data:
                       value: 0
               - conditions:
@@ -264,10 +265,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.dakterras_gordijn_my_position
+                      entity_id: button.roof_terrace_shade_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.dakterras_gordijn_position
+                      entity_id: input_number.roof_terrace_shade_position
                     data:
                       value: 50
               - conditions:
@@ -276,46 +277,46 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.dakterras_gordijn_rts
+                      entity_id: cover.roof_terrace_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.dakterras_gordijn_position
+                      entity_id: input_number.roof_terrace_shade_position
                     data:
                       value: 100
 
-      - name: "Gameroom Gordijn Links1"
-        unique_id: gameroom_gordijn_links1
+      - name: "Gameroom Left 1 Shade"
+        unique_id: gameroom_left_1_shade
         device_class: curtain
-        icon: mdi:blinds-horizontal
-        position: "{{ states('input_number.gameroom_gordijn_links1_position') | int }}"
+        icon: mdi:roller-shade
+        position: "{{ states('input_number.gameroom_left_1_shade_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.gameroom_gordijn_links1_position') | int %}
+          {% set pos = states('input_number.gameroom_left_1_shade_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.gameroom_gordijn_links1_rts
+              entity_id: cover.gameroom_left_1_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.gameroom_gordijn_links1_position
+              entity_id: input_number.gameroom_left_1_shade_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.gameroom_gordijn_links1_rts
+              entity_id: cover.gameroom_left_1_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.gameroom_gordijn_links1_position
+              entity_id: input_number.gameroom_left_1_shade_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.gameroom_gordijn_links1_rts
+              entity_id: cover.gameroom_left_1_shade_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -324,10 +325,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.gameroom_gordijn_links1_rts
+                      entity_id: cover.gameroom_left_1_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gameroom_gordijn_links1_position
+                      entity_id: input_number.gameroom_left_1_shade_position
                     data:
                       value: 0
               - conditions:
@@ -336,10 +337,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.gameroom_gordijn_links1_my_position
+                      entity_id: button.gameroom_left_1_shade_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gameroom_gordijn_links1_position
+                      entity_id: input_number.gameroom_left_1_shade_position
                     data:
                       value: 50
               - conditions:
@@ -348,46 +349,46 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.gameroom_gordijn_links1_rts
+                      entity_id: cover.gameroom_left_1_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gameroom_gordijn_links1_position
+                      entity_id: input_number.gameroom_left_1_shade_position
                     data:
                       value: 100
 
-      - name: "Gameroom Gordijn Links2"
-        unique_id: gameroom_gordijn_links2
+      - name: "Gameroom Left 2 Shade"
+        unique_id: gameroom_left_2_shade
         device_class: curtain
-        icon: mdi:blinds-horizontal
-        position: "{{ states('input_number.gameroom_gordijn_links2_position') | int }}"
+        icon: mdi:roller-shade
+        position: "{{ states('input_number.gameroom_left_2_shade_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.gameroom_gordijn_links2_position') | int %}
+          {% set pos = states('input_number.gameroom_left_2_shade_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.gameroom_gordijn_links2_rts
+              entity_id: cover.gameroom_left_2_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.gameroom_gordijn_links2_position
+              entity_id: input_number.gameroom_left_2_shade_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.gameroom_gordijn_links2_rts
+              entity_id: cover.gameroom_left_2_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.gameroom_gordijn_links2_position
+              entity_id: input_number.gameroom_left_2_shade_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.gameroom_gordijn_links2_rts
+              entity_id: cover.gameroom_left_2_shade_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -396,10 +397,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.gameroom_gordijn_links2_rts
+                      entity_id: cover.gameroom_left_2_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gameroom_gordijn_links2_position
+                      entity_id: input_number.gameroom_left_2_shade_position
                     data:
                       value: 0
               - conditions:
@@ -408,10 +409,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.gameroom_gordijn_links2_my_position
+                      entity_id: button.gameroom_left_2_shade_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gameroom_gordijn_links2_position
+                      entity_id: input_number.gameroom_left_2_shade_position
                     data:
                       value: 50
               - conditions:
@@ -420,46 +421,46 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.gameroom_gordijn_links2_rts
+                      entity_id: cover.gameroom_left_2_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gameroom_gordijn_links2_position
+                      entity_id: input_number.gameroom_left_2_shade_position
                     data:
                       value: 100
 
-      - name: "Gameroom Gordijn Rechts1"
-        unique_id: gameroom_gordijn_rechts1
+      - name: "Gameroom Right 1 Shade"
+        unique_id: gameroom_right_1_shade
         device_class: curtain
-        icon: mdi:blinds-horizontal
-        position: "{{ states('input_number.gameroom_gordijn_rechts1_position') | int }}"
+        icon: mdi:roller-shade
+        position: "{{ states('input_number.gameroom_right_1_shade_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.gameroom_gordijn_rechts1_position') | int %}
+          {% set pos = states('input_number.gameroom_right_1_shade_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.gameroom_gordijn_rechts1_rts
+              entity_id: cover.gameroom_right_1_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.gameroom_gordijn_rechts1_position
+              entity_id: input_number.gameroom_right_1_shade_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.gameroom_gordijn_rechts1_rts
+              entity_id: cover.gameroom_right_1_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.gameroom_gordijn_rechts1_position
+              entity_id: input_number.gameroom_right_1_shade_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.gameroom_gordijn_rechts1_rts
+              entity_id: cover.gameroom_right_1_shade_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -468,10 +469,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.gameroom_gordijn_rechts1_rts
+                      entity_id: cover.gameroom_right_1_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gameroom_gordijn_rechts1_position
+                      entity_id: input_number.gameroom_right_1_shade_position
                     data:
                       value: 0
               - conditions:
@@ -480,10 +481,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.gameroom_gordijn_rechts1_my_position
+                      entity_id: button.gameroom_right_1_shade_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gameroom_gordijn_rechts1_position
+                      entity_id: input_number.gameroom_right_1_shade_position
                     data:
                       value: 50
               - conditions:
@@ -492,46 +493,46 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.gameroom_gordijn_rechts1_rts
+                      entity_id: cover.gameroom_right_1_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gameroom_gordijn_rechts1_position
+                      entity_id: input_number.gameroom_right_1_shade_position
                     data:
                       value: 100
 
-      - name: "Gameroom Gordijn Rechts2"
-        unique_id: gameroom_gordijn_rechts2
+      - name: "Gameroom Right 2 Shade"
+        unique_id: gameroom_right_2_shade
         device_class: curtain
-        icon: mdi:blinds-horizontal
-        position: "{{ states('input_number.gameroom_gordijn_rechts2_position') | int }}"
+        icon: mdi:roller-shade
+        position: "{{ states('input_number.gameroom_right_2_shade_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.gameroom_gordijn_rechts2_position') | int %}
+          {% set pos = states('input_number.gameroom_right_2_shade_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.gameroom_gordijn_rechts2_rts
+              entity_id: cover.gameroom_right_2_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.gameroom_gordijn_rechts2_position
+              entity_id: input_number.gameroom_right_2_shade_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.gameroom_gordijn_rechts2_rts
+              entity_id: cover.gameroom_right_2_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.gameroom_gordijn_rechts2_position
+              entity_id: input_number.gameroom_right_2_shade_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.gameroom_gordijn_rechts2_rts
+              entity_id: cover.gameroom_right_2_shade_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -540,10 +541,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.gameroom_gordijn_rechts2_rts
+                      entity_id: cover.gameroom_right_2_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gameroom_gordijn_rechts2_position
+                      entity_id: input_number.gameroom_right_2_shade_position
                     data:
                       value: 0
               - conditions:
@@ -552,10 +553,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.gameroom_gordijn_rechts2_my_position
+                      entity_id: button.gameroom_right_2_shade_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gameroom_gordijn_rechts2_position
+                      entity_id: input_number.gameroom_right_2_shade_position
                     data:
                       value: 50
               - conditions:
@@ -564,46 +565,46 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.gameroom_gordijn_rechts2_rts
+                      entity_id: cover.gameroom_right_2_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gameroom_gordijn_rechts2_position
+                      entity_id: input_number.gameroom_right_2_shade_position
                     data:
                       value: 100
 
-      - name: "Gang Gordijn"
-        unique_id: gang_gordijn
+      - name: "Hallway Shade"
+        unique_id: hallway_shade
         device_class: curtain
-        icon: mdi:blinds-horizontal
-        position: "{{ states('input_number.gang_gordijn_position') | int }}"
+        icon: mdi:roller-shade
+        position: "{{ states('input_number.hallway_shade_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.gang_gordijn_position') | int %}
+          {% set pos = states('input_number.hallway_shade_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.gang_gordijn_rts
+              entity_id: cover.hallway_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.gang_gordijn_position
+              entity_id: input_number.hallway_shade_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.gang_gordijn_rts
+              entity_id: cover.hallway_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.gang_gordijn_position
+              entity_id: input_number.hallway_shade_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.gang_gordijn_rts
+              entity_id: cover.hallway_shade_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -612,10 +613,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.gang_gordijn_rts
+                      entity_id: cover.hallway_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gang_gordijn_position
+                      entity_id: input_number.hallway_shade_position
                     data:
                       value: 0
               - conditions:
@@ -624,10 +625,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.gang_gordijn_my_position
+                      entity_id: button.hallway_shade_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gang_gordijn_position
+                      entity_id: input_number.hallway_shade_position
                     data:
                       value: 50
               - conditions:
@@ -636,46 +637,46 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.gang_gordijn_rts
+                      entity_id: cover.hallway_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.gang_gordijn_position
+                      entity_id: input_number.hallway_shade_position
                     data:
                       value: 100
 
-      - name: "Kantoor Gordijn Links"
-        unique_id: kantoor_gordijn_links
+      - name: "Office Left Shade"
+        unique_id: office_left_shade
         device_class: curtain
-        icon: mdi:blinds-horizontal
-        position: "{{ states('input_number.kantoor_gordijn_links_position') | int }}"
+        icon: mdi:roller-shade
+        position: "{{ states('input_number.office_left_shade_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.kantoor_gordijn_links_position') | int %}
+          {% set pos = states('input_number.office_left_shade_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.kantoor_gordijn_links_rts
+              entity_id: cover.office_left_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.kantoor_gordijn_links_position
+              entity_id: input_number.office_left_shade_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.kantoor_gordijn_links_rts
+              entity_id: cover.office_left_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.kantoor_gordijn_links_position
+              entity_id: input_number.office_left_shade_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.kantoor_gordijn_links_rts
+              entity_id: cover.office_left_shade_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -684,10 +685,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.kantoor_gordijn_links_rts
+                      entity_id: cover.office_left_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.kantoor_gordijn_links_position
+                      entity_id: input_number.office_left_shade_position
                     data:
                       value: 0
               - conditions:
@@ -696,10 +697,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.kantoor_gordijn_links_my_position
+                      entity_id: button.office_left_shade_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.kantoor_gordijn_links_position
+                      entity_id: input_number.office_left_shade_position
                     data:
                       value: 50
               - conditions:
@@ -708,46 +709,46 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.kantoor_gordijn_links_rts
+                      entity_id: cover.office_left_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.kantoor_gordijn_links_position
+                      entity_id: input_number.office_left_shade_position
                     data:
                       value: 100
 
-      - name: "Kantoor Gordijn Rechts"
-        unique_id: kantoor_gordijn_rechts
+      - name: "Office Right Shade"
+        unique_id: office_right_shade
         device_class: curtain
-        icon: mdi:blinds-horizontal
-        position: "{{ states('input_number.kantoor_gordijn_rechts_position') | int }}"
+        icon: mdi:roller-shade
+        position: "{{ states('input_number.office_right_shade_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.kantoor_gordijn_rechts_position') | int %}
+          {% set pos = states('input_number.office_right_shade_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.kantoor_gordijn_rechts_rts
+              entity_id: cover.office_right_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.kantoor_gordijn_rechts_position
+              entity_id: input_number.office_right_shade_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.kantoor_gordijn_rechts_rts
+              entity_id: cover.office_right_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.kantoor_gordijn_rechts_position
+              entity_id: input_number.office_right_shade_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.kantoor_gordijn_rechts_rts
+              entity_id: cover.office_right_shade_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -756,10 +757,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.kantoor_gordijn_rechts_rts
+                      entity_id: cover.office_right_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.kantoor_gordijn_rechts_position
+                      entity_id: input_number.office_right_shade_position
                     data:
                       value: 0
               - conditions:
@@ -768,10 +769,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.kantoor_gordijn_rechts_my_position
+                      entity_id: button.office_right_shade_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.kantoor_gordijn_rechts_position
+                      entity_id: input_number.office_right_shade_position
                     data:
                       value: 50
               - conditions:
@@ -780,46 +781,46 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.kantoor_gordijn_rechts_rts
+                      entity_id: cover.office_right_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.kantoor_gordijn_rechts_position
+                      entity_id: input_number.office_right_shade_position
                     data:
                       value: 100
 
-      - name: "Keuken Gordijn"
-        unique_id: keuken_gordijn
+      - name: "Kitchen Shade"
+        unique_id: kitchen_shade
         device_class: curtain
-        icon: mdi:blinds-horizontal
-        position: "{{ states('input_number.keuken_gordijn_position') | int }}"
+        icon: mdi:roller-shade
+        position: "{{ states('input_number.kitchen_shade_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.keuken_gordijn_position') | int %}
+          {% set pos = states('input_number.kitchen_shade_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.keuken_gordijn_rts
+              entity_id: cover.kitchen_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.keuken_gordijn_position
+              entity_id: input_number.kitchen_shade_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.keuken_gordijn_rts
+              entity_id: cover.kitchen_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.keuken_gordijn_position
+              entity_id: input_number.kitchen_shade_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.keuken_gordijn_rts
+              entity_id: cover.kitchen_shade_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -828,10 +829,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.keuken_gordijn_rts
+                      entity_id: cover.kitchen_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.keuken_gordijn_position
+                      entity_id: input_number.kitchen_shade_position
                     data:
                       value: 0
               - conditions:
@@ -840,10 +841,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.keuken_gordijn_my_position
+                      entity_id: button.kitchen_shade_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.keuken_gordijn_position
+                      entity_id: input_number.kitchen_shade_position
                     data:
                       value: 50
               - conditions:
@@ -852,45 +853,45 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.keuken_gordijn_rts
+                      entity_id: cover.kitchen_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.keuken_gordijn_position
+                      entity_id: input_number.kitchen_shade_position
                     data:
                       value: 100
 
-      - name: "Sauna Gordijn"
-        unique_id: sauna_gordijn
+      - name: "Gym Curtain"
+        unique_id: gym_curtain
         device_class: curtain
-        position: "{{ states('input_number.sauna_gordijn_position') | int }}"
+        position: "{{ states('input_number.gym_curtain_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.sauna_gordijn_position') | int %}
+          {% set pos = states('input_number.gym_curtain_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.sauna_gordijn_rts
+              entity_id: cover.gym_curtain_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.sauna_gordijn_position
+              entity_id: input_number.gym_curtain_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.sauna_gordijn_rts
+              entity_id: cover.gym_curtain_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.sauna_gordijn_position
+              entity_id: input_number.gym_curtain_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.sauna_gordijn_rts
+              entity_id: cover.gym_curtain_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -899,10 +900,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.sauna_gordijn_rts
+                      entity_id: cover.gym_curtain_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.sauna_gordijn_position
+                      entity_id: input_number.gym_curtain_position
                     data:
                       value: 0
               - conditions:
@@ -911,10 +912,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.sauna_gordijn_my_position
+                      entity_id: button.gym_curtain_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.sauna_gordijn_position
+                      entity_id: input_number.gym_curtain_position
                     data:
                       value: 50
               - conditions:
@@ -923,45 +924,45 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.sauna_gordijn_rts
+                      entity_id: cover.gym_curtain_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.sauna_gordijn_position
+                      entity_id: input_number.gym_curtain_position
                     data:
                       value: 100
 
-      - name: "Slaapkamer Gordijn"
-        unique_id: slaapkamer_gordijn
+      - name: "Bedroom Curtain"
+        unique_id: bedroom_curtain
         device_class: curtain
-        position: "{{ states('input_number.slaapkamer_gordijn_position') | int }}"
+        position: "{{ states('input_number.bedroom_curtain_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.slaapkamer_gordijn_position') | int %}
+          {% set pos = states('input_number.bedroom_curtain_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.slaapkamer_gordijn_rts
+              entity_id: cover.bedroom_curtain_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.slaapkamer_gordijn_position
+              entity_id: input_number.bedroom_curtain_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.slaapkamer_gordijn_rts
+              entity_id: cover.bedroom_curtain_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.slaapkamer_gordijn_position
+              entity_id: input_number.bedroom_curtain_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.slaapkamer_gordijn_rts
+              entity_id: cover.bedroom_curtain_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -970,10 +971,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.slaapkamer_gordijn_rts
+                      entity_id: cover.bedroom_curtain_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.slaapkamer_gordijn_position
+                      entity_id: input_number.bedroom_curtain_position
                     data:
                       value: 0
               - conditions:
@@ -982,10 +983,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.slaapkamer_gordijn_my_position
+                      entity_id: button.bedroom_curtain_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.slaapkamer_gordijn_position
+                      entity_id: input_number.bedroom_curtain_position
                     data:
                       value: 50
               - conditions:
@@ -994,46 +995,46 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.slaapkamer_gordijn_rts
+                      entity_id: cover.bedroom_curtain_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.slaapkamer_gordijn_position
+                      entity_id: input_number.bedroom_curtain_position
                     data:
                       value: 100
 
-      - name: "Tuin Gordijn"
-        unique_id: tuin_gordijn
+      - name: "Garden Shade"
+        unique_id: garden_shade
         device_class: curtain
-        icon: mdi:blinds-horizontal
-        position: "{{ states('input_number.tuin_gordijn_position') | int }}"
+        icon: mdi:roller-shade
+        position: "{{ states('input_number.garden_shade_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.tuin_gordijn_position') | int %}
+          {% set pos = states('input_number.garden_shade_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.tuin_gordijn_rts
+              entity_id: cover.garden_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.tuin_gordijn_position
+              entity_id: input_number.garden_shade_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.tuin_gordijn_rts
+              entity_id: cover.garden_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.tuin_gordijn_position
+              entity_id: input_number.garden_shade_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.tuin_gordijn_rts
+              entity_id: cover.garden_shade_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -1042,10 +1043,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.tuin_gordijn_rts
+                      entity_id: cover.garden_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.tuin_gordijn_position
+                      entity_id: input_number.garden_shade_position
                     data:
                       value: 0
               - conditions:
@@ -1054,10 +1055,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.tuin_gordijn_my_position
+                      entity_id: button.garden_shade_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.tuin_gordijn_position
+                      entity_id: input_number.garden_shade_position
                     data:
                       value: 50
               - conditions:
@@ -1066,46 +1067,46 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.tuin_gordijn_rts
+                      entity_id: cover.garden_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.tuin_gordijn_position
+                      entity_id: input_number.garden_shade_position
                     data:
                       value: 100
 
-      - name: "Woonkamer Gordijn"
-        unique_id: woonkamer_gordijn
+      - name: "Living Room Shade"
+        unique_id: living_room_shade
         device_class: curtain
-        icon: mdi:blinds-horizontal
-        position: "{{ states('input_number.woonkamer_gordijn_position') | int }}"
+        icon: mdi:roller-shade
+        position: "{{ states('input_number.living_room_shade_position') | int }}"
         availability: "{{ true }}"
         state: >
-          {% set pos = states('input_number.woonkamer_gordijn_position') | int %}
+          {% set pos = states('input_number.living_room_shade_position') | int %}
           {% if pos == 0 %}closed
           {% elif pos == 100 %}open
           {% else %}open{% endif %}
         open_cover:
           - action: cover.open_cover
             target:
-              entity_id: cover.woonkamer_gordijn_rts
+              entity_id: cover.living_room_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.woonkamer_gordijn_position
+              entity_id: input_number.living_room_shade_position
             data:
               value: 100
         close_cover:
           - action: cover.close_cover
             target:
-              entity_id: cover.woonkamer_gordijn_rts
+              entity_id: cover.living_room_shade_rts
           - action: input_number.set_value
             target:
-              entity_id: input_number.woonkamer_gordijn_position
+              entity_id: input_number.living_room_shade_position
             data:
               value: 0
         stop_cover:
           - action: cover.stop_cover
             target:
-              entity_id: cover.woonkamer_gordijn_rts
+              entity_id: cover.living_room_shade_rts
         set_cover_position:
           - choose:
               - conditions:
@@ -1114,10 +1115,10 @@ template:
                 sequence:
                   - action: cover.close_cover
                     target:
-                      entity_id: cover.woonkamer_gordijn_rts
+                      entity_id: cover.living_room_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.woonkamer_gordijn_position
+                      entity_id: input_number.living_room_shade_position
                     data:
                       value: 0
               - conditions:
@@ -1126,10 +1127,10 @@ template:
                 sequence:
                   - action: button.press
                     target:
-                      entity_id: button.woonkamer_gordijn_my_position
+                      entity_id: button.living_room_shade_my_position
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.woonkamer_gordijn_position
+                      entity_id: input_number.living_room_shade_position
                     data:
                       value: 50
               - conditions:
@@ -1138,27 +1139,27 @@ template:
                 sequence:
                   - action: cover.open_cover
                     target:
-                      entity_id: cover.woonkamer_gordijn_rts
+                      entity_id: cover.living_room_shade_rts
                   - action: input_number.set_value
                     target:
-                      entity_id: input_number.woonkamer_gordijn_position
+                      entity_id: input_number.living_room_shade_position
                     data:
                       value: 100
 
 
 cover:
   - platform: group
-    name: "Kantoor Gordijnen"
-    unique_id: kantoor_gordijnen
+    name: "Office Shades"
+    unique_id: office_shades
     entities:
-      - cover.kantoor_gordijn_links
-      - cover.kantoor_gordijn_rechts
+      - cover.office_left_shade
+      - cover.office_right_shade
 
   - platform: group
-    name: "Gameroom Gordijnen"
-    unique_id: gameroom_gordijnen
+    name: "Gameroom Shades"
+    unique_id: gameroom_shades
     entities:
-      - cover.gameroom_gordijn_links1
-      - cover.gameroom_gordijn_links2
-      - cover.gameroom_gordijn_rechts1
-      - cover.gameroom_gordijn_rechts2
+      - cover.gameroom_left_1_shade
+      - cover.gameroom_left_2_shade
+      - cover.gameroom_right_1_shade
+      - cover.gameroom_right_2_shade

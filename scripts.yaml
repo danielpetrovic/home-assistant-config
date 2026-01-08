@@ -5,13 +5,13 @@ music_away:
     data: {}
     target:
       entity_id:
-      - media_player.badkamer
+      - media_player.bathroom
       - media_player.gameroom
-      - media_player.kantoor
-      - media_player.keuken
-      - media_player.sauna
-      - media_player.slaapkamer
-      - media_player.woonkamer
+      - media_player.office
+      - media_player.kitchen
+      - media_player.gym
+      - media_player.bedroom
+      - media_player.living_room
   alias: Music - Away
   description: ''
   icon: mdi:music-note-off-outline
@@ -28,24 +28,24 @@ music_night:
       media_id:
       - Classical
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.bedroom
   - action: media_player.media_play
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.bedroom
   - action: media_player.repeat_set
     metadata: {}
     data:
       repeat: all
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.bedroom
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.bedroom
   - delay:
       hours: 0
       minutes: 0
@@ -55,19 +55,19 @@ music_night:
     metadata: {}
     data:
       group_members:
-      - media_player.badkamer
-      - media_player.keuken
-      - media_player.sauna
+      - media_player.bathroom
+      - media_player.kitchen
+      - media_player.gym
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.bedroom
   - action: media_player.volume_set
     metadata: {}
     data:
       volume_level: 0.25
     target:
       entity_id:
-      - media_player.sauna
-      - media_player.slaapkamer
+      - media_player.gym
+      - media_player.bedroom
 music_home:
   alias: Music - Home
   description: ''
@@ -89,24 +89,24 @@ music_home:
       - R&B
       - Rock
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.bedroom
   - action: media_player.media_play
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.bedroom
   - action: media_player.repeat_set
     metadata: {}
     data:
       repeat: all
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.bedroom
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.bedroom
   - delay:
       hours: 0
       minutes: 0
@@ -116,44 +116,47 @@ music_home:
     metadata: {}
     data:
       group_members:
-      - media_player.badkamer
-      - media_player.keuken
-      - media_player.sauna
+      - media_player.bathroom
+      - media_player.kitchen
+      - media_player.gym
     target:
-      entity_id: media_player.slaapkamer
+      entity_id: media_player.bedroom
   - action: media_player.volume_set
     metadata: {}
     data:
       volume_level: 0.35
     target:
       entity_id:
-      - media_player.keuken
+      - media_player.kitchen
   - action: media_player.volume_set
     metadata: {}
     data:
       volume_level: 0.25
     target:
       entity_id:
-      - media_player.sauna
-      - media_player.slaapkamer
+      - media_player.gym
+      - media_player.bedroom
 lights_green:
+  alias: Lights - Breathe Green
+  description: ''
+  icon: mdi:alarm-light
   sequence:
   - alias: Scene, create
     action: scene.create
     data:
       scene_id: alarm_before
       snapshot_entities:
-      - light.badkamer_lamp
-      - light.eettafel_lamp_onder
-      - light.entree_lamp
-      - light.gameroom_lamp_onder
-      - light.gang_lamp
-      - light.kantoor_lamp
-      - light.sauna_lamp
-      - light.schuur_lamp_werkbank
-      - light.slaapkamer_lamp
-      - light.toilet_lamp
-      - light.woonkamer_lamp_onder
+      - light.bathroom_light
+      - light.bedroom_light
+      - light.dining_table_below_light
+      - light.entrance_light
+      - light.gameroom_below_light
+      - light.gym_light
+      - light.hallway_light
+      - light.living_room_below_light
+      - light.office_light
+      - light.shed_workbench_light
+      - light.toilet_light
   - alias: Lights green, breathe
     action: light.turn_on
     data:
@@ -163,7 +166,7 @@ lights_green:
       transition: 1
     target:
       entity_id:
-      - light.alarm_lampen
+      - light.alarm
   - delay:
       hours: 0
       minutes: 0
@@ -179,7 +182,7 @@ lights_green:
       transition: 1
     target:
       entity_id:
-      - light.alarm_lampen
+      - light.alarm
   - delay:
       hours: 0
       minutes: 0
@@ -202,27 +205,27 @@ lights_green:
       entity_id: scene.alarm_before
     data: {}
     enabled: true
-  alias: Lights - Breathe Green
+lights_blue:
+  alias: Lights - Breathe Blue
   description: ''
   icon: mdi:alarm-light
-lights_blue:
   sequence:
   - alias: Scene, create
     action: scene.create
     data:
       scene_id: alarm_before
       snapshot_entities:
-      - light.badkamer_lamp
-      - light.eettafel_lamp_onder
-      - light.entree_lamp
-      - light.gameroom_lamp_onder
-      - light.gang_lamp
-      - light.kantoor_lamp
-      - light.sauna_lamp
-      - light.schuur_lamp_werkbank
-      - light.slaapkamer_lamp
-      - light.toilet_lamp
-      - light.woonkamer_lamp_onder
+      - light.bathroom_light
+      - light.bedroom_light
+      - light.dining_table_below_light
+      - light.entrance_light
+      - light.gameroom_below_light
+      - light.gym_light
+      - light.hallway_light
+      - light.living_room_below_light
+      - light.office_light
+      - light.shed_workbench_light
+      - light.toilet_light
   - alias: Lights blue, breathe
     action: light.turn_on
     data:
@@ -232,7 +235,7 @@ lights_blue:
       transition: 1
     target:
       entity_id:
-      - light.alarm_lampen
+      - light.alarm
   - delay:
       hours: 0
       minutes: 0
@@ -248,7 +251,7 @@ lights_blue:
       transition: 1
     target:
       entity_id:
-      - light.alarm_lampen
+      - light.alarm
   - delay:
       hours: 0
       minutes: 0
@@ -271,27 +274,27 @@ lights_blue:
       entity_id: scene.alarm_before
     data: {}
     enabled: true
-  alias: Lights - Breathe Blue
+lights_red:
+  alias: Lights - Breathe Red
   description: ''
   icon: mdi:alarm-light
-lights_red:
   sequence:
   - alias: Scene, create
     action: scene.create
     data:
       scene_id: alarm_before
       snapshot_entities:
-      - light.badkamer_lamp
-      - light.eettafel_lamp_onder
-      - light.entree_lamp
-      - light.gameroom_lamp_onder
-      - light.gang_lamp
-      - light.kantoor_lamp
-      - light.sauna_lamp
-      - light.schuur_lamp_werkbank
-      - light.slaapkamer_lamp
-      - light.toilet_lamp
-      - light.woonkamer_lamp_onder
+      - light.bathroom_light
+      - light.bedroom_light
+      - light.dining_table_below_light
+      - light.entrance_light
+      - light.gameroom_below_light
+      - light.gym_light
+      - light.hallway_light
+      - light.living_room_below_light
+      - light.office_light
+      - light.shed_workbench_light
+      - light.toilet_light
   - alias: Lights red, breathe
     action: light.turn_on
     data:
@@ -301,7 +304,7 @@ lights_red:
       transition: 1
     target:
       entity_id:
-      - light.alarm_lampen
+      - light.alarm
   - delay:
       hours: 0
       minutes: 0
@@ -317,7 +320,7 @@ lights_red:
       transition: 1
     target:
       entity_id:
-      - light.alarm_lampen
+      - light.alarm
   - delay:
       hours: 0
       minutes: 0
@@ -340,27 +343,27 @@ lights_red:
       entity_id: scene.alarm_before
     data: {}
     enabled: true
-  alias: Lights - Breathe Red
+lights_orange:
+  alias: Lights - Breathe Orange
   description: ''
   icon: mdi:alarm-light
-lights_orange:
   sequence:
   - alias: Scene, create
     action: scene.create
     data:
       scene_id: alarm_before
       snapshot_entities:
-      - light.badkamer_lamp
-      - light.eettafel_lamp_onder
-      - light.entree_lamp
-      - light.gameroom_lamp_onder
-      - light.gang_lamp
-      - light.kantoor_lamp
-      - light.sauna_lamp
-      - light.schuur_lamp_werkbank
-      - light.slaapkamer_lamp
-      - light.toilet_lamp
-      - light.woonkamer_lamp_onder
+      - light.bathroom_light
+      - light.bedroom_light
+      - light.dining_table_below_light
+      - light.entrance_light
+      - light.gameroom_below_light
+      - light.gym_light
+      - light.hallway_light
+      - light.living_room_below_light
+      - light.office_light
+      - light.shed_workbench_light
+      - light.toilet_light
   - alias: Lights orange, breathe
     action: light.turn_on
     data:
@@ -370,7 +373,7 @@ lights_orange:
       transition: 1
     target:
       entity_id:
-      - light.alarm_lampen
+      - light.alarm
   - delay:
       hours: 0
       minutes: 0
@@ -386,7 +389,7 @@ lights_orange:
       transition: 1
     target:
       entity_id:
-      - light.alarm_lampen
+      - light.alarm
   - delay:
       hours: 0
       minutes: 0
@@ -409,16 +412,14 @@ lights_orange:
       entity_id: scene.alarm_before
     data: {}
     enabled: true
-  alias: Lights - Breathe Orange
-  description: ''
-  icon: mdi:alarm-light
 alarm_pending:
   sequence:
   - action: button.press
     metadata: {}
     data: {}
     target:
-      entity_id: button.alarm_sirene_trigger_alarm
+      entity_id:
+      - button.alarm_siren_trigger_alarm
   alias: Alarm - Pending
   description: ''
   icon: mdi:shield-outline
@@ -433,7 +434,8 @@ alarm_home:
     metadata: {}
     data: {}
     target:
-      entity_id: button.alarm_sirene_stop_alarm
+      entity_id:
+      - button.alarm_siren_stop_alarm
   alias: Alarm - Home
   description: ''
   icon: mdi:shield-home
@@ -443,7 +445,8 @@ alarm_night:
     metadata: {}
     data: {}
     target:
-      entity_id: button.alarm_sirene_stop_alarm
+      entity_id:
+      - button.alarm_siren_stop_alarm
   alias: Alarm - Night
   description: ''
   icon: mdi:shield-moon
@@ -453,12 +456,7 @@ alarm_disarmed:
     metadata: {}
     data: {}
     target:
-      entity_id: button.alarm_sirene_stop_alarm
-  - action: fan.set_preset_mode
-    data:
-      preset_mode: Auto
-    target:
-      entity_id: fan.ducobox
+      entity_id: button.alarm_siren_stop_alarm
   alias: Alarm - Disarmed
   description: ''
   icon: mdi:shield-off
