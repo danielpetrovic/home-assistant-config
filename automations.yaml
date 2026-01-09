@@ -40,10 +40,6 @@
       hours: 0
       minutes: 0
       seconds: 10
-  - alias: 01:00
-    id: 01:00
-    trigger: time
-    at: 01:00:00
   - alias: player idle
     id: player idle
     trigger: state
@@ -57,10 +53,6 @@
       hours: 0
       minutes: 0
       seconds: 30
-  - alias: 07:00
-    id: 07:00
-    trigger: time
-    at: 07:00:00
   conditions: []
   actions:
   - choose:
@@ -70,6 +62,18 @@
         id:
         - lights on
       sequence:
+      - action: media_player.join
+        metadata: {}
+        target:
+          entity_id: media_player.bedroom
+        data:
+          group_members:
+          - media_player.bathroom
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 3
+          milliseconds: 0
       - action: media_player.volume_set
         metadata: {}
         data:
@@ -86,6 +90,21 @@
         metadata: {}
         data:
           volume_level: 0.25
+        target:
+          entity_id: media_player.bathroom
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 9
+          milliseconds: 0
+      - action: media_player.unjoin
+        metadata: {}
+        target:
+          entity_id: media_player.bathroom
+        data: {}
+      - action: media_player.turn_off
+        metadata: {}
+        data: {}
         target:
           entity_id: media_player.bathroom
     - conditions:
@@ -121,21 +140,6 @@
     - conditions:
       - condition: trigger
         id:
-        - 01:00
-      sequence:
-      - action: media_player.unjoin
-        metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.bathroom
-      - action: media_player.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.bathroom
-    - conditions:
-      - condition: trigger
-        id:
         - player idle
       - condition: state
         entity_id: media_player.bedroom
@@ -150,7 +154,7 @@
       - delay:
           hours: 0
           minutes: 0
-          seconds: 1
+          seconds: 3
           milliseconds: 0
       - action: media_player.join
         metadata: {}
@@ -160,18 +164,6 @@
           group_members:
           - media_player.bathroom
       alias: player idle
-    - conditions:
-      - condition: trigger
-        id:
-        - 07:00
-      sequence:
-      - action: media_player.join
-        metadata: {}
-        data:
-          group_members:
-          - media_player.bathroom
-        target:
-          entity_id: media_player.bedroom
   mode: restart
 - id: '1704667361587'
   alias: Garden Covers
@@ -3659,11 +3651,12 @@
     input:
       integration_type:
       - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Entrance Button
       button_1_light:
         entity_id:
-        - light.entrance_light
+        - light.office_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
@@ -3671,8 +3664,13 @@
       - action: automation.toggle
         metadata: {}
         target:
-          entity_id: automation.entrance_beweging
+          entity_id: automation.entrance_motion
         data: {}
+      zha_remote: b5b016dbd25e4edc48cfe901343953e3
+      button_1_on_light_mode:
+      - turn_on
+      button_1_off_light_mode:
+      - turn_off
 - id: '1755899171238'
   alias: Toilet Button
   description: ''
@@ -5076,18 +5074,19 @@
       - action: light.turn_off
         target:
           area_id:
-          - roof_terrace
+          - bedroom
           - dining_table
           - entrance
           - gameroom
-          - hallway
-          - office
-          - kitchen
-          - gym
-          - shed
           - garden
+          - gym
+          - hallway
+          - kitchen
           - laundry_room
           - living_room
+          - office
+          - roof_terrace
+          - shed
         data:
           transition: 60
     - alias: 01:00
@@ -5098,19 +5097,19 @@
       - action: light.turn_off
         target:
           area_id:
-          - roof_terrace
+          - bedroom
           - dining_table
           - entrance
           - gameroom
-          - hallway
-          - office
-          - kitchen
-          - gym
-          - shed
-          - bedroom
           - garden
+          - gym
+          - hallway
+          - kitchen
           - laundry_room
           - living_room
+          - office
+          - roof_terrace
+          - shed
         data:
           transition: 60
   - alias: Luminosity
@@ -5128,7 +5127,7 @@
       - action: light.turn_on
         target:
           entity_id:
-          - light.front_door_lighten
+          - light.front_door_light
         data:
           brightness_pct: 100
           transition: 3600
@@ -5142,8 +5141,8 @@
         metadata: {}
         target:
           entity_id:
-          - light.dining_table_light_boven
-          - light.living_room_light_boven
+          - light.dining_table_above_light
+          - light.living_room_above_light
     - alias: not dark
       conditions:
       - condition: trigger
@@ -5159,8 +5158,8 @@
       - action: light.turn_off
         target:
           entity_id:
-          - light.alleyway_lighten
-          - light.front_door_lighten
+          - light.alleyway
+          - light.front_door_light
         data:
           transition: 3600
     enabled: true

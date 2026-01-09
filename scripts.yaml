@@ -55,9 +55,8 @@ music_night:
     metadata: {}
     data:
       group_members:
-      - media_player.bathroom
-      - media_player.kitchen
       - media_player.gym
+      - media_player.kitchen
     target:
       entity_id: media_player.bedroom
   - action: media_player.volume_set
@@ -66,8 +65,8 @@ music_night:
       volume_level: 0.25
     target:
       entity_id:
-      - media_player.gym
       - media_player.bedroom
+      - media_player.gym
 music_home:
   alias: Music - Home
   description: ''
@@ -116,9 +115,8 @@ music_home:
     metadata: {}
     data:
       group_members:
-      - media_player.bathroom
-      - media_player.kitchen
       - media_player.gym
+      - media_player.kitchen
     target:
       entity_id: media_player.bedroom
   - action: media_player.volume_set
@@ -134,8 +132,8 @@ music_home:
       volume_level: 0.25
     target:
       entity_id:
-      - media_player.gym
       - media_player.bedroom
+      - media_player.gym
 lights_green:
   alias: Lights - Breathe Green
   description: ''
