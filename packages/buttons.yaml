@@ -1,118 +1,104 @@
 input_text:
-  badkamer_knop_last_pressed:
-    name: Badkamer Knop Last Pressed
+  bathroom_button_last_pressed:
+    name: Bathroom Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  eettafel_knop_last_pressed:
-    name: Eettafel Knop Last Pressed
+  dining_table_button_last_pressed:
+    name: Dining Table Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  entree_knop_last_pressed:
-    name: Entree Knop Last Pressed
-    icon: mdi:gesture-double-tap
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
-  gameroom_bureau_knop_last_pressed:
-    name: Gameroom Bureau Knop Last Pressed
+  gameroom_desk_button_last_pressed:
+    name: Gameroom Desk Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  gameroom_dakterras_knop_last_pressed:
-    name: Gameroom Dakterras Knop Last Pressed
+  roof_terrace_button_last_pressed:
+    name: Roof Terrace Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  gameroom_knop_last_pressed:
-    name: Gameroom Knop Last Pressed
+  gameroom_button_last_pressed:
+    name: Gameroom Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  gang_knop_last_pressed:
-    name: Gang Knop Last Pressed
+  hallway_button_last_pressed:
+    name: Hallway Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  kantoor_knop_last_pressed:
-    name: Kantoor Knop Last Pressed
+  office_button_last_pressed:
+    name: Office Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  keuken_knop_last_pressed:
-    name: Keuken Knop Last Pressed
+  kitchen_button_last_pressed:
+    name: Kitchen Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  sauna_knop_last_pressed:
-    name: Sauna Knop Last Pressed
+  gym_button_last_pressed:
+    name: Gym Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  schuur_looppad_knop_last_pressed:
-    name: Schuur Looppad Knop Last Pressed
+  shed_alleyway_button_last_pressed:
+    name: Shed Alleyway Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  schuur_tuin_knop_last_pressed:
-    name: Schuur Tuin Knop Last Pressed
+  shed_garden_button_last_pressed:
+    name: Shed Garden Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  toilet_knop_last_pressed:
-    name: Toilet Knop Last Pressed
-    icon: mdi:gesture-double-tap
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
-  slaapkamer_alex_knop_last_pressed:
-    name: Slaapkamer Alex Knop Last Pressed
+  bedroom_alex_button_last_pressed:
+    name: Bedroom Alex Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  slaapkamer_deni_knop_last_pressed:
-    name: Slaapkamer Deni Knop Last Pressed
+  bedroom_deni_button_last_pressed:
+    name: Bedroom Deni Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  slaapkamer_knop_last_pressed:
-    name: Slaapkamer Knop Last Pressed
+  bedroom_button_last_pressed:
+    name: Bedroom Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1
     mode: text
     pattern: "[1-4]"
-  woonkamer_knop_last_pressed:
-    name: Woonkamer Knop Last Pressed
+  living_room_button_last_pressed:
+    name: Living Room Button Last Pressed
     icon: mdi:knob
     min: 0
     max: 1

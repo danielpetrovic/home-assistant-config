@@ -48,7 +48,7 @@ input_text:
     max: 16
     pattern: "^[0-9A-F+]+$" # Supports PIN and RFID
   alarm_code_user_3:
-    name: Alarm Code Arjen en Yuni
+    name: Alarm Code Arjen and Yuni
     icon: mdi:dialpad
     mode: password
     min: 4
