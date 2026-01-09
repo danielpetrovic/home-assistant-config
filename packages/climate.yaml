@@ -311,7 +311,7 @@ template:
         icon: mdi:sun-clock
   - sensor:
       - name: "Climate Heat Stress"
-        unique_id: climate_heat_stress_percent
+        unique_id: climate_heat_stress
         unit_of_measurement: "%"
         state_class: measurement
         state: >
@@ -372,7 +372,7 @@ template:
       - name: "Climate Mode"
         unique_id: climate_mode
         state: >
-          {% set hs = states('sensor.climate_heat_stress_percent') | float(0) %}
+          {% set hs = states('sensor.climate_heat_stress') | float(0) %}
           {% set humidex = states('sensor.climate_humidex') | float(0) %}
           {% set daylight_h = states('sensor.daylight_duration') | float(0) %}
           {% set min7 = states('sensor.outdoor_temperature_min') | float(0) %}
