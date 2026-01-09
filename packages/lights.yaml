@@ -1,5 +1,3 @@
-# Adaptive Lighting Helpers
-# These are updated by the Adaptive Lighting blueprint automation
 input_number:
   adaptive_brightness_bright:
     name: "Adaptive Brightness Bright"
@@ -471,3 +469,12 @@ schedule:
         data:
           brightness_pct: 10
           color_temp_kelvin: 2200
+
+template:
+  - sensor:
+      - name: "Lights"
+        unique_id: lights
+        state: >
+          {% set lights = states.light | selectattr('entity_id', 'search', 'light') | list %}
+          {{ lights | selectattr('state', 'eq', 'on') | list | count }}
+        icon: mdi:lightbulb-group

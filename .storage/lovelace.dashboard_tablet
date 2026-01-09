@@ -12,23 +12,17 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "heading",
-                  "heading_style": "subtitle",
-                  "heading": "Camera's",
-                  "icon": "mdi:cctv"
-                },
-                {
+                  "show_state": false,
+                  "show_name": false,
+                  "camera_view": "live",
+                  "fit_mode": "cover",
                   "type": "picture-entity",
                   "aspect_ratio": "4:3",
                   "camera_image": "camera.voordeur",
-                  "camera_view": "live",
-                  "entity": "camera.voordeur",
-                  "fit_mode": "cover",
+                  "entity": "camera.front_door",
                   "grid_options": {
                     "columns": "full"
                   },
-                  "show_state": false,
-                  "show_name": false,
                   "tap_action": {
                     "action": "none"
                   }
@@ -44,7 +38,7 @@
                   "icon": "mdi:home-floor-0",
                   "heading_style": "subtitle",
                   "badges": [],
-                  "heading": "Begane grond"
+                  "heading": "Ground floor"
                 },
                 {
                   "square": false,
@@ -54,18 +48,34 @@
                       "show_name": false,
                       "show_icon": true,
                       "type": "button",
+                      "name": "Looppad",
+                      "icon": "mdi:walk",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/alleyway"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.alleyway"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
                       "name": "Eettafel",
                       "icon": "mdi:table-furniture",
                       "tap_action": {
                         "action": "navigate",
-                        "navigation_path": "/lovelace/eettafel"
+                        "navigation_path": "/lovelace/dining_table"
                       },
                       "show_state": false,
                       "layout_options": {
                         "grid_columns": 1,
                         "grid_rows": 2
                       },
-                      "entity": "light.eettafel_lampen"
+                      "entity": "light.dining_table_above_light"
                     },
                     {
                       "show_name": false,
@@ -75,61 +85,92 @@
                       "icon": "mdi:coat-rack",
                       "tap_action": {
                         "action": "navigate",
-                        "navigation_path": "/lovelace/entree"
+                        "navigation_path": "/lovelace/entrance"
                       },
                       "layout_options": {
                         "grid_columns": 1,
                         "grid_rows": 2
                       },
-                      "entity": "light.entree_lampen"
+                      "entity": "light.entrance_light"
                     },
                     {
                       "show_name": false,
                       "show_icon": true,
                       "type": "button",
-                      "name": "Keuken",
+                      "icon": "mdi:door-closed",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/front_door"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.front_door_light"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Tuin",
+                      "icon": "mdi:flower",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/garden"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.garden"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Kitchen",
                       "icon": "mdi:countertop-outline",
                       "tap_action": {
                         "action": "navigate",
-                        "navigation_path": "/lovelace/keuken"
+                        "navigation_path": "/lovelace/kitchen"
                       },
                       "layout_options": {
                         "grid_columns": 1,
                         "grid_rows": 2
                       },
-                      "entity": "light.keuken_lampen"
+                      "entity": "light.kitchen"
                     },
                     {
                       "show_name": false,
                       "show_icon": true,
                       "type": "button",
-                      "name": "Looppad",
-                      "icon": "mdi:walk",
+                      "name": "Woonkamer",
+                      "icon": "mdi:sofa",
                       "tap_action": {
                         "action": "navigate",
-                        "navigation_path": "/lovelace/looppad"
+                        "navigation_path": "/lovelace/living_room"
                       },
                       "layout_options": {
-                        "grid_columns": 1,
+                        "grid_columns": 2,
                         "grid_rows": 2
                       },
-                      "entity": "light.looppad_lampen"
+                      "entity": "light.living_room_above_light"
                     },
                     {
                       "show_name": false,
                       "show_icon": true,
                       "type": "button",
-                      "name": "Schuur",
+                      "name": "Shed",
                       "icon": "mdi:garage",
                       "tap_action": {
                         "action": "navigate",
-                        "navigation_path": "/lovelace/schuur"
+                        "navigation_path": "/lovelace/shed"
                       },
                       "layout_options": {
                         "grid_columns": 1,
                         "grid_rows": 2
                       },
-                      "entity": "light.schuur_lampen"
+                      "entity": "light.shed"
                     },
                     {
                       "show_name": false,
@@ -145,55 +186,7 @@
                         "grid_columns": 1,
                         "grid_rows": 2
                       },
-                      "entity": "light.toilet_lampen"
-                    },
-                    {
-                      "show_name": false,
-                      "show_icon": true,
-                      "type": "button",
-                      "name": "Tuin",
-                      "icon": "mdi:flower",
-                      "tap_action": {
-                        "action": "navigate",
-                        "navigation_path": "/lovelace/tuin"
-                      },
-                      "layout_options": {
-                        "grid_columns": 1,
-                        "grid_rows": 2
-                      },
-                      "entity": "light.tuin_lampen"
-                    },
-                    {
-                      "show_name": false,
-                      "show_icon": true,
-                      "type": "button",
-                      "name": "Voordeur",
-                      "icon": "mdi:door-closed",
-                      "tap_action": {
-                        "action": "navigate",
-                        "navigation_path": "/lovelace/voordeur"
-                      },
-                      "layout_options": {
-                        "grid_columns": 1,
-                        "grid_rows": 2
-                      },
-                      "entity": "light.voordeur_lampen"
-                    },
-                    {
-                      "show_name": false,
-                      "show_icon": true,
-                      "type": "button",
-                      "name": "Woonkamer",
-                      "icon": "mdi:sofa",
-                      "tap_action": {
-                        "action": "navigate",
-                        "navigation_path": "/lovelace/woonkamer"
-                      },
-                      "layout_options": {
-                        "grid_columns": 2,
-                        "grid_rows": 2
-                      },
-                      "entity": "light.woonkamer_lampen"
+                      "entity": "light.toilet_light"
                     }
                   ],
                   "columns": 3
@@ -203,7 +196,7 @@
                   "icon": "mdi:home-floor-1",
                   "heading_style": "subtitle",
                   "badges": [],
-                  "heading": "Eerste verdieping"
+                  "heading": "First floor"
                 },
                 {
                   "square": false,
@@ -217,89 +210,87 @@
                       "icon": "mdi:shower-head",
                       "tap_action": {
                         "action": "navigate",
-                        "navigation_path": "/lovelace/badkamer"
+                        "navigation_path": "/lovelace/bathroom"
                       },
                       "show_state": false,
                       "layout_options": {
                         "grid_columns": 2,
                         "grid_rows": 2
                       },
-                      "entity": "light.badkamer_lampen"
+                      "entity": "light.bathroom_light"
                     },
                     {
                       "show_name": false,
                       "show_icon": true,
                       "type": "button",
-                      "name": "Gang",
-                      "icon": "mdi:stairs",
+                      "name": "Bedroom",
+                      "icon": "mdi:bed-king",
                       "tap_action": {
                         "action": "navigate",
-                        "navigation_path": "/lovelace/gang"
+                        "navigation_path": "/lovelace/bedroom"
                       },
                       "layout_options": {
                         "grid_columns": 1,
                         "grid_rows": 2
                       },
-                      "entity": "light.gang_lampen",
+                      "entity": "light.bedroom_light"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Gym",
+                      "icon": "mdi:dumbbell",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/gym"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.gym_light"
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Hallway",
+                      "icon": "mdi:stairs",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/hallway"
+                      },
+                      "layout_options": {
+                        "grid_columns": 1,
+                        "grid_rows": 2
+                      },
+                      "entity": "light.hallway_light",
                       "show_state": false
                     },
                     {
                       "show_name": false,
                       "show_icon": true,
                       "type": "button",
-                      "name": "Kantoor",
                       "icon": "mdi:desk",
                       "tap_action": {
                         "action": "navigate",
-                        "navigation_path": "/lovelace/kantoor"
+                        "navigation_path": "/lovelace/office"
                       },
                       "layout_options": {
                         "grid_columns": 1,
                         "grid_rows": 2
                       },
-                      "entity": "light.kantoor_lampen"
+                      "entity": "light.office_light"
                     },
                     {
                       "show_name": false,
                       "show_icon": true,
                       "type": "button",
-                      "name": "Sauna",
-                      "icon": "mdi:dumbbell",
-                      "tap_action": {
-                        "action": "navigate",
-                        "navigation_path": "/lovelace/sauna"
-                      },
-                      "layout_options": {
-                        "grid_columns": 1,
-                        "grid_rows": 2
-                      },
-                      "entity": "light.sauna_lampen"
-                    },
-                    {
-                      "show_name": false,
-                      "show_icon": true,
-                      "type": "button",
-                      "name": "Slaapkamer",
-                      "icon": "mdi:bed-king",
-                      "tap_action": {
-                        "action": "navigate",
-                        "navigation_path": "/lovelace/slaapkamer"
-                      },
-                      "layout_options": {
-                        "grid_columns": 1,
-                        "grid_rows": 2
-                      },
-                      "entity": "light.slaapkamer_lampen"
-                    },
-                    {
-                      "show_name": false,
-                      "show_icon": true,
-                      "type": "button",
-                      "name": "Meterkast",
                       "icon": "mdi:server",
                       "tap_action": {
                         "action": "navigate",
-                        "navigation_path": "/lovelace/meterkast"
+                        "navigation_path": "/lovelace/utility_closet"
                       },
                       "layout_options": {
                         "grid_columns": 1,
@@ -314,7 +305,7 @@
                   "icon": "mdi:home-floor-2",
                   "heading_style": "subtitle",
                   "badges": [],
-                  "heading": "Tweede verdieping"
+                  "heading": "Second floor"
                 },
                 {
                   "square": false,
@@ -324,17 +315,18 @@
                       "show_name": false,
                       "show_icon": true,
                       "type": "button",
-                      "name": "Dakterras",
-                      "icon": "mdi:balcony",
+                      "name": "Wasruimte",
+                      "icon": "mdi:washing-machine",
                       "tap_action": {
                         "action": "navigate",
-                        "navigation_path": "/lovelace/dakterras"
+                        "navigation_path": "/lovelace/laundry_room"
                       },
+                      "show_state": false,
                       "layout_options": {
                         "grid_columns": 1,
                         "grid_rows": 2
                       },
-                      "entity": "light.dakterras_lampen"
+                      "entity": "light.laundry_room_light"
                     },
                     {
                       "show_name": false,
@@ -350,24 +342,23 @@
                         "grid_columns": 1,
                         "grid_rows": 2
                       },
-                      "entity": "light.gameroom_lampen"
+                      "entity": "light.gameroom_above_light"
                     },
                     {
                       "show_name": false,
                       "show_icon": true,
                       "type": "button",
-                      "name": "Wasruimte",
-                      "icon": "mdi:washing-machine",
+                      "name": "Roof Terrace",
+                      "icon": "mdi:balcony",
                       "tap_action": {
                         "action": "navigate",
-                        "navigation_path": "/lovelace/wasruimte"
+                        "navigation_path": "/lovelace/roof_terrace"
                       },
-                      "show_state": false,
                       "layout_options": {
                         "grid_columns": 1,
                         "grid_rows": 2
                       },
-                      "entity": "light.wasruimte_lampen"
+                      "entity": "light.roof_terrace_light"
                     }
                   ],
                   "columns": 3
@@ -375,7 +366,7 @@
                 {
                   "type": "heading",
                   "icon": "mdi:car",
-                  "heading": "Auto",
+                  "heading": "Car",
                   "heading_style": "subtitle"
                 },
                 {
@@ -574,11 +565,11 @@
                 },
                 {
                   "type": "media-control",
-                  "entity": "media_player.slaapkamer"
+                  "entity": "media_player.bedroom"
                 },
                 {
                   "type": "tile",
-                  "entity": "media_player.badkamer_kef",
+                  "entity": "media_player.bathroom_kef",
                   "show_entity_picture": false,
                   "state_content": [
                     "state",
@@ -610,7 +601,7 @@
                 },
                 {
                   "type": "tile",
-                  "entity": "media_player.kantoor_kef",
+                  "entity": "media_player.gym_kef",
                   "show_entity_picture": false,
                   "state_content": [
                     "state",
@@ -626,7 +617,7 @@
                 },
                 {
                   "type": "tile",
-                  "entity": "media_player.keuken_kef",
+                  "entity": "media_player.kitchen_kef",
                   "show_entity_picture": false,
                   "state_content": [
                     "state",
@@ -642,7 +633,7 @@
                 },
                 {
                   "type": "tile",
-                  "entity": "media_player.sauna_kef",
+                  "entity": "media_player.living_room_kef",
                   "show_entity_picture": false,
                   "state_content": [
                     "state",
@@ -658,23 +649,7 @@
                 },
                 {
                   "type": "tile",
-                  "entity": "media_player.slaapkamer_kef",
-                  "show_entity_picture": false,
-                  "state_content": [
-                    "state",
-                    "source"
-                  ],
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "media-player-volume-buttons"
-                    }
-                  ],
-                  "features_position": "inline"
-                },
-                {
-                  "type": "tile",
-                  "entity": "media_player.woonkamer_kef",
+                  "entity": "media_player.office_kef",
                   "show_entity_picture": false,
                   "state_content": [
                     "state",
@@ -726,43 +701,39 @@
             },
             {
               "type": "entity",
-              "show_name": false,
-              "show_state": false,
-              "show_icon": true,
-              "entity": "sensor.lampen",
+              "entity": "sensor.lights",
               "show_entity_picture": false,
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/lampen"
+                "navigation_path": "/lovelace/lights"
               },
               "color": "light-grey",
               "visibility": [
                 {
                   "condition": "numeric_state",
-                  "entity": "sensor.lampen",
+                  "entity": "sensor.lights",
                   "below": 1
                 }
-              ]
+              ],
+              "display_type": "minimal"
             },
             {
               "type": "entity",
-              "show_name": false,
-              "show_state": false,
-              "show_icon": true,
-              "entity": "sensor.lampen",
+              "entity": "sensor.lights",
               "show_entity_picture": false,
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/lampen"
+                "navigation_path": "/lovelace/lights"
               },
               "color": "amber",
               "visibility": [
                 {
                   "condition": "numeric_state",
-                  "entity": "sensor.lampen",
+                  "entity": "sensor.lights",
                   "above": 0
                 }
-              ]
+              ],
+              "display_type": "minimal"
             },
             {
               "type": "entity",
@@ -807,27 +778,27 @@
               "show_name": false,
               "show_state": false,
               "show_icon": true,
-              "entity": "fan.ducobox"
+              "entity": "fan.ducobox_ventilation"
             },
             {
               "type": "entity",
               "show_name": false,
               "show_state": false,
               "show_icon": true,
-              "entity": "sensor.koeling",
+              "entity": "sensor.cooling",
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/klimaat"
+                "navigation_path": "/lovelace/climate"
               },
               "visibility": [
                 {
                   "condition": "numeric_state",
-                  "entity": "sensor.koeling",
+                  "entity": "sensor.cooling",
                   "below": 1
                 },
                 {
                   "condition": "numeric_state",
-                  "entity": "sensor.verwarming",
+                  "entity": "sensor.heating",
                   "below": 1
                 }
               ],
@@ -838,15 +809,15 @@
               "show_name": false,
               "show_state": false,
               "show_icon": true,
-              "entity": "sensor.koeling",
+              "entity": "sensor.cooling",
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/klimaat"
+                "navigation_path": "/lovelace/climate"
               },
               "visibility": [
                 {
                   "condition": "numeric_state",
-                  "entity": "sensor.koeling",
+                  "entity": "sensor.cooling",
                   "above": 0
                 }
               ],
@@ -857,15 +828,15 @@
               "show_name": false,
               "show_state": false,
               "show_icon": true,
-              "entity": "sensor.verwarming",
+              "entity": "sensor.heating",
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/klimaat"
+                "navigation_path": "/lovelace/climate"
               },
               "visibility": [
                 {
                   "condition": "numeric_state",
-                  "entity": "sensor.verwarming",
+                  "entity": "sensor.heating",
                   "above": 0
                 }
               ],
