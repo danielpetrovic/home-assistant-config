@@ -3656,7 +3656,7 @@
       z2m_device_name: Entrance Button
       button_1_light:
         entity_id:
-        - light.office_light
+        - light.entrance_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
