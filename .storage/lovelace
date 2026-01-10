@@ -724,7 +724,7 @@
               "show_entity_picture": false,
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/light"
+                "navigation_path": "/lovelace/lights"
               },
               "color": "amber",
               "visibility": [
@@ -1119,229 +1119,118 @@
               "type": "grid",
               "cards": [
                 {
-                  "show_name": false,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "none"
-                  },
-                  "layout_options": {
-                    "grid_columns": 4,
-                    "grid_rows": 2
-                  },
-                  "icon": "mdi:home-floor-0",
-                  "hold_action": {
-                    "action": "none"
-                  },
-                  "theme": "Enhanced Black"
-                },
-                {
                   "square": false,
                   "type": "grid",
                   "cards": [
                     {
-                      "type": "entities",
-                      "entities": [
-                        {
-                          "entity": "light.eettafel_light_boven",
-                          "name": "Lamp boven",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.eettafel_light_onder",
-                          "name": "Lamp onder",
-                          "secondary_info": "last-changed"
-                        }
-                      ],
-                      "state_color": true,
-                      "show_header_toggle": false
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Eettafel"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
+                      "type": "button",
+                      "icon": "mdi:home-floor-0",
+                      "theme": "Enhanced Black",
+                      "tap_action": {
+                        "action": "none"
+                      },
+                      "hold_action": {
+                        "action": "none"
+                      }
+                    },
                     {
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.entree_light",
-                          "name": "Lamp",
+                          "entity": "light.alleyway",
                           "secondary_info": "last-changed"
                         }
-                      ],
-                      "state_color": true,
-                      "show_header_toggle": false
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Entree"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
+                      ]
+                    },
                     {
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.kitchen_light",
+                          "entity": "light.dining_table_above_light",
                           "secondary_info": "last-changed"
                         },
                         {
-                          "entity": "light.kitchen_cabinet_light",
+                          "entity": "light.dining_table_below_light",
                           "secondary_info": "last-changed"
                         }
-                      ],
-                      "state_color": true,
-                      "show_header_toggle": false
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Kitchen"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
+                      ]
+                    },
                     {
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.looppad_light",
+                          "entity": "light.entrance_light",
                           "secondary_info": "last-changed"
                         }
-                      ],
-                      "state_color": true,
-                      "show_header_toggle": false
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Looppad"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
+                      ]
+                    },
                     {
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.schuur_light_links",
-                          "name": "Lamp links",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.schuur_light_midden",
-                          "secondary_info": "last-changed",
-                          "name": "Lamp midden"
-                        },
-                        {
-                          "entity": "light.schuur_light_rechts",
-                          "secondary_info": "last-changed",
-                          "name": "Lamp rechts"
-                        },
-                        {
-                          "entity": "light.schuur_light_werkbank",
-                          "name": "Lamp werkbank",
+                          "entity": "light.garden",
                           "secondary_info": "last-changed"
                         }
-                      ],
-                      "state_color": true,
-                      "show_header_toggle": false
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Shed"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
+                      ]
+                    },
+                    {
+                      "type": "entities",
+                      "entities": [
+                        {
+                          "entity": "light.kitchen",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.kitchen_cabinet",
+                          "secondary_info": "last-changed"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "entities",
+                      "entities": [
+                        {
+                          "entity": "light.living_room_above_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.living_room_below_light",
+                          "secondary_info": "last-changed"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "entities",
+                      "entities": [
+                        {
+                          "entity": "light.shed_left_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.shed_middle_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.shed_right_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.shed_workbench_light",
+                          "secondary_info": "last-changed"
+                        }
+                      ]
+                    },
                     {
                       "type": "entities",
                       "entities": [
                         {
                           "entity": "light.toilet_light",
-                          "name": "Lamp",
                           "secondary_info": "last-changed"
                         }
-                      ],
-                      "state_color": true,
-                      "show_header_toggle": false
+                      ]
                     }
                   ],
-                  "columns": 1,
-                  "title": "Toilet"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
-                    {
-                      "type": "entities",
-                      "entities": [
-                        {
-                          "entity": "light.garden_light",
-                          "secondary_info": "last-changed"
-                        }
-                      ],
-                      "theme": "Enhanced Grey",
-                      "state_color": true,
-                      "show_header_toggle": false
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Tuin"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
-                    {
-                      "type": "entities",
-                      "entities": [
-                        {
-                          "entity": "light.front_door_light",
-                          "name": "Lamp",
-                          "secondary_info": "last-changed"
-                        }
-                      ],
-                      "theme": "Enhanced Grey",
-                      "state_color": true,
-                      "show_header_toggle": false
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Voordeur"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
-                    {
-                      "type": "entities",
-                      "entities": [
-                        {
-                          "entity": "light.woonkamer_light_boven",
-                          "name": "Lamp boven",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.woonkamer_light_onder",
-                          "name": "Lamp onder",
-                          "secondary_info": "last-changed"
-                        }
-                      ],
-                      "theme": "Enhanced Grey",
-                      "state_color": true
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Woonkamer"
+                  "columns": 1
                 }
               ]
             },
@@ -1349,154 +1238,83 @@
               "type": "grid",
               "cards": [
                 {
-                  "show_name": false,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "none"
-                  },
-                  "layout_options": {
-                    "grid_columns": 4,
-                    "grid_rows": 2
-                  },
-                  "icon": "mdi:home-floor-1",
-                  "theme": "Enhanced Black",
-                  "hold_action": {
-                    "action": "none"
-                  }
-                },
-                {
                   "square": false,
                   "type": "grid",
                   "cards": [
                     {
-                      "type": "entities",
-                      "entities": [
-                        {
-                          "entity": "light.badkamer_light",
-                          "name": "Lamp",
-                          "secondary_info": "last-changed"
-                        }
-                      ],
-                      "theme": "Enhanced Grey",
-                      "state_color": true,
-                      "show_header_toggle": false
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Badkamer"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
+                      "type": "button",
+                      "icon": "mdi:home-floor-1",
+                      "theme": "Enhanced Black",
+                      "tap_action": {
+                        "action": "none"
+                      },
+                      "hold_action": {
+                        "action": "none"
+                      }
+                    },
                     {
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.hallway_light",
-                          "name": "Lamp",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.hallway_trap_1_light",
-                          "secondary_info": "last-changed",
-                          "name": "Trap 1 Lamp"
-                        },
-                        {
-                          "entity": "light.hallway_trap_2_light",
-                          "name": "Trap 2 Lamp",
+                          "entity": "light.bathroom_light",
                           "secondary_info": "last-changed"
                         }
-                      ],
-                      "theme": "Enhanced Grey",
-                      "state_color": true
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Hallway"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
-                    {
-                      "type": "entities",
-                      "entities": [
-                        {
-                          "entity": "light.kantoor_light",
-                          "name": "Lamp",
-                          "secondary_info": "last-changed"
-                        }
-                      ],
-                      "theme": "Enhanced Grey",
-                      "state_color": true
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Office"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
-                    {
-                      "type": "entities",
-                      "entities": [
-                        {
-                          "entity": "light.gym_light",
-                          "name": "Lamp",
-                          "secondary_info": "last-changed"
-                        }
-                      ],
-                      "theme": "Enhanced Grey",
-                      "state_color": true,
-                      "show_header_toggle": false
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Gym"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
+                      ]
+                    },
                     {
                       "type": "entities",
                       "entities": [
                         {
                           "entity": "light.bedroom_light",
-                          "name": "Lamp",
                           "secondary_info": "last-changed"
                         },
                         {
                           "entity": "light.bedroom_alex_light",
-                          "name": "Alex Lamp",
                           "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.bedroom_alex_light_bed",
-                          "secondary_info": "last-changed",
-                          "name": "Alex Lamp bed"
                         },
                         {
                           "entity": "light.bedroom_deni_light",
-                          "name": "Deni Lamp",
                           "secondary_info": "last-changed"
                         },
                         {
-                          "entity": "light.bedroom_deni_light_bed",
-                          "name": "Deni Lamp bed",
+                          "entity": "light.bedroom_alex_bed_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.bedroom_deni_bed_light",
                           "secondary_info": "last-changed"
                         }
-                      ],
-                      "theme": "Enhanced Grey",
-                      "state_color": true,
-                      "show_header_toggle": false
+                      ]
+                    },
+                    {
+                      "type": "entities",
+                      "entities": [
+                        {
+                          "entity": "light.gym_light",
+                          "secondary_info": "last-changed"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "entities",
+                      "entities": [
+                        {
+                          "entity": "light.hallway_light",
+                          "secondary_info": "last-changed"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "entities",
+                      "entities": [
+                        {
+                          "entity": "light.office_light",
+                          "secondary_info": "last-changed"
+                        }
+                      ]
                     }
                   ],
-                  "columns": 1,
-                  "title": "Bedroom"
+                  "columns": 1
                 }
               ]
             },
@@ -1504,99 +1322,63 @@
               "type": "grid",
               "cards": [
                 {
-                  "show_name": false,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "none"
-                  },
-                  "layout_options": {
-                    "grid_columns": 4,
-                    "grid_rows": 2
-                  },
-                  "icon": "mdi:home-floor-2",
-                  "theme": "Enhanced Black",
-                  "hold_action": {
-                    "action": "none"
-                  }
-                },
-                {
                   "square": false,
                   "type": "grid",
                   "cards": [
                     {
-                      "type": "entities",
-                      "entities": [
-                        {
-                          "entity": "light.roof_terrace_light",
-                          "name": "Lamp",
-                          "secondary_info": "last-changed"
-                        }
-                      ],
-                      "theme": "Enhanced Grey",
-                      "state_color": true,
-                      "show_header_toggle": false
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Roof Terrace"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
-                    {
-                      "type": "entities",
-                      "entities": [
-                        {
-                          "entity": "light.gameroom_light_boven",
-                          "name": "Lamp boven",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.gameroom_light_onder",
-                          "name": "Lamp onder",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.gameroom_light_links",
-                          "name": "Lamp links",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.gameroom_light_rechts",
-                          "secondary_info": "last-changed",
-                          "name": "Lamp rechts"
-                        }
-                      ],
-                      "theme": "Enhanced Grey",
-                      "state_color": true,
-                      "show_header_toggle": false
-                    }
-                  ],
-                  "columns": 1,
-                  "title": "Gameroom"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "icon": "mdi:home-floor-2",
+                      "theme": "Enhanced Black",
+                      "tap_action": {
+                        "action": "none"
+                      },
+                      "hold_action": {
+                        "action": "none"
+                      }
+                    },
                     {
                       "type": "entities",
                       "entities": [
                         {
                           "entity": "light.laundry_room_light",
-                          "name": "Lamp",
                           "secondary_info": "last-changed"
                         }
-                      ],
-                      "theme": "Enhanced Grey",
-                      "state_color": true,
-                      "show_header_toggle": false
+                      ]
+                    },
+                    {
+                      "type": "entities",
+                      "entities": [
+                        {
+                          "entity": "light.gameroom_above_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.gameroom_below_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.gameroom_left_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.gameroom_right_light",
+                          "secondary_info": "last-changed"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "entities",
+                      "entities": [
+                        {
+                          "entity": "light.roof_terrace_light",
+                          "secondary_info": "last-changed"
+                        }
+                      ]
                     }
                   ],
-                  "columns": 1,
-                  "title": "Wasruimte"
+                  "columns": 1
                 }
               ]
             }
@@ -1608,7 +1390,7 @@
               "show_entity_picture": false,
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/light"
+                "navigation_path": "/lovelace/lights"
               },
               "color": "light-grey",
               "visibility": [
@@ -1625,7 +1407,7 @@
               "show_entity_picture": false,
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/light"
+                "navigation_path": "/lovelace/lights"
               },
               "color": "amber",
               "visibility": [
@@ -1649,7 +1431,7 @@
               ],
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/schakelaars"
+                "navigation_path": "/lovelace/switches"
               }
             },
             {
@@ -1665,20 +1447,20 @@
               ],
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/schakelaars"
+                "navigation_path": "/lovelace/switches"
               }
             },
             {
               "type": "entity",
-              "entity": "sensor.koeling",
+              "entity": "sensor.cooling",
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/klimaat"
+                "navigation_path": "/lovelace/climate"
               },
               "visibility": [
                 {
                   "condition": "numeric_state",
-                  "entity": "sensor.koeling",
+                  "entity": "sensor.cooling",
                   "below": 1
                 }
               ],
@@ -1686,15 +1468,15 @@
             },
             {
               "type": "entity",
-              "entity": "sensor.koeling",
+              "entity": "sensor.cooling",
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/klimaat"
+                "navigation_path": "/lovelace/climate"
               },
               "visibility": [
                 {
                   "condition": "numeric_state",
-                  "entity": "sensor.koeling",
+                  "entity": "sensor.cooling",
                   "above": 0
                 }
               ],
@@ -1705,7 +1487,7 @@
               "entity": "sensor.heating",
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/klimaat"
+                "navigation_path": "/lovelace/climate"
               },
               "visibility": [
                 {
@@ -1721,7 +1503,7 @@
               "entity": "sensor.heating",
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/klimaat"
+                "navigation_path": "/lovelace/climate"
               },
               "visibility": [
                 {
@@ -2531,150 +2313,69 @@
               "type": "grid",
               "cards": [
                 {
-                  "features": [
+                  "square": false,
+                  "type": "grid",
+                  "cards": [
                     {
-                      "type": "trend-graph"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "sensor.climate_heat_stress",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "color": "pink"
-                },
-                {
-                  "features": [
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "icon": "mdi:home-floor-0",
+                      "theme": "Enhanced Black",
+                      "tap_action": {
+                        "action": "none"
+                      },
+                      "hold_action": {
+                        "action": "none"
+                      }
+                    },
                     {
-                      "type": "trend-graph"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "sensor.climate_humidex",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "color": "blue"
-                },
-                {
-                  "type": "gauge",
-                  "entity": "sensor.climate_heat_stress",
-                  "min": 0,
-                  "max": 100,
-                  "unit": "%",
-                  "severity": {
-                    "green": 0,
-                    "yellow": 50,
-                    "red": 75
-                  },
-                  "grid_options": {
-                    "columns": 6,
-                    "rows": 2
-                  },
-                  "needle": false,
-                  "name": " "
-                },
-                {
-                  "type": "gauge",
-                  "entity": "sensor.climate_humidex",
-                  "min": 10,
-                  "max": 45,
-                  "unit": "°C",
-                  "severity": {
-                    "green": 10,
-                    "yellow": 30,
-                    "red": 40
-                  },
-                  "grid_options": {
-                    "columns": 6,
-                    "rows": 2
-                  },
-                  "name": " ",
-                  "needle": false
-                },
-                {
-                  "type": "tile",
-                  "entity": "sensor.climate_mode",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "show_entity_picture": false,
-                  "grid_options": {
-                    "columns": "full"
-                  }
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "heading",
-                  "heading": "Bathroom",
-                  "heading_style": "title"
-                },
-                {
-                  "type": "tile",
-                  "entity": "climate.bathroom_heating",
-                  "name": "Heating",
-                  "state_content": [
-                    "current_temperature",
-                    "hvac_action",
-                    "temperature"
-                  ],
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "climate-hvac-modes"
-                    }
-                  ],
-                  "features_position": "inline"
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "heading",
-                  "heading": "Gameroom"
-                },
-                {
-                  "type": "tile",
-                  "entity": "climate.gameroom_airco",
-                  "features_position": "inline",
-                  "features": [
-                    {
-                      "style": "icons",
-                      "hvac_modes": [
-                        "off",
-                        "cool",
-                        "dry",
-                        "fan_only"
+                      "square": false,
+                      "type": "grid",
+                      "cards": [
+                        {
+                          "type": "tile",
+                          "entity": "climate.living_room_ac",
+                          "state_content": [
+                            "current_temperature",
+                            "hvac_action",
+                            "temperature"
+                          ],
+                          "vertical": false,
+                          "features": [
+                            {
+                              "style": "icons",
+                              "hvac_modes": [
+                                "off",
+                                "cool",
+                                "dry",
+                                "fan_only"
+                              ],
+                              "type": "climate-hvac-modes"
+                            }
+                          ],
+                          "features_position": "inline"
+                        },
+                        {
+                          "type": "tile",
+                          "entity": "climate.living_room_heating",
+                          "state_content": [
+                            "current_temperature",
+                            "hvac_action",
+                            "temperature"
+                          ],
+                          "features": [
+                            {
+                              "type": "climate-hvac-modes"
+                            }
+                          ],
+                          "features_position": "inline"
+                        }
                       ],
-                      "type": "climate-hvac-modes"
+                      "columns": 1
                     }
                   ],
-                  "name": "Airco",
-                  "state_content": [
-                    "current_temperature",
-                    "hvac_action",
-                    "temperature"
-                  ]
-                },
-                {
-                  "type": "tile",
-                  "entity": "climate.gameroom_heating",
-                  "name": "Heating",
-                  "state_content": [
-                    "current_temperature",
-                    "hvac_action",
-                    "temperature"
-                  ],
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "climate-hvac-modes"
-                    }
-                  ],
-                  "features_position": "inline"
+                  "columns": 1
                 }
               ]
             },
@@ -2682,77 +2383,137 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "heading",
-                  "heading": "Gym",
-                  "heading_style": "title",
-                  "icon": "mdi:dumbbell"
-                },
-                {
-                  "type": "tile",
-                  "entity": "climate.gym_heating",
-                  "name": "Heating",
-                  "state_content": [
-                    "current_temperature",
-                    "hvac_action",
-                    "temperature"
-                  ],
-                  "vertical": false,
-                  "features": [
+                  "square": false,
+                  "type": "grid",
+                  "cards": [
                     {
-                      "type": "climate-hvac-modes"
-                    }
-                  ],
-                  "features_position": "inline"
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "heading",
-                  "heading": "Office",
-                  "heading_style": "title"
-                },
-                {
-                  "type": "tile",
-                  "entity": "climate.kantoor_airco",
-                  "features_position": "inline",
-                  "features": [
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "icon": "mdi:home-floor-1",
+                      "theme": "Enhanced Black",
+                      "tap_action": {
+                        "action": "none"
+                      },
+                      "hold_action": {
+                        "action": "none"
+                      }
+                    },
                     {
-                      "style": "icons",
-                      "hvac_modes": [
-                        "off",
-                        "cool",
-                        "dry",
-                        "fan_only"
+                      "square": false,
+                      "type": "grid",
+                      "cards": [
+                        {
+                          "type": "tile",
+                          "entity": "climate.bathroom_heating",
+                          "state_content": [
+                            "current_temperature",
+                            "hvac_action",
+                            "temperature"
+                          ],
+                          "features": [
+                            {
+                              "type": "climate-hvac-modes"
+                            }
+                          ],
+                          "features_position": "inline"
+                        },
+                        {
+                          "type": "tile",
+                          "entity": "climate.bedroom_ac",
+                          "state_content": [
+                            "current_temperature",
+                            "hvac_action",
+                            "temperature"
+                          ],
+                          "vertical": false,
+                          "features": [
+                            {
+                              "style": "icons",
+                              "hvac_modes": [
+                                "off",
+                                "cool",
+                                "dry",
+                                "fan_only"
+                              ],
+                              "type": "climate-hvac-modes"
+                            }
+                          ],
+                          "features_position": "inline"
+                        },
+                        {
+                          "type": "tile",
+                          "entity": "climate.bedroom_heating",
+                          "state_content": [
+                            "current_temperature",
+                            "hvac_action",
+                            "temperature"
+                          ],
+                          "features": [
+                            {
+                              "type": "climate-hvac-modes"
+                            }
+                          ],
+                          "features_position": "inline"
+                        },
+                        {
+                          "type": "tile",
+                          "entity": "climate.gym_heating",
+                          "state_content": [
+                            "current_temperature",
+                            "hvac_action",
+                            "temperature"
+                          ],
+                          "features": [
+                            {
+                              "type": "climate-hvac-modes"
+                            }
+                          ],
+                          "features_position": "inline"
+                        },
+                        {
+                          "type": "tile",
+                          "entity": "climate.office_ac",
+                          "state_content": [
+                            "current_temperature",
+                            "hvac_action",
+                            "temperature"
+                          ],
+                          "vertical": false,
+                          "features": [
+                            {
+                              "style": "icons",
+                              "hvac_modes": [
+                                "off",
+                                "cool",
+                                "dry",
+                                "fan_only"
+                              ],
+                              "type": "climate-hvac-modes"
+                            }
+                          ],
+                          "features_position": "inline"
+                        },
+                        {
+                          "type": "tile",
+                          "entity": "climate.office_heating",
+                          "state_content": [
+                            "current_temperature",
+                            "hvac_action",
+                            "temperature"
+                          ],
+                          "features": [
+                            {
+                              "type": "climate-hvac-modes"
+                            }
+                          ],
+                          "features_position": "inline"
+                        }
                       ],
-                      "type": "climate-hvac-modes"
+                      "columns": 1
                     }
                   ],
-                  "name": "Airco",
-                  "state_content": [
-                    "current_temperature",
-                    "hvac_action",
-                    "temperature"
-                  ]
-                },
-                {
-                  "type": "tile",
-                  "entity": "climate.office_heating",
-                  "name": "Heating",
-                  "state_content": [
-                    "current_temperature",
-                    "hvac_action",
-                    "temperature"
-                  ],
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "climate-hvac-modes"
-                    }
-                  ],
-                  "features_position": "inline"
+                  "columns": 1
                 }
               ]
             },
@@ -2760,97 +2521,69 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "heading",
-                  "heading": "Bedroom"
-                },
-                {
-                  "type": "tile",
-                  "entity": "climate.bedroom_airco",
-                  "features_position": "inline",
-                  "features": [
+                  "square": false,
+                  "type": "grid",
+                  "cards": [
                     {
-                      "style": "icons",
-                      "hvac_modes": [
-                        "off",
-                        "cool",
-                        "dry",
-                        "fan_only"
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "icon": "mdi:home-floor-2",
+                      "theme": "Enhanced Black",
+                      "tap_action": {
+                        "action": "none"
+                      },
+                      "hold_action": {
+                        "action": "none"
+                      }
+                    },
+                    {
+                      "square": false,
+                      "type": "grid",
+                      "cards": [
+                        {
+                          "type": "tile",
+                          "entity": "climate.gameroom_ac",
+                          "state_content": [
+                            "current_temperature",
+                            "hvac_action",
+                            "temperature"
+                          ],
+                          "vertical": false,
+                          "features": [
+                            {
+                              "style": "icons",
+                              "hvac_modes": [
+                                "off",
+                                "cool",
+                                "dry",
+                                "fan_only"
+                              ],
+                              "type": "climate-hvac-modes"
+                            }
+                          ],
+                          "features_position": "inline"
+                        },
+                        {
+                          "type": "tile",
+                          "entity": "climate.gameroom_heating",
+                          "state_content": [
+                            "current_temperature",
+                            "hvac_action",
+                            "temperature"
+                          ],
+                          "features": [
+                            {
+                              "type": "climate-hvac-modes"
+                            }
+                          ],
+                          "features_position": "inline"
+                        }
                       ],
-                      "type": "climate-hvac-modes"
+                      "columns": 1
                     }
                   ],
-                  "name": "Airco",
-                  "state_content": [
-                    "current_temperature",
-                    "hvac_action",
-                    "temperature"
-                  ]
-                },
-                {
-                  "type": "tile",
-                  "entity": "climate.bedroom_heating",
-                  "name": "Heating",
-                  "state_content": [
-                    "current_temperature",
-                    "hvac_action",
-                    "temperature"
-                  ],
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "climate-hvac-modes"
-                    }
-                  ],
-                  "features_position": "inline"
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "heading",
-                  "heading": "Woonkamer"
-                },
-                {
-                  "type": "tile",
-                  "entity": "climate.woonkamer_airco",
-                  "features_position": "inline",
-                  "features": [
-                    {
-                      "style": "icons",
-                      "hvac_modes": [
-                        "off",
-                        "cool",
-                        "dry",
-                        "fan_only"
-                      ],
-                      "type": "climate-hvac-modes"
-                    }
-                  ],
-                  "name": "Airco",
-                  "state_content": [
-                    "current_temperature",
-                    "hvac_action",
-                    "temperature"
-                  ]
-                },
-                {
-                  "type": "tile",
-                  "entity": "climate.living_room_heating",
-                  "name": "Heating",
-                  "state_content": [
-                    "current_temperature",
-                    "hvac_action",
-                    "temperature"
-                  ],
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "climate-hvac-modes"
-                    }
-                  ],
-                  "features_position": "inline"
+                  "columns": 1
                 }
               ]
             }
@@ -2860,11 +2593,35 @@
           "badges": [
             {
               "type": "entity",
+              "show_name": false,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.climate_heat_stress",
+              "color": "blue"
+            },
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.climate_humidex",
+              "color": "blue"
+            },
+            {
+              "type": "entity",
+              "show_name": false,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.climate_mode",
+              "show_entity_picture": false
+            },
+            {
+              "type": "entity",
               "entity": "sensor.lights",
               "show_entity_picture": false,
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/light"
+                "navigation_path": "/lovelace/lights"
               },
               "color": "light-grey",
               "visibility": [
@@ -2881,7 +2638,7 @@
               "show_entity_picture": false,
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/light"
+                "navigation_path": "/lovelace/lights"
               },
               "color": "amber",
               "visibility": [
@@ -2926,15 +2683,15 @@
             },
             {
               "type": "entity",
-              "entity": "sensor.koeling",
+              "entity": "sensor.cooling",
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/klimaat"
+                "navigation_path": "/lovelace/climate"
               },
               "visibility": [
                 {
                   "condition": "numeric_state",
-                  "entity": "sensor.koeling",
+                  "entity": "sensor.cooling",
                   "below": 1
                 }
               ],
@@ -2942,15 +2699,15 @@
             },
             {
               "type": "entity",
-              "entity": "sensor.koeling",
+              "entity": "sensor.cooling",
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/klimaat"
+                "navigation_path": "/lovelace/climate"
               },
               "visibility": [
                 {
                   "condition": "numeric_state",
-                  "entity": "sensor.koeling",
+                  "entity": "sensor.cooling",
                   "above": 0
                 }
               ],
@@ -2961,7 +2718,7 @@
               "entity": "sensor.heating",
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/klimaat"
+                "navigation_path": "/lovelace/climate"
               },
               "visibility": [
                 {
@@ -2977,7 +2734,7 @@
               "entity": "sensor.heating",
               "tap_action": {
                 "action": "navigate",
-                "navigation_path": "/lovelace/klimaat"
+                "navigation_path": "/lovelace/climate"
               },
               "visibility": [
                 {
@@ -3420,7 +3177,7 @@
                   "fit_mode": "cover",
                   "type": "picture-entity",
                   "entity": "camera.entrance",
-                  "camera_image": "camera.entree",
+                  "camera_image": "camera.entrance",
                   "grid_options": {
                     "columns": "full"
                   },
@@ -6096,15 +5853,7 @@
               "column_span": 1
             }
           ],
-          "badges": [
-            {
-              "type": "entity",
-              "show_name": false,
-              "show_state": true,
-              "show_icon": true,
-              "entity": "binary_sensor.entrance_door_contact"
-            }
-          ],
+          "badges": [],
           "cards": [],
           "header": {
             "layout": "center",
@@ -6183,8 +5932,8 @@
                 },
                 {
                   "type": "tile",
-                  "entity": "climate.woonkamer_airco",
-                  "name": "Airco",
+                  "entity": "climate.living_room_ac",
+                  "name": "AC",
                   "state_content": [
                     "current_temperature",
                     "hvac_action",
@@ -8258,8 +8007,8 @@
                 },
                 {
                   "type": "tile",
-                  "entity": "climate.kantoor_airco",
-                  "name": "Airco",
+                  "entity": "climate.office_ac",
+                  "name": "AC",
                   "state_content": [
                     "current_temperature",
                     "hvac_action",
@@ -9267,8 +9016,8 @@
                 },
                 {
                   "type": "tile",
-                  "entity": "climate.bedroom_cooling",
-                  "name": "Cooling",
+                  "entity": "climate.bedroom_ac",
+                  "name": "AC",
                   "state_content": [
                     "current_temperature",
                     "hvac_action",
@@ -11083,8 +10832,14 @@
                 },
                 {
                   "type": "tile",
-                  "entity": "climate.gameroom_airco",
-                  "features_position": "inline",
+                  "entity": "climate.gameroom_ac",
+                  "name": "AC",
+                  "state_content": [
+                    "current_temperature",
+                    "hvac_action",
+                    "temperature"
+                  ],
+                  "vertical": false,
                   "features": [
                     {
                       "style": "icons",
@@ -11097,12 +10852,7 @@
                       "type": "climate-hvac-modes"
                     }
                   ],
-                  "name": "Airco",
-                  "state_content": [
-                    "current_temperature",
-                    "hvac_action",
-                    "temperature"
-                  ]
+                  "features_position": "inline"
                 },
                 {
                   "type": "tile",
