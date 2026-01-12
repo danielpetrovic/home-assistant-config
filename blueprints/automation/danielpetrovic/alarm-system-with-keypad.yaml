@@ -4,7 +4,7 @@ blueprint:
   description: |
     # Alarm System with Keypad support (Z2M / ZHA / Dashboard)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/alarm-system-with-keypad.yaml) [![Community Discussion](https://img.shields.io/badge/Community-Discussion-41bdf5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://community.home-assistant.io/t/alarm-system-with-zigbee-z2m-zha-keypad-support-kepzb-110/958295) ![Version](https://img.shields.io/badge/Version-2026.01.1-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/alarm-system-with-keypad.yaml) [![Community Discussion](https://img.shields.io/badge/Community-Discussion-41bdf5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://community.home-assistant.io/t/alarm-system-with-zigbee-z2m-zha-keypad-support-kepzb-110/958295) ![Version](https://img.shields.io/badge/Version-2026.01.2-blue?style=for-the-badge)
 
     A comprehensive alarm system blueprint for Home Assistant with multiple keypad integration options. No custom components required.
 
@@ -173,6 +173,11 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.01.2: Notification Message Improvements & Documentation Updates**
+          - Improved default notification messages for better readability
+          - Moved user/sensor name variables to end of messages for more natural phrasing
+          - Updated all notification defaults: armed modes, disarmed, arming, pending, triggered, and sensor alerts
+          - Updated dashboard keypad script aliases to use dash separator for consistency
         - **2026.01.1: Bug Fix & Documentation Updates**
           - Fixed triggered mode notifications not being sent (config exclusion bug)
           - Added badge-style buttons to blueprint header (GitHub, Blueprint Code, Community, Version)
@@ -336,7 +341,7 @@ blueprint:
         # Dashboard keypad scripts (required - button cards don't support templates)
         script:
           alarm_dashboard_append_1:
-            alias: "Alarm Dashboard: Append 1"
+            alias: "Alarm Dashboard - Append 1"
             sequence:
               - action: input_text.set_value
                 target:
@@ -344,7 +349,7 @@ blueprint:
                 data:
                   value: "{{ states('input_text.alarm_dashboard_code') + '1' }}"
           alarm_dashboard_append_2:
-            alias: "Alarm Dashboard: Append 2"
+            alias: "Alarm Dashboard - Append 2"
             sequence:
               - action: input_text.set_value
                 target:
@@ -352,7 +357,7 @@ blueprint:
                 data:
                   value: "{{ states('input_text.alarm_dashboard_code') + '2' }}"
           alarm_dashboard_append_3:
-            alias: "Alarm Dashboard: Append 3"
+            alias: "Alarm Dashboard - Append 3"
             sequence:
               - action: input_text.set_value
                 target:
@@ -360,7 +365,7 @@ blueprint:
                 data:
                   value: "{{ states('input_text.alarm_dashboard_code') + '3' }}"
           alarm_dashboard_append_4:
-            alias: "Alarm Dashboard: Append 4"
+            alias: "Alarm Dashboard - Append 4"
             sequence:
               - action: input_text.set_value
                 target:
@@ -368,7 +373,7 @@ blueprint:
                 data:
                   value: "{{ states('input_text.alarm_dashboard_code') + '4' }}"
           alarm_dashboard_append_5:
-            alias: "Alarm Dashboard: Append 5"
+            alias: "Alarm Dashboard - Append 5"
             sequence:
               - action: input_text.set_value
                 target:
@@ -376,7 +381,7 @@ blueprint:
                 data:
                   value: "{{ states('input_text.alarm_dashboard_code') + '5' }}"
           alarm_dashboard_append_6:
-            alias: "Alarm Dashboard: Append 6"
+            alias: "Alarm Dashboard - Append 6"
             sequence:
               - action: input_text.set_value
                 target:
@@ -384,7 +389,7 @@ blueprint:
                 data:
                   value: "{{ states('input_text.alarm_dashboard_code') + '6' }}"
           alarm_dashboard_append_7:
-            alias: "Alarm Dashboard: Append 7"
+            alias: "Alarm Dashboard - Append 7"
             sequence:
               - action: input_text.set_value
                 target:
@@ -392,7 +397,7 @@ blueprint:
                 data:
                   value: "{{ states('input_text.alarm_dashboard_code') + '7' }}"
           alarm_dashboard_append_8:
-            alias: "Alarm Dashboard: Append 8"
+            alias: "Alarm Dashboard - Append 8"
             sequence:
               - action: input_text.set_value
                 target:
@@ -400,7 +405,7 @@ blueprint:
                 data:
                   value: "{{ states('input_text.alarm_dashboard_code') + '8' }}"
           alarm_dashboard_append_9:
-            alias: "Alarm Dashboard: Append 9"
+            alias: "Alarm Dashboard - Append 9"
             sequence:
               - action: input_text.set_value
                 target:
@@ -408,7 +413,7 @@ blueprint:
                 data:
                   value: "{{ states('input_text.alarm_dashboard_code') + '9' }}"
           alarm_dashboard_append_0:
-            alias: "Alarm Dashboard: Append 0"
+            alias: "Alarm Dashboard - Append 0"
             sequence:
               - action: input_text.set_value
                 target:
@@ -416,7 +421,7 @@ blueprint:
                 data:
                   value: "{{ states('input_text.alarm_dashboard_code') + '0' }}"
           alarm_dashboard_clear:
-            alias: "Alarm Dashboard: Clear"
+            alias: "Alarm Dashboard - Clear"
             sequence:
               - action: input_text.set_value
                 target:
@@ -424,7 +429,7 @@ blueprint:
                 data:
                   value: ""
           alarm_dashboard_backspace:
-            alias: "Alarm Dashboard: Backspace"
+            alias: "Alarm Dashboard - Backspace"
             sequence:
               - action: input_text.set_value
                 target:
@@ -1028,7 +1033,7 @@ blueprint:
             `required` `text`
 
             Notification message when entering Armed Away mode. Use `{user_name}` template variable for the person who armed the alarm.
-          default: "{user_name} armed the alarm in Away mode."
+          default: "The alarm is now armed in Away mode by {user_name}."
           selector:
             text:
         alarm_notifications_critical_armed_away:
@@ -1136,7 +1141,7 @@ blueprint:
             `required` `text`
 
             Notification message when entering Armed Home mode. Use `{user_name}` template variable for the person who armed the alarm.
-          default: "{user_name} armed the alarm in Home mode."
+          default: "The alarm is now armed in Home mode by {user_name}."
           selector:
             text:
         alarm_notifications_critical_armed_home:
@@ -1244,7 +1249,7 @@ blueprint:
             `required` `text`
 
             Notification message when entering Armed Night mode. Use `{user_name}` template variable for the person who armed the alarm.
-          default: "{user_name} armed the alarm in Night mode."
+          default: "The alarm is now armed in Night mode by {user_name}."
           selector:
             text:
         alarm_notifications_critical_armed_night:
@@ -1332,7 +1337,7 @@ blueprint:
             `required` `text`
 
             Notification message during arming countdown. Use `{user_name}` template variable for the person who is arming the alarm.
-          default: "{user_name} is arming the alarm. Please exit the house promptly!"
+          default: "The alarm is being armed by {user_name}. Please exit the house promptly!"
           selector:
             text:
         alarm_notifications_critical_arming:
@@ -1398,7 +1403,7 @@ blueprint:
             `required` `text`
 
             Notification message when sensor triggers pending countdown. Use `{trigger_name}` template variable for the sensor that triggered the alarm.
-          default: "{trigger_name} triggered the alarm! Please disarm the alarm to prevent it from activating!"
+          default: "The alarm was triggered by {trigger_name}! Please disarm the alarm to prevent it from activating!"
           selector:
             text:
         alarm_notifications_critical_pending:
@@ -1464,7 +1469,7 @@ blueprint:
             `required` `text`
 
             Notification message when alarm is disarmed. Use `{user_name}` template variable for the person who disarmed the alarm.
-          default: "{user_name} disarmed the alarm."
+          default: "The alarm is now disarmed by {user_name}."
           selector:
             text:
         alarm_notifications_critical_disarmed:
@@ -1530,7 +1535,7 @@ blueprint:
             `required` `text`
 
             Notification message when alarm is fully triggered. Use `{trigger_name}` template variable for the sensor that triggered the alarm.
-          default: "{trigger_name} triggered the alarm! The alarm has been activated!"
+          default: "The alarm was triggered by {trigger_name}! The alarm has been activated!"
           selector:
             text:
         alarm_notifications_critical_triggered:
@@ -1726,7 +1731,7 @@ blueprint:
             `required` `text`
 
             Notification message when an always-active sensor triggers. Use `{trigger_name}` template variable for the sensor name.
-          default: "{trigger_name} triggered!"
+          default: "Sensor triggered: {trigger_name}!"
           selector:
             text:
         alarm_notifications_critical_always:
