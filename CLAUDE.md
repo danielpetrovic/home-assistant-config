@@ -1,4 +1,4 @@
-@.claude/CLAUDE.md
+@.claude/session.md
 
 # Home Assistant Configuration - Context for AI Assistants
 
@@ -33,7 +33,7 @@ config/
 │   ├── lights.yaml                # Adaptive lighting system & sensors
 │   └── system.yaml                # System-wide helpers & counters
 ├── blueprints/automation/         # Custom automation blueprints
-│   ├── danielpetrovic/            # Author: danielpetrovic (3 blueprints)
+│   ├── danielpetrovic/            # Author: danielpetrovic (4 blueprints)
 │   └── panhans/                   # Author: panhans (1 blueprint)
 └── themes/danielpetrovic/         # 3 UI theme variants
 ```
@@ -230,7 +230,7 @@ The installation is organized across 3 floors:
 - Schedule integration with auto-adjust
 - Requires HA 2024.10.0+
 
-### 3. Alarm System with Keypad (3,651 lines)
+### 3. Alarm System with Keypad (3,704 lines)
 - Author: danielpetrovic
 - Multi-keypad: Z2M, ZHA, Dashboard
 - Multi-user PIN + RFID support
@@ -238,6 +238,7 @@ The installation is organized across 3 floors:
 - Auto-arm/disarm with geofencing
 - Rich notifications with camera feeds
 - Emergency SOS button
+- Dashboard keypad scripts with dash separator naming
 - Requires HA 2024.8.0+
 
 ### 4. Niko Battery Switch (Multi-Button) (~1011 lines)
@@ -285,18 +286,36 @@ Uses the [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting) in
 
 ## Scripts
 
-### Lighting Presets (8)
-- `000%`, `025%`, `050%`, `100%` - Fixed brightness with adaptive color
-- `Adaptive` - Full adaptive (brightness + color)
-- `Adaptive Color` - Color temp only
-
 ### Music Presets (3)
-- `Music Away` - Turns off all 7 media players
-- `Music Night` - Plays Classical playlist on bedroom (leader) grouped with kitchen & sauna, volume 0.25
-- `Music Home` - Plays 9 playlists (Asian, Dance, Eurovision, Hip Hop, Jazz, Metal, Pop, R&B, Rock) on bedroom (leader) grouped with kitchen & sauna, different volumes per room (0.35 kitchen, 0.25 bedroom/sauna)
+- `music_away` - Turns off all 7 media players
+- `music_night` - Plays Classical playlist on bedroom (leader) grouped with kitchen & gym, volume 0.25
+- `music_home` - Plays 9 playlists (Asian, Dance, Eurovision, Hip Hop, Jazz, Metal, Pop, R&B, Rock) on bedroom (leader) grouped with kitchen & gym, different volumes per room (0.35 kitchen, 0.25 bedroom/gym)
 
-### Alarm Effects (4)
-- Breathing animations: Green, Blue, Red, Orange
+### Lighting Presets (6)
+- `lights_preset_000` - Turn off light
+- `lights_preset_025` - 25% brightness with adaptive color
+- `lights_preset_050` - 50% brightness with adaptive color
+- `lights_preset_100` - 100% brightness with adaptive color
+- `lights_preset_adaptive` - Full adaptive (brightness + color)
+- `lights_preset_adaptive_color` - Adaptive color temp only (keeps current brightness)
+
+### Lighting Effects (4)
+- `lights_green` - Breathing animation: Green
+- `lights_blue` - Breathing animation: Blue
+- `lights_red` - Breathing animation: Red
+- `lights_orange` - Breathing animation: Orange
+
+### Alarm Mode Scripts (5)
+- `alarm_away` - Armed Away mode actions
+- `alarm_home` - Armed Home mode actions (stops siren)
+- `alarm_night` - Armed Night mode actions (stops siren)
+- `alarm_disarmed` - Disarmed mode actions (stops siren)
+- `alarm_pending` - Pending mode actions (triggers siren)
+
+### Ventilation Presets (3)
+- `fan_away` - Sets ventilation to Away mode
+- `fan_home` - Sets ventilation to Auto mode
+- `fan_night` - Sets ventilation to Manual 2 Forced
 
 ## Development Patterns
 
