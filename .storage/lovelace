@@ -379,7 +379,7 @@
                             "type": "button",
                             "show_state": true,
                             "icon": "",
-                            "entity": "sensor.t047zg_batterij",
+                            "entity": "sensor.t047zg_battery",
                             "icon_height": "30px",
                             "theme": "Enhanced Grey"
                           },
@@ -409,7 +409,7 @@
                             "type": "button",
                             "show_state": true,
                             "icon": "",
-                            "entity": "binary_sensor.t047zg_stekker",
+                            "entity": "binary_sensor.t047zg_plug",
                             "icon_height": "30px",
                             "theme": "Enhanced Grey"
                           }
@@ -436,7 +436,7 @@
                             "type": "button",
                             "show_state": true,
                             "icon": "",
-                            "entity": "sensor.t047zg_batterij",
+                            "entity": "sensor.t047zg_battery",
                             "icon_height": "30px",
                             "theme": "Enhanced Orange"
                           },
@@ -466,7 +466,7 @@
                             "type": "button",
                             "show_state": true,
                             "icon": "",
-                            "entity": "binary_sensor.t047zg_stekker",
+                            "entity": "binary_sensor.t047zg_plug",
                             "icon_height": "30px",
                             "theme": "Enhanced Orange"
                           }
@@ -493,7 +493,7 @@
                             "type": "button",
                             "show_state": true,
                             "icon": "",
-                            "entity": "sensor.t047zg_batterij",
+                            "entity": "sensor.t047zg_battery",
                             "icon_height": "30px",
                             "theme": "Enhanced Grey"
                           },
@@ -523,7 +523,7 @@
                             "type": "button",
                             "show_state": true,
                             "icon": "",
-                            "entity": "binary_sensor.t047zg_stekker",
+                            "entity": "binary_sensor.t047zg_plug",
                             "icon_height": "30px",
                             "theme": "Enhanced Green"
                           }
@@ -540,128 +540,409 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "heading",
-                  "icon": "mdi:multimedia",
-                  "heading": "Media",
-                  "heading_style": "subtitle"
-                },
-                {
-                  "type": "media-control",
-                  "entity": "media_player.bedroom",
-                  "name": "Music Assistant"
-                },
-                {
-                  "type": "tile",
-                  "entity": "media_player.bathroom_kef",
-                  "show_entity_picture": false,
-                  "state_content": [
-                    "state",
-                    "source"
-                  ],
-                  "vertical": false,
-                  "features": [
+                  "type": "vertical-stack",
+                  "cards": [
                     {
-                      "type": "media-player-volume-buttons"
+                      "type": "heading",
+                      "heading": "Alarm Keypad",
+                      "heading_style": "subtitle",
+                      "icon": "mdi:shield-lock"
+                    },
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "tile",
+                          "entity": "alarm_control_panel.alarm",
+                          "name": "Status",
+                          "vertical": false,
+                          "tap_action": {
+                            "action": "none"
+                          },
+                          "icon_tap_action": {
+                            "action": "none"
+                          },
+                          "features_position": "bottom"
+                        },
+                        {
+                          "type": "tile",
+                          "entity": "input_text.alarm_code_user_name",
+                          "name": "Last User",
+                          "icon": "mdi:account",
+                          "vertical": false,
+                          "tap_action": {
+                            "action": "none"
+                          },
+                          "icon_tap_action": {
+                            "action": "none"
+                          },
+                          "features_position": "bottom"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "markdown",
+                      "content": "{% set code = states('input_text.alarm_dashboard_code') %}\n<div style=\"height: 60px; display: flex; align-items: center; justify-content: center; font-size: 48px; letter-spacing: 8px; font-family: monospace;\">\n  {% if code == '' %}\n    ____\n  {% else %}\n    {{ '●' * (code | length) }}\n  {% endif %}\n</div>\n"
+                    },
+                    {
+                      "square": false,
+                      "type": "grid",
+                      "columns": 3,
+                      "cards": [
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:numeric-1",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.alarm_dashboard_append_1"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:numeric-2",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.alarm_dashboard_append_2"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:numeric-3",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.alarm_dashboard_append_3"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:numeric-4",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.alarm_dashboard_append_4"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:numeric-5",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.alarm_dashboard_append_5"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:numeric-6",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.alarm_dashboard_append_6"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:numeric-7",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.alarm_dashboard_append_7"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:numeric-8",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.alarm_dashboard_append_8"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:numeric-9",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.alarm_dashboard_append_9"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:close-circle",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.alarm_dashboard_clear"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:numeric-0",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.alarm_dashboard_append_0"
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:backspace",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.alarm_dashboard_backspace"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:shield-lock",
+                          "icon_height": "50px",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "input_text.set_value",
+                            "target": {
+                              "entity_id": "input_text.alarm_dashboard_action"
+                            },
+                            "data": {
+                              "value": "arm_away"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:shield-home",
+                          "icon_height": "50px",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "input_text.set_value",
+                            "target": {
+                              "entity_id": "input_text.alarm_dashboard_action"
+                            },
+                            "data": {
+                              "value": "arm_home"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:shield-moon",
+                          "icon_height": "50px",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "input_text.set_value",
+                            "target": {
+                              "entity_id": "input_text.alarm_dashboard_action"
+                            },
+                            "data": {
+                              "value": "arm_night"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "show_name": false,
+                          "show_icon": true,
+                          "icon": "mdi:shield-off",
+                          "icon_height": "50px",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "input_text.set_value",
+                            "target": {
+                              "entity_id": "input_text.alarm_dashboard_action"
+                            },
+                            "data": {
+                              "value": "disarm"
+                            }
+                          }
+                        }
+                      ]
                     }
                   ],
-                  "features_position": "inline"
+                  "visibility": [
+                    {
+                      "condition": "or",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "alarm_control_panel.alarm",
+                          "state": "arming"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "alarm_control_panel.alarm",
+                          "state": "disarming"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "alarm_control_panel.alarm",
+                          "state": "pending"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "alarm_control_panel.alarm",
+                          "state": "triggered"
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
-                  "type": "tile",
-                  "entity": "media_player.bedroom_kef",
-                  "show_entity_picture": false,
-                  "state_content": [
-                    "state",
-                    "source"
-                  ],
-                  "vertical": false,
-                  "features": [
+                  "square": false,
+                  "type": "grid",
+                  "cards": [
                     {
-                      "type": "media-player-volume-buttons"
+                      "type": "heading",
+                      "icon": "mdi:multimedia",
+                      "heading": "Media",
+                      "heading_style": "subtitle"
+                    },
+                    {
+                      "type": "media-control",
+                      "entity": "media_player.bedroom",
+                      "name": "Music Assistant"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "media_player.bathroom_kef",
+                      "show_entity_picture": false,
+                      "state_content": [
+                        "state",
+                        "source"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "media-player-volume-buttons"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "media_player.bedroom_kef",
+                      "show_entity_picture": false,
+                      "state_content": [
+                        "state",
+                        "source"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "media-player-volume-buttons"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "media_player.gameroom_kef",
+                      "show_entity_picture": false,
+                      "state_content": [
+                        "state",
+                        "source"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "media-player-volume-buttons"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "media_player.gym_kef",
+                      "show_entity_picture": false,
+                      "state_content": [
+                        "state",
+                        "source"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "media-player-volume-buttons"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "media_player.kitchen_kef",
+                      "show_entity_picture": false,
+                      "state_content": [
+                        "state",
+                        "source"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "media-player-volume-buttons"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "media_player.living_room_kef",
+                      "show_entity_picture": false,
+                      "state_content": [
+                        "state",
+                        "source",
+                        "audio_codec"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "media-player-volume-buttons"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "media_player.office_kef",
+                      "show_entity_picture": false,
+                      "state_content": [
+                        "state",
+                        "source"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "media-player-volume-buttons"
+                        }
+                      ],
+                      "features_position": "inline"
                     }
                   ],
-                  "features_position": "inline"
-                },
-                {
-                  "type": "tile",
-                  "entity": "media_player.gameroom_kef",
-                  "show_entity_picture": false,
-                  "state_content": [
-                    "state",
-                    "source"
-                  ],
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "media-player-volume-buttons"
-                    }
-                  ],
-                  "features_position": "inline"
-                },
-                {
-                  "type": "tile",
-                  "entity": "media_player.gym_kef",
-                  "show_entity_picture": false,
-                  "state_content": [
-                    "state",
-                    "source"
-                  ],
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "media-player-volume-buttons"
-                    }
-                  ],
-                  "features_position": "inline"
-                },
-                {
-                  "type": "tile",
-                  "entity": "media_player.kitchen_kef",
-                  "show_entity_picture": false,
-                  "state_content": [
-                    "state",
-                    "source"
-                  ],
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "media-player-volume-buttons"
-                    }
-                  ],
-                  "features_position": "inline"
-                },
-                {
-                  "type": "tile",
-                  "entity": "media_player.living_room_kef",
-                  "show_entity_picture": false,
-                  "state_content": [
-                    "state",
-                    "source",
-                    "audio_codec"
-                  ],
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "media-player-volume-buttons"
-                    }
-                  ],
-                  "features_position": "inline"
-                },
-                {
-                  "type": "tile",
-                  "entity": "media_player.office_kef",
-                  "show_entity_picture": false,
-                  "state_content": [
-                    "state",
-                    "source"
-                  ],
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "media-player-volume-buttons"
-                    }
-                  ],
-                  "features_position": "inline"
+                  "columns": 1
                 }
               ]
             }
