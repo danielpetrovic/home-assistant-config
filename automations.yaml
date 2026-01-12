@@ -186,11 +186,16 @@
         target:
           entity_id:
           - cover.garden_shade
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
           - cover.garden_shutter
     - conditions:
       - condition: state
         entity_id: input_select.garden_covers
-        state: 090%
+        state: Winter
       sequence:
       - action: cover.set_cover_position
         data:
@@ -198,12 +203,15 @@
         metadata: {}
         target:
           entity_id: cover.garden_shade
-      - alias: Door open?
+      - alias: Door or shed shutter open?
         choose:
         - conditions:
           - condition: state
             entity_id: binary_sensor.garden_door_contact
             state: 'off'
+          - condition: state
+            entity_id: cover.shed_garden_shutter
+            state: closed
           sequence:
           - action: cover.set_cover_position
             data:
@@ -212,14 +220,25 @@
             target:
               entity_id: cover.garden_shutter
         - conditions:
-          - condition: state
-            entity_id: binary_sensor.garden_door_contact
-            state: 'on'
+          - condition: or
+            conditions:
+            - condition: state
+              entity_id: binary_sensor.garden_door_contact
+              state: 'on'
+            - condition: not
+              conditions:
+              - condition: state
+                entity_id: cover.shed_garden_shutter
+                state: closed
           sequence:
           - wait_for_trigger:
             - entity_id:
               - binary_sensor.garden_door_contact
               to: 'off'
+              trigger: state
+            - entity_id:
+              - cover.shed_garden_shutter
+              to: closed
               trigger: state
             continue_on_timeout: true
           - action: cover.set_cover_position
@@ -231,7 +250,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.garden_covers
-        state: 080%
+        state: Summer
       sequence:
       - action: cover.set_cover_position
         data:
@@ -239,12 +258,15 @@
         metadata: {}
         target:
           entity_id: cover.garden_shade
-      - alias: Door open?
+      - alias: Door or shed shutter open?
         choose:
         - conditions:
           - condition: state
             entity_id: binary_sensor.garden_door_contact
             state: 'off'
+          - condition: state
+            entity_id: cover.shed_garden_shutter
+            state: closed
           sequence:
           - action: cover.set_cover_position
             data:
@@ -253,142 +275,30 @@
             target:
               entity_id: cover.garden_shutter
         - conditions:
-          - condition: state
-            entity_id: binary_sensor.garden_door_contact
-            state: 'on'
+          - condition: or
+            conditions:
+            - condition: state
+              entity_id: binary_sensor.garden_door_contact
+              state: 'on'
+            - condition: not
+              conditions:
+              - condition: state
+                entity_id: cover.shed_garden_shutter
+                state: closed
           sequence:
           - wait_for_trigger:
             - entity_id:
               - binary_sensor.garden_door_contact
               to: 'off'
+              trigger: state
+            - entity_id:
+              - cover.shed_garden_shutter
+              to: closed
               trigger: state
             continue_on_timeout: true
           - action: cover.set_cover_position
             data:
               position: 80
-            metadata: {}
-            target:
-              entity_id: cover.garden_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.garden_covers
-        state: 060%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.garden_shade
-      - alias: Door open?
-        choose:
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.garden_door_contact
-            state: 'off'
-          sequence:
-          - action: cover.set_cover_position
-            data:
-              position: 60
-            metadata: {}
-            target:
-              entity_id: cover.garden_shutter
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.garden_door_contact
-            state: 'on'
-          sequence:
-          - wait_for_trigger:
-            - entity_id:
-              - binary_sensor.garden_door_contact
-              to: 'off'
-              trigger: state
-            continue_on_timeout: true
-          - action: cover.set_cover_position
-            data:
-              position: 60
-            metadata: {}
-            target:
-              entity_id: cover.garden_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.garden_covers
-        state: 040%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.garden_shade
-      - alias: Door open?
-        choose:
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.garden_door_contact
-            state: 'off'
-          sequence:
-          - action: cover.set_cover_position
-            data:
-              position: 40
-            metadata: {}
-            target:
-              entity_id: cover.garden_shutter
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.garden_door_contact
-            state: 'on'
-          sequence:
-          - wait_for_trigger:
-            - entity_id:
-              - binary_sensor.garden_door_contact
-              to: 'off'
-              trigger: state
-            continue_on_timeout: true
-          - action: cover.set_cover_position
-            data:
-              position: 40
-            metadata: {}
-            target:
-              entity_id: cover.garden_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.garden_covers
-        state: 020%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.garden_shade
-      - alias: Door open?
-        choose:
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.garden_door_contact
-            state: 'off'
-          sequence:
-          - action: cover.set_cover_position
-            data:
-              position: 20
-            metadata: {}
-            target:
-              entity_id: cover.garden_shutter
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.garden_door_contact
-            state: 'on'
-          sequence:
-          - wait_for_trigger:
-            - entity_id:
-              - binary_sensor.garden_door_contact
-              to: 'off'
-              trigger: state
-            continue_on_timeout: true
-          - action: cover.set_cover_position
-            data:
-              position: 20
             metadata: {}
             target:
               entity_id: cover.garden_shutter
@@ -403,12 +313,15 @@
         metadata: {}
         target:
           entity_id: cover.garden_shade
-      - alias: Door open?
+      - alias: Door or shed shutter open?
         choose:
         - conditions:
           - condition: state
             entity_id: binary_sensor.garden_door_contact
             state: 'off'
+          - condition: state
+            entity_id: cover.shed_garden_shutter
+            state: closed
           sequence:
           - action: cover.close_cover
             data: {}
@@ -417,14 +330,25 @@
               entity_id:
               - cover.garden_shutter
         - conditions:
-          - condition: state
-            entity_id: binary_sensor.garden_door_contact
-            state: 'on'
+          - condition: or
+            conditions:
+            - condition: state
+              entity_id: binary_sensor.garden_door_contact
+              state: 'on'
+            - condition: not
+              conditions:
+              - condition: state
+                entity_id: cover.shed_garden_shutter
+                state: closed
           sequence:
           - wait_for_trigger:
             - entity_id:
               - binary_sensor.garden_door_contact
               to: 'off'
+              trigger: state
+            - entity_id:
+              - cover.shed_garden_shutter
+              to: closed
               trigger: state
             continue_on_timeout: true
           - action: cover.close_cover
@@ -460,7 +384,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.roof_terrace_covers
-        state: 090%
+        state: Winter
       sequence:
       - action: cover.set_cover_position
         data:
@@ -501,7 +425,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.roof_terrace_covers
-        state: 080%
+        state: Summer
       sequence:
       - action: cover.set_cover_position
         data:
@@ -536,129 +460,6 @@
           - action: cover.set_cover_position
             data:
               position: 80
-            metadata: {}
-            target:
-              entity_id: cover.roof_terrace_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.roof_terrace_covers
-        state: 060%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.roof_terrace_shade
-      - alias: Door open?
-        choose:
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.roof_terrace_door_contact
-            state: 'off'
-          sequence:
-          - action: cover.set_cover_position
-            data:
-              position: 60
-            metadata: {}
-            target:
-              entity_id: cover.roof_terrace_shutter
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.roof_terrace_door_contact
-            state: 'on'
-          sequence:
-          - wait_for_trigger:
-            - entity_id:
-              - binary_sensor.roof_terrace_door_contact
-              to: 'off'
-              trigger: state
-            continue_on_timeout: true
-          - action: cover.set_cover_position
-            data:
-              position: 60
-            metadata: {}
-            target:
-              entity_id: cover.roof_terrace_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.roof_terrace_covers
-        state: 040%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.roof_terrace_shade
-      - alias: Door open?
-        choose:
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.roof_terrace_door_contact
-            state: 'off'
-          sequence:
-          - action: cover.set_cover_position
-            data:
-              position: 40
-            metadata: {}
-            target:
-              entity_id: cover.roof_terrace_shutter
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.roof_terrace_door_contact
-            state: 'on'
-          sequence:
-          - wait_for_trigger:
-            - entity_id:
-              - binary_sensor.roof_terrace_door_contact
-              to: 'off'
-              trigger: state
-            continue_on_timeout: true
-          - action: cover.set_cover_position
-            data:
-              position: 40
-            metadata: {}
-            target:
-              entity_id: cover.roof_terrace_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.roof_terrace_covers
-        state: 020%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.roof_terrace_shade
-      - alias: Door open?
-        choose:
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.roof_terrace_door_contact
-            state: 'off'
-          sequence:
-          - action: cover.set_cover_position
-            data:
-              position: 20
-            metadata: {}
-            target:
-              entity_id: cover.roof_terrace_shutter
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.roof_terrace_door_contact
-            state: 'on'
-          sequence:
-          - wait_for_trigger:
-            - entity_id:
-              - binary_sensor.roof_terrace_door_contact
-              to: 'off'
-              trigger: state
-            continue_on_timeout: true
-          - action: cover.set_cover_position
-            data:
-              position: 20
             metadata: {}
             target:
               entity_id: cover.roof_terrace_shutter
@@ -727,7 +528,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.kitchen_covers
-        state: 090%
+        state: Winter
       sequence:
       - action: cover.set_cover_position
         data:
@@ -744,7 +545,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.kitchen_covers
-        state: 080%
+        state: Summer
       sequence:
       - action: cover.set_cover_position
         data:
@@ -755,57 +556,6 @@
       - action: cover.set_cover_position
         data:
           position: 80
-        metadata: {}
-        target:
-          entity_id: cover.kitchen_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.kitchen_covers
-        state: 060%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.kitchen_shade
-      - action: cover.set_cover_position
-        data:
-          position: 60
-        metadata: {}
-        target:
-          entity_id: cover.kitchen_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.kitchen_covers
-        state: 040%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.kitchen_shade
-      - action: cover.set_cover_position
-        data:
-          position: 40
-        metadata: {}
-        target:
-          entity_id: cover.kitchen_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.kitchen_covers
-        state: 020%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.kitchen_shade
-      - action: cover.set_cover_position
-        data:
-          position: 20
         metadata: {}
         target:
           entity_id: cover.kitchen_shutter
@@ -853,7 +603,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.living_room_covers
-        state: 090%
+        state: Winter
       sequence:
       - action: cover.set_cover_position
         data:
@@ -870,41 +620,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.living_room_covers
-        state: 080%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.living_room_shade
-      - action: cover.set_cover_position
-        data:
-          position: 80
-        metadata: {}
-        target:
-          entity_id: cover.living_room_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.living_room_covers
-        state: 060%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.living_room_shade
-      - action: cover.set_cover_position
-        data:
-          position: 60
-        metadata: {}
-        target:
-          entity_id: cover.living_room_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.living_room_covers
-        state: 040%
+        state: Summer
       sequence:
       - action: cover.set_cover_position
         data:
@@ -921,7 +637,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.living_room_covers
-        state: 020%
+        state: Privacy
       sequence:
       - action: cover.set_cover_position
         data:
@@ -980,7 +696,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.gameroom_covers
-        state: 090%
+        state: Winter
       sequence:
       - action: cover.set_cover_position
         data:
@@ -1005,32 +721,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.gameroom_covers
-        state: 080%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.gameroom_shades
-      - action: cover.set_cover_position
-        data:
-          position: 40
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_left_shutter
-      - action: cover.set_cover_position
-        data:
-          position: 80
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_right_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.gameroom_covers
-        state: 060%
+        state: Summer
       sequence:
       - action: cover.set_cover_position
         data:
@@ -1055,32 +746,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.gameroom_covers
-        state: 040%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.gameroom_shades
-      - action: cover.set_cover_position
-        data:
-          position: 20
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_left_shutter
-      - action: cover.set_cover_position
-        data:
-          position: 40
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gameroom_right_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.gameroom_covers
-        state: 020%
+        state: Privacy
       sequence:
       - action: cover.set_cover_position
         data:
@@ -1141,7 +807,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.hallway_covers
-        state: 090%
+        state: Winter
       sequence:
       - action: cover.set_cover_position
         data:
@@ -1158,24 +824,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.hallway_covers
-        state: 080%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.hallway_shade
-      - action: cover.set_cover_position
-        data:
-          position: 80
-        metadata: {}
-        target:
-          entity_id: cover.hallway_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.hallway_covers
-        state: 060%
+        state: Summer
       sequence:
       - action: cover.close_cover
         data: {}
@@ -1192,24 +841,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.hallway_covers
-        state: 040%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.hallway_shade
-      - action: cover.set_cover_position
-        data:
-          position: 40
-        metadata: {}
-        target:
-          entity_id: cover.hallway_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.hallway_covers
-        state: 020%
+        state: Privacy
       sequence:
       - action: cover.close_cover
         data: {}
@@ -1262,7 +894,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.gym_covers
-        state: 090%
+        state: Partial
       sequence:
       - action: cover.close_cover
         data: {}
@@ -1279,58 +911,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.gym_covers
-        state: 080%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gym_curtain
-      - action: cover.set_cover_position
-        data:
-          position: 80
-        metadata: {}
-        target:
-          entity_id: cover.gym_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.gym_covers
-        state: 060%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gym_curtain
-      - action: cover.set_cover_position
-        data:
-          position: 60
-        metadata: {}
-        target:
-          entity_id: cover.gym_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.gym_covers
-        state: 040%
-      sequence:
-      - action: cover.close_cover
-        data: {}
-        metadata: {}
-        target:
-          entity_id:
-          - cover.gym_curtain
-      - action: cover.set_cover_position
-        data:
-          position: 40
-        metadata: {}
-        target:
-          entity_id: cover.gym_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.gym_covers
-        state: 020%
+        state: Privacy
       sequence:
       - action: cover.close_cover
         data: {}
@@ -1383,7 +964,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.office_covers
-        state: 090%
+        state: Winter
       sequence:
       - action: cover.set_cover_position
         data:
@@ -1401,25 +982,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.office_covers
-        state: 080%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.office_shades
-      - action: cover.set_cover_position
-        data:
-          position: 80
-        metadata: {}
-        target:
-          entity_id:
-          - cover.office_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.office_covers
-        state: 060%
+        state: Summer
       sequence:
       - action: cover.set_cover_position
         data:
@@ -1437,25 +1000,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.office_covers
-        state: 040%
-      sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
-        metadata: {}
-        target:
-          entity_id: cover.office_shades
-      - action: cover.set_cover_position
-        data:
-          position: 40
-        metadata: {}
-        target:
-          entity_id:
-          - cover.office_shutter
-    - conditions:
-      - condition: state
-        entity_id: input_select.office_covers
-        state: 020%
+        state: Privacy
       sequence:
       - action: cover.set_cover_position
         data:
@@ -1515,7 +1060,7 @@
         metadata: {}
         target:
           entity_id:
-          - light.shed_lighten
+          - light.shed
       - action: scene.create
         data:
           scene_id: garden_before
@@ -1554,7 +1099,7 @@
         metadata: {}
         target:
           entity_id:
-          - light.shed_lighten
+          - light.shed
     - conditions:
       - condition: state
         entity_id: input_select.shed_covers
@@ -1581,7 +1126,7 @@
         metadata: {}
         target:
           entity_id:
-          - light.shed_lighten
+          - light.shed
       - action: scene.create
         data:
           scene_id: garden_before
@@ -1610,16 +1155,17 @@
         data: {}
         metadata: {}
         target:
-          entity_id: light.shed_lighten
+          entity_id:
+          - light.shed
       - if:
         - condition: state
-          entity_id: binary_sensor.garden_contact_sensor_contact
+          entity_id: binary_sensor.garden_door_contact
           state: 'on'
         then:
         - wait_for_trigger:
           - trigger: state
             entity_id:
-            - binary_sensor.garden_contact_sensor_contact
+            - binary_sensor.garden_door_contact
             to: 'off'
             from: 'on'
         - target:
@@ -1673,8 +1219,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.bedroom_covers
-        state:
-        - 080%
+        state: Partial
       sequence:
       - action: cover.close_cover
         metadata: {}
@@ -1683,7 +1228,7 @@
         data: {}
       - action: cover.set_cover_position
         data:
-          position: 80
+          position: 90
         metadata: {}
         target:
           entity_id:
@@ -1693,7 +1238,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.bedroom_covers
-        state: 020%
+        state: Privacy
       sequence:
       - action: cover.close_cover
         metadata: {}
@@ -3651,7 +3196,6 @@
     input:
       integration_type:
       - z2m
-      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Entrance Button
       button_1_light:
@@ -3666,7 +3210,6 @@
         target:
           entity_id: automation.entrance_motion
         data: {}
-      zha_remote: b5b016dbd25e4edc48cfe901343953e3
       button_1_on_light_mode:
       - turn_on
       button_1_off_light_mode:
@@ -3682,7 +3225,8 @@
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Toilet Button
       button_1_light:
-        entity_id: light.toilet_lighten
+        entity_id:
+        - light.toilet_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
@@ -4526,9 +4070,6 @@
   alias: Covers
   description: All logic for window coverings (time + climate)
   triggers:
-  - at: 07:00:00
-    id: 07:00
-    trigger: time
   - at: 07:30:00
     id: 07:30
     trigger: time
@@ -4553,114 +4094,147 @@
   actions:
   - alias: Time-based logic
     choose:
-    - alias: 07:00
-      conditions:
-      - condition: trigger
-        id:
-        - 07:00
-      - condition: time
-        weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
-      sequence:
-      - repeat:
-          for_each:
-          - entities:
-            - input_select.hallway_covers
-            - input_select.gym_covers
-            preset: 020%
-          - entities:
-            - input_select.gameroom_covers
-            - input_select.office_covers
-            - input_select.living_room_covers
-            preset: 020%
-          - entities:
-            - input_select.roof_terrace_covers
-            - input_select.kitchen_covers
-            - input_select.garden_covers
-            preset: 090%
-          sequence:
-          - target:
-              entity_id: '{{ repeat.item.entities }}'
-            data:
-              option: '{{ repeat.item.preset }}'
-            action: input_select.select_option
-          - delay:
-              seconds: 5
     - alias: 07:30
       conditions:
       - condition: trigger
         id: 07:30
-      - condition: time
-        weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
       sequence:
-      - repeat:
-          for_each:
-          - entities:
-            - input_select.hallway_covers
-            - input_select.gym_covers
-            - input_select.bedroom_covers
-            preset: 020%
-          - entities:
-            - input_select.gameroom_covers
-            - input_select.office_covers
-            - input_select.living_room_covers
-            preset: 020%
-          - entities:
-            - input_select.roof_terrace_covers
-            - input_select.kitchen_covers
-            - input_select.garden_covers
-            preset: 090%
+      - alias: Workday
+        choose:
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'on'
           sequence:
-          - target:
-              entity_id: '{{ repeat.item.entities }}'
-            data:
-              option: '{{ repeat.item.preset }}'
-            action: input_select.select_option
-          - delay:
-              seconds: 5
+          - repeat:
+              for_each:
+              - entities:
+                - input_select.hallway_covers
+                - input_select.gym_covers
+                - input_select.bedroom_covers
+                preset: Privacy
+              - entities:
+                - input_select.gameroom_covers
+                - input_select.office_covers
+                - input_select.living_room_covers
+                preset: Privacy
+              - entities:
+                - input_select.roof_terrace_covers
+                - input_select.kitchen_covers
+                - input_select.garden_covers
+                preset: Winter
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entities }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+          alias: 'Yes'
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'off'
+          sequence:
+          - repeat:
+              for_each:
+              - entities:
+                - input_select.hallway_covers
+                - input_select.gym_covers
+                preset: Privacy
+              - entities:
+                - input_select.gameroom_covers
+                - input_select.office_covers
+                - input_select.living_room_covers
+                preset: Privacy
+              - entities:
+                - input_select.roof_terrace_covers
+                - input_select.kitchen_covers
+                - input_select.garden_covers
+                preset: Winter
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entities }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+          alias: 'No'
     - alias: 08:30
       conditions:
       - condition: trigger
         id: 08:30
-      - condition: time
-        weekday:
-        - sat
-        - sun
       sequence:
-      - repeat:
-          for_each:
-          - entities:
-            - input_select.hallway_covers
-            - input_select.gym_covers
-            - input_select.bedroom_covers
-            preset: 020%
-          - entities:
-            - input_select.gameroom_covers
-            - input_select.office_covers
-            - input_select.living_room_covers
-            preset: 020%
-          - entities:
-            - input_select.roof_terrace_covers
-            - input_select.kitchen_covers
-            - input_select.garden_covers
-            preset: 090%
+      - alias: Workday
+        choose:
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'on'
           sequence:
-          - target:
-              entity_id: '{{ repeat.item.entities }}'
-            data:
-              option: '{{ repeat.item.preset }}'
-            action: input_select.select_option
-          - delay:
-              seconds: 5
+          - repeat:
+              for_each:
+              - entities:
+                - input_select.gym_covers
+                - input_select.bedroom_covers
+                preset: Partial
+              - entities:
+                - input_select.hallway_covers
+                - input_select.gameroom_covers
+                - input_select.office_covers
+                - input_select.living_room_covers
+                preset: Summer
+              - entities:
+                - input_select.roof_terrace_covers
+                - input_select.kitchen_covers
+                - input_select.garden_covers
+                preset: Winter
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entities }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+          alias: 'Yes'
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'off'
+          sequence:
+          - repeat:
+              for_each:
+              - entities:
+                - input_select.hallway_covers
+                - input_select.gym_covers
+                - input_select.bedroom_covers
+                preset: Privacy
+              - entities:
+                - input_select.gameroom_covers
+                - input_select.office_covers
+                - input_select.living_room_covers
+                preset: Privacy
+              - entities:
+                - input_select.roof_terrace_covers
+                - input_select.kitchen_covers
+                - input_select.garden_covers
+                preset: Winter
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entities }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+          alias: 'No'
     - alias: '10:00'
       conditions:
       - condition: trigger
@@ -4763,12 +4337,12 @@
             - input_select.gameroom_covers
             - input_select.office_covers
             - input_select.living_room_covers
-            preset: 090%
+            preset: Winter
           - entities:
             - input_select.roof_terrace_covers
             - input_select.kitchen_covers
             - input_select.garden_covers
-            preset: 090%
+            preset: Winter
           sequence:
           - target:
               entity_id: '{{ repeat.item.entities }}'
@@ -4803,12 +4377,12 @@
                 - input_select.gameroom_covers
                 - input_select.office_covers
                 - input_select.living_room_covers
-                preset: 090%
+                preset: Winter
               - entities:
                 - input_select.roof_terrace_covers
                 - input_select.kitchen_covers
                 - input_select.garden_covers
-                preset: 090%
+                preset: Winter
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entities }}'
@@ -4829,12 +4403,12 @@
                 - input_select.gameroom_covers
                 - input_select.office_covers
                 - input_select.living_room_covers
-                preset: 080%
+                preset: Summer
               - entities:
                 - input_select.roof_terrace_covers
                 - input_select.kitchen_covers
                 - input_select.garden_covers
-                preset: 090%
+                preset: Winter
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entities }}'
@@ -4855,12 +4429,12 @@
                 - input_select.gameroom_covers
                 - input_select.office_covers
                 - input_select.living_room_covers
-                preset: 060%
+                preset: Summer
               - entities:
                 - input_select.roof_terrace_covers
                 - input_select.kitchen_covers
                 - input_select.garden_covers
-                preset: 080%
+                preset: Summer
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entities }}'
@@ -4881,12 +4455,12 @@
                 - input_select.gameroom_covers
                 - input_select.office_covers
                 - input_select.living_room_covers
-                preset: 060%
+                preset: Summer
               - entities:
                 - input_select.roof_terrace_covers
                 - input_select.kitchen_covers
                 - input_select.garden_covers
-                preset: 080%
+                preset: Summer
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entities }}'
@@ -4921,12 +4495,12 @@
                 - input_select.gameroom_covers
                 - input_select.office_covers
                 - input_select.living_room_covers
-                preset: 080%
+                preset: Summer
               - entities:
                 - input_select.roof_terrace_covers
                 - input_select.kitchen_covers
                 - input_select.garden_covers
-                preset: 090%
+                preset: Winter
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entities }}'
@@ -4947,12 +4521,12 @@
                 - input_select.gameroom_covers
                 - input_select.office_covers
                 - input_select.living_room_covers
-                preset: 060%
+                preset: Summer
               - entities:
                 - input_select.roof_terrace_covers
                 - input_select.kitchen_covers
                 - input_select.garden_covers
-                preset: 080%
+                preset: Summer
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entities }}'
@@ -4973,12 +4547,12 @@
                 - input_select.gameroom_covers
                 - input_select.office_covers
                 - input_select.living_room_covers
-                preset: 040%
+                preset: Summer
               - entities:
                 - input_select.roof_terrace_covers
                 - input_select.kitchen_covers
                 - input_select.garden_covers
-                preset: 080%
+                preset: Summer
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entities }}'
@@ -4999,12 +4573,12 @@
                 - input_select.gameroom_covers
                 - input_select.office_covers
                 - input_select.living_room_covers
-                preset: 020%
+                preset: Privacy
               - entities:
                 - input_select.roof_terrace_covers
                 - input_select.kitchen_covers
                 - input_select.garden_covers
-                preset: 060%
+                preset: Summer
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entities }}'
@@ -5378,21 +4952,21 @@
       alias: motion clear
   mode: restart
 - id: '1764313480952'
-  alias: Robotstofzuiger
+  alias: Robot Vacuums
   description: ''
   triggers:
   - trigger: time
     at: 06:00:00
   - trigger: state
     entity_id:
-    - sensor.bart_status
+    - sensor.bart_operation_state
     to:
     - actionrequired
   conditions: []
   actions:
   - if:
     - condition: state
-      entity_id: sensor.bart_status
+      entity_id: sensor.bart_operation_state
       state:
       - actionrequired
     then:
@@ -5401,26 +4975,30 @@
       data:
         option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_only
       target:
-        entity_id: select.bart_schoonmaakmodus
+        entity_id:
+        - select.bart_cleaning_mode
     - action: select.select_option
       metadata: {}
       data:
         option: consumer_products_cleaning_robot_program_cleaning_clean_all
       target:
-        entity_id: select.bart_actieve_programma
+        entity_id:
+        - select.bart_active_programme
     else:
     - action: select.select_option
       metadata: {}
       data:
-        option: consumer_products_cleaning_robot_enum_type_cleaning_mode_mop_after_vacuum
+        option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_and_mop
       target:
-        entity_id: select.bart_schoonmaakmodus
+        entity_id:
+        - select.bart_cleaning_mode
     - action: select.select_option
       metadata: {}
       data:
         option: consumer_products_cleaning_robot_program_cleaning_clean_all
       target:
-        entity_id: select.bart_actieve_programma
+        entity_id:
+        - select.bart_active_programme
   mode: single
 - id: '1764429546417'
   alias: Gameroom Motion
