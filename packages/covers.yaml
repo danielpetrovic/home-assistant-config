@@ -109,66 +109,51 @@ input_select:
     name: Roof Terrace Covers Preset
     options:
       - "Closed"
-      - "020%"
-      - "040%"
-      - "060%"
-      - "080%"
-      - "090%"
+      - "Summer"
+      - "Winter"
       - "Open"
     icon: mdi:window-shutter-auto
   gameroom_covers:
     name: Gameroom Covers Preset
     options:
       - "Closed"
-      - "020%"
-      - "040%"
-      - "060%"
-      - "080%"
-      - "090%"
+      - "Privacy"
+      - "Summer"
+      - "Winter"
       - "Open"
     icon: mdi:window-shutter-auto
   hallway_covers:
     name: Hallway Covers Preset
     options:
       - "Closed"
-      - "020%"
-      - "040%"
-      - "060%"
-      - "080%"
-      - "090%"
+      - "Privacy"
+      - "Summer"
+      - "Winter"
       - "Open"
     icon: mdi:window-shutter-auto
   office_covers:
     name: Office Covers Preset
     options:
       - "Closed"
-      - "020%"
-      - "040%"
-      - "060%"
-      - "080%"
-      - "090%"
+      - "Privacy"
+      - "Summer"
+      - "Winter"
       - "Open"
     icon: mdi:window-shutter-auto
   kitchen_covers:
     name: Kitchen Covers Preset
     options:
       - "Closed"
-      - "020%"
-      - "040%"
-      - "060%"
-      - "080%"
-      - "090%"
+      - "Summer"
+      - "Winter"
       - "Open"
     icon: mdi:window-shutter-auto
   gym_covers:
     name: Gym Covers Preset
     options:
       - "Closed"
-      - "020%"
-      - "040%"
-      - "060%"
-      - "080%"
-      - "090%"
+      - "Privacy"
+      - "Partial"
       - "Open"
     icon: mdi:window-shutter-auto
   shed_covers:
@@ -183,30 +168,25 @@ input_select:
     name: Bedroom Covers Preset
     options:
       - "Closed"
-      - "020%"
-      - "080%"
+      - "Privacy"
+      - "Partial"
       - "Open"
     icon: mdi:window-shutter-auto
   garden_covers:
     name: Garden Covers Preset
     options:
       - "Closed"
-      - "020%"
-      - "040%"
-      - "060%"
-      - "080%"
-      - "090%"
+      - "Summer"
+      - "Winter"
       - "Open"
     icon: mdi:window-shutter-auto
   living_room_covers:
     name: Living Room Covers Preset
     options:
       - "Closed"
-      - "020%"
-      - "040%"
-      - "060%"
-      - "080%"
-      - "090%"
+      - "Privacy"
+      - "Summer"
+      - "Winter"
       - "Open"
     icon: mdi:window-shutter-auto
 
