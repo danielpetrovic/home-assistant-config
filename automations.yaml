@@ -1382,7 +1382,8 @@
           transition: 1
         metadata: {}
         target:
-          entity_id: light.laundy_room_light
+          entity_id:
+          - light.laundry_room_light
       alias: door open - lights on
     - conditions:
       - condition: trigger
@@ -1394,7 +1395,8 @@
           transition: 1
         metadata: {}
         target:
-          entity_id: light.laundy_room_light
+          entity_id:
+          - light.laundry_room_light
       alias: door closed - lights off
   mode: restart
 - id: '1706128421603'
@@ -2158,7 +2160,7 @@
     id: Deni PC
   - trigger: numeric_state
     entity_id:
-    - sensor.gameroom_bureau_power
+    - sensor.gameroom_desk_power
     for:
       hours: 0
       minutes: 50
@@ -2199,7 +2201,8 @@
         metadata: {}
         data: {}
         target:
-          entity_id: switch.gameroom_bureau
+          entity_id:
+          - switch.gameroom_desk
   mode: restart
 - id: '1736811833071'
   alias: Bathroom Button
@@ -4110,19 +4113,19 @@
           - repeat:
               for_each:
               - entities:
-                - input_select.hallway_covers
-                - input_select.gym_covers
                 - input_select.bedroom_covers
+                - input_select.gym_covers
+                - input_select.hallway_covers
                 preset: Privacy
               - entities:
                 - input_select.gameroom_covers
                 - input_select.office_covers
-                - input_select.living_room_covers
                 preset: Privacy
               - entities:
-                - input_select.roof_terrace_covers
-                - input_select.kitchen_covers
                 - input_select.garden_covers
+                - input_select.kitchen_covers
+                - input_select.living_room_covers
+                - input_select.roof_terrace_covers
                 preset: Winter
               sequence:
               - target:
@@ -4142,18 +4145,18 @@
           - repeat:
               for_each:
               - entities:
-                - input_select.hallway_covers
                 - input_select.gym_covers
+                - input_select.hallway_covers
                 preset: Privacy
               - entities:
                 - input_select.gameroom_covers
                 - input_select.office_covers
-                - input_select.living_room_covers
                 preset: Privacy
               - entities:
-                - input_select.roof_terrace_covers
-                - input_select.kitchen_covers
                 - input_select.garden_covers
+                - input_select.kitchen_covers
+                - input_select.living_room_covers
+                - input_select.roof_terrace_covers
                 preset: Winter
               sequence:
               - target:
@@ -4180,20 +4183,9 @@
           - repeat:
               for_each:
               - entities:
-                - input_select.gym_covers
                 - input_select.bedroom_covers
+                - input_select.gym_covers
                 preset: Partial
-              - entities:
-                - input_select.hallway_covers
-                - input_select.gameroom_covers
-                - input_select.office_covers
-                - input_select.living_room_covers
-                preset: Summer
-              - entities:
-                - input_select.roof_terrace_covers
-                - input_select.kitchen_covers
-                - input_select.garden_covers
-                preset: Winter
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entities }}'
@@ -4212,20 +4204,8 @@
           - repeat:
               for_each:
               - entities:
-                - input_select.hallway_covers
-                - input_select.gym_covers
                 - input_select.bedroom_covers
                 preset: Privacy
-              - entities:
-                - input_select.gameroom_covers
-                - input_select.office_covers
-                - input_select.living_room_covers
-                preset: Privacy
-              - entities:
-                - input_select.roof_terrace_covers
-                - input_select.kitchen_covers
-                - input_select.garden_covers
-                preset: Winter
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entities }}'
@@ -4239,36 +4219,34 @@
       conditions:
       - condition: trigger
         id: '10:00'
-      - condition: time
-        weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
       sequence:
-      - target:
-          entity_id:
-          - input_select.hallway_covers
-          - input_select.gym_covers
-          - input_select.bedroom_covers
-        data:
-          option: Open
-        action: input_select.select_option
+      - alias: Workday
+        choose:
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'on'
+          sequence:
+          - target:
+              entity_id:
+              - input_select.bedroom_covers
+              - input_select.gym_covers
+              - input_select.hallway_covers
+            data:
+              option: Open
+            action: input_select.select_option
+          alias: 'Yes'
     - alias: '11:00'
       conditions:
       - condition: trigger
         id: '11:00'
-      - condition: time
-        weekday:
-        - sat
-        - sun
       sequence:
       - target:
           entity_id:
-          - input_select.hallway_covers
-          - input_select.gym_covers
           - input_select.bedroom_covers
+          - input_select.gym_covers
+          - input_select.hallway_covers
         data:
           option: Open
         action: input_select.select_option
@@ -4316,6 +4294,7 @@
           data:
             option: Closed
           action: input_select.select_option
+        alias: Is it dark outside?
   - alias: Climate-based logic
     choose:
     - alias: cold during day

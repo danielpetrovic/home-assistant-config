@@ -4799,7 +4799,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.ducobox_silent_temperature",
+                      "entity": "sensor.shed_ventilation_temperature",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "red",
@@ -4814,7 +4814,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.ducobox_silent_humidity",
+                      "entity": "sensor.shed_ventilation_humidity",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "blue",
@@ -4829,7 +4829,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.ducobox_silent_co2",
+                      "entity": "sensor.shed_ventilation_co2",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "green",
@@ -5114,7 +5114,10 @@
             },
             {
               "type": "entity",
-              "entity": "fan.ducobox_silent"
+              "show_name": false,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "fan.shed_ventilation"
             }
           ],
           "header": {},
