@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.10-blue?style=for-the-badge)
+    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.11-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -55,11 +55,13 @@ blueprint:
     version_info:
       name: Version History
       description: |
-        - **2026.01.10: Fix Z2M brightness stop detection for buttons 2, 3, and 4**
-          - Fixed: Z2M brightness dimming up now works properly for buttons 2, 3, and 4
-          - Fixed: Added missing `value_json.brightness is not defined` filter to 6 MQTT stop triggers (buttons 2-4, move up/down)
-          - Improved: Buttons 2, 3, and 4 now have identical Z2M stop detection logic as button 1
-          - Note: ZHA implementation unchanged and unaffected by this fix
+        - **2026.01.11: Normalize Z2M to ZHA format for unified handling**
+          - Changed: Z2M actions now normalized to ZHA format (endpoint + command + move_mode)
+          - Improved: Single unified command mapping handles both ZHA and Z2M identically
+          - Improved: Eliminates complex 60-line device-model-specific action mapping
+          - Improved: Z2M suffix checking uses most-specific-first logic to prevent overlap
+          - Removed: Useless `value_json.brightness is not defined` filters (Z2M never sends this field)
+          - Note: This is a major code simplification - easier to verify and maintain
 
         - **2026.01.9: Fix double-press detection, remove helpers, and remove adaptive lighting triggers**
           - **BREAKING:** Removed text helper requirement - delete the helper you created for v2026.01.8
@@ -1516,98 +1518,84 @@ actions:
         {% else %}
           0
         {% endif %}
-      # Command parsing - handles both Z2M MQTT payloads and ZHA events
-      # Unified command - normalize Z2M actions to match ZHA command format with button prefix
-      command: >-
+      # Normalize Z2M actions to ZHA format (endpoint + command + move_mode)
+      # This allows using single unified command mapping for both ZHA and Z2M
+      normalized_endpoint: >-
         {% if trigger.id == 'zha_button' %}
-          {% set endpoint = trigger.event.data.endpoint_id | default(1) %}
-          {% set cmd = trigger.event.data.command %}
-          {% set params = trigger.event.data.params | default({}) %}
+          {{ trigger.event.data.endpoint_id | default(1) }}
+        {% elif trigger.id == 'z2m_button' %}
+          {% set action = trigger.payload_json.action | default('') %}
+          {# Check most specific suffixes first to avoid overlap #}
+          {% if action.endswith('_top_left') %}
+            1
+          {% elif action.endswith('_bottom_left') %}
+            2
+          {% elif action.endswith('_top_right') %}
+            3
+          {% elif action.endswith('_bottom_right') %}
+            4
+          {% elif action.endswith('_left') %}
+            1
+          {% elif action.endswith('_right') %}
+            2
+          {% else %}
+            1
+          {% endif %}
+        {% else %}
+          1
+        {% endif %}
+      normalized_command: >-
+        {% if trigger.id == 'zha_button' %}
+          {{ trigger.event.data.command }}
+        {% elif trigger.id == 'z2m_button' %}
+          {% set action = trigger.payload_json.action | default('') %}
+          {% if action.startswith('on') %}
+            on
+          {% elif action.startswith('off') %}
+            off
+          {% elif action.startswith('brightness_move_up') %}
+            move
+          {% elif action.startswith('brightness_move_down') %}
+            move
+          {% elif action.startswith('brightness_stop') %}
+            stop
+          {% else %}
+            unknown
+          {% endif %}
+        {% else %}
+          unknown
+        {% endif %}
+      normalized_move_mode: >-
+        {% if trigger.id == 'zha_button' %}
+          {{ trigger.event.data.params.move_mode | default(0) }}
+        {% elif trigger.id == 'z2m_button' %}
+          {% set action = trigger.payload_json.action | default('') %}
+          {% if action.startswith('brightness_move_up') %}
+            0
+          {% elif action.startswith('brightness_move_down') %}
+            1
+          {% else %}
+            0
+          {% endif %}
+        {% else %}
+          0
+        {% endif %}
+      # Unified command mapping - works identically for ZHA and Z2M
+      command: >-
+        {% if trigger.id in ['zha_button', 'z2m_button'] %}
+          {% set endpoint = normalized_endpoint | int %}
+          {% set cmd = normalized_command %}
+          {% set move_mode = normalized_move_mode | int %}
           {% if cmd == 'on' %}
             button_{{ endpoint }}_on
           {% elif cmd == 'off' %}
             button_{{ endpoint }}_off
-          {% elif cmd in ['move', 'move_with_on_off'] and params.move_mode == 0 %}
+          {% elif cmd == 'move' and move_mode == 0 %}
             button_{{ endpoint }}_brightness_move_up
-          {% elif cmd == 'move' and params.move_mode == 1 %}
+          {% elif cmd == 'move' and move_mode == 1 %}
             button_{{ endpoint }}_brightness_move_down
           {% elif cmd == 'stop' %}
             button_{{ endpoint }}_brightness_stop
-          {% else %}
-            unknown
-          {% endif %}
-        {% elif trigger.id == 'z2m_button' %}
-          {% set action = trigger.payload_json.action | default('') %}
-          {% if action == 'on' %}
-            button_1_on
-          {% elif action == 'off' %}
-            button_1_off
-          {% elif action == 'brightness_move_up' %}
-            button_1_brightness_move_up
-          {% elif action == 'brightness_move_down' %}
-            button_1_brightness_move_down
-          {% elif action == 'brightness_stop' %}
-            button_1_brightness_stop
-          {% elif action == 'on_left' %}
-            button_1_on
-          {% elif action == 'off_left' %}
-            button_1_off
-          {% elif action == 'on_right' %}
-            button_2_on
-          {% elif action == 'off_right' %}
-            button_2_off
-          {% elif action == 'brightness_move_up_left' %}
-            button_1_brightness_move_up
-          {% elif action == 'brightness_move_down_left' %}
-            button_1_brightness_move_down
-          {% elif action == 'brightness_stop_left' %}
-            button_1_brightness_stop
-          {% elif action == 'brightness_move_up_right' %}
-            button_2_brightness_move_up
-          {% elif action == 'brightness_move_down_right' %}
-            button_2_brightness_move_down
-          {% elif action == 'brightness_stop_right' %}
-            button_2_brightness_stop
-          {% elif action == 'on_top_left' %}
-            button_1_on
-          {% elif action == 'off_top_left' %}
-            button_1_off
-          {% elif action == 'on_bottom_left' %}
-            button_2_on
-          {% elif action == 'off_bottom_left' %}
-            button_2_off
-          {% elif action == 'on_top_right' %}
-            button_3_on
-          {% elif action == 'off_top_right' %}
-            button_3_off
-          {% elif action == 'on_bottom_right' %}
-            button_4_on
-          {% elif action == 'off_bottom_right' %}
-            button_4_off
-          {% elif action == 'brightness_move_up_top_left' %}
-            button_1_brightness_move_up
-          {% elif action == 'brightness_move_down_top_left' %}
-            button_1_brightness_move_down
-          {% elif action == 'brightness_stop_top_left' %}
-            button_1_brightness_stop
-          {% elif action == 'brightness_move_up_bottom_left' %}
-            button_2_brightness_move_up
-          {% elif action == 'brightness_move_down_bottom_left' %}
-            button_2_brightness_move_down
-          {% elif action == 'brightness_stop_bottom_left' %}
-            button_2_brightness_stop
-          {% elif action == 'brightness_move_up_top_right' %}
-            button_3_brightness_move_up
-          {% elif action == 'brightness_move_down_top_right' %}
-            button_3_brightness_move_down
-          {% elif action == 'brightness_stop_top_right' %}
-            button_3_brightness_stop
-          {% elif action == 'brightness_move_up_bottom_right' %}
-            button_4_brightness_move_up
-          {% elif action == 'brightness_move_down_bottom_right' %}
-            button_4_brightness_move_down
-          {% elif action == 'brightness_stop_bottom_right' %}
-            button_4_brightness_stop
           {% else %}
             unknown
           {% endif %}
@@ -2054,8 +2042,7 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] and
-                                     value_json.brightness is not defined }}
+                                  {{ value_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
@@ -2144,8 +2131,7 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] and
-                                     value_json.brightness is not defined }}
+                                  {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
@@ -2234,8 +2220,7 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_top_right'] and
-                                     value_json.brightness is not defined }}
+                                  {{ value_json.action | default('') in ['brightness_stop_top_right'] }}
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
@@ -2324,8 +2309,7 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_bottom_right'] and
-                                     value_json.brightness is not defined }}
+                                  {{ value_json.action | default('') in ['brightness_stop_bottom_right'] }}
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
@@ -2414,8 +2398,7 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] and
-                                     value_json.brightness is not defined }}
+                                  {{ value_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
@@ -2502,8 +2485,7 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] and
-                                     value_json.brightness is not defined }}
+                                  {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
@@ -2590,8 +2572,8 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_top_right'] and
-                                     value_json.brightness is not defined }}
+                                  {% set action = value_json.action | default('') %}
+                                  {{ action == 'brightness_stop_top_right' }}
                             timeout: "30"
                             continue_on_timeout: true
                       - if:
@@ -2678,8 +2660,7 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_bottom_right'] and
-                                     value_json.brightness is not defined }}
+                                  {{ value_json.action | default('') in ['brightness_stop_bottom_right'] }}
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
