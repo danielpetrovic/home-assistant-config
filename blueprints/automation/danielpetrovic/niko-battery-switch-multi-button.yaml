@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.9-blue?style=for-the-badge)
+    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.10-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -55,6 +55,12 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.01.10: Fix Z2M brightness stop detection for buttons 2, 3, and 4**
+          - Fixed: Z2M brightness dimming up now works properly for buttons 2, 3, and 4
+          - Fixed: Added missing `value_json.brightness is not defined` filter to 6 MQTT stop triggers (buttons 2-4, move up/down)
+          - Improved: Buttons 2, 3, and 4 now have identical Z2M stop detection logic as button 1
+          - Note: ZHA implementation unchanged and unaffected by this fix
+
         - **2026.01.9: Fix double-press detection, remove helpers, and remove adaptive lighting triggers**
           - **BREAKING:** Removed text helper requirement - delete the helper you created for v2026.01.8
           - **BREAKING:** Removed adaptive lighting auto-adjust triggers - adaptive brightness/color adjustments should be handled by the adaptive-lighting blueprint
@@ -2138,7 +2144,8 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}
+                                  {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] and
+                                     value_json.brightness is not defined }}
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
@@ -2227,7 +2234,8 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_top_right'] }}
+                                  {{ value_json.action | default('') in ['brightness_stop_top_right'] and
+                                     value_json.brightness is not defined }}
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
@@ -2316,7 +2324,8 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_bottom_right'] }}
+                                  {{ value_json.action | default('') in ['brightness_stop_bottom_right'] and
+                                     value_json.brightness is not defined }}
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
@@ -2493,7 +2502,8 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}
+                                  {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] and
+                                     value_json.brightness is not defined }}
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
@@ -2580,7 +2590,8 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_top_right'] }}
+                                  {{ value_json.action | default('') in ['brightness_stop_top_right'] and
+                                     value_json.brightness is not defined }}
                             timeout: "30"
                             continue_on_timeout: true
                       - if:
@@ -2667,7 +2678,8 @@ actions:
                               - trigger: mqtt
                                 topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
                                 value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_bottom_right'] }}
+                                  {{ value_json.action | default('') in ['brightness_stop_bottom_right'] and
+                                     value_json.brightness is not defined }}
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
