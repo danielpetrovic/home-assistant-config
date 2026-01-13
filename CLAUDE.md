@@ -241,15 +241,15 @@ The installation is organized across 3 floors:
 - Dashboard keypad scripts with dash separator naming
 - Requires HA 2024.8.0+
 
-### 4. Niko Battery Switch (Multi-Button) (~1011 lines)
+### 4. Niko Battery Switch (Multi-Button) (~3,800 lines)
 - Author: danielpetrovic
 - Models: 552-720X1 (1-button), 552-720X2 (2-button), 552-720X4 (4-button)
 - On/Off, long-press dimming, double-press custom
 - Schedule-based automation with auto-adjust
-- Z2M simulated brightness support (auto-detected, smooth continuous dimming)
-- Auto-detects Z2M elapsed field for improved double-click reliability
+- Z2M and ZHA unified handling via normalization layer
+- Loop-based dimming with smooth transitions (universal compatibility)
 - No helper requirements (removed in v2026.01.9)
-- Unified 300ms double-press timeout (ZHA & Z2M)
+- Auto-detects Z2M elapsed field for improved double-click reliability
 - Requires HA 2024.10.0+
 
 ## Adaptive Lighting System
