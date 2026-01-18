@@ -4332,6 +4332,16 @@
             {
               "type": "entity",
               "show_name": false,
+              "show_state": false,
+              "show_icon": true,
+              "entity": "automation.kitchen_motion",
+              "tap_action": {
+                "action": "toggle"
+              }
+            },
+            {
+              "type": "entity",
+              "show_name": false,
               "show_state": true,
               "show_icon": true,
               "entity": "binary_sensor.kitchen_alarm_water_leak"
