@@ -2837,13 +2837,14 @@
           entity_id: media_player.kitchen
         data:
           volume_level: 0.01
-    - alias: Idle or Paused
+    - alias: Not playing
       conditions:
-      - condition: state
-        entity_id: media_player.living_room_tv_cast
-        state:
-        - idle
-        - paused
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: media_player.living_room_tv_cast
+          state: playing
+        alias: Not playing
       sequence:
       - action: media_player.volume_set
         metadata: {}
