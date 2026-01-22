@@ -55,6 +55,13 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.01.12: Direct mapping - eliminate normalization layer**
+          - Changed: Replaced normalization-based routing with direct ZHA/Z2M conditions per handler
+          - Fixed: Multi-button Z2M dimming and double-click now work correctly
+          - Improved: Each handler explicitly lists supported ZHA endpoints and Z2M actions
+          - Improved: No intermediate variables means no whitespace comparison issues
+          - Removed: normalized_endpoint, normalized_command, normalized_move_mode, command, button_num, button_action variables
+
         - **2026.01.11: Normalize Z2M to ZHA format for unified handling**
           - Changed: Z2M actions now normalized to ZHA format (endpoint + command + move_mode)
           - Improved: Single unified command mapping handles both ZHA and Z2M identically
@@ -1518,107 +1525,7 @@ actions:
         {% else %}
           0
         {% endif %}
-      # Normalize Z2M actions to ZHA format (endpoint + command + move_mode)
-      # This allows using single unified command mapping for both ZHA and Z2M
-      normalized_endpoint: >-
-        {% if trigger.id == 'zha_button' %}
-          {{ trigger.event.data.endpoint_id | default(1) }}
-        {% elif trigger.id == 'z2m_button' %}
-          {% set action = trigger.payload_json.action | default('') %}
-          {# Check most specific suffixes first to avoid overlap #}
-          {% if action.endswith('_top_left') %}
-            1
-          {% elif action.endswith('_bottom_left') %}
-            2
-          {% elif action.endswith('_top_right') %}
-            3
-          {% elif action.endswith('_bottom_right') %}
-            4
-          {% elif action.endswith('_left') %}
-            1
-          {% elif action.endswith('_right') %}
-            2
-          {% else %}
-            1
-          {% endif %}
-        {% else %}
-          1
-        {% endif %}
-      normalized_command: >-
-        {% if trigger.id == 'zha_button' %}
-          {{ trigger.event.data.command }}
-        {% elif trigger.id == 'z2m_button' %}
-          {% set action = trigger.payload_json.action | default('') %}
-          {% if action.startswith('on') %}
-            on
-          {% elif action.startswith('off') %}
-            off
-          {% elif action.startswith('brightness_move_up') %}
-            move
-          {% elif action.startswith('brightness_move_down') %}
-            move
-          {% elif action.startswith('brightness_stop') %}
-            stop
-          {% else %}
-            unknown
-          {% endif %}
-        {% else %}
-          unknown
-        {% endif %}
-      normalized_move_mode: >-
-        {% if trigger.id == 'zha_button' %}
-          {{ trigger.event.data.params.move_mode | default(0) }}
-        {% elif trigger.id == 'z2m_button' %}
-          {% set action = trigger.payload_json.action | default('') %}
-          {% if action.startswith('brightness_move_up') %}
-            0
-          {% elif action.startswith('brightness_move_down') %}
-            1
-          {% else %}
-            0
-          {% endif %}
-        {% else %}
-          0
-        {% endif %}
-      # Unified command mapping - works identically for ZHA and Z2M
-      command: >-
-        {% if trigger.id in ['zha_button', 'z2m_button'] %}
-          {% set endpoint = normalized_endpoint | int %}
-          {% set cmd = normalized_command %}
-          {% set move_mode = normalized_move_mode | int %}
-          {% if cmd == 'on' %}
-            button_{{ endpoint }}_on
-          {% elif cmd == 'off' %}
-            button_{{ endpoint }}_off
-          {% elif cmd == 'move' and move_mode == 0 %}
-            button_{{ endpoint }}_brightness_move_up
-          {% elif cmd == 'move' and move_mode == 1 %}
-            button_{{ endpoint }}_brightness_move_down
-          {% elif cmd == 'stop' %}
-            button_{{ endpoint }}_brightness_stop
-          {% else %}
-            unknown
-          {% endif %}
-        {% elif trigger.id.startswith('schedule_change_') %}
-          schedule_change_{{ trigger.id.split('_')[-1] }}
-        {% else %}
-          none
-        {% endif %}
-      # Extract button number and action from command
-      button_num: >-
-        {% if command.startswith('button_') %}
-          {{ command.split('_')[1] | int(1) }}
-        {% elif command.startswith('schedule_change_') %}
-          {{ command.split('_')[-1] | int(1) }}
-        {% else %}
-          1
-        {% endif %}
-      button_action: >-
-        {% if command.startswith('button_') %}
-          {{ command.split('_', 2)[2] }}
-        {% else %}
-          none
-        {% endif %}
+      # Simple helper - no normalization, handlers use direct conditions
       is_button_event: "{{ trigger.id in ['zha_button', 'z2m_button'] }}"
   - condition: >-
       {{ (trigger.id == 'zha_button' and 'zha' in integration_type) or
@@ -1989,8 +1896,9 @@ actions:
           - stop: Button 4 auto-adjust completed
       # ========== BUTTON 1 BRIGHTNESS UP ==========
       - conditions:
-          - "{{ is_button_event }}"
-          - "{{ command == 'button_1_brightness_move_up' }}"
+          - or:
+              - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 1 and trigger.event.data.command == 'move' and trigger.event.data.params.move_mode == 0 }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['brightness_move_up', 'brightness_move_up_left', 'brightness_move_up_top_left'] }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_1_increase
@@ -2078,8 +1986,9 @@ actions:
                                     - stop: Stop flag set
       # ========== BUTTON 2 BRIGHTNESS UP ==========
       - conditions:
-          - "{{ is_button_event }}"
-          - "{{ command == 'button_2_brightness_move_up' }}"
+          - or:
+              - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 2 and trigger.event.data.command == 'move' and trigger.event.data.params.move_mode == 0 }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['brightness_move_up_right', 'brightness_move_up_bottom_left'] }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_2_increase
@@ -2167,8 +2076,9 @@ actions:
                                     - stop: Stop flag set
       # ========== BUTTON 3 BRIGHTNESS UP ==========
       - conditions:
-          - "{{ is_button_event }}"
-          - "{{ command == 'button_3_brightness_move_up' }}"
+          - or:
+              - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 3 and trigger.event.data.command == 'move' and trigger.event.data.params.move_mode == 0 }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'brightness_move_up_top_right' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_3_increase
@@ -2256,8 +2166,9 @@ actions:
                                     - stop: Stop flag set
       # ========== BUTTON 4 BRIGHTNESS UP ==========
       - conditions:
-          - "{{ is_button_event }}"
-          - "{{ command == 'button_4_brightness_move_up' }}"
+          - or:
+              - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 4 and trigger.event.data.command == 'move' and trigger.event.data.params.move_mode == 0 }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'brightness_move_up_bottom_right' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_4_increase
@@ -2345,8 +2256,9 @@ actions:
                                     - stop: Stop flag set
       # ========== BUTTON 1 BRIGHTNESS DOWN ==========
       - conditions:
-          - "{{ is_button_event }}"
-          - "{{ command == 'button_1_brightness_move_down' }}"
+          - or:
+              - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 1 and trigger.event.data.command == 'move' and trigger.event.data.params.move_mode == 1 }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['brightness_move_down', 'brightness_move_down_left', 'brightness_move_down_top_left'] }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_1_decrease
@@ -2432,8 +2344,9 @@ actions:
                                     - stop: Stop flag set
       # ========== BUTTON 2 BRIGHTNESS DOWN ==========
       - conditions:
-          - "{{ is_button_event }}"
-          - "{{ command == 'button_2_brightness_move_down' }}"
+          - or:
+              - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 2 and trigger.event.data.command == 'move' and trigger.event.data.params.move_mode == 1 }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['brightness_move_down_right', 'brightness_move_down_bottom_left'] }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_2_decrease
@@ -2519,8 +2432,9 @@ actions:
                                     - stop: Stop flag set
       # ========== BUTTON 3 BRIGHTNESS DOWN ==========
       - conditions:
-          - "{{ is_button_event }}"
-          - "{{ command == 'button_3_brightness_move_down' }}"
+          - or:
+              - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 3 and trigger.event.data.command == 'move' and trigger.event.data.params.move_mode == 1 }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'brightness_move_down_top_right' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_3_decrease
@@ -2607,8 +2521,9 @@ actions:
                                     - stop: Stop flag set
       # ========== BUTTON 4 BRIGHTNESS DOWN ==========
       - conditions:
-          - "{{ is_button_event }}"
-          - "{{ command == 'button_4_brightness_move_down' }}"
+          - or:
+              - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 4 and trigger.event.data.command == 'move' and trigger.event.data.params.move_mode == 1 }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'brightness_move_down_bottom_right' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_4_decrease
@@ -2694,40 +2609,64 @@ actions:
                                     - stop: Stop flag set
       # ========== BUTTON 1 BRIGHTNESS STOP ==========
       - conditions:
-          - "{{ is_button_event }}"
-          - "{{ command == 'button_1_brightness_stop' }}"
+          - or:
+              - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 1 and trigger.event.data.command == 'stop' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_1_stop
       # ========== BUTTON 2 BRIGHTNESS STOP ==========
       - conditions:
-          - "{{ is_button_event }}"
-          - "{{ command == 'button_2_brightness_stop' }}"
+          - or:
+              - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 2 and trigger.event.data.command == 'stop' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_2_stop
       # ========== BUTTON 3 BRIGHTNESS STOP ==========
       - conditions:
-          - "{{ is_button_event }}"
-          - "{{ command == 'button_3_brightness_stop' }}"
+          - or:
+              - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 3 and trigger.event.data.command == 'stop' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'brightness_stop_top_right' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_3_stop
       # ========== BUTTON 4 BRIGHTNESS STOP ==========
       - conditions:
-          - "{{ is_button_event }}"
-          - "{{ command == 'button_4_brightness_stop' }}"
+          - or:
+              - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 4 and trigger.event.data.command == 'stop' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'brightness_stop_bottom_right' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_4_stop
   - condition: "{{ is_button_event }}"
     alias: "Check if button event (not schedule/adaptive trigger)"
-  - condition: "{{ button_action in ['on', 'off'] }}"
+  - condition: >-
+      {{ (trigger.id == 'zha_button' and trigger.event.data.command in ['on', 'off']) or
+         (trigger.id == 'z2m_button' and (trigger.payload_json.action.startswith('on') or trigger.payload_json.action.startswith('off'))) }}
     alias: "Check if on/off action (not dimming)"
   - alias: "Store first press details"
     variables:
-      first_action: "{{ button_action }}"
-      first_button: "{{ button_num }}"
+      # Direct derivation of first button from trigger
+      first_button: >-
+        {% if trigger.id == 'zha_button' %}
+          {{ trigger.event.data.endpoint_id | default(1) }}
+        {% elif trigger.id == 'z2m_button' %}
+          {% set action = trigger.payload_json.action | default('') %}
+          {% if action in ['on', 'off'] %}1{% elif action.endswith('_top_left') %}1{% elif action.endswith('_bottom_left') %}2{% elif action.endswith('_top_right') %}3{% elif action.endswith('_bottom_right') %}4{% elif action.endswith('_left') %}1{% elif action.endswith('_right') %}2{% else %}1{% endif %}
+        {% else %}
+          1
+        {% endif %}
+      # Direct derivation of first action from trigger
+      first_action: >-
+        {% if trigger.id == 'zha_button' %}
+          {{ trigger.event.data.command }}
+        {% elif trigger.id == 'z2m_button' %}
+          {% set action = trigger.payload_json.action | default('') %}
+          {% if action.startswith('on') %}on{% elif action.startswith('off') %}off{% else %}none{% endif %}
+        {% else %}
+          none
+        {% endif %}
   - wait_for_trigger:
       - trigger: event
         event_type: zha_event
@@ -2801,27 +2740,27 @@ actions:
           0
         {% endif %}
   - if:
-      - "{{ second_action in ['on', 'off'] and second_action != first_action and second_button == first_button }}"
+      - "{{ second_action | trim in ['on', 'off'] and second_action | trim != first_action | trim and second_button | int == first_button | int }}"
     alias: "Validate double-click: opposite action on same button"
     then:
       - choose:
           - conditions:
-              - "{{ first_button == 1 }}"
+              - "{{ first_button | int == 1 }}"
             alias: "Button 1 double-press"
             sequence:
               - sequence: !input button_1_double_press
           - conditions:
-              - "{{ first_button == 2 }}"
+              - "{{ first_button | int == 2 }}"
             alias: "Button 2 double-press"
             sequence:
               - sequence: !input button_2_double_press
           - conditions:
-              - "{{ first_button == 3 }}"
+              - "{{ first_button | int == 3 }}"
             alias: "Button 3 double-press"
             sequence:
               - sequence: !input button_3_double_press
           - conditions:
-              - "{{ first_button == 4 }}"
+              - "{{ first_button | int == 4 }}"
             alias: "Button 4 double-press"
             sequence:
               - sequence: !input button_4_double_press
@@ -2830,8 +2769,8 @@ actions:
   - choose:
       # ========== BUTTON 1 ON ==========
       - conditions:
-          - "{{ first_button == 1 }}"
-          - "{{ first_action == 'on' }}"
+          - "{{ first_button | int == 1 }}"
+          - "{{ first_action | trim == 'on' }}"
         alias: "Button 1 on"
         sequence:
           - alias: "Set button 1 configuration variables"
@@ -2948,8 +2887,8 @@ actions:
                             target: "{{ button_1_light }}"
       # ========== BUTTON 1 OFF ==========
       - conditions:
-          - "{{ first_button == 1 }}"
-          - "{{ first_action == 'off' }}"
+          - "{{ first_button | int == 1 }}"
+          - "{{ first_action | trim == 'off' }}"
         alias: "Button 1 off"
         sequence:
           - alias: "Set button 1 configuration variables"
@@ -3066,8 +3005,8 @@ actions:
                             target: "{{ button_1_light }}"
       # ========== BUTTON 2 ON ==========
       - conditions:
-          - "{{ first_button == 2 }}"
-          - "{{ first_action == 'on' }}"
+          - "{{ first_button | int == 2 }}"
+          - "{{ first_action | trim == 'on' }}"
         alias: "Button 2 on"
         sequence:
           - alias: "Set button 2 configuration variables"
@@ -3184,8 +3123,8 @@ actions:
                             target: "{{ button_2_light }}"
       # ========== BUTTON 2 OFF ==========
       - conditions:
-          - "{{ first_button == 2 }}"
-          - "{{ first_action == 'off' }}"
+          - "{{ first_button | int == 2 }}"
+          - "{{ first_action | trim == 'off' }}"
         alias: "Button 2 off"
         sequence:
           - alias: "Set button 2 configuration variables"
@@ -3302,8 +3241,8 @@ actions:
                             target: "{{ button_2_light }}"
       # ========== BUTTON 3 ON ==========
       - conditions:
-          - "{{ first_button == 3 }}"
-          - "{{ first_action == 'on' }}"
+          - "{{ first_button | int == 3 }}"
+          - "{{ first_action | trim == 'on' }}"
         alias: "Button 3 on"
         sequence:
           - alias: "Set button 3 configuration variables"
@@ -3420,8 +3359,8 @@ actions:
                             target: "{{ button_3_light }}"
       # ========== BUTTON 3 OFF ==========
       - conditions:
-          - "{{ first_button == 3 }}"
-          - "{{ first_action == 'off' }}"
+          - "{{ first_button | int == 3 }}"
+          - "{{ first_action | trim == 'off' }}"
         alias: "Button 3 off"
         sequence:
           - alias: "Set button 3 configuration variables"
@@ -3538,8 +3477,8 @@ actions:
                             target: "{{ button_3_light }}"
       # ========== BUTTON 4 ON ==========
       - conditions:
-          - "{{ first_button == 4 }}"
-          - "{{ first_action == 'on' }}"
+          - "{{ first_button | int == 4 }}"
+          - "{{ first_action | trim == 'on' }}"
         alias: "Button 4 on"
         sequence:
           - alias: "Set button 4 configuration variables"
@@ -3656,8 +3595,8 @@ actions:
                             target: "{{ button_4_light }}"
       # ========== BUTTON 4 OFF ==========
       - conditions:
-          - "{{ first_button == 4 }}"
-          - "{{ first_action == 'off' }}"
+          - "{{ first_button | int == 4 }}"
+          - "{{ first_action | trim == 'off' }}"
         alias: "Button 4 off"
         sequence:
           - alias: "Set button 4 configuration variables"
