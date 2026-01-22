@@ -82,13 +82,32 @@ The installation is organized across 3 floors:
 `<location>_<device_type>` (e.g., `light.living_room_light`, `climate.office_heating`)
 
 ### Device Type Suffixes
-- `_light` / `_light_lower` - Lights (upper/lower variants)
-- `_heating` - Heating
+
+**Lights:**
+- `_light` - Main room lights
+- `_above_light` / `_below_light` - Position-based variants
+- `_bed_light` - Bed-specific lights
+- `_cabinet` - Cabinet lights
+
+**Covers:**
+- `_shade` - Roller shades
+- `_shutter` - Window shutters
+- `_curtain` - Curtains
+
+**Climate:**
+- `_heating` - Heating thermostats and switches
 - `_ac` - Air conditioning
-- `_curtain` - Curtains (Somfy RTS)
-- `_blind` - Blinds (Somfy IO)
-- `_door_sensor_contact` - Door sensors
-- `_motion` - Motion sensors
+
+**Sensors:**
+- `_door_contact` - Door contact sensors
+- `_motion_occupancy` - Motion occupancy sensors
+- `_temperature` - Temperature sensors
+- `_illuminance` - Light level sensors
+
+**Helpers:**
+- `_covers` - Cover preset selectors (input_select)
+- `_position` - Cover position sliders (input_number)
+- `_button_last_pressed` - Button state tracking (input_text)
 
 ## Key Integrations
 
