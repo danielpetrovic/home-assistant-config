@@ -4727,17 +4727,16 @@
                   "name": "Router RAM"
                 },
                 {
+                  "type": "tile",
+                  "entity": "sensor.utility_closet_power",
+                  "color": "yellow",
+                  "vertical": false,
                   "features": [
                     {
                       "type": "trend-graph"
                     }
                   ],
-                  "type": "tile",
-                  "features_position": "inline",
-                  "vertical": false,
-                  "entity": "sensor.meterkast_energiegebruik",
-                  "color": "yellow",
-                  "name": "Meterkast"
+                  "features_position": "inline"
                 }
               ]
             },

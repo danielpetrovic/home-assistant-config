@@ -2839,12 +2839,12 @@
           volume_level: 0.01
     - alias: Not playing
       conditions:
-      - condition: not
-        conditions:
-        - condition: state
-          entity_id: media_player.living_room_tv_cast
-          state: playing
-        alias: Not playing
+      - condition: state
+        entity_id: media_player.living_room_tv_cast
+        state:
+        - 'off'
+        - idle
+        - paused
       sequence:
       - action: media_player.volume_set
         metadata: {}
