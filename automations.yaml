@@ -2166,7 +2166,7 @@
       minutes: 50
       seconds: 0
     below: 50
-    id: Bureau Low
+    id: Desk
   conditions: []
   actions:
   - choose:
@@ -2195,7 +2195,7 @@
     - conditions:
       - condition: trigger
         id:
-        - Bureau Low
+        - Desk
       sequence:
       - action: switch.turn_off
         metadata: {}
@@ -2802,11 +2802,6 @@
   alias: Living Room Media
   description: ''
   triggers:
-  - entity_id:
-    - remote.living_room_tv
-    attribute: current_activity
-    trigger: state
-    enabled: true
   - trigger: state
     entity_id:
     - media_player.living_room_tv_cast
@@ -2817,189 +2812,45 @@
   actions:
   - alias: Living Room TV
     choose:
-    - conditions:
+    - alias: NLZIET
+      conditions:
       - condition: state
-        entity_id: remote.living_room_tv
-        attribute: current_activity
-        state: com.google.android.apps.mediashell
+        entity_id: media_player.living_room_tv_cast
+        attribute: app_name
+        state: NLZIET
       sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            state: playing
-          sequence:
-          - data:
-              volume_level: 0.01
-            target:
-              entity_id: media_player.kitchen
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            state: idle
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.kitchen
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            state: paused
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.kitchen
-            action: media_player.volume_set
-      alias: Cast
-    - conditions:
+      - action: media_player.volume_set
+        metadata: {}
+        target:
+          entity_id: media_player.kitchen
+        data:
+          volume_level: 0.01
+    - alias: Playing
+      conditions:
       - condition: state
-        entity_id: remote.living_room_tv
-        attribute: current_activity
-        state: com.google.android.apps.tv.launcherx
+        entity_id: media_player.living_room_tv_cast
+        state: playing
       sequence:
-      - alias: Kitchen volume omhoog
+      - action: media_player.volume_set
+        metadata: {}
+        target:
+          entity_id: media_player.kitchen
+        data:
+          volume_level: 0.01
+    - alias: Idle or Paused
+      conditions:
+      - condition: state
+        entity_id: media_player.living_room_tv_cast
+        state:
+        - idle
+        - paused
+      sequence:
+      - action: media_player.volume_set
+        metadata: {}
+        target:
+          entity_id: media_player.kitchen
         data:
           volume_level: 0.35
-        target:
-          entity_id: media_player.kitchen
-        action: media_player.volume_set
-      alias: Launcher
-    - conditions:
-      - condition: state
-        entity_id: remote.living_room_tv
-        state: com.netflix.ninja
-        attribute: current_activity
-      sequence:
-      - data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.kitchen
-        action: media_player.volume_set
-      alias: Netflix
-    - conditions:
-      - condition: state
-        entity_id: remote.living_room_tv
-        attribute: current_activity
-        state: nl.nlziet
-      sequence:
-      - data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.kitchen
-        action: media_player.volume_set
-      alias: NLZIET
-    - conditions:
-      - condition: state
-        entity_id: remote.living_room_tv
-        attribute: current_activity
-        state: com.plexapp.android
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            state: playing
-          sequence:
-          - data:
-              volume_level: 0.01
-            target:
-              entity_id: media_player.kitchen
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            state: idle
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.kitchen
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            state: paused
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.kitchen
-            action: media_player.volume_set
-      alias: Plex
-    - conditions:
-      - condition: state
-        entity_id: remote.living_room_tv
-        attribute: current_activity
-        state: com.google.android.apps.tv.dreamx
-      sequence:
-      - data:
-          volume_level: 0.35
-        target:
-          entity_id: media_player.kitchen
-        action: media_player.volume_set
-      alias: Screen Saver
-    - conditions:
-      - condition: state
-        entity_id: remote.living_room_tv
-        attribute: current_activity
-        state: com.sony.dtv.tvx
-      - condition: not
-        conditions:
-        - condition: state
-          entity_id: media_player.living_room_tv_cast
-          attribute: media_title
-          state: OSMC HDMI 1
-          enabled: true
-      sequence:
-      - data:
-          volume_level: 0.01
-        target:
-          entity_id: media_player.kitchen
-        action: media_player.volume_set
-      alias: TV
-    - conditions:
-      - condition: state
-        entity_id: remote.living_room_tv
-        attribute: current_activity
-        state: com.google.android.youtube.tv
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            state: playing
-          sequence:
-          - data:
-              volume_level: 0.01
-            target:
-              entity_id: media_player.kitchen
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            state: idle
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.kitchen
-            action: media_player.volume_set
-        - conditions:
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            state: paused
-          sequence:
-          - data:
-              volume_level: 0.35
-            target:
-              entity_id: media_player.kitchen
-            action: media_player.volume_set
-      alias: YouTube
-    enabled: true
   mode: restart
 - id: '1745758491686'
   alias: Front Door
@@ -3097,7 +2948,6 @@
         target:
           entity_id:
           - light.bedroom_alex_bed_light
-          - light.bedroom_deni_bed_light
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -3111,7 +2961,6 @@
         target:
           entity_id:
           - light.bedroom_alex_bed_light
-          - light.bedroom_deni_bed_light
       alias: motion clear
   mode: restart
 - id: '1746611520879'
@@ -3153,7 +3002,6 @@
         metadata: {}
         target:
           entity_id:
-          - light.bedroom_alex_bed_light
           - light.bedroom_deni_bed_light
       alias: motion detected
     - conditions:
@@ -3167,7 +3015,6 @@
         metadata: {}
         target:
           entity_id:
-          - light.bedroom_alex_bed_light
           - light.bedroom_deni_bed_light
       alias: motion clear
   mode: restart
@@ -3177,7 +3024,7 @@
   triggers:
   - trigger: numeric_state
     entity_id:
-    - sensor.office_bureau_power
+    - sensor.office_desk_power
     for:
       hours: 1
       minutes: 0
@@ -3189,7 +3036,8 @@
     metadata: {}
     data: {}
     target:
-      entity_id: switch.office_bureau
+      entity_id:
+      - switch.office_desk
   mode: restart
 - id: '1755896860214'
   alias: Entrance Button
@@ -5080,7 +4928,8 @@
       alarm_auto_arm_away: true
       alarm_notifications_target:
       - 1b49bd1284b5afb6e9f5f081024a600c
-      - 4e78dc3151bcb7dd0ac4060b7b17158b
+      - a41cc8827f1344e4edb8ff8bba988948
+      - d4d71140fffc1b75a2aa9099ec492e6f
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
       - media_player.utility_closet

@@ -3066,7 +3066,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -3142,7 +3142,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -3253,7 +3253,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -3329,7 +3329,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -3496,7 +3496,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -3572,7 +3572,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -3813,7 +3813,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -3889,7 +3889,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -4000,7 +4000,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -4076,7 +4076,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -4414,7 +4414,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -4490,7 +4490,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -4799,7 +4799,7 @@
                   "icon": "mdi:home-thermometer"
                 },
                 {
-                  "square": false,
+                  "square": true,
                   "type": "grid",
                   "cards": [
                     {
@@ -4935,7 +4935,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -5011,7 +5011,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -5170,7 +5170,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -5246,7 +5246,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -5400,7 +5400,7 @@
                   "icon": "mdi:home-thermometer-outline"
                 },
                 {
-                  "square": false,
+                  "square": true,
                   "type": "grid",
                   "cards": [
                     {
@@ -5536,7 +5536,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -5612,7 +5612,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -5976,7 +5976,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -6052,7 +6052,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -6173,7 +6173,7 @@
                   "heading_style": "subtitle"
                 },
                 {
-                  "square": false,
+                  "square": true,
                   "type": "grid",
                   "cards": [
                     {
@@ -6350,7 +6350,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -6426,7 +6426,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -6537,7 +6537,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -6613,7 +6613,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -6719,7 +6719,7 @@
                   "type": "vertical-stack",
                   "cards": [
                     {
-                      "square": false,
+                      "square": true,
                       "columns": 3,
                       "type": "grid",
                       "cards": [
@@ -6930,7 +6930,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "columns": 3,
                       "type": "grid",
                       "cards": [
@@ -7187,7 +7187,7 @@
                   "heading_style": "subtitle"
                 },
                 {
-                  "square": false,
+                  "square": true,
                   "type": "grid",
                   "cards": [
                     {
@@ -7286,7 +7286,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -7362,7 +7362,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -7642,7 +7642,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -7718,7 +7718,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -7829,7 +7829,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -7905,7 +7905,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -8016,7 +8016,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -8092,7 +8092,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -8248,7 +8248,7 @@
                   "heading_style": "subtitle"
                 },
                 {
-                  "square": false,
+                  "square": true,
                   "type": "grid",
                   "cards": [
                     {
@@ -8423,7 +8423,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -8499,7 +8499,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -8745,7 +8745,7 @@
                   "heading_style": "subtitle"
                 },
                 {
-                  "square": false,
+                  "square": true,
                   "type": "grid",
                   "cards": [
                     {
@@ -8898,7 +8898,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -8974,7 +8974,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -9257,7 +9257,7 @@
                   "icon": "mdi:home-thermometer"
                 },
                 {
-                  "square": false,
+                  "square": true,
                   "type": "grid",
                   "cards": [
                     {
@@ -9458,7 +9458,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -9534,7 +9534,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -9645,7 +9645,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -9721,7 +9721,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -9805,6 +9805,193 @@
                             "service": "script.lights_preset_adaptive_color",
                             "data": {
                               "target_light": "light.bedroom_alex_light"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "tile",
+                      "entity": "light.bedroom_alex_bed_light",
+                      "icon": "",
+                      "state_content": [
+                        "brightness",
+                        "last_changed"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "light-brightness"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "square": true,
+                      "type": "grid",
+                      "columns": 5,
+                      "cards": [
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.bedroom_bed",
+                          "icon": "mdi:lightbulb-off-outline",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_000",
+                            "data": {
+                              "target_light": "light.bedroom_bed"
+                            }
+                          },
+                          "icon_height": "50px"
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.bedroom_bed",
+                          "icon": "mdi:lightbulb-on-10",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_025",
+                            "data": {
+                              "target_light": "light.bedroom_bed"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.bedroom_bed",
+                          "icon": "mdi:lightbulb-on-40",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_050",
+                            "data": {
+                              "target_light": "light.bedroom_bed"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "entity": "light.bedroom_bed",
+                          "icon": "mdi:lightbulb-on",
+                          "show_name": false,
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_100",
+                            "data": {
+                              "target_light": "light.bedroom_bed"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "entity": "light.bedroom_bed",
+                          "icon": "mdi:lightbulb-auto",
+                          "show_name": false,
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_adaptive",
+                            "data": {
+                              "target_light": "light.bedroom_bed"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "square": true,
+                      "type": "grid",
+                      "columns": 5,
+                      "cards": [
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "icon": "mdi:lightbulb",
+                          "color": "deep-orange",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "light.turn_on",
+                            "data": {
+                              "color_temp_kelvin": 2200
+                            },
+                            "target": {
+                              "entity_id": "light.bedroom_bed"
+                            }
+                          },
+                          "icon_height": "50px"
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "icon": "mdi:lightbulb",
+                          "color": "orange",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "light.turn_on",
+                            "data": {
+                              "color_temp_kelvin": 2700
+                            },
+                            "target": {
+                              "entity_id": "light.bedroom_bed"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "icon": "mdi:lightbulb",
+                          "color": "amber",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "light.turn_on",
+                            "data": {
+                              "color_temp_kelvin": 3500
+                            },
+                            "target": {
+                              "entity_id": "light.bedroom_bed"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "icon": "mdi:lightbulb",
+                          "color": "white",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "light.turn_on",
+                            "data": {
+                              "color_temp_kelvin": 4000
+                            },
+                            "target": {
+                              "entity_id": "light.bedroom_bed"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.bedroom_bed",
+                          "icon": "mdi:lightbulb-auto",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_adaptive_color",
+                            "data": {
+                              "target_light": "light.bedroom_bed"
                             }
                           }
                         }
@@ -9832,7 +10019,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -9908,7 +10095,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -10004,7 +10191,7 @@
                   "cards": [
                     {
                       "type": "tile",
-                      "entity": "light.bedroom_bed",
+                      "entity": "light.bedroom_deni_bed_light",
                       "icon": "",
                       "state_content": [
                         "brightness",
@@ -10019,7 +10206,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -10095,7 +10282,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -10316,7 +10503,7 @@
                   "icon": "mdi:home-thermometer"
                 },
                 {
-                  "square": false,
+                  "square": true,
                   "type": "grid",
                   "cards": [
                     {
@@ -10411,7 +10598,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -10487,7 +10674,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -10737,7 +10924,7 @@
                   "icon": "mdi:home-thermometer-outline"
                 },
                 {
-                  "square": false,
+                  "square": true,
                   "type": "grid",
                   "cards": [
                     {
@@ -10872,7 +11059,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -10948,7 +11135,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -11073,7 +11260,7 @@
                   "heading_style": "subtitle"
                 },
                 {
-                  "square": false,
+                  "square": true,
                   "type": "grid",
                   "cards": [
                     {
@@ -11304,7 +11491,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -11380,7 +11567,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -11491,7 +11678,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -11567,7 +11754,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -11678,7 +11865,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -11754,7 +11941,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -11865,7 +12052,7 @@
                       "features_position": "inline"
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
@@ -11941,7 +12128,7 @@
                       ]
                     },
                     {
-                      "square": false,
+                      "square": true,
                       "type": "grid",
                       "columns": 5,
                       "cards": [
