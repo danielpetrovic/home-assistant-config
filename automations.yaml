@@ -3907,10 +3907,6 @@
       persons:
       - person.alex
       - person.deni
-      duration:
-        hours: 0
-        minutes: 0
-        seconds: 10
       title_arriving: Home Assistant
       message_arriving: '{{ person }} arrives at {{ zone }}.'
       title_leaving: Home Assistant
