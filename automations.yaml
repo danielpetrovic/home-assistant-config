@@ -5221,3 +5221,38 @@
         target:
           entity_id: button.living_room_tablet_herstarten
   mode: single
+- id: '1769193997494'
+  alias: Car
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.t047zg_charging
+    to: 'on'
+    from: 'off'
+  - trigger: state
+    entity_id: binary_sensor.t047zg_charging
+    to: 'off'
+    from: 'on'
+  conditions: []
+  actions:
+  - parallel:
+    - alias: Announce
+      action: tts.speak
+      target:
+        entity_id: tts.home_assistant_cloud
+      data:
+        cache: true
+        media_player_entity_id: media_player.utility_closet
+        message: '{{ message }}'
+    - alias: Notify
+      action: notify.notify
+      data:
+        message: '{{ message }}'
+        data:
+          channel: Car
+          notification_icon: mdi:car
+  variables:
+    battery: '{{ states(''sensor.t047zg_battery'') }}'
+    message: '{{ ''Car charging started'' if trigger.to == ''on'' else ''Car finished
+      charging'' }} at {{ battery }}%'
+  mode: single
