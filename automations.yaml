@@ -2869,8 +2869,7 @@
   description: ''
   triggers:
   - entity_id:
-    - binary_sensor.front_door_doorbell
-    to: 'on'
+    - event.front_door_doorbell
     trigger: state
   conditions: []
   actions:
@@ -2893,7 +2892,7 @@
         data:
           channel: Doorbell
           clickAction: /lovelace/front_door
-          image: /api/camera_proxy/camera.front_door
+          image: /api/camera_proxy/camera.front_door_hq
           importance: high
           notification_icon: mdi:doorbell-video
           priority: high
@@ -2917,7 +2916,7 @@
   variables:
     base_url_https: '{{ states(''input_text.base_url_https'') }}'
     base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
-    image_url: '{{ base_url_https }}{{state_attr(''camera.front_door'',''entity_picture'')+''&time=''}}{{as_timestamp(now())}}'
+    image_url: '{{ base_url_https }}{{state_attr(''camera.front_door_hq'',''entity_picture'')+''&time=''}}{{as_timestamp(now())}}'
     video_url: '{{ base_url_rtsp }}/front_door'
   mode: restart
 - id: '1746611445373'
@@ -5230,7 +5229,8 @@
         metadata: {}
         data: {}
         target:
-          entity_id: button.living_room_tablet_herstarten
+          entity_id:
+          - button.living_room_tablet_restart
   mode: single
 - id: '1769193997494'
   alias: Car

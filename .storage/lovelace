@@ -3475,7 +3475,7 @@
                 {
                   "show_state": false,
                   "show_name": false,
-                  "camera_view": "live",
+                  "camera_view": "auto",
                   "fit_mode": "cover",
                   "type": "picture-entity",
                   "entity": "camera.entrance_mq",
@@ -4795,7 +4795,7 @@
                 {
                   "show_state": false,
                   "show_name": false,
-                  "camera_view": "live",
+                  "camera_view": "auto",
                   "fit_mode": "cover",
                   "type": "picture-entity",
                   "entity": "camera.shed_mq",
@@ -5397,7 +5397,7 @@
                 {
                   "show_state": false,
                   "show_name": false,
-                  "camera_view": "live",
+                  "camera_view": "auto",
                   "fit_mode": "cover",
                   "type": "picture-entity",
                   "entity": "camera.garden_mq",
