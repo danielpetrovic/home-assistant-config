@@ -18,8 +18,8 @@
                   "fit_mode": "cover",
                   "type": "picture-entity",
                   "aspect_ratio": "4:3",
-                  "camera_image": "camera.voordeur",
-                  "entity": "camera.front_door",
+                  "camera_image": "camera.front_door_hq",
+                  "entity": "camera.front_door_mq",
                   "grid_options": {
                     "columns": "full"
                   },

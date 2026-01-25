@@ -1837,7 +1837,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.kitchen_media_koelkast_vriezer_energiegebruik",
+                      "entity": "sensor.kitchen_media_koelkast_vriezer_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
@@ -1851,7 +1851,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.oven_combi_energiegebruik",
+                      "entity": "sensor.oven_combi_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
@@ -1865,7 +1865,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.oven_stoom_energiegebruik",
+                      "entity": "sensor.oven_stoom_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
@@ -1879,7 +1879,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.quooker_energiegebruik",
+                      "entity": "sensor.quooker_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
@@ -1893,7 +1893,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.vaatwasser_energiegebruik",
+                      "entity": "sensor.vaatwasser_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
@@ -1915,7 +1915,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.meterkast_energiegebruik",
+                      "entity": "sensor.meterkast_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
@@ -1937,7 +1937,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.schuur_energiegebruik",
+                      "entity": "sensor.schuur_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
@@ -1971,7 +1971,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.verwarmingspomp_0_energiegebruik",
+                      "entity": "sensor.verwarmingspomp_0_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -1996,7 +1996,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.woonkamer_media_energiegebruik",
+                      "entity": "sensor.woonkamer_media_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -2076,7 +2076,7 @@
                     }
                   ],
                   "type": "tile",
-                  "entity": "sensor.gym_energiegebruik",
+                  "entity": "sensor.gym_power",
                   "features_position": "inline",
                   "vertical": false,
                   "color": "yellow",
@@ -2102,7 +2102,7 @@
                     }
                   ],
                   "type": "tile",
-                  "entity": "sensor.verwarmingspomp_1_energiegebruik",
+                  "entity": "sensor.verwarmingspomp_1_power",
                   "features_position": "bottom",
                   "vertical": false,
                   "color": "yellow",
@@ -2127,7 +2127,7 @@
                     }
                   ],
                   "type": "tile",
-                  "entity": "sensor.vriezer_groot_energiegebruik",
+                  "entity": "sensor.vriezer_groot_power",
                   "features_position": "bottom",
                   "vertical": false,
                   "color": "yellow",
@@ -2157,7 +2157,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.bedroom_media_energiegebruik",
+                      "entity": "sensor.bedroom_media_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -2201,7 +2201,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.airco_energiegebruik",
+                      "entity": "sensor.airco_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
@@ -2215,7 +2215,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.zonnepanelen_energiegebruik",
+                      "entity": "sensor.zonnepanelen_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
@@ -2249,7 +2249,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.alex_pc_energiegebruik",
+                      "entity": "sensor.alex_pc_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -2274,7 +2274,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.deni_pc_energiegebruik",
+                      "entity": "sensor.deni_pc_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -2325,7 +2325,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.gameroom_media_energiegebruik",
+                      "entity": "sensor.gameroom_media_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -2359,7 +2359,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.verwarmingspomp_2_energiegebruik",
+                      "entity": "sensor.verwarmingspomp_2_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -2384,7 +2384,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.wasdroger_energiegebruik",
+                      "entity": "sensor.wasdroger_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -2409,7 +2409,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.wasmachine_energiegebruik",
+                      "entity": "sensor.wasmachine_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -2434,7 +2434,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.wtw_energiegebruik",
+                      "entity": "sensor.wtw_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -3478,8 +3478,8 @@
                   "camera_view": "live",
                   "fit_mode": "cover",
                   "type": "picture-entity",
-                  "entity": "camera.entrance",
-                  "camera_image": "camera.entrance",
+                  "entity": "camera.entrance_mq",
+                  "camera_image": "camera.entrance_hq",
                   "grid_options": {
                     "columns": "full"
                   },
@@ -4266,14 +4266,14 @@
                     }
                   ],
                   "type": "tile",
-                  "entity": "sensor.keuken_media_koelkast_vriezer_energiegebruik",
+                  "entity": "sensor.kitchen_media_fridge_freezer_power",
                   "features_position": "inline",
                   "vertical": false,
                   "color": "yellow",
                   "show_entity_picture": false,
                   "hide_state": false,
                   "icon": "mdi:audio-video",
-                  "name": "Media + Koelkast + Vriezer"
+                  "name": "Media + Fridge + Freezer"
                 },
                 {
                   "features": [
@@ -4282,14 +4282,14 @@
                     }
                   ],
                   "type": "tile",
-                  "entity": "sensor.oven_combi_energiegebruik",
+                  "entity": "sensor.combination_oven_power",
                   "features_position": "inline",
                   "vertical": false,
                   "color": "yellow",
                   "show_entity_picture": false,
                   "hide_state": false,
                   "icon": "mdi:stove",
-                  "name": "Oven Combi"
+                  "name": "Combination Oven"
                 },
                 {
                   "features": [
@@ -4298,14 +4298,14 @@
                     }
                   ],
                   "type": "tile",
-                  "entity": "sensor.oven_stoom_energiegebruik",
+                  "entity": "sensor.steam_oven_power",
                   "features_position": "inline",
                   "vertical": false,
                   "color": "yellow",
                   "show_entity_picture": false,
                   "hide_state": false,
                   "icon": "mdi:stove",
-                  "name": "Oven Stoom"
+                  "name": "Steam Oven"
                 },
                 {
                   "features": [
@@ -4314,7 +4314,23 @@
                     }
                   ],
                   "type": "tile",
-                  "entity": "sensor.quooker_energiegebruik",
+                  "entity": "sensor.dishwasher_power",
+                  "features_position": "inline",
+                  "vertical": false,
+                  "color": "yellow",
+                  "show_entity_picture": false,
+                  "hide_state": false,
+                  "icon": "mdi:dishwasher",
+                  "name": "Dishwasher"
+                },
+                {
+                  "features": [
+                    {
+                      "type": "trend-graph"
+                    }
+                  ],
+                  "type": "tile",
+                  "entity": "sensor.quooker_power",
                   "features_position": "inline",
                   "vertical": false,
                   "color": "yellow",
@@ -4322,22 +4338,6 @@
                   "hide_state": false,
                   "icon": "mdi:water-boiler",
                   "name": "Quooker"
-                },
-                {
-                  "features": [
-                    {
-                      "type": "trend-graph"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "sensor.vaatwasser_energiegebruik",
-                  "features_position": "inline",
-                  "vertical": false,
-                  "color": "yellow",
-                  "show_entity_picture": false,
-                  "hide_state": false,
-                  "icon": "mdi:dishwasher",
-                  "name": "Vaatwasser"
                 }
               ]
             }
@@ -4795,11 +4795,11 @@
                 {
                   "show_state": false,
                   "show_name": false,
-                  "camera_view": "auto",
+                  "camera_view": "live",
                   "fit_mode": "cover",
                   "type": "picture-entity",
-                  "entity": "camera.shed",
-                  "camera_image": "camera.schuur",
+                  "entity": "camera.shed_mq",
+                  "camera_image": "camera.shed_hq",
                   "aspect_ratio": "16:9",
                   "theme": "Square Black",
                   "grid_options": {
@@ -5400,8 +5400,8 @@
                   "camera_view": "live",
                   "fit_mode": "cover",
                   "type": "picture-entity",
-                  "entity": "camera.garden",
-                  "camera_image": "camera.garden",
+                  "entity": "camera.garden_mq",
+                  "camera_image": "camera.garden_hq",
                   "aspect_ratio": "16:9",
                   "grid_options": {
                     "columns": "full"
@@ -5957,9 +5957,9 @@
                   "camera_view": "live",
                   "fit_mode": "cover",
                   "type": "picture-entity",
-                  "entity": "camera.front_door",
+                  "entity": "camera.front_door_mq",
                   "aspect_ratio": "4:3",
-                  "camera_image": "camera.front_door",
+                  "camera_image": "camera.front_door_hq",
                   "grid_options": {
                     "columns": "full"
                   }
@@ -7125,7 +7125,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "switch.verwarmingspomp_0",
+                      "entity": "switch.living_room_media",
                       "features_position": "bottom",
                       "vertical": false,
                       "hide_state": true
@@ -7137,32 +7137,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.verwarmingspomp_0_energiegebruik",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "color": "yellow",
-                      "name": " "
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "toggle"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "switch.woonkamer_media",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "hide_state": true
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "trend-graph"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "sensor.woonkamer_media_energiegebruik",
+                      "entity": "sensor.living_room_media_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -9174,7 +9149,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "switch.verwarmingspomp_1",
+                      "entity": "switch.gym_freezer",
                       "features_position": "bottom",
                       "vertical": false,
                       "hide_state": true
@@ -9186,32 +9161,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.verwarmingspomp_1_energiegebruik",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "color": "yellow",
-                      "name": " "
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "toggle"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "switch.vriezer_groot",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "hide_state": true
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "trend-graph"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "sensor.vriezer_groot_energiegebruik",
+                      "entity": "sensor.gym_freezer_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -10810,7 +10760,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "switch.verwarmingspomp_2",
+                      "entity": "switch.washing_machine",
                       "features_position": "bottom",
                       "vertical": false,
                       "hide_state": true
@@ -10822,7 +10772,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.verwarmingspomp_2_energiegebruik",
+                      "entity": "sensor.washing_machine_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -10835,7 +10785,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "switch.wasdroger",
+                      "entity": "switch.washing_dryer",
                       "features_position": "bottom",
                       "vertical": false,
                       "hide_state": true
@@ -10847,7 +10797,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.wasdroger_energiegebruik",
+                      "entity": "sensor.washing_dryer_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -10860,7 +10810,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "switch.wasmachine",
+                      "entity": "switch.ventilation",
                       "features_position": "bottom",
                       "vertical": false,
                       "hide_state": true
@@ -10872,32 +10822,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.wasmachine_energiegebruik",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "color": "yellow",
-                      "name": " "
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "toggle"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "switch.wtw",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "hide_state": true
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "trend-graph"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "sensor.wtw_energiegebruik",
+                      "entity": "sensor.ventilation_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -12336,7 +12261,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.alex_pc_energiegebruik",
+                      "entity": "sensor.alex_pc_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -12361,7 +12286,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.deni_pc_energiegebruik",
+                      "entity": "sensor.deni_pc_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -12412,7 +12337,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.gameroom_media_energiegebruik",
+                      "entity": "sensor.gameroom_media_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
