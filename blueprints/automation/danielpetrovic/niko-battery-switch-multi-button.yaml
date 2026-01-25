@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.13-blue?style=for-the-badge)
+    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.14-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -55,6 +55,11 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.01.14: Fix template errors and unified double-click timing**
+          - Fixed: Template error 'dict object has no attribute action' by adding | default('')
+          - Changed: Z2M double-click now uses unified elapsed timing (same as ZHA method)
+          - Changed: Double-click timeout reduced from 500ms to 400ms for snappier response
+
         - **2026.01.13: Complete direct mapping for all handlers**
           - Fixed: ZHA dimming now handles both 'move' and 'move_with_on_off' commands
           - Fixed: On/off handlers converted to direct mapping (removes whitespace issues)
@@ -2649,12 +2654,13 @@ actions:
     alias: "Check if button event (not schedule/adaptive trigger)"
   - condition: >-
       {{ (trigger.id == 'zha_button' and trigger.event.data.command in ['on', 'off']) or
-         (trigger.id == 'z2m_button' and (trigger.payload_json.action.startswith('on') or trigger.payload_json.action.startswith('off'))) }}
+         (trigger.id == 'z2m_button' and ((trigger.payload_json.action | default('')).startswith('on') or (trigger.payload_json.action | default('')).startswith('off'))) }}
     alias: "Check if on/off action (not dimming)"
   - alias: "Store first press details"
     variables:
+      first_press_time: "{{ as_timestamp(now()) }}"
       first_button: "{{ trigger.event.data.endpoint_id | default(1) if trigger.id == 'zha_button' else (1 if trigger.payload_json.action in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else 2 if trigger.payload_json.action in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else 3 if trigger.payload_json.action in ['on_top_right', 'off_top_right'] else 4) }}"
-      first_action: "{{ 'on' if (trigger.id == 'zha_button' and trigger.event.data.command == 'on') or (trigger.id == 'z2m_button' and trigger.payload_json.action.startswith('on')) else 'off' }}"
+      first_action: "{{ 'on' if (trigger.id == 'zha_button' and trigger.event.data.command == 'on') or (trigger.id == 'z2m_button' and (trigger.payload_json.action | default('')).startswith('on')) else 'off' }}"
   - wait_for_trigger:
       - trigger: event
         event_type: zha_event
@@ -2669,13 +2675,13 @@ actions:
                                     'on_top_left', 'off_top_left', 'on_bottom_left', 'off_bottom_left',
                                     'on_top_right', 'off_top_right', 'on_bottom_right', 'off_bottom_right'] }}
         alias: "Z2M second press"
-    timeout: 0.5
+    timeout: 0.4
     continue_on_timeout: true
   - alias: "Parse second press details"
     variables:
       # Second action: 'on', 'off', or 'none' - single-line to avoid whitespace issues
-      # ZHA: uses event.time_fired for elapsed check; Z2M: trusts wait_for_trigger timeout
-      second_action: "{{ 'none' if wait.trigger is none else ('none' if wait.trigger.platform == 'event' and (now() - wait.trigger.event.time_fired).total_seconds() * 1000 > 500 else (wait.trigger.event.data.command if wait.trigger.platform == 'event' else ('on' if wait.trigger.payload_json.action | default('') in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] else ('off' if wait.trigger.payload_json.action | default('') in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] else 'none')))) }}"
+      # Universal elapsed check using first_press_time for both ZHA and Z2M (400ms double-click window)
+      second_action: "{{ 'none' if wait.trigger is none or (as_timestamp(now()) - first_press_time) * 1000 > 400 else (wait.trigger.event.data.command if wait.trigger.platform == 'event' else ('on' if wait.trigger.payload_json.action | default('') in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] else ('off' if wait.trigger.payload_json.action | default('') in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] else 'none'))) }}"
       # Second button: 1-4 or 0 if none - single-line to avoid whitespace issues
       second_button: "{{ 0 if wait.trigger is none else (wait.trigger.event.data.endpoint_id | default(1) if wait.trigger.platform == 'event' else (1 if wait.trigger.payload_json.action | default('') in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else (2 if wait.trigger.payload_json.action | default('') in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else (3 if wait.trigger.payload_json.action | default('') in ['on_top_right', 'off_top_right'] else 4)))) }}"
   - if:
