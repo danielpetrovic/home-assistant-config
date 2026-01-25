@@ -814,6 +814,17 @@
                   ]
                 },
                 {
+                  "show_current": true,
+                  "show_forecast": false,
+                  "type": "weather-forecast",
+                  "entity": "weather.roof_terrace",
+                  "forecast_type": "hourly",
+                  "round_temperature": false,
+                  "forecast_slots": 5,
+                  "secondary_info_attribute": "humidity",
+                  "theme": "Enhanced Black"
+                },
+                {
                   "square": false,
                   "type": "grid",
                   "cards": [

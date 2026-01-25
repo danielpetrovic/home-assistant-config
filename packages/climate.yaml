@@ -437,3 +437,102 @@ template:
             {% endif %}
           {% endif %}
         icon: mdi:sun-snowflake-variant
+  - weather:
+      - name: "Roof Terrace"
+        unique_id: roof_terrace
+        condition_template: "{{ states('sensor.roof_terrace_sensor_weather_condition') }}"
+        temperature_template: "{{ states('sensor.roof_terrace_sensor_temperature') | float(0) }}"
+        apparent_temperature_template: "{{ states('sensor.roof_terrace_sensor_apparent_temperature') | float(0) }}"
+        humidity_template: "{{ states('sensor.roof_terrace_sensor_humidity') | float(0) }}"
+        pressure_template: "{{ states('sensor.roof_terrace_sensor_pressure') | float(0) }}"
+        wind_speed_template: "{{ (states('sensor.roof_terrace_sensor_wind_speed') | float(0) * 3.6) | round(1) }}"
+        wind_gust_speed_template: "{{ (states('sensor.roof_terrace_sensor_gust_speed') | float(0) * 3.6) | round(1) }}"
+        wind_bearing_template: "{{ states('sensor.roof_terrace_sensor_wind_direction') | float(0) }}"
+        dew_point_template: "{{ states('sensor.roof_terrace_sensor_dew_point') | float(0) }}"
+        wind_speed_unit: "km/h"
+        pressure_unit: "hPa"
+        temperature_unit: "°C"
+        precipitation_unit: "mm"
+        forecast_hourly_template: >
+          {% set current = states('sensor.roof_terrace_sensor_weather_condition') %}
+          {% set trend = states('sensor.roof_terrace_sensor_pressure_trend') | float(0) %}
+          {% set temp = states('sensor.roof_terrace_sensor_temperature') | float(0) %}
+          {% set humidity = states('sensor.roof_terrace_sensor_humidity') | float(0) %}
+
+          {# Get sun times for day/night detection #}
+          {% set sunrise = state_attr('sun.sun', 'next_rising') | as_datetime %}
+          {% set sunset = state_attr('sun.sun', 'next_setting') | as_datetime %}
+          {% set sun_up = states('sun.sun') == 'above_horizon' %}
+
+          {# Condition ranking: 0=worst to 4=best #}
+          {% set conditions = ['pouring', 'rainy', 'cloudy', 'partlycloudy', 'sunny'] %}
+          {% set night_conditions = ['pouring', 'rainy', 'cloudy', 'partlycloudy', 'clear-night'] %}
+
+          {# Map current condition to rank #}
+          {% set current_map = {
+            'pouring': 0, 'hail': 0, 'snowy': 1,
+            'rainy': 1,
+            'cloudy': 2,
+            'partlycloudy': 3, 'windy-variant': 3,
+            'sunny': 4, 'clear-night': 4, 'windy': 4
+          } %}
+          {% set current_rank = current_map.get(current, 2) %}
+
+          {# Calculate shift per hour based on pressure trend #}
+          {% if trend > 2 %}
+            {% set shift_per_hour = 0.5 %}
+          {% elif trend > 0.5 %}
+            {% set shift_per_hour = 0.25 %}
+          {% elif trend < -2 %}
+            {% set shift_per_hour = -0.5 %}
+          {% elif trend < -0.5 %}
+            {% set shift_per_hour = -0.25 %}
+          {% else %}
+            {% set shift_per_hour = 0 %}
+          {% endif %}
+
+          {# Generate 6-hour forecast #}
+          {% set forecast = namespace(items=[]) %}
+          {% for hour in range(1, 7) %}
+            {% set future_time = now() + timedelta(hours=hour) %}
+
+            {# Determine if sun is up at future_time #}
+            {% if sun_up %}
+              {# Currently day: night if future_time >= sunset and < next sunrise #}
+              {% set is_night = future_time >= sunset %}
+            {% else %}
+              {# Currently night: day if future_time >= sunrise and < next sunset #}
+              {% set is_night = future_time < sunrise %}
+            {% endif %}
+
+            {# Calculate predicted rank (clamped 0-4) #}
+            {% set predicted_rank = ([0, current_rank + (shift_per_hour * hour)] | max) %}
+            {% set predicted_rank = ([4, predicted_rank] | min) | int %}
+
+            {# Select condition based on day/night #}
+            {% if is_night %}
+              {% set predicted_condition = night_conditions[predicted_rank] %}
+            {% else %}
+              {% set predicted_condition = conditions[predicted_rank] %}
+            {% endif %}
+
+            {# Temp prediction based on sun position #}
+            {% if is_night %}
+              {% set temp_adj = -1.5 %}
+            {% else %}
+              {# Warmer during day, peak around solar noon #}
+              {% set hours_since_sunrise = (future_time - sunrise).total_seconds() / 3600 %}
+              {% set day_length = (sunset - sunrise).total_seconds() / 3600 %}
+              {% set day_progress = hours_since_sunrise / day_length if day_length > 0 else 0.5 %}
+              {# Peak warmth at 60% through the day (afternoon) #}
+              {% set temp_adj = 2 * (1 - (2 * (day_progress - 0.6) | abs)) %}
+            {% endif %}
+
+            {% set forecast.items = forecast.items + [{
+              'datetime': future_time.isoformat(),
+              'condition': predicted_condition,
+              'temperature': (temp + temp_adj) | round(1),
+              'humidity': humidity | int
+            }] %}
+          {% endfor %}
+          {{ forecast.items }}
