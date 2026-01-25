@@ -24,7 +24,7 @@
     id: shower on
     trigger: numeric_state
     entity_id:
-    - sensor.watergebruik
+    - sensor.watermeter_water_usage
     above: 7.5
     for:
       hours: 0
@@ -34,7 +34,7 @@
     id: shower off
     trigger: numeric_state
     entity_id:
-    - sensor.watergebruik
+    - sensor.watermeter_water_usage
     below: 7.5
     for:
       hours: 0
@@ -1875,9 +1875,9 @@
       alias: player idle
   mode: parallel
 - id: '1706694278160'
-  alias: Verwarmingspomp 0
+  alias: Heating Pump 0
   description: ''
-  trigger:
+  triggers:
   - alias: heating on
     trigger: state
     entity_id:
@@ -1897,8 +1897,8 @@
   - trigger: time
     at: '12:00:00'
     id: '12:00'
-  condition: []
-  action:
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: trigger
@@ -1908,7 +1908,8 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: switch.verwarmingspomp_0
+          entity_id:
+          - switch.floor_heating_pump_0
         action: switch.turn_on
     - conditions:
       - condition: trigger
@@ -1917,9 +1918,9 @@
       sequence:
       - metadata: {}
         data: {}
-        target:
-          entity_id: switch.verwarmingspomp_0
         action: switch.turn_off
+        target:
+          entity_id: switch.floor_heating_pump_0
     - conditions:
       - condition: trigger
         id:
@@ -1931,7 +1932,8 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: switch.verwarmingspomp_0
+          entity_id:
+          - switch.floor_heating_pump_0
         action: switch.turn_on
       - delay:
           hours: 0
@@ -1941,13 +1943,14 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: switch.verwarmingspomp_0
+          entity_id:
+          - switch.floor_heating_pump_0
         action: switch.turn_off
   mode: restart
 - id: '1706694419125'
-  alias: Verwarmingspomp 1
+  alias: Heating Pump 1
   description: ''
-  trigger:
+  triggers:
   - trigger: state
     entity_id:
     - switch.bathroom_heating
@@ -1999,8 +2002,8 @@
   - trigger: time
     at: '12:00:00'
     id: '12:00'
-  condition: []
-  action:
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: or
@@ -2021,7 +2024,8 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: switch.verwarmingspomp_1
+          entity_id:
+          - switch.floor_heating_pump_1
         action: switch.turn_on
     - conditions:
       - condition: state
@@ -2040,7 +2044,8 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: switch.verwarmingspomp_1
+          entity_id:
+          - switch.floor_heating_pump_1
         action: switch.turn_off
     - conditions:
       - condition: trigger
@@ -2053,7 +2058,8 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: switch.verwarmingspomp_1
+          entity_id:
+          - switch.floor_heating_pump_1
         action: switch.turn_on
       - delay:
           hours: 0
@@ -2063,13 +2069,14 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: switch.verwarmingspomp_1
+          entity_id:
+          - switch.floor_heating_pump_1
         action: switch.turn_off
   mode: restart
 - id: '1706694427908'
-  alias: Verwarmingspomp 2
+  alias: Heating Pump 2
   description: ''
-  trigger:
+  triggers:
   - alias: heating on
     trigger: state
     entity_id:
@@ -2089,8 +2096,8 @@
   - trigger: time
     at: '12:00:00'
     id: '12:00'
-  condition: []
-  action:
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: trigger
@@ -2100,7 +2107,8 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: switch.verwarmingspomp_2
+          entity_id:
+          - switch.floor_heating_pump_2
         action: switch.turn_on
     - conditions:
       - condition: trigger
@@ -2110,7 +2118,8 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: switch.verwarmingspomp_2
+          entity_id:
+          - switch.floor_heating_pump_2
         action: switch.turn_off
     - conditions:
       - condition: trigger
@@ -2123,7 +2132,8 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: switch.verwarmingspomp_2
+          entity_id:
+          - switch.floor_heating_pump_2
         action: switch.turn_on
       - delay:
           hours: 0
@@ -2133,7 +2143,8 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: switch.verwarmingspomp_2
+          entity_id:
+          - switch.floor_heating_pump_2
         action: switch.turn_off
   mode: restart
 - id: '1713999237361'
@@ -2142,7 +2153,7 @@
   triggers:
   - trigger: numeric_state
     entity_id:
-    - sensor.alex_pc_energiegebruik
+    - sensor.alex_pc_energy_import
     for:
       hours: 0
       minutes: 10
@@ -2151,7 +2162,7 @@
     id: Alex PC
   - trigger: numeric_state
     entity_id:
-    - sensor.deni_pc_energiegebruik
+    - sensor.deni_pc_energy_import
     for:
       hours: 0
       minutes: 10
@@ -3292,7 +3303,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 19
             target:
               entity_id: climate.living_room_heating
         - alias: mild
@@ -3303,7 +3314,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 18
             target:
               entity_id: climate.living_room_heating
         - alias: warm
@@ -3314,7 +3325,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 16
+              temperature: 17
             target:
               entity_id: climate.living_room_heating
   mode: restart
@@ -3408,7 +3419,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 19
             target:
               entity_id: climate.bedroom_heating
         - alias: mild
@@ -3419,7 +3430,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 18
             target:
               entity_id: climate.bedroom_heating
         - alias: warm
@@ -3430,7 +3441,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 16
+              temperature: 17
             target:
               entity_id: climate.bedroom_heating
   mode: restart
@@ -3524,7 +3535,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 19
             target:
               entity_id: climate.office_heating
         - alias: mild
@@ -3535,7 +3546,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 18
             target:
               entity_id: climate.office_heating
         - alias: warm
@@ -3546,7 +3557,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 16
+              temperature: 17
             target:
               entity_id: climate.office_heating
   mode: restart
@@ -3640,7 +3651,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 19
             target:
               entity_id: climate.gameroom_heating
         - alias: mild
@@ -3651,7 +3662,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 18
             target:
               entity_id: climate.gameroom_heating
         - alias: warm
@@ -3662,7 +3673,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 16
+              temperature: 17
             target:
               entity_id: climate.gameroom_heating
   mode: restart
@@ -3756,7 +3767,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 19
             target:
               entity_id: climate.gym_heating
         - alias: mild
@@ -3767,7 +3778,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 18
             target:
               entity_id: climate.gym_heating
         - alias: warm
@@ -3778,7 +3789,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 16
+              temperature: 17
             target:
               entity_id: climate.gym_heating
   mode: restart
@@ -3872,7 +3883,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 19
             target:
               entity_id: climate.bathroom_heating
         - alias: mild
@@ -3883,7 +3894,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 18
             target:
               entity_id: climate.bathroom_heating
         - alias: warm
@@ -3894,7 +3905,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 16
+              temperature: 17
             target:
               entity_id: climate.bathroom_heating
   mode: restart
@@ -5228,31 +5239,48 @@
   - trigger: state
     entity_id: binary_sensor.t047zg_charging
     to: 'on'
-    from: 'off'
+    id: charging
   - trigger: state
     entity_id: binary_sensor.t047zg_charging
     to: 'off'
-    from: 'on'
+    id: stopped
   conditions: []
   actions:
-  - parallel:
-    - alias: Announce
-      action: tts.speak
-      target:
-        entity_id: tts.home_assistant_cloud
-      data:
-        cache: true
-        media_player_entity_id: media_player.utility_closet
-        message: '{{ message }}'
-    - alias: Notify
-      action: notify.notify
-      data:
-        message: '{{ message }}'
-        data:
-          channel: Car
-          notification_icon: mdi:car
-  variables:
-    battery: '{{ states(''sensor.t047zg_battery'') }}'
-    message: '{{ ''Car charging started'' if trigger.to == ''on'' else ''Car finished
-      charging'' }} at {{ battery }}%'
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: charging
+      sequence:
+      - parallel:
+        - action: tts.speak
+          target:
+            entity_id: tts.home_assistant_cloud
+          data:
+            cache: true
+            media_player_entity_id: media_player.utility_closet
+            message: Car charging started at {{ states('sensor.t047zg_battery') }}%
+        - action: notify.notify
+          data:
+            message: Car charging started at {{ states('sensor.t047zg_battery') }}%
+            data:
+              channel: Car
+              notification_icon: mdi:car
+    - conditions:
+      - condition: trigger
+        id: stopped
+      sequence:
+      - parallel:
+        - action: tts.speak
+          target:
+            entity_id: tts.home_assistant_cloud
+          data:
+            cache: true
+            media_player_entity_id: media_player.utility_closet
+            message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
+        - action: notify.notify
+          data:
+            message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
+            data:
+              channel: Car
+              notification_icon: mdi:car
   mode: single
