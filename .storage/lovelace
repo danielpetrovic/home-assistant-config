@@ -2611,49 +2611,55 @@
                       }
                     },
                     {
-                      "square": false,
-                      "type": "grid",
-                      "cards": [
+                      "type": "tile",
+                      "entity": "climate.living_room_ac",
+                      "state_content": [
+                        "current_temperature",
+                        "hvac_action",
+                        "temperature"
+                      ],
+                      "vertical": false,
+                      "features": [
                         {
-                          "type": "tile",
-                          "entity": "climate.living_room_ac",
-                          "state_content": [
-                            "current_temperature",
-                            "hvac_action",
-                            "temperature"
+                          "style": "icons",
+                          "hvac_modes": [
+                            "off",
+                            "cool",
+                            "dry",
+                            "fan_only"
                           ],
-                          "vertical": false,
-                          "features": [
-                            {
-                              "style": "icons",
-                              "hvac_modes": [
-                                "off",
-                                "cool",
-                                "dry",
-                                "fan_only"
-                              ],
-                              "type": "climate-hvac-modes"
-                            }
-                          ],
-                          "features_position": "inline"
-                        },
-                        {
-                          "type": "tile",
-                          "entity": "climate.living_room_heating",
-                          "state_content": [
-                            "current_temperature",
-                            "hvac_action",
-                            "temperature"
-                          ],
-                          "features": [
-                            {
-                              "type": "climate-hvac-modes"
-                            }
-                          ],
-                          "features_position": "inline"
+                          "type": "climate-hvac-modes"
                         }
                       ],
-                      "columns": 1
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "climate.living_room_heating",
+                      "state_content": [
+                        "current_temperature",
+                        "hvac_action",
+                        "temperature"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "climate-hvac-modes"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "switch.floor_heating_pump_0",
+                      "state_content": "last_changed",
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "toggle"
+                        }
+                      ],
+                      "features_position": "inline"
                     }
                   ],
                   "columns": 1
@@ -2681,117 +2687,126 @@
                       }
                     },
                     {
-                      "square": false,
-                      "type": "grid",
-                      "cards": [
+                      "type": "tile",
+                      "entity": "climate.bedroom_ac",
+                      "state_content": [
+                        "current_temperature",
+                        "hvac_action",
+                        "temperature"
+                      ],
+                      "vertical": false,
+                      "features": [
                         {
-                          "type": "tile",
-                          "entity": "climate.bathroom_heating",
-                          "state_content": [
-                            "current_temperature",
-                            "hvac_action",
-                            "temperature"
+                          "style": "icons",
+                          "hvac_modes": [
+                            "off",
+                            "cool",
+                            "dry",
+                            "fan_only"
                           ],
-                          "features": [
-                            {
-                              "type": "climate-hvac-modes"
-                            }
-                          ],
-                          "features_position": "inline"
-                        },
-                        {
-                          "type": "tile",
-                          "entity": "climate.bedroom_ac",
-                          "state_content": [
-                            "current_temperature",
-                            "hvac_action",
-                            "temperature"
-                          ],
-                          "vertical": false,
-                          "features": [
-                            {
-                              "style": "icons",
-                              "hvac_modes": [
-                                "off",
-                                "cool",
-                                "dry",
-                                "fan_only"
-                              ],
-                              "type": "climate-hvac-modes"
-                            }
-                          ],
-                          "features_position": "inline"
-                        },
-                        {
-                          "type": "tile",
-                          "entity": "climate.bedroom_heating",
-                          "state_content": [
-                            "current_temperature",
-                            "hvac_action",
-                            "temperature"
-                          ],
-                          "features": [
-                            {
-                              "type": "climate-hvac-modes"
-                            }
-                          ],
-                          "features_position": "inline"
-                        },
-                        {
-                          "type": "tile",
-                          "entity": "climate.gym_heating",
-                          "state_content": [
-                            "current_temperature",
-                            "hvac_action",
-                            "temperature"
-                          ],
-                          "features": [
-                            {
-                              "type": "climate-hvac-modes"
-                            }
-                          ],
-                          "features_position": "inline"
-                        },
-                        {
-                          "type": "tile",
-                          "entity": "climate.office_ac",
-                          "state_content": [
-                            "current_temperature",
-                            "hvac_action",
-                            "temperature"
-                          ],
-                          "vertical": false,
-                          "features": [
-                            {
-                              "style": "icons",
-                              "hvac_modes": [
-                                "off",
-                                "cool",
-                                "dry",
-                                "fan_only"
-                              ],
-                              "type": "climate-hvac-modes"
-                            }
-                          ],
-                          "features_position": "inline"
-                        },
-                        {
-                          "type": "tile",
-                          "entity": "climate.office_heating",
-                          "state_content": [
-                            "current_temperature",
-                            "hvac_action",
-                            "temperature"
-                          ],
-                          "features": [
-                            {
-                              "type": "climate-hvac-modes"
-                            }
-                          ],
-                          "features_position": "inline"
+                          "type": "climate-hvac-modes"
                         }
                       ],
-                      "columns": 1
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "climate.bathroom_heating",
+                      "state_content": [
+                        "current_temperature",
+                        "hvac_action",
+                        "temperature"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "climate-hvac-modes"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "climate.bedroom_heating",
+                      "state_content": [
+                        "current_temperature",
+                        "hvac_action",
+                        "temperature"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "climate-hvac-modes"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "climate.gym_heating",
+                      "state_content": [
+                        "current_temperature",
+                        "hvac_action",
+                        "temperature"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "climate-hvac-modes"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "climate.office_ac",
+                      "state_content": [
+                        "current_temperature",
+                        "hvac_action",
+                        "temperature"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "style": "icons",
+                          "hvac_modes": [
+                            "off",
+                            "cool",
+                            "dry",
+                            "fan_only"
+                          ],
+                          "type": "climate-hvac-modes"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "climate.office_heating",
+                      "state_content": [
+                        "current_temperature",
+                        "hvac_action",
+                        "temperature"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "climate-hvac-modes"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "switch.floor_heating_pump_1",
+                      "state_content": "last_changed",
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "toggle"
+                        }
+                      ],
+                      "features_position": "inline"
                     }
                   ],
                   "columns": 1
@@ -2819,49 +2834,55 @@
                       }
                     },
                     {
-                      "square": false,
-                      "type": "grid",
-                      "cards": [
+                      "type": "tile",
+                      "entity": "climate.gameroom_ac",
+                      "state_content": [
+                        "current_temperature",
+                        "hvac_action",
+                        "temperature"
+                      ],
+                      "vertical": false,
+                      "features": [
                         {
-                          "type": "tile",
-                          "entity": "climate.gameroom_ac",
-                          "state_content": [
-                            "current_temperature",
-                            "hvac_action",
-                            "temperature"
+                          "style": "icons",
+                          "hvac_modes": [
+                            "off",
+                            "cool",
+                            "dry",
+                            "fan_only"
                           ],
-                          "vertical": false,
-                          "features": [
-                            {
-                              "style": "icons",
-                              "hvac_modes": [
-                                "off",
-                                "cool",
-                                "dry",
-                                "fan_only"
-                              ],
-                              "type": "climate-hvac-modes"
-                            }
-                          ],
-                          "features_position": "inline"
-                        },
-                        {
-                          "type": "tile",
-                          "entity": "climate.gameroom_heating",
-                          "state_content": [
-                            "current_temperature",
-                            "hvac_action",
-                            "temperature"
-                          ],
-                          "features": [
-                            {
-                              "type": "climate-hvac-modes"
-                            }
-                          ],
-                          "features_position": "inline"
+                          "type": "climate-hvac-modes"
                         }
                       ],
-                      "columns": 1
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "climate.gameroom_heating",
+                      "state_content": [
+                        "current_temperature",
+                        "hvac_action",
+                        "temperature"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "climate-hvac-modes"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "switch.floor_heating_pump_2",
+                      "state_content": "last_changed",
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "toggle"
+                        }
+                      ],
+                      "features_position": "inline"
                     }
                   ],
                   "columns": 1
@@ -7547,7 +7568,10 @@
             },
             {
               "type": "entity",
-              "entity": "sensor.watergebruik"
+              "show_name": false,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.watermeter_water_usage"
             }
           ],
           "theme": "Enhanced Grey",
