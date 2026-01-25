@@ -343,13 +343,22 @@ template:
         state: >
           {% set T = states('sensor.roof_terrace_sensor_temperature') | float(0) %}
           {% set RH = states('sensor.roof_terrace_sensor_humidity') | float(0) %}
-          {# Calculate dewpoint using Magnus formula #}
-          {% set a = 17.27 %}
-          {% set b = 237.7 %}
-          {% set alpha = (a * T) / (b + T) + (RH / 100) | log %}
-          {% set Td = (b * alpha) / (a - alpha) %}
-          {% set e = 6.11 * (2.718281828 ** (5417.7530 * ((1/273.15) - (1/(273.15 + Td))))) %}
-          {{ (T + (0.5555 * (e - 10))) | round(1) }}
+          {% if RH <= 0 %}
+            {{ T | round(1) }}
+          {% else %}
+            {# Calculate dewpoint using Magnus formula #}
+            {% set a = 17.27 %}
+            {% set b = 237.7 %}
+            {% set log_input = (a * T) / (b + T) + (RH / 100) %}
+            {% if log_input > 0 %}
+              {% set alpha = log_input | log %}
+              {% set Td = (b * alpha) / (a - alpha) %}
+              {% set e = 6.11 * (2.718281828 ** (5417.7530 * ((1/273.15) - (1/(273.15 + Td))))) %}
+              {{ (T + (0.5555 * (e - 10))) | round(1) }}
+            {% else %}
+              {{ T | round(1) }}
+            {% endif %}
+          {% endif %}
         icon: mdi:thermometer-water
   - sensor:
       - name: "Climate Luminosity"
