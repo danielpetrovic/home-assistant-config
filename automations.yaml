@@ -69,11 +69,6 @@
         data:
           group_members:
           - media_player.bathroom
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 3
-          milliseconds: 0
       - action: media_player.volume_set
         metadata: {}
         data:
@@ -90,21 +85,6 @@
         metadata: {}
         data:
           volume_level: 0.25
-        target:
-          entity_id: media_player.bathroom
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 9
-          milliseconds: 0
-      - action: media_player.unjoin
-        metadata: {}
-        target:
-          entity_id: media_player.bathroom
-        data: {}
-      - action: media_player.turn_off
-        metadata: {}
-        data: {}
         target:
           entity_id: media_player.bathroom
     - conditions:
@@ -154,15 +134,15 @@
       - delay:
           hours: 0
           minutes: 0
-          seconds: 3
+          seconds: 2
           milliseconds: 0
       - action: media_player.join
         metadata: {}
-        target:
-          entity_id: media_player.bedroom
         data:
           group_members:
           - media_player.bathroom
+        target:
+          entity_id: media_player.bedroom
       alias: player idle
   mode: restart
 - id: '1704667361587'
@@ -1658,11 +1638,11 @@
       sequence:
       - action: media_player.join
         metadata: {}
-        target:
-          entity_id: media_player.bedroom
         data:
           group_members:
           - media_player.gym
+        target:
+          entity_id: media_player.bedroom
     - conditions:
       - condition: trigger
         id:
@@ -1699,11 +1679,11 @@
           milliseconds: 0
       - action: media_player.join
         metadata: {}
-        target:
-          entity_id: media_player.bedroom
         data:
           group_members:
           - media_player.gym
+        target:
+          entity_id: media_player.bedroom
       alias: player idle
     - conditions:
       - condition: trigger
@@ -2297,7 +2277,7 @@
       z2m_device_name: Gameroom Desk Button
       last_pressed: input_text.gameroom_desk_button_last_pressed
       button_1_light:
-        entity_id: light.gameroom_lighten
+        entity_id: light.gameroom_above_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
@@ -2354,7 +2334,8 @@
       z2m_device_name: Gameroom Button
       last_pressed: input_text.gameroom_button_last_pressed
       button_1_light:
-        entity_id: light.gameroom_lighten
+        entity_id:
+        - light.gameroom_above_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
@@ -2869,8 +2850,10 @@
   description: ''
   triggers:
   - entity_id:
-    - event.front_door_doorbell
+    - binary_sensor.front_door_doorbell
     trigger: state
+    to:
+    - 'on'
   conditions: []
   actions:
   - parallel:
@@ -2892,7 +2875,7 @@
         data:
           channel: Doorbell
           clickAction: /lovelace/front_door
-          image: /api/camera_proxy/camera.front_door_hq
+          image: /api/camera_proxy/camera.front_door
           importance: high
           notification_icon: mdi:doorbell-video
           priority: high
@@ -2916,7 +2899,7 @@
   variables:
     base_url_https: '{{ states(''input_text.base_url_https'') }}'
     base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
-    image_url: '{{ base_url_https }}{{state_attr(''camera.front_door_hq'',''entity_picture'')+''&time=''}}{{as_timestamp(now())}}'
+    image_url: '{{ base_url_https }}{{state_attr(''camera.front_door'',''entity_picture'')+''&time=''}}{{as_timestamp(now())}}'
     video_url: '{{ base_url_rtsp }}/front_door'
   mode: restart
 - id: '1746611445373'
@@ -3161,7 +3144,7 @@
       z2m_device_name: Roof Terrace Button
       last_pressed: input_text.roof_terrace_button_last_pressed
       button_1_light:
-        entity_id: light.gameroom_lighten
+        entity_id: light.gameroom_above_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
@@ -4635,11 +4618,11 @@
           milliseconds: 0
       - action: media_player.join
         metadata: {}
-        target:
-          entity_id: media_player.bedroom
         data:
           group_members:
           - media_player.kitchen
+        target:
+          entity_id: media_player.bedroom
       alias: player idle
     - conditions:
       - condition: trigger
@@ -4798,41 +4781,45 @@
     - actionrequired
   conditions: []
   actions:
-  - if:
-    - condition: state
-      entity_id: sensor.bart_operation_state
-      state:
-      - actionrequired
-    then:
-    - action: select.select_option
-      metadata: {}
-      data:
-        option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_only
-      target:
-        entity_id:
-        - select.bart_cleaning_mode
-    - action: select.select_option
-      metadata: {}
-      data:
-        option: consumer_products_cleaning_robot_program_cleaning_clean_all
-      target:
-        entity_id:
-        - select.bart_active_programme
-    else:
-    - action: select.select_option
-      metadata: {}
-      data:
-        option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_and_mop
-      target:
-        entity_id:
-        - select.bart_cleaning_mode
-    - action: select.select_option
-      metadata: {}
-      data:
-        option: consumer_products_cleaning_robot_program_cleaning_clean_all
-      target:
-        entity_id:
-        - select.bart_active_programme
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: sensor.bart_operation_state
+        state:
+        - actionrequired
+      sequence:
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_only
+        target:
+          entity_id:
+          - select.bart_cleaning_mode
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: consumer_products_cleaning_robot_program_cleaning_clean_all
+        target:
+          entity_id:
+          - select.bart_active_programme
+      alias: Error
+    - conditions: []
+      sequence:
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: consumer_products_cleaning_robot_enum_type_cleaning_mode_intelligent_mode
+        target:
+          entity_id:
+          - select.bart_cleaning_mode
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: consumer_products_cleaning_robot_program_cleaning_clean_all
+        target:
+          entity_id:
+          - select.bart_active_programme
+      alias: No error
   mode: single
 - id: '1764429546417'
   alias: Gameroom Motion
@@ -5210,40 +5197,26 @@
         - light.living_room_below_light
       auto_adjust_enabled: true
       workday_sensor: binary_sensor.workday_sensor
-- id: '1767044874987'
-  alias: Living Room Tablet
-  description: ''
-  triggers:
-  - trigger: homeassistant
-    event: start
-    id: ha start
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - ha start
-      sequence:
-      - action: button.press
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - button.living_room_tablet_restart
-  mode: single
 - id: '1769193997494'
   alias: Car
   description: ''
   triggers:
   - trigger: state
-    entity_id: binary_sensor.t047zg_charging
-    to: 'on'
+    entity_id:
+    - binary_sensor.t047zg_charging
+    to:
+    - 'on'
     id: charging
+    from:
+    - 'off'
   - trigger: state
-    entity_id: binary_sensor.t047zg_charging
-    to: 'off'
+    entity_id:
+    - binary_sensor.t047zg_charging
+    to:
+    - 'off'
     id: stopped
+    from:
+    - 'on'
   conditions: []
   actions:
   - choose:
