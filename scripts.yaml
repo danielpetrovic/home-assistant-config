@@ -49,24 +49,26 @@ music_night:
   - delay:
       hours: 0
       minutes: 0
-      seconds: 3
+      seconds: 1
       milliseconds: 0
   - action: media_player.join
     metadata: {}
-    data:
-      group_members:
-      - media_player.gym
-      - media_player.kitchen
     target:
       entity_id: media_player.bedroom
+    data:
+      group_members:
+      - media_player.bathroom
+      - media_player.gym
+      - media_player.kitchen
   - action: media_player.volume_set
     metadata: {}
     data:
       volume_level: 0.25
     target:
       entity_id:
-      - media_player.bedroom
-      - media_player.gym
+      - media_player.bathroom_kef
+      - media_player.bedroom_kef
+      - media_player.gym_kef
 music_home:
   alias: Music - Home
   description: ''
@@ -78,15 +80,7 @@ music_home:
       media_type: playlist
       enqueue: replace_next
       media_id:
-      - Asian
-      - Dance
-      - Eurovision
-      - Hip Hop
-      - Jazz
-      - Metal
-      - Pop
-      - R&B
-      - Rock
+      - 500 Random tracks
     target:
       entity_id: media_player.bedroom
   - action: media_player.media_play
@@ -109,16 +103,17 @@ music_home:
   - delay:
       hours: 0
       minutes: 0
-      seconds: 3
+      seconds: 1
       milliseconds: 0
   - action: media_player.join
     metadata: {}
-    data:
-      group_members:
-      - media_player.gym
-      - media_player.kitchen
     target:
       entity_id: media_player.bedroom
+    data:
+      group_members:
+      - media_player.bathroom
+      - media_player.gym
+      - media_player.kitchen
   - action: media_player.volume_set
     metadata: {}
     data:

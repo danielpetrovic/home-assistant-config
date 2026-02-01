@@ -5,13 +5,13 @@
   "data": {
     "items": [
       {
-        "id": "dashboard_tablet",
-        "show_in_sidebar": false,
-        "icon": "mdi:tablet-dashboard",
-        "title": "Tablet",
-        "require_admin": false,
+        "id": "lovelace",
+        "icon": "mdi:view-dashboard",
+        "title": "Overview",
+        "url_path": "lovelace",
         "mode": "storage",
-        "url_path": "dashboard-tablet"
+        "require_admin": false,
+        "show_in_sidebar": true
       }
     ]
   }
