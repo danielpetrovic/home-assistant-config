@@ -12,6 +12,15 @@
         "mode": "storage",
         "require_admin": false,
         "show_in_sidebar": true
+      },
+      {
+        "id": "dashboard_tablet",
+        "show_in_sidebar": false,
+        "icon": "mdi:tablet-dashboard",
+        "title": "Tablet Dasbhoard",
+        "require_admin": false,
+        "mode": "storage",
+        "url_path": "dashboard-tablet"
       }
     ]
   }

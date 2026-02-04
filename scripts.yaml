@@ -24,9 +24,10 @@ music_night:
     metadata: {}
     data:
       media_type: playlist
-      enqueue: replace_next
+      enqueue: replace
       media_id:
       - Classical
+      radio_mode: false
     target:
       entity_id: media_player.bedroom
   - action: media_player.media_play
@@ -78,14 +79,10 @@ music_home:
     metadata: {}
     data:
       media_type: playlist
-      enqueue: replace_next
+      enqueue: replace
       media_id:
       - 500 Random tracks
-    target:
-      entity_id: media_player.bedroom
-  - action: media_player.media_play
-    metadata: {}
-    data: {}
+      radio_mode: false
     target:
       entity_id: media_player.bedroom
   - action: media_player.repeat_set
@@ -100,11 +97,6 @@ music_home:
       shuffle: true
     target:
       entity_id: media_player.bedroom
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 1
-      milliseconds: 0
   - action: media_player.join
     metadata: {}
     target:
