@@ -18,6 +18,7 @@
 /deps/
 /glances
 /image
+/tmp
 /tmp_backups
 /tts
 /www
