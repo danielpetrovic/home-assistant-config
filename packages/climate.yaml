@@ -10,7 +10,7 @@ sensor:
   - platform: statistics
     name: "Outdoor Temperature Max"
     unique_id: outdoor_temperature_max
-    entity_id: sensor.roof_terrace_sensor_temperature
+    entity_id: sensor.roof_terrace_sensor_apparent_temperature
     state_characteristic: value_max
     max_age:
       hours: 96
@@ -18,7 +18,7 @@ sensor:
   - platform: statistics
     name: "Outdoor Temperature Min"
     unique_id: outdoor_temperature_min
-    entity_id: sensor.roof_terrace_sensor_temperature
+    entity_id: sensor.roof_terrace_sensor_apparent_temperature
     state_characteristic: value_min
     max_age:
       hours: 168
@@ -310,57 +310,6 @@ template:
           {% endif %}
         icon: mdi:sun-clock
   - sensor:
-      - name: "Climate Heat Stress"
-        unique_id: climate_heat_stress
-        unit_of_measurement: "%"
-        state_class: measurement
-        state: >
-          {% set T = states('sensor.roof_terrace_sensor_temperature') | float(0) %}
-          {% set lux = states('sensor.roof_terrace_sensor_illuminance') | float(0) %}
-          {% set solar = lux / 100 %}
-          {% set rh = states('sensor.roof_terrace_sensor_humidity') | float(0) %}
-          {% set wind = states('sensor.roof_terrace_sensor_wind_speed') | float(0) %}
-          {% set precipitation = states('sensor.roof_terrace_sensor_precipitation') | float(0) %}
-
-          {% set base = T + (solar / 100) + (rh / 10) %}
-          {% set cooled = base - (wind / 2) %}
-          {% set adjusted = cooled - (3 if precipitation > 0 else 0) %}
-
-          {% set min_val = 18 %}
-          {% set max_val = 42 %}
-          {% set scaled = ((adjusted - min_val) / (max_val - min_val)) %}
-
-          {# Tuned sigmoid curve using Euler's number approximation #}
-          {% set sigmoid = 1 / (1 + (2.71828 ** (-4 * (scaled - 0.5)))) %}
-          {% set percent = sigmoid * 100 %}
-          {{ [percent, 0] | max | round(0) }}
-        icon: mdi:weather-sunny-alert
-  - sensor:
-      - name: "Climate Humidex"
-        unique_id: climate_humidex
-        unit_of_measurement: "°C"
-        state_class: measurement
-        state: >
-          {% set T = states('sensor.roof_terrace_sensor_temperature') | float(0) %}
-          {% set RH = states('sensor.roof_terrace_sensor_humidity') | float(0) %}
-          {% if RH <= 0 %}
-            {{ T | round(1) }}
-          {% else %}
-            {# Calculate dewpoint using Magnus formula #}
-            {% set a = 17.27 %}
-            {% set b = 237.7 %}
-            {% set log_input = (a * T) / (b + T) + (RH / 100) %}
-            {% if log_input > 0 %}
-              {% set alpha = log_input | log %}
-              {% set Td = (b * alpha) / (a - alpha) %}
-              {% set e = 6.11 * (2.718281828 ** (5417.7530 * ((1/273.15) - (1/(273.15 + Td))))) %}
-              {{ (T + (0.5555 * (e - 10))) | round(1) }}
-            {% else %}
-              {{ T | round(1) }}
-            {% endif %}
-          {% endif %}
-        icon: mdi:thermometer-water
-  - sensor:
       - name: "Climate Luminosity"
         unique_id: climate_luminosity
         state: >
@@ -381,8 +330,8 @@ template:
       - name: "Climate Mode"
         unique_id: climate_mode
         state: >
-          {% set hs = states('sensor.climate_heat_stress') | float(0) %}
-          {% set humidex = states('sensor.climate_humidex') | float(0) %}
+          {% set hs = states('sensor.roof_terrace_sensor_heat_stress') | float(0) %}
+          {% set humidex = states('sensor.roof_terrace_sensor_humidex') | float(0) %}
           {% set daylight_h = states('sensor.daylight_duration') | float(0) %}
           {% set min7 = states('sensor.outdoor_temperature_min') | float(0) %}
           {% set max4 = states('sensor.outdoor_temperature_max') | float(0) %}
