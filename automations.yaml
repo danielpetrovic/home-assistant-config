@@ -221,7 +221,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.garden_door
+            entity_id: binary_sensor.garden_door_contact
             state:
             - 'off'
           - condition: state
@@ -238,7 +238,7 @@
           - condition: or
             conditions:
             - condition: state
-              entity_id: binary_sensor.garden_door
+              entity_id: binary_sensor.garden_door_contact
               state: 'on'
             - condition: not
               conditions:
@@ -248,7 +248,7 @@
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.garden_door
+              - binary_sensor.garden_door_contact
               to: 'off'
               trigger: state
             - entity_id:
@@ -277,7 +277,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.garden_door
+            entity_id: binary_sensor.garden_door_contact
             state: 'off'
           - condition: state
             entity_id: cover.shed_garden_shutter
@@ -293,7 +293,7 @@
           - condition: or
             conditions:
             - condition: state
-              entity_id: binary_sensor.garden_door
+              entity_id: binary_sensor.garden_door_contact
               state: 'on'
             - condition: not
               conditions:
@@ -303,7 +303,7 @@
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.garden_door
+              - binary_sensor.garden_door_contact
               to: 'off'
               trigger: state
             - entity_id:
@@ -332,7 +332,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.garden_door
+            entity_id: binary_sensor.garden_door_contact
             state: 'off'
           - condition: state
             entity_id: cover.shed_garden_shutter
@@ -348,7 +348,7 @@
           - condition: or
             conditions:
             - condition: state
-              entity_id: binary_sensor.garden_door
+              entity_id: binary_sensor.garden_door_contact
               state: 'on'
             - condition: not
               conditions:
@@ -358,7 +358,7 @@
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.garden_door
+              - binary_sensor.garden_door_contact
               to: 'off'
               trigger: state
             - entity_id:
@@ -411,7 +411,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.roof_terrace_door
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -422,12 +422,12 @@
               entity_id: cover.roof_terrace_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.roof_terrace_door
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.roof_terrace_door
+              - binary_sensor.roof_terrace_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -452,7 +452,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.roof_terrace_door
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'off'
           sequence:
           - action: cover.set_cover_position
@@ -463,12 +463,12 @@
               entity_id: cover.roof_terrace_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.roof_terrace_door
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.roof_terrace_door
+              - binary_sensor.roof_terrace_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -492,7 +492,7 @@
         choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.roof_terrace_door
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'off'
           sequence:
           - action: cover.close_cover
@@ -502,12 +502,12 @@
               entity_id: cover.roof_terrace_shutter
         - conditions:
           - condition: state
-            entity_id: binary_sensor.roof_terrace_door
+            entity_id: binary_sensor.roof_terrace_door_contact
             state: 'on'
           sequence:
           - wait_for_trigger:
             - entity_id:
-              - binary_sensor.roof_terrace_door
+              - binary_sensor.roof_terrace_door_contact
               to: 'off'
               trigger: state
             continue_on_timeout: true
@@ -1169,13 +1169,13 @@
           - light.shed
       - if:
         - condition: state
-          entity_id: binary_sensor.garden_door
+          entity_id: binary_sensor.garden_door_contact
           state: 'on'
         then:
         - wait_for_trigger:
           - trigger: state
             entity_id:
-            - binary_sensor.garden_door
+            - binary_sensor.garden_door_contact
             to: 'off'
             from: 'on'
         - target:
@@ -1286,7 +1286,7 @@
   triggers:
   - alias: door open
     entity_id:
-    - binary_sensor.toilet_door
+    - binary_sensor.toilet_door_contact
     to:
     - 'on'
     id: door open
@@ -1313,14 +1313,14 @@
   triggers:
   - alias: door open
     entity_id:
-    - binary_sensor.kitchen_cabinet_door
+    - binary_sensor.kitchen_cabinet_door_contact
     to:
     - 'on'
     id: door open
     trigger: state
   - alias: door closed
     entity_id:
-    - binary_sensor.kitchen_cabinet_door
+    - binary_sensor.kitchen_cabinet_door_contact
     to:
     - 'off'
     id: door closed
@@ -1363,14 +1363,14 @@
   triggers:
   - alias: door open
     entity_id:
-    - binary_sensor.laundy_room_door
+    - binary_sensor.laundy_room_door_contact
     to:
     - 'on'
     id: door open
     trigger: state
   - alias: door closed
     entity_id:
-    - binary_sensor.laundy_room_door
+    - binary_sensor.laundy_room_door_contact
     to:
     - 'off'
     id: door closed
@@ -1546,7 +1546,7 @@
   triggers:
   - alias: door open
     entity_id:
-    - binary_sensor.bedroom_door
+    - binary_sensor.bedroom_door_contact
     to:
     - 'on'
     id: door open
@@ -1798,7 +1798,7 @@
   triggers:
   - alias: door open
     entity_id:
-    - binary_sensor.bathroom_door
+    - binary_sensor.bathroom_door_contact
     to:
     - 'on'
     id: door open
@@ -2167,7 +2167,7 @@
   triggers:
   - trigger: numeric_state
     entity_id:
-    - sensor.alex_pc_energy_import
+    - sensor.alex_pc_power
     for:
       hours: 0
       minutes: 10
@@ -2176,7 +2176,7 @@
     id: Alex PC
   - trigger: numeric_state
     entity_id:
-    - sensor.deni_pc_energy_import
+    - sensor.deni_pc_power
     for:
       hours: 0
       minutes: 10
@@ -2789,12 +2789,12 @@
       z2m_device_name: Shed Garden Button
       last_pressed: input_text.shed_garden_button_last_pressed
       button_1_light:
-        entity_id: light.shed_lighten
+        entity_id: light.shed
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_light:
-        entity_id: light.garden_lighten
+        entity_id: light.garden
       button_3_light_schedule: schedule.lights_bright
       button_2_short_release:
       - action: input_select.select_option
@@ -2834,10 +2834,56 @@
     from:
     to:
     enabled: true
+  - trigger: state
+    entity_id:
+    - media_player.living_room_player
+    from:
+    to:
   conditions: []
   actions:
+  - delay:
+      seconds: 1
   - alias: Living Room TV
     choose:
+    - alias: OSMC HDMI 1 playing
+      conditions:
+      - condition: state
+        entity_id: media_player.living_room_tv_cast
+        state: playing
+      - condition: state
+        entity_id: media_player.living_room_tv_cast
+        attribute: media_title
+        state: OSMC HDMI 1
+      - condition: state
+        entity_id: media_player.living_room_player
+        state: playing
+      sequence:
+      - action: media_player.volume_set
+        target:
+          entity_id: media_player.kitchen
+        data:
+          volume_level: 0.01
+    - alias: OSMC HDMI 1 not playing
+      conditions:
+      - condition: state
+        entity_id: media_player.living_room_tv_cast
+        state: playing
+      - condition: state
+        entity_id: media_player.living_room_tv_cast
+        attribute: media_title
+        state: OSMC HDMI 1
+      - condition: state
+        entity_id: media_player.living_room_player
+        state:
+        - 'off'
+        - idle
+        - paused
+      sequence:
+      - action: media_player.volume_set
+        target:
+          entity_id: media_player.kitchen
+        data:
+          volume_level: 0.35
     - alias: NLZIET
       conditions:
       - condition: state
@@ -2846,7 +2892,6 @@
         state: NLZIET
       sequence:
       - action: media_player.volume_set
-        metadata: {}
         target:
           entity_id: media_player.kitchen
         data:
@@ -2858,7 +2903,6 @@
         state: playing
       sequence:
       - action: media_player.volume_set
-        metadata: {}
         target:
           entity_id: media_player.kitchen
         data:
@@ -2873,7 +2917,6 @@
         - paused
       sequence:
       - action: media_player.volume_set
-        metadata: {}
         target:
           entity_id: media_player.kitchen
         data:
@@ -3118,7 +3161,7 @@
         metadata: {}
         data: {}
         target:
-          entity_id: automation.toilet_door
+          entity_id: automation.toilet_door_contact
 - id: '1755965337801'
   alias: Shed Alleyway Button
   description: ''
@@ -3131,12 +3174,12 @@
       z2m_device_name: Shed Alleyway Button
       last_pressed: input_text.shed_alleyway_button_last_pressed
       button_1_light:
-        entity_id: light.shed_lighten
+        entity_id: light.shed
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_light:
-        entity_id: light.garden_lighten
+        entity_id: light.garden
       button_3_light_schedule: schedule.lights_bright
       button_2_short_release:
       - action: input_select.select_option
@@ -4820,53 +4863,104 @@
   description: ''
   triggers:
   - trigger: time
-    at: 06:00:00
-  - trigger: state
-    entity_id:
-    - sensor.bart_operation_state
-    to:
-    - actionrequired
+    at: 07:30:00
+    id: 07:30
+  - trigger: time
+    at: '18:00:00'
+    id: '18:00'
   conditions: []
   actions:
   - choose:
     - conditions:
-      - condition: state
-        entity_id: sensor.bart_operation_state
-        state:
-        - actionrequired
+      - condition: trigger
+        id:
+        - 07:30
       sequence:
-      - action: select.select_option
-        metadata: {}
-        data:
-          option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_only
-        target:
-          entity_id:
-          - select.bart_cleaning_mode
-      - action: select.select_option
-        metadata: {}
-        data:
-          option: consumer_products_cleaning_robot_program_cleaning_clean_all
-        target:
-          entity_id:
-          - select.bart_active_programme
-      alias: Error
-    - conditions: []
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: sensor.bart_operation_state
+            state:
+            - actionrequired
+          sequence:
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_only
+            target:
+              entity_id:
+              - select.bart_cleaning_mode
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: consumer_products_cleaning_robot_program_cleaning_clean_all
+            target:
+              entity_id:
+              - select.bart_active_programme
+          alias: Error
+        - conditions: []
+          sequence:
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: consumer_products_cleaning_robot_enum_type_cleaning_mode_intelligent_mode
+            target:
+              entity_id:
+              - select.bart_cleaning_mode
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: consumer_products_cleaning_robot_program_cleaning_clean_all
+            target:
+              entity_id:
+              - select.bart_active_programme
+          alias: No error
+      alias: 07:30
+    - conditions:
+      - condition: trigger
+        id:
+        - '18:00'
       sequence:
-      - action: select.select_option
-        metadata: {}
-        data:
-          option: consumer_products_cleaning_robot_enum_type_cleaning_mode_mop_after_vacuum
-        target:
-          entity_id:
-          - select.bart_cleaning_mode
-      - action: select.select_option
-        metadata: {}
-        data:
-          option: consumer_products_cleaning_robot_program_cleaning_clean_all
-        target:
-          entity_id:
-          - select.bart_active_programme
-      alias: No error
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: sensor.bert_operation_state
+            state:
+            - actionrequired
+          sequence:
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_only
+            target:
+              entity_id:
+              - select.bert_cleaning_mode
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: consumer_products_cleaning_robot_program_cleaning_clean_all
+            target:
+              entity_id:
+              - select.bert_active_programme
+          alias: Error
+        - conditions: []
+          sequence:
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: consumer_products_cleaning_robot_enum_type_cleaning_mode_intelligent_mode
+            target:
+              entity_id:
+              - select.bert_cleaning_mode
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: consumer_products_cleaning_robot_program_cleaning_clean_all
+            target:
+              entity_id:
+              - select.bert_active_programme
+          alias: No error
+      alias: '18:00'
   mode: single
 - id: '1764429546417'
   alias: Gameroom Motion
@@ -4979,10 +5073,10 @@
       alarm_announcements_player:
       - media_player.utility_closet
       alarm_sensor_away:
-      - binary_sensor.entrance_door
-      - binary_sensor.garden_door
-      - binary_sensor.living_room_window
-      - binary_sensor.roof_terrace_door
+      - binary_sensor.entrance_door_contact
+      - binary_sensor.garden_door_contact
+      - binary_sensor.living_room_window_contact
+      - binary_sensor.roof_terrace_door_contact
       alarm_scripts_away:
       - script.alarm_away
       - script.fan_away
@@ -4994,10 +5088,10 @@
       - script.fan_home
       - script.music_home
       alarm_sensor_night:
-      - binary_sensor.entrance_door
-      - binary_sensor.garden_door
-      - binary_sensor.living_room_window
-      - binary_sensor.roof_terrace_door
+      - binary_sensor.entrance_door_contact
+      - binary_sensor.garden_door_contact
+      - binary_sensor.living_room_window_contact
+      - binary_sensor.roof_terrace_door_contact
       alarm_scripts_night:
       - script.alarm_night
       - script.fan_night
@@ -5014,23 +5108,26 @@
       alarm_notifications_critical_triggered: true
       alarm_notifications_critical_always: false
       alarm_sensor_fire:
-      - binary_sensor.entrance_smoke_alarm_smoke
-      - binary_sensor.hallway_smoke_alarm_smoke
-      - binary_sensor.gameroom_smoke_alarm_smoke
-      - binary_sensor.shed_heat_alarm_smoke
+      - binary_sensor.entrance_alarm_smoke
+      - binary_sensor.gameroom_alarm_smoke
+      - binary_sensor.hallway_alarm_smoke
+      - binary_sensor.shed_alarm_smoke
       alarm_notifications_critical_fire: true
       alarm_notifications_critical_gas: true
       alarm_sensor_moisture:
-      - binary_sensor.kitchen_flood_alarm_water_leak
-      - binary_sensor.laundry_room_flood_alarm_water_leak
+      - binary_sensor.kitchen_alarm_water_leak
+      - binary_sensor.laundry_room_alarm_water_leak
       alarm_notifications_critical_moisture: true
       alarm_scripts_moisture:
-      - script.lights_blue
+      - script.lights_breathe_blue
       dashboard_code_entry_helper: input_text.dashboard_code_entry
       dashboard_alarm_code: input_text.dashboard_alarm_code
       dashboard_alarm_action: input_text.dashboard_alarm_action
       alarm_dashboard_code: input_text.alarm_dashboard_code
       alarm_dashboard_action: input_text.alarm_dashboard_action
+      alarm_camera_home: camera.entrance
+      alarm_scripts_fire:
+      - script.lights_breathe_orange
 - id: '1765450835637'
   alias: Gym Motion
   description: ''
@@ -5220,7 +5317,7 @@
         - light.bedroom_deni_bed_light
         - light.toilet_light
         - light.garden
-        - light.front_door_light
+        - light.front_door_contact_light
         - light.laundy_room_light
         - light.living_room_above_light
       auto_adjust_enabled: true
