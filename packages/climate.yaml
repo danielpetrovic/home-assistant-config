@@ -23,14 +23,6 @@ sensor:
     max_age:
       hours: 168
     precision: 2
-  - platform: statistics
-    name: "Outdoor Temperature Mean"
-    unique_id: outdoor_temperature_mean
-    entity_id: sensor.roof_terrace_sensor_temperature
-    state_characteristic: mean
-    max_age:
-      hours: 168
-    precision: 2
 
 climate:
   - platform: generic_thermostat
@@ -408,16 +400,20 @@ template:
           {% set temp = states('sensor.roof_terrace_sensor_temperature') | float(0) %}
           {% set humidity = states('sensor.roof_terrace_sensor_humidity') | float(0) %}
 
-          {# Get sun times for day/night detection #}
-          {% set sunrise = state_attr('sun.sun', 'next_rising') | as_datetime %}
-          {% set sunset = state_attr('sun.sun', 'next_setting') | as_datetime %}
+          {# Historical temperature range for diurnal curve #}
+          {% set t_max = states('sensor.outdoor_temperature_max') | float(temp) %}
+          {% set t_min = states('sensor.outdoor_temperature_min') | float(temp) %}
+          {% set t_mean = (t_max + t_min) / 2 %}
+          {% set t_amp = (t_max - t_min) / 2 %}
+
+          {# Sun times for day/night detection #}
+          {% set next_rise = state_attr('sun.sun', 'next_rising') | as_datetime %}
+          {% set next_set = state_attr('sun.sun', 'next_setting') | as_datetime %}
           {% set sun_up = states('sun.sun') == 'above_horizon' %}
 
           {# Condition ranking: 0=worst to 4=best #}
           {% set conditions = ['pouring', 'rainy', 'cloudy', 'partlycloudy', 'sunny'] %}
           {% set night_conditions = ['pouring', 'rainy', 'cloudy', 'partlycloudy', 'clear-night'] %}
-
-          {# Map current condition to rank #}
           {% set current_map = {
             'pouring': 0, 'hail': 0, 'snowy': 1,
             'rainy': 1,
@@ -427,7 +423,7 @@ template:
           } %}
           {% set current_rank = current_map.get(current, 2) %}
 
-          {# Calculate shift per hour based on pressure trend #}
+          {# Pressure trend → condition shift per hour #}
           {% if trend > 2 %}
             {% set shift_per_hour = 0.5 %}
           {% elif trend > 0.5 %}
@@ -445,42 +441,35 @@ template:
           {% for hour in range(1, 7) %}
             {% set future_time = now() + timedelta(hours=hour) %}
 
-            {# Determine if sun is up at future_time #}
+            {# Day/night detection #}
             {% if sun_up %}
-              {# Currently day: night if future_time >= sunset and < next sunrise #}
-              {% set is_night = future_time >= sunset %}
+              {% set is_night = future_time >= next_set %}
             {% else %}
-              {# Currently night: day if future_time >= sunrise and < next sunset #}
-              {% set is_night = future_time < sunrise %}
+              {% set is_night = future_time < next_rise %}
             {% endif %}
 
-            {# Calculate predicted rank (clamped 0-4) #}
+            {# Predicted condition #}
             {% set predicted_rank = ([0, current_rank + (shift_per_hour * hour)] | max) %}
             {% set predicted_rank = ([4, predicted_rank] | min) | int %}
-
-            {# Select condition based on day/night #}
             {% if is_night %}
               {% set predicted_condition = night_conditions[predicted_rank] %}
             {% else %}
               {% set predicted_condition = conditions[predicted_rank] %}
             {% endif %}
 
-            {# Temp prediction based on sun position #}
-            {% if is_night %}
-              {% set temp_adj = -1.5 %}
-            {% else %}
-              {# Warmer during day, peak around solar noon #}
-              {% set hours_since_sunrise = (future_time - sunrise).total_seconds() / 3600 %}
-              {% set day_length = (sunset - sunrise).total_seconds() / 3600 %}
-              {% set day_progress = hours_since_sunrise / day_length if day_length > 0 else 0.5 %}
-              {# Peak warmth at 60% through the day (afternoon) #}
-              {% set temp_adj = 2 * (1 - (2 * (day_progress - 0.6) | abs)) %}
-            {% endif %}
+            {# Temperature: sinusoidal diurnal curve peaking at 14:00, trough at 02:00 #}
+            {% set future_hour = future_time.hour + future_time.minute / 60 %}
+            {% set phase = (future_hour - 14) / 24 * 2 * pi %}
+            {% set curve_temp = t_mean + t_amp * cos(phase) %}
+
+            {# Blend: near hours favor current temp, far hours favor curve #}
+            {% set blend = (hour - 1) / 5 %}
+            {% set predicted_temp = temp * (1 - blend) + curve_temp * blend %}
 
             {% set forecast.items = forecast.items + [{
               'datetime': future_time.isoformat(),
               'condition': predicted_condition,
-              'temperature': (temp + temp_adj) | round(1),
+              'temperature': predicted_temp | round(1),
               'humidity': humidity | int
             }] %}
           {% endfor %}
