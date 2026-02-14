@@ -1,4 +1,6 @@
-@.claude/session.md
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 # Home Assistant Configuration - Context for AI Assistants
 
@@ -407,3 +409,306 @@ Uses the [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting) in
   - Dashboard configuration (lovelace_dashboards)
   - Custom resources (lovelace_resources)
 - **Format:** YAML-based Lovelace UI configuration
+
+## Common Commands
+
+### Configuration Management
+
+```bash
+# Validate configuration before restarting
+ha core check
+
+# Restart Home Assistant
+ha core restart
+
+# Reload specific components without full restart
+ha core reload --automation
+ha core reload --script
+ha core reload --template
+
+# Check Home Assistant version
+ha core info
+
+# Update Home Assistant
+ha core update
+```
+
+### Logs and Debugging
+
+```bash
+# View live logs
+ha core logs
+
+# Follow logs in real-time
+ha core logs -f
+
+# View supervisor logs
+ha supervisor logs
+
+# Check specific integration logs
+grep "zigbee2mqtt" /config/home-assistant.log
+grep "adaptive_lighting" /config/home-assistant.log
+
+# Clear log file
+> /config/home-assistant.log
+```
+
+### Automation Testing
+
+```bash
+# Trigger automation manually (via Developer Tools > Services)
+# Service: automation.trigger
+# Entity: automation.<automation_name>
+
+# Enable/disable automation
+ha core service call automation.turn_off --entity automation.<automation_name>
+ha core service call automation.turn_on --entity automation.<automation_name>
+
+# Reload automations after editing
+ha core reload --automation
+
+# Test templates (via Developer Tools > Template)
+# Navigate to: http://homeassistant.local:8123/developer-tools/template
+```
+
+### Backup and Restore
+
+```bash
+# Create backup
+ha backups new --name "manual_backup_$(date +%Y%m%d)"
+
+# List backups
+ha backups list
+
+# Restore from backup
+ha backups restore <backup_slug>
+```
+
+### Add-on Management
+
+```bash
+# List installed add-ons
+ha addons
+
+# Start/stop add-on
+ha addons start <addon_name>
+ha addons stop <addon_name>
+
+# Restart specific add-on (e.g., Zigbee2MQTT)
+ha addons restart zigbee2mqtt
+
+# View add-on logs
+ha addons logs zigbee2mqtt
+```
+
+## Remote Access Setup
+
+### SSH Connection Details
+
+```bash
+Host: <your-ha-hostname>
+User: root
+Port: 22
+Path: /config
+```
+
+### rclone Configuration
+
+The Home Assistant config directory is accessible remotely via rclone with SFTP backend.
+
+**Setup:**
+
+```bash
+# Configure rclone (interactive)
+rclone config
+
+# Remote name: ha
+# Type: sftp
+# Host: <your-ha-hostname>
+# User: root
+# Port: 22
+# SSH key: ~/.ssh/id_ed25519
+```
+
+**Common Operations:**
+
+```bash
+# List files
+rclone ls ha:/config
+
+# List directories
+rclone lsd ha:/config
+
+# Copy file from remote to local
+rclone copy ha:/config/configuration.yaml ~/local_backup/
+
+# Copy file from local to remote
+rclone copy ~/local_backup/configuration.yaml ha:/config/
+
+# Sync entire config (use with caution!)
+rclone sync ha:/config ~/ha-config-backup/
+
+# View file contents
+rclone cat ha:/config/configuration.yaml
+
+# Edit file remotely (download, edit, upload)
+rclone copy ha:/config/automations.yaml ~/automations.yaml
+# ... edit locally ...
+rclone copy ~/automations.yaml ha:/config/automations.yaml
+```
+
+**Note:** FUSE mounting via `rclone mount` is not available in Termux/Android environments. Use direct rclone commands instead.
+
+### SSH Direct Access
+
+```bash
+# Connect to HA server
+ssh root@<your-ha-hostname>
+
+# Execute remote command
+ssh root@<your-ha-hostname> "ha core info"
+
+# Copy files with scp
+scp root@<your-ha-hostname>:/config/configuration.yaml ~/backup/
+
+# Copy files with rsync
+rsync -avz root@<your-ha-hostname>:/config/ ~/ha-backup/
+```
+
+## Testing & Debugging
+
+### Configuration Validation
+
+**Before any restart:**
+
+```bash
+# Always validate configuration first
+ha core check
+
+# Expected output: "Configuration valid!"
+# If errors are found, they will be listed with line numbers
+```
+
+### Blueprint Testing
+
+**Testing Custom Blueprints:**
+
+1. **Syntax Validation:**
+   - Check YAML syntax: `ha core check`
+   - Errors will reference the blueprint file path
+
+2. **Import Test:**
+   - Navigate to: Settings > Automations & Scenes > Blueprints
+   - Click "Import Blueprint" and verify it appears
+
+3. **Automation Creation:**
+   - Create a test automation using the blueprint
+   - Fill in all required inputs
+   - Save and trigger manually via Developer Tools
+
+4. **Trace Mode:**
+   - Navigate to: Settings > Automations & Scenes
+   - Select your test automation
+   - Click "Traces" to see execution history
+   - Review each step's execution time and output
+
+### Common Troubleshooting
+
+**Automation Not Triggering:**
+
+```bash
+# Check if automation is enabled
+# Navigate to: Settings > Automations & Scenes
+# Look for disabled automations (greyed out)
+
+# Review automation traces
+# Click on automation > Traces tab
+# Check "Last Triggered" timestamp
+
+# Check condition evaluation
+# Traces will show which conditions passed/failed
+```
+
+**Integration Issues:**
+
+```bash
+# Check logs for specific integration
+ha core logs | grep "integration_name"
+
+# Common integrations to monitor:
+# - zigbee2mqtt
+# - adaptive_lighting
+# - music_assistant
+# - unifiprotect
+
+# Restart integration (via Developer Tools > Services)
+# Service: homeassistant.reload_config_entry
+# Entity: config_entry_id (found in .storage/core.config_entries)
+```
+
+**Template Errors:**
+
+```bash
+# Test templates in Developer Tools > Template
+# Navigate to: http://homeassistant.local:8123/developer-tools/template
+
+# Common template debugging:
+{{ states('sensor.outdoor_temperature') }}
+{{ state_attr('climate.living_room_heating', 'current_temperature') }}
+{{ is_state('binary_sensor.living_room_motion_occupancy', 'on') }}
+
+# Check template sensor logs
+ha core logs | grep "template"
+```
+
+**Performance Issues:**
+
+```bash
+# Check database size
+ls -lh /config/home-assistant_v2.db
+
+# If database is large (>1GB), consider:
+# - Reducing recorder history (configuration.yaml)
+# - Excluding chatty sensors from recorder
+# - Running database maintenance
+
+# Check system resources
+ha host info
+
+# Check add-on resource usage
+ha addons stats
+```
+
+**Z2M Device Issues:**
+
+```bash
+# Check Zigbee2MQTT logs
+ha addons logs zigbee2mqtt
+
+# Common issues:
+# - Device not responding: Check battery level
+# - Pairing fails: Reset device and try again
+# - Firmware updates: Check Z2M dashboard for available updates
+
+# Restart Zigbee2MQTT
+ha addons restart zigbee2mqtt
+```
+
+### Log File Locations
+
+```
+/config/home-assistant.log           # Main HA log
+/config/home-assistant.log.1         # Previous log (rotated)
+/config/home-assistant.log.fault     # Fault/crash logs
+/addon_configs/*/                    # Add-on specific configs
+```
+
+### Debugging Workflow
+
+1. **Reproduce the issue** - Trigger the automation/integration manually
+2. **Check logs** - `ha core logs` or grep for specific integration
+3. **Review traces** - For automations, check trace timeline
+4. **Validate config** - `ha core check` before making changes
+5. **Test in isolation** - Disable other automations that might interfere
+6. **Incremental changes** - Change one thing at a time, test after each change
+7. **Use trace mode** - Enable trace logging for detailed execution flow
