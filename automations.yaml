@@ -1363,14 +1363,14 @@
   triggers:
   - alias: door open
     entity_id:
-    - binary_sensor.laundy_room_door_contact
+    - binary_sensor.laundry_room_door_contact
     to:
     - 'on'
     id: door open
     trigger: state
   - alias: door closed
     entity_id:
-    - binary_sensor.laundy_room_door_contact
+    - binary_sensor.laundry_room_door_contact
     to:
     - 'off'
     id: door closed
@@ -4866,8 +4866,8 @@
     at: 07:30:00
     id: 07:30
   - trigger: time
-    at: '18:00:00'
-    id: '18:00'
+    at: '12:00:00'
+    id: '12:00'
   conditions: []
   actions:
   - choose:
@@ -4915,11 +4915,10 @@
               entity_id:
               - select.bart_active_programme
           alias: No error
-      alias: 07:30
     - conditions:
       - condition: trigger
         id:
-        - '18:00'
+        - '12:00'
       sequence:
       - choose:
         - conditions:
@@ -4960,7 +4959,6 @@
               entity_id:
               - select.bert_active_programme
           alias: No error
-      alias: '18:00'
   mode: single
 - id: '1764429546417'
   alias: Gameroom Motion
@@ -5317,8 +5315,8 @@
         - light.bedroom_deni_bed_light
         - light.toilet_light
         - light.garden
-        - light.front_door_contact_light
-        - light.laundy_room_light
+        - light.front_door_light
+        - light.laundry_room_light
         - light.living_room_above_light
       auto_adjust_enabled: true
       workday_sensor: binary_sensor.workday_sensor
