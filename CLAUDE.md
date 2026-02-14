@@ -141,7 +141,7 @@ The installation is organized across 3 floors:
 
 ### Unifi Protect
 - Security camera system integration
-- Live camera feeds displayed on Shelly Wall Display XL (living room)
+- Live camera feeds displayed on Samsung Tab A11+ wall tablet (living room)
 - Integrated with alarm system for notifications
 
 ### DucoBox Ventilation (REST API)
@@ -392,14 +392,14 @@ Uses the [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting) in
 
 ## Control Interfaces
 
-### Shelly Wall Display XL (Living Room)
+### Samsung Tab A11+ Wall Tablet (Living Room)
 - **Location:** Living Room
 - **Functions:**
   - Full Home Assistant dashboard access
   - Alarm control panel
   - Live camera feeds from Unifi Protect
   - Central control point for entire home
-- **Integration:** Native HA display integration
+- **Integration:** Home Assistant Companion App (set as Home/Launcher)
 
 ### Dashboards
 - **Storage:** `.storage/lovelace*` files (committed to repo)

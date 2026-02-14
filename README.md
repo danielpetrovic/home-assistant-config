@@ -40,7 +40,7 @@ My personal Home Assistant configuration for a comprehensive smart home installa
 - Motion-based lighting (selected rooms)
 - Automated window coverings (20 covers across 10 locations)
 - Energy monitoring (25+ HomeWizard devices)
-- Shelly Wall Display XL in living room for HA control, alarm, and Unifi Protect camera feeds
+- Samsung Tab A11+ wall tablet with HA Companion App (set as Home/Launcher) for full HA control, alarm, and Unifi Protect camera feeds
 
 ## 📁 Repository Structure
 
