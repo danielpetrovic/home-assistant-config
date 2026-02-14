@@ -8,6 +8,7 @@
 # Exception: Allow dashboard configurations to be committed
 !.storage/lovelace
 !.storage/lovelace.backup
+!.storage/lovelace.lovelace
 !.storage/lovelace.dashboard_tablet
 !.storage/lovelace_dashboards
 !.storage/lovelace_resources

@@ -59,7 +59,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.alleyway"
+                          "entity": "light.alleyway_lights"
                         },
                         {
                           "show_name": false,
@@ -76,7 +76,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.dining_table_above_light"
+                          "entity": "light.dining_table_lights"
                         },
                         {
                           "show_name": false,
@@ -92,7 +92,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.entrance_light"
+                          "entity": "light.entrance_lights"
                         },
                         {
                           "show_name": false,
@@ -107,7 +107,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.front_door_light"
+                          "entity": "light.front_door_lights"
                         },
                         {
                           "show_name": false,
@@ -123,7 +123,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.garden"
+                          "entity": "light.garden_lights"
                         },
                         {
                           "show_name": false,
@@ -139,7 +139,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.kitchen"
+                          "entity": "light.kitchen_lights"
                         },
                         {
                           "show_name": false,
@@ -155,7 +155,7 @@
                             "grid_columns": 2,
                             "grid_rows": 2
                           },
-                          "entity": "light.living_room_above_light"
+                          "entity": "light.living_room_lights"
                         },
                         {
                           "show_name": false,
@@ -171,7 +171,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.shed"
+                          "entity": "light.shed_lights"
                         },
                         {
                           "show_name": false,
@@ -187,7 +187,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.toilet_light"
+                          "entity": "light.toilet_lights"
                         }
                       ],
                       "columns": 3
@@ -218,7 +218,7 @@
                             "grid_columns": 2,
                             "grid_rows": 2
                           },
-                          "entity": "light.bathroom_light"
+                          "entity": "light.bathroom_lights"
                         },
                         {
                           "show_name": false,
@@ -234,7 +234,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.bedroom_light"
+                          "entity": "light.bedroom_lights"
                         },
                         {
                           "show_name": false,
@@ -250,7 +250,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.gym_light"
+                          "entity": "light.gym_lights"
                         },
                         {
                           "show_name": false,
@@ -266,7 +266,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.hallway_light",
+                          "entity": "light.hallway_lights",
                           "show_state": false
                         },
                         {
@@ -282,7 +282,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.office_light"
+                          "entity": "light.office_lights"
                         },
                         {
                           "show_name": false,
@@ -327,7 +327,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.laundry_room_light"
+                          "entity": "light.laundry_room_lights"
                         },
                         {
                           "show_name": false,
@@ -343,7 +343,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.gameroom_above_light"
+                          "entity": "light.gameroom_lights"
                         },
                         {
                           "show_name": false,
@@ -359,7 +359,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.roof_terrace_light"
+                          "entity": "light.roof_terrace_lights"
                         }
                       ],
                       "columns": 3
