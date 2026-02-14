@@ -478,3 +478,121 @@ template:
           {% set lights = states.light | selectattr('entity_id', 'search', 'light') | list %}
           {{ lights | selectattr('state', 'eq', 'on') | list | count }}
         icon: mdi:lightbulb-group
+
+light:
+  # Ground Floor Areas
+  - platform: group
+    name: Dining Table Lights
+    unique_id: dining_table_lights
+    entities:
+      - light.dining_table_above_light
+      - light.dining_table_below_light
+
+  - platform: group
+    name: Entrance Lights
+    unique_id: entrance_lights
+    entities:
+      - light.entrance_light
+
+  - platform: group
+    name: Kitchen Lights
+    unique_id: kitchen_lights
+    entities:
+      - light.kitchen
+      - light.kitchen_cabinet
+
+  - platform: group
+    name: Alleyway Lights
+    unique_id: alleyway_lights
+    entities:
+      - light.alleyway
+
+  - platform: group
+    name: Shed Lights
+    unique_id: shed_lights
+    entities:
+      - light.shed
+
+  - platform: group
+    name: Toilet Lights
+    unique_id: toilet_lights
+    entities:
+      - light.toilet_light
+
+  - platform: group
+    name: Garden Lights
+    unique_id: garden_lights
+    entities:
+      - light.garden
+
+  - platform: group
+    name: Front Door Lights
+    unique_id: front_door_lights
+    entities:
+      - light.front_door_light
+
+  - platform: group
+    name: Living Room Lights
+    unique_id: living_room_lights
+    entities:
+      - light.living_room_above_light
+      - light.living_room_below_light
+
+  # First Floor Areas
+  - platform: group
+    name: Bathroom Lights
+    unique_id: bathroom_lights
+    entities:
+      - light.bathroom_light
+
+  - platform: group
+    name: Hallway Lights
+    unique_id: hallway_lights
+    entities:
+      - light.hallway_light
+      - light.hallway_stairs_1_light
+      - light.hallway_stairs_2_light
+
+  - platform: group
+    name: Office Lights
+    unique_id: office_lights
+    entities:
+      - light.office_light
+
+  - platform: group
+    name: Gym Lights
+    unique_id: gym_lights
+    entities:
+      - light.gym_light
+
+  - platform: group
+    name: Bedroom Lights
+    unique_id: bedroom_lights
+    entities:
+      - light.bedroom_light
+      - light.bedroom_alex_light
+      - light.bedroom_alex_bed_light
+      - light.bedroom_deni_light
+      - light.bedroom_deni_bed_light
+
+  # Second Floor Areas
+  - platform: group
+    name: Roof Terrace Lights
+    unique_id: roof_terrace_lights
+    entities:
+      - light.roof_terrace_light
+
+  - platform: group
+    name: Gameroom Lights
+    unique_id: gameroom_lights
+    entities:
+      - light.gameroom_above_light
+      - light.gameroom_below_light
+      - light.gameroom_left_light
+      - light.gameroom_right_light
+
+  - platform: group
+    name: Laundry Room Lights
+    unique_id: laundry_room_lights
+    entities:
+      - light.laundry_room_light
