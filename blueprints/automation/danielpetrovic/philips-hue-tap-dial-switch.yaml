@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Philips Hue Tap Dial Switch (Z2M / ZHA)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.3-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) ![Version](https://img.shields.io/badge/Version-2026.02.1-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of a Philips Hue Tap Dial Switch through Zigbee2MQTT or ZHA integration, supporting custom actions, light automation, and media player control.
 
@@ -34,6 +34,14 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.02.1: Label support, separate brightness/color reset, dial direction fix, Z2M integration tags**
+          - Added: Label targets now work in Light Mode (uses label_entities() to resolve entities)
+          - Added: Separate "Reset Brightness" and "Reset Color Temperature" toggles per button (replaces combined "Reset to Defaults")
+          - Added: Z2M/ZHA integration tags on all custom action inputs so users know which actions are supported per integration
+          - Fixed: Dial rotation direction confusion by switching from parallel to single automation mode
+          - Improved: Z2M double tap detection updated to work with single automation mode (consume wait absorbs the second release)
+          - Breaking: `button_X_short_release_reset` and `button_X_long_release_reset` replaced by `_brightness` and `_color` variants; reconfigure if you previously set these to false
+
         - **2026.01.3: Fix NoneType division errors in volume control and documentation improvements**
           - Fixed: Added `| int(0)` filter to all 8 volume_level templates for dial rotation
           - Fixed: Prevents "TypeError: unsupported operand type(s) for /: 'NoneType' and 'int'" errors
@@ -226,7 +234,7 @@ blueprint:
         button_1_press:
           name: Short Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a short press of Button 1.
           default: []
@@ -235,7 +243,7 @@ blueprint:
         button_1_short_release:
           name: Short Release
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run on a release of Button 1 after a short press.
           default: []
@@ -244,7 +252,7 @@ blueprint:
         button_1_hold:
           name: Long Press
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run on a long press of Button 1. Will repeat while the button is held.
           default: []
@@ -253,7 +261,7 @@ blueprint:
         button_1_long_release:
           name: Long Release
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run when Button 1 is released after a long press.
           default: []
@@ -262,7 +270,7 @@ blueprint:
         button_1_double:
           name: Double Press
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run on a double press of Button 1.
           default: []
@@ -271,7 +279,7 @@ blueprint:
         button_1_triple:
           name: Triple Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a triple press of Button 1.
           default: []
@@ -280,7 +288,7 @@ blueprint:
         button_1_quadruple:
           name: Quadruple Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a quadruple press of Button 1.
           default: []
@@ -289,7 +297,7 @@ blueprint:
         button_1_quintuple:
           name: Quintuple Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a quintuple press of Button 1.
           default: []
@@ -298,7 +306,7 @@ blueprint:
         button_1_rotate_left:
           name: Rotate Left
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run when dial is turned to the left after pressing Button 1.
           default: []
@@ -307,7 +315,7 @@ blueprint:
         button_1_rotate_right:
           name: Rotate Right
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run when dial is turned to the right after pressing Button 1.
           default: []
@@ -518,22 +526,40 @@ blueprint:
               step: 30
               unit_of_measurement: "s"
               mode: slider
-        button_1_short_release_reset:
-          name: Reset to Defaults on Short Release
+        button_1_short_release_reset_brightness:
+          name: Reset Brightness on Short Release
           default: true
           description: |
             `optional` `boolean`
 
-            Apply brightness and color values when turning on. Disable to maintain current light settings.
+            Apply the default brightness value when turning on. Disable to maintain current brightness.
           selector:
             boolean: {}
-        button_1_long_release_reset:
-          name: Reset to Defaults on Long Release
+        button_1_short_release_reset_color:
+          name: Reset Color Temperature on Short Release
           default: true
           description: |
             `optional` `boolean`
 
-            Apply brightness and color values on long release. Disable to maintain current light settings.
+            Apply the default color temperature when turning on. Disable to maintain current color temperature.
+          selector:
+            boolean: {}
+        button_1_long_release_reset_brightness:
+          name: Reset Brightness on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply the default brightness value on long release. Disable to maintain current brightness.
+          selector:
+            boolean: {}
+        button_1_long_release_reset_color:
+          name: Reset Color Temperature on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply the default color temperature on long release. Disable to maintain current color temperature.
           selector:
             boolean: {}
     button_1_media:
@@ -763,7 +789,7 @@ blueprint:
         button_2_press:
           name: Short Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a short press of Button 2.
           default: []
@@ -772,7 +798,7 @@ blueprint:
         button_2_short_release:
           name: Short Release
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run on a release of Button 2 after a short press.
           default: []
@@ -781,7 +807,7 @@ blueprint:
         button_2_hold:
           name: Long Press
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run on a long press of Button 2. Will repeat while the button is held.
           default: []
@@ -790,7 +816,7 @@ blueprint:
         button_2_long_release:
           name: Long Release
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run when Button 2 is released after a long press.
           default: []
@@ -799,7 +825,7 @@ blueprint:
         button_2_double:
           name: Double Press
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run on a double press of Button 2.
           default: []
@@ -808,7 +834,7 @@ blueprint:
         button_2_triple:
           name: Triple Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a triple press of Button 2.
           default: []
@@ -817,7 +843,7 @@ blueprint:
         button_2_quadruple:
           name: Quadruple Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a quadruple press of Button 2.
           default: []
@@ -826,7 +852,7 @@ blueprint:
         button_2_quintuple:
           name: Quintuple Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a quintuple press of Button 2.
           default: []
@@ -835,7 +861,7 @@ blueprint:
         button_2_rotate_left:
           name: Rotate Left
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run when dial is turned to the left after pressing Button 2.
           default: []
@@ -844,7 +870,7 @@ blueprint:
         button_2_rotate_right:
           name: Rotate Right
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run when dial is turned to the right after pressing Button 2.
           default: []
@@ -1055,22 +1081,40 @@ blueprint:
               step: 30
               unit_of_measurement: "s"
               mode: slider
-        button_2_short_release_reset:
-          name: Reset to Defaults on Short Release
+        button_2_short_release_reset_brightness:
+          name: Reset Brightness on Short Release
           default: true
           description: |
             `optional` `boolean`
 
-            Apply brightness and color values when turning on. Disable to maintain current light settings.
+            Apply the default brightness value when turning on. Disable to maintain current brightness.
           selector:
             boolean: {}
-        button_2_long_release_reset:
-          name: Reset to Defaults on Long Release
+        button_2_short_release_reset_color:
+          name: Reset Color Temperature on Short Release
           default: true
           description: |
             `optional` `boolean`
 
-            Apply brightness and color values on long release. Disable to maintain current light settings.
+            Apply the default color temperature when turning on. Disable to maintain current color temperature.
+          selector:
+            boolean: {}
+        button_2_long_release_reset_brightness:
+          name: Reset Brightness on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply the default brightness value on long release. Disable to maintain current brightness.
+          selector:
+            boolean: {}
+        button_2_long_release_reset_color:
+          name: Reset Color Temperature on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply the default color temperature on long release. Disable to maintain current color temperature.
           selector:
             boolean: {}
     button_2_media:
@@ -1300,7 +1344,7 @@ blueprint:
         button_3_press:
           name: Short Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a short press of Button 3.
           default: []
@@ -1309,7 +1353,7 @@ blueprint:
         button_3_short_release:
           name: Short Release
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run on a release of Button 3 after a short press.
           default: []
@@ -1318,7 +1362,7 @@ blueprint:
         button_3_hold:
           name: Long Press
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run on a long press of Button 3. Will repeat while the button is held.
           default: []
@@ -1327,7 +1371,7 @@ blueprint:
         button_3_long_release:
           name: Long Release
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run when Button 3 is released after a long press.
           default: []
@@ -1336,7 +1380,7 @@ blueprint:
         button_3_double:
           name: Double Press
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run on a double press of Button 3.
           default: []
@@ -1345,7 +1389,7 @@ blueprint:
         button_3_triple:
           name: Triple Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a triple press of Button 3.
           default: []
@@ -1354,7 +1398,7 @@ blueprint:
         button_3_quadruple:
           name: Quadruple Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a quadruple press of Button 3.
           default: []
@@ -1363,7 +1407,7 @@ blueprint:
         button_3_quintuple:
           name: Quintuple Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a quintuple press of Button 3.
           default: []
@@ -1372,7 +1416,7 @@ blueprint:
         button_3_rotate_left:
           name: Rotate Left
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run when dial is turned to the left after pressing Button 3.
           default: []
@@ -1381,7 +1425,7 @@ blueprint:
         button_3_rotate_right:
           name: Rotate Right
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run when dial is turned to the right after pressing Button 3.
           default: []
@@ -1592,22 +1636,40 @@ blueprint:
               step: 30
               unit_of_measurement: "s"
               mode: slider
-        button_3_short_release_reset:
-          name: Reset to Defaults on Short Release
+        button_3_short_release_reset_brightness:
+          name: Reset Brightness on Short Release
           default: true
           description: |
             `optional` `boolean`
 
-            Apply brightness and color values when turning on. Disable to maintain current light settings.
+            Apply the default brightness value when turning on. Disable to maintain current brightness.
           selector:
             boolean: {}
-        button_3_long_release_reset:
-          name: Reset to Defaults on Long Release
+        button_3_short_release_reset_color:
+          name: Reset Color Temperature on Short Release
           default: true
           description: |
             `optional` `boolean`
 
-            Apply brightness and color values on long release. Disable to maintain current light settings.
+            Apply the default color temperature when turning on. Disable to maintain current color temperature.
+          selector:
+            boolean: {}
+        button_3_long_release_reset_brightness:
+          name: Reset Brightness on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply the default brightness value on long release. Disable to maintain current brightness.
+          selector:
+            boolean: {}
+        button_3_long_release_reset_color:
+          name: Reset Color Temperature on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply the default color temperature on long release. Disable to maintain current color temperature.
           selector:
             boolean: {}
     button_3_media:
@@ -1837,7 +1899,7 @@ blueprint:
         button_4_press:
           name: Short Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a short press of Button 4.
           default: []
@@ -1846,7 +1908,7 @@ blueprint:
         button_4_short_release:
           name: Short Release
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run on a release of Button 4 after a short press.
           default: []
@@ -1855,7 +1917,7 @@ blueprint:
         button_4_hold:
           name: Long Press
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run on a long press of Button 4. Will repeat while the button is held.
           default: []
@@ -1864,7 +1926,7 @@ blueprint:
         button_4_long_release:
           name: Long Release
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run when Button 4 is released after a long press.
           default: []
@@ -1873,7 +1935,7 @@ blueprint:
         button_4_double:
           name: Double Press
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run on a double press of Button 4.
           default: []
@@ -1882,7 +1944,7 @@ blueprint:
         button_4_triple:
           name: Triple Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a triple press of Button 4.
           default: []
@@ -1891,7 +1953,7 @@ blueprint:
         button_4_quadruple:
           name: Quadruple Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a quadruple press of Button 4.
           default: []
@@ -1900,7 +1962,7 @@ blueprint:
         button_4_quintuple:
           name: Quintuple Press
           description: |
-            `optional` `action`
+            `optional` `action` `ZHA`
 
             Action to run on a quintuple press of Button 4.
           default: []
@@ -1909,7 +1971,7 @@ blueprint:
         button_4_rotate_left:
           name: Rotate Left
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run when dial is turned to the left after pressing Button 4.
           default: []
@@ -1918,7 +1980,7 @@ blueprint:
         button_4_rotate_right:
           name: Rotate Right
           description: |
-            `optional` `action`
+            `optional` `action` `Z2M` `ZHA`
 
             Action to run when dial is turned to the right after pressing Button 4.
           default: []
@@ -2129,22 +2191,40 @@ blueprint:
               step: 30
               unit_of_measurement: "s"
               mode: slider
-        button_4_short_release_reset:
-          name: Reset to Defaults on Short Release
+        button_4_short_release_reset_brightness:
+          name: Reset Brightness on Short Release
           default: true
           description: |
             `optional` `boolean`
 
-            Apply brightness and color values when turning on. Disable to maintain current light settings.
+            Apply the default brightness value when turning on. Disable to maintain current brightness.
           selector:
             boolean: {}
-        button_4_long_release_reset:
-          name: Reset to Defaults on Long Release
+        button_4_short_release_reset_color:
+          name: Reset Color Temperature on Short Release
           default: true
           description: |
             `optional` `boolean`
 
-            Apply brightness and color values on long release. Disable to maintain current light settings.
+            Apply the default color temperature when turning on. Disable to maintain current color temperature.
+          selector:
+            boolean: {}
+        button_4_long_release_reset_brightness:
+          name: Reset Brightness on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply the default brightness value on long release. Disable to maintain current brightness.
+          selector:
+            boolean: {}
+        button_4_long_release_reset_color:
+          name: Reset Color Temperature on Long Release
+          default: true
+          description: |
+            `optional` `boolean`
+
+            Apply the default color temperature on long release. Disable to maintain current color temperature.
           selector:
             boolean: {}
     button_4_media:
@@ -2367,7 +2447,7 @@ blueprint:
               custom_value: false
               multiple: true
 
-mode: parallel
+mode: single
 max_exceeded: silent
 
 trigger_variables:
@@ -2501,12 +2581,14 @@ variables:
   button_1_triple_media_mode: !input button_1_triple_media_mode
   button_1_triple_media_control: !input button_1_triple_media_control
   button_1_rotate_media_mode: !input button_1_rotate_media_mode
-  button_1_has_light: "{{ button_1_light.entity_id | default([]) | length > 0 or button_1_light.device_id | default([]) | length > 0 or button_1_light.area_id | default([]) | length > 0 }}"
+  button_1_has_light: "{{ button_1_light.entity_id | default([]) | length > 0 or button_1_light.device_id | default([]) | length > 0 or button_1_light.area_id | default([]) | length > 0 or button_1_light.label_id | default([]) | length > 0 }}"
   button_1_has_media: "{{ button_1_media is string and button_1_media != '' }}"
   button_1_dimming_speed: !input button_1_dimming_speed
   button_1_step_size: "{{ (button_1_dimming_speed * 2.5) | int }}"
-  button_1_short_release_reset: !input button_1_short_release_reset
-  button_1_long_release_reset: !input button_1_long_release_reset
+  button_1_short_release_reset_brightness: !input button_1_short_release_reset_brightness
+  button_1_short_release_reset_color: !input button_1_short_release_reset_color
+  button_1_long_release_reset_brightness: !input button_1_long_release_reset_brightness
+  button_1_long_release_reset_color: !input button_1_long_release_reset_color
   button_1_light_auto_adjust: !input button_1_light_auto_adjust
   button_1_light_auto_adjust_transition: !input button_1_light_auto_adjust_transition
   button_1_light_entities: >-
@@ -2526,6 +2608,11 @@ variables:
       {% set areas = [button_1_light.area_id] if button_1_light.area_id is string else button_1_light.area_id %}
       {% for area in areas %}
         {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% elif button_1_light.label_id is defined and button_1_light.label_id | length > 0 %}
+      {% set labels = [button_1_light.label_id] if button_1_light.label_id is string else button_1_light.label_id %}
+      {% for label in labels %}
+        {% set ns.entities = ns.entities + label_entities(label) | select('match', '^light\.') | list %}
       {% endfor %}
     {% endif %}
     {{ ns.entities }}
@@ -2598,12 +2685,14 @@ variables:
   button_2_triple_media_mode: !input button_2_triple_media_mode
   button_2_triple_media_control: !input button_2_triple_media_control
   button_2_rotate_media_mode: !input button_2_rotate_media_mode
-  button_2_has_light: "{{ button_2_light.entity_id | default([]) | length > 0 or button_2_light.device_id | default([]) | length > 0 or button_2_light.area_id | default([]) | length > 0 }}"
+  button_2_has_light: "{{ button_2_light.entity_id | default([]) | length > 0 or button_2_light.device_id | default([]) | length > 0 or button_2_light.area_id | default([]) | length > 0 or button_2_light.label_id | default([]) | length > 0 }}"
   button_2_has_media: "{{ button_2_media is string and button_2_media != '' }}"
   button_2_dimming_speed: !input button_2_dimming_speed
   button_2_step_size: "{{ (button_2_dimming_speed * 2.5) | int }}"
-  button_2_short_release_reset: !input button_2_short_release_reset
-  button_2_long_release_reset: !input button_2_long_release_reset
+  button_2_short_release_reset_brightness: !input button_2_short_release_reset_brightness
+  button_2_short_release_reset_color: !input button_2_short_release_reset_color
+  button_2_long_release_reset_brightness: !input button_2_long_release_reset_brightness
+  button_2_long_release_reset_color: !input button_2_long_release_reset_color
   button_2_light_auto_adjust: !input button_2_light_auto_adjust
   button_2_light_auto_adjust_transition: !input button_2_light_auto_adjust_transition
   button_2_light_entities: >-
@@ -2623,6 +2712,11 @@ variables:
       {% set areas = [button_2_light.area_id] if button_2_light.area_id is string else button_2_light.area_id %}
       {% for area in areas %}
         {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% elif button_2_light.label_id is defined and button_2_light.label_id | length > 0 %}
+      {% set labels = [button_2_light.label_id] if button_2_light.label_id is string else button_2_light.label_id %}
+      {% for label in labels %}
+        {% set ns.entities = ns.entities + label_entities(label) | select('match', '^light\.') | list %}
       {% endfor %}
     {% endif %}
     {{ ns.entities }}
@@ -2695,12 +2789,14 @@ variables:
   button_3_triple_media_mode: !input button_3_triple_media_mode
   button_3_triple_media_control: !input button_3_triple_media_control
   button_3_rotate_media_mode: !input button_3_rotate_media_mode
-  button_3_has_light: "{{ button_3_light.entity_id | default([]) | length > 0 or button_3_light.device_id | default([]) | length > 0 or button_3_light.area_id | default([]) | length > 0 }}"
+  button_3_has_light: "{{ button_3_light.entity_id | default([]) | length > 0 or button_3_light.device_id | default([]) | length > 0 or button_3_light.area_id | default([]) | length > 0 or button_3_light.label_id | default([]) | length > 0 }}"
   button_3_has_media: "{{ button_3_media is string and button_3_media != '' }}"
   button_3_dimming_speed: !input button_3_dimming_speed
   button_3_step_size: "{{ (button_3_dimming_speed * 2.5) | int }}"
-  button_3_short_release_reset: !input button_3_short_release_reset
-  button_3_long_release_reset: !input button_3_long_release_reset
+  button_3_short_release_reset_brightness: !input button_3_short_release_reset_brightness
+  button_3_short_release_reset_color: !input button_3_short_release_reset_color
+  button_3_long_release_reset_brightness: !input button_3_long_release_reset_brightness
+  button_3_long_release_reset_color: !input button_3_long_release_reset_color
   button_3_light_auto_adjust: !input button_3_light_auto_adjust
   button_3_light_auto_adjust_transition: !input button_3_light_auto_adjust_transition
   button_3_light_entities: >-
@@ -2720,6 +2816,11 @@ variables:
       {% set areas = [button_3_light.area_id] if button_3_light.area_id is string else button_3_light.area_id %}
       {% for area in areas %}
         {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% elif button_3_light.label_id is defined and button_3_light.label_id | length > 0 %}
+      {% set labels = [button_3_light.label_id] if button_3_light.label_id is string else button_3_light.label_id %}
+      {% for label in labels %}
+        {% set ns.entities = ns.entities + label_entities(label) | select('match', '^light\.') | list %}
       {% endfor %}
     {% endif %}
     {{ ns.entities }}
@@ -2792,12 +2893,14 @@ variables:
   button_4_triple_media_mode: !input button_4_triple_media_mode
   button_4_triple_media_control: !input button_4_triple_media_control
   button_4_rotate_media_mode: !input button_4_rotate_media_mode
-  button_4_has_light: "{{ button_4_light.entity_id | default([]) | length > 0 or button_4_light.device_id | default([]) | length > 0 or button_4_light.area_id | default([]) | length > 0 }}"
+  button_4_has_light: "{{ button_4_light.entity_id | default([]) | length > 0 or button_4_light.device_id | default([]) | length > 0 or button_4_light.area_id | default([]) | length > 0 or button_4_light.label_id | default([]) | length > 0 }}"
   button_4_has_media: "{{ button_4_media is string and button_4_media != '' }}"
   button_4_dimming_speed: !input button_4_dimming_speed
   button_4_step_size: "{{ (button_4_dimming_speed * 2.5) | int }}"
-  button_4_short_release_reset: !input button_4_short_release_reset
-  button_4_long_release_reset: !input button_4_long_release_reset
+  button_4_short_release_reset_brightness: !input button_4_short_release_reset_brightness
+  button_4_short_release_reset_color: !input button_4_short_release_reset_color
+  button_4_long_release_reset_brightness: !input button_4_long_release_reset_brightness
+  button_4_long_release_reset_color: !input button_4_long_release_reset_color
   button_4_light_auto_adjust: !input button_4_light_auto_adjust
   button_4_light_auto_adjust_transition: !input button_4_light_auto_adjust_transition
   button_4_light_entities: >-
@@ -2817,6 +2920,11 @@ variables:
       {% set areas = [button_4_light.area_id] if button_4_light.area_id is string else button_4_light.area_id %}
       {% for area in areas %}
         {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+      {% endfor %}
+    {% elif button_4_light.label_id is defined and button_4_light.label_id | length > 0 %}
+      {% set labels = [button_4_light.label_id] if button_4_light.label_id is string else button_4_light.label_id %}
+      {% for label in labels %}
+        {% set ns.entities = ns.entities + label_entities(label) | select('match', '^light\.') | list %}
       {% endfor %}
     {% endif %}
     {{ ns.entities }}
@@ -2912,6 +3020,17 @@ actions:
             {% if wait.trigger is not none %}button_{{ detected_button }}_double_press
             {% else %}button_{{ detected_button }}_short_release
             {% endif %}
+      - alias: Consume Z2M second release after double press
+        if: "{{ wait.trigger is not none }}"
+        then:
+          - wait_for_trigger:
+              - trigger: mqtt
+                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+                payload: "button_{{ detected_button }}_press_release"
+                value_template: "{{ value_json.action }}"
+            timeout:
+              milliseconds: 500
+            continue_on_timeout: true
   - alias: Update last pressed helper for button commands
     if:
       - "{{ command | regex_search('button_[1-4]') }}"
@@ -3099,12 +3218,26 @@ actions:
                   - if: "{{ 'turn_on' in button_1_short_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_1_short_release_reset }}"
+                          - conditions: "{{ button_1_short_release_reset_brightness and button_1_short_release_reset_color }}"
                             sequence:
                               - action: light.turn_on
                                 target: "{{ button_1_light }}"
                                 data:
                                   brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                          - conditions: "{{ button_1_short_release_reset_brightness }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_1_light }}"
+                                data:
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  transition: "{{ button_1_transition }}"
+                          - conditions: "{{ button_1_short_release_reset_color }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_1_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
                                   transition: "{{ button_1_transition }}"
                         default:
@@ -3121,12 +3254,26 @@ actions:
                   - if: "{{ 'toggle' in button_1_short_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_1_short_release_reset }}"
+                          - conditions: "{{ button_1_short_release_reset_brightness and button_1_short_release_reset_color }}"
                             sequence:
                               - action: light.toggle
                                 target: "{{ button_1_light }}"
                                 data:
                                   brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                          - conditions: "{{ button_1_short_release_reset_brightness }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_1_light }}"
+                                data:
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  transition: "{{ button_1_transition }}"
+                          - conditions: "{{ button_1_short_release_reset_color }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_1_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
                                   transition: "{{ button_1_transition }}"
                         default:
@@ -3192,12 +3339,26 @@ actions:
                   - if: "{{ 'turn_on' in button_1_long_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_1_long_release_reset }}"
+                          - conditions: "{{ button_1_long_release_reset_brightness and button_1_long_release_reset_color }}"
                             sequence:
                               - action: light.turn_on
                                 target: "{{ button_1_light }}"
                                 data:
                                   brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                          - conditions: "{{ button_1_long_release_reset_brightness }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_1_light }}"
+                                data:
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  transition: "{{ button_1_transition }}"
+                          - conditions: "{{ button_1_long_release_reset_color }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_1_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
                                   transition: "{{ button_1_transition }}"
                         default:
@@ -3214,12 +3375,26 @@ actions:
                   - if: "{{ 'toggle' in button_1_long_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_1_long_release_reset }}"
+                          - conditions: "{{ button_1_long_release_reset_brightness and button_1_long_release_reset_color }}"
                             sequence:
                               - action: light.toggle
                                 target: "{{ button_1_light }}"
                                 data:
                                   brightness_pct: "{{ button_1_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                  transition: "{{ button_1_transition }}"
+                          - conditions: "{{ button_1_long_release_reset_brightness }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_1_light }}"
+                                data:
+                                  brightness_pct: "{{ button_1_brightness_pct }}"
+                                  transition: "{{ button_1_transition }}"
+                          - conditions: "{{ button_1_long_release_reset_color }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_1_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
                                   transition: "{{ button_1_transition }}"
                         default:
@@ -3424,12 +3599,26 @@ actions:
                   - if: "{{ 'turn_on' in button_2_short_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_2_short_release_reset }}"
+                          - conditions: "{{ button_2_short_release_reset_brightness and button_2_short_release_reset_color }}"
                             sequence:
                               - action: light.turn_on
                                 target: "{{ button_2_light }}"
                                 data:
                                   brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                          - conditions: "{{ button_2_short_release_reset_brightness }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_2_light }}"
+                                data:
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  transition: "{{ button_2_transition }}"
+                          - conditions: "{{ button_2_short_release_reset_color }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_2_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
                                   transition: "{{ button_2_transition }}"
                         default:
@@ -3446,12 +3635,26 @@ actions:
                   - if: "{{ 'toggle' in button_2_short_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_2_short_release_reset }}"
+                          - conditions: "{{ button_2_short_release_reset_brightness and button_2_short_release_reset_color }}"
                             sequence:
                               - action: light.toggle
                                 target: "{{ button_2_light }}"
                                 data:
                                   brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                          - conditions: "{{ button_2_short_release_reset_brightness }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_2_light }}"
+                                data:
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  transition: "{{ button_2_transition }}"
+                          - conditions: "{{ button_2_short_release_reset_color }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_2_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
                                   transition: "{{ button_2_transition }}"
                         default:
@@ -3517,12 +3720,26 @@ actions:
                   - if: "{{ 'turn_on' in button_2_long_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_2_long_release_reset }}"
+                          - conditions: "{{ button_2_long_release_reset_brightness and button_2_long_release_reset_color }}"
                             sequence:
                               - action: light.turn_on
                                 target: "{{ button_2_light }}"
                                 data:
                                   brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                          - conditions: "{{ button_2_long_release_reset_brightness }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_2_light }}"
+                                data:
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  transition: "{{ button_2_transition }}"
+                          - conditions: "{{ button_2_long_release_reset_color }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_2_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
                                   transition: "{{ button_2_transition }}"
                         default:
@@ -3539,12 +3756,26 @@ actions:
                   - if: "{{ 'toggle' in button_2_long_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_2_long_release_reset }}"
+                          - conditions: "{{ button_2_long_release_reset_brightness and button_2_long_release_reset_color }}"
                             sequence:
                               - action: light.toggle
                                 target: "{{ button_2_light }}"
                                 data:
                                   brightness_pct: "{{ button_2_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                  transition: "{{ button_2_transition }}"
+                          - conditions: "{{ button_2_long_release_reset_brightness }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_2_light }}"
+                                data:
+                                  brightness_pct: "{{ button_2_brightness_pct }}"
+                                  transition: "{{ button_2_transition }}"
+                          - conditions: "{{ button_2_long_release_reset_color }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_2_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
                                   transition: "{{ button_2_transition }}"
                         default:
@@ -3749,12 +3980,26 @@ actions:
                   - if: "{{ 'turn_on' in button_3_short_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_3_short_release_reset }}"
+                          - conditions: "{{ button_3_short_release_reset_brightness and button_3_short_release_reset_color }}"
                             sequence:
                               - action: light.turn_on
                                 target: "{{ button_3_light }}"
                                 data:
                                   brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                          - conditions: "{{ button_3_short_release_reset_brightness }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_3_light }}"
+                                data:
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  transition: "{{ button_3_transition }}"
+                          - conditions: "{{ button_3_short_release_reset_color }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_3_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
                                   transition: "{{ button_3_transition }}"
                         default:
@@ -3771,12 +4016,26 @@ actions:
                   - if: "{{ 'toggle' in button_3_short_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_3_short_release_reset }}"
+                          - conditions: "{{ button_3_short_release_reset_brightness and button_3_short_release_reset_color }}"
                             sequence:
                               - action: light.toggle
                                 target: "{{ button_3_light }}"
                                 data:
                                   brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                          - conditions: "{{ button_3_short_release_reset_brightness }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_3_light }}"
+                                data:
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  transition: "{{ button_3_transition }}"
+                          - conditions: "{{ button_3_short_release_reset_color }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_3_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
                                   transition: "{{ button_3_transition }}"
                         default:
@@ -3842,12 +4101,26 @@ actions:
                   - if: "{{ 'turn_on' in button_3_long_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_3_long_release_reset }}"
+                          - conditions: "{{ button_3_long_release_reset_brightness and button_3_long_release_reset_color }}"
                             sequence:
                               - action: light.turn_on
                                 target: "{{ button_3_light }}"
                                 data:
                                   brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                          - conditions: "{{ button_3_long_release_reset_brightness }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_3_light }}"
+                                data:
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  transition: "{{ button_3_transition }}"
+                          - conditions: "{{ button_3_long_release_reset_color }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_3_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
                                   transition: "{{ button_3_transition }}"
                         default:
@@ -3864,12 +4137,26 @@ actions:
                   - if: "{{ 'toggle' in button_3_long_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_3_long_release_reset }}"
+                          - conditions: "{{ button_3_long_release_reset_brightness and button_3_long_release_reset_color }}"
                             sequence:
                               - action: light.toggle
                                 target: "{{ button_3_light }}"
                                 data:
                                   brightness_pct: "{{ button_3_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                  transition: "{{ button_3_transition }}"
+                          - conditions: "{{ button_3_long_release_reset_brightness }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_3_light }}"
+                                data:
+                                  brightness_pct: "{{ button_3_brightness_pct }}"
+                                  transition: "{{ button_3_transition }}"
+                          - conditions: "{{ button_3_long_release_reset_color }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_3_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
                                   transition: "{{ button_3_transition }}"
                         default:
@@ -4074,12 +4361,26 @@ actions:
                   - if: "{{ 'turn_on' in button_4_short_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_4_short_release_reset }}"
+                          - conditions: "{{ button_4_short_release_reset_brightness and button_4_short_release_reset_color }}"
                             sequence:
                               - action: light.turn_on
                                 target: "{{ button_4_light }}"
                                 data:
                                   brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                          - conditions: "{{ button_4_short_release_reset_brightness }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_4_light }}"
+                                data:
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  transition: "{{ button_4_transition }}"
+                          - conditions: "{{ button_4_short_release_reset_color }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_4_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
                                   transition: "{{ button_4_transition }}"
                         default:
@@ -4096,12 +4397,26 @@ actions:
                   - if: "{{ 'toggle' in button_4_short_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_4_short_release_reset }}"
+                          - conditions: "{{ button_4_short_release_reset_brightness and button_4_short_release_reset_color }}"
                             sequence:
                               - action: light.toggle
                                 target: "{{ button_4_light }}"
                                 data:
                                   brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                          - conditions: "{{ button_4_short_release_reset_brightness }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_4_light }}"
+                                data:
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  transition: "{{ button_4_transition }}"
+                          - conditions: "{{ button_4_short_release_reset_color }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_4_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
                                   transition: "{{ button_4_transition }}"
                         default:
@@ -4167,12 +4482,26 @@ actions:
                   - if: "{{ 'turn_on' in button_4_long_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_4_long_release_reset }}"
+                          - conditions: "{{ button_4_long_release_reset_brightness and button_4_long_release_reset_color }}"
                             sequence:
                               - action: light.turn_on
                                 target: "{{ button_4_light }}"
                                 data:
                                   brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                          - conditions: "{{ button_4_long_release_reset_brightness }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_4_light }}"
+                                data:
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  transition: "{{ button_4_transition }}"
+                          - conditions: "{{ button_4_long_release_reset_color }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_4_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
                                   transition: "{{ button_4_transition }}"
                         default:
@@ -4189,12 +4518,26 @@ actions:
                   - if: "{{ 'toggle' in button_4_long_release_light_mode }}"
                     then:
                       - choose:
-                          - conditions: "{{ button_4_long_release_reset }}"
+                          - conditions: "{{ button_4_long_release_reset_brightness and button_4_long_release_reset_color }}"
                             sequence:
                               - action: light.toggle
                                 target: "{{ button_4_light }}"
                                 data:
                                   brightness_pct: "{{ button_4_brightness_pct }}"
+                                  color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                  transition: "{{ button_4_transition }}"
+                          - conditions: "{{ button_4_long_release_reset_brightness }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_4_light }}"
+                                data:
+                                  brightness_pct: "{{ button_4_brightness_pct }}"
+                                  transition: "{{ button_4_transition }}"
+                          - conditions: "{{ button_4_long_release_reset_color }}"
+                            sequence:
+                              - action: light.toggle
+                                target: "{{ button_4_light }}"
+                                data:
                                   color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
                                   transition: "{{ button_4_transition }}"
                         default:
