@@ -5420,7 +5420,7 @@
     statistics
   triggers:
   - at: 03:30:00
-    platform: time
+    trigger: time
   conditions: []
   actions:
   - action: recorder.purge_entities
@@ -5490,6 +5490,14 @@
       - sensor.gym_freezer_voltage
       - sensor.kitchen_media_fridge_freezer_power
       - sensor.kitchen_media_fridge_freezer_voltage
+      - weather.roof_terrace
+      - sensor.ucg_rc16_memory_utilization
+      - sensor.ucg_rc16_ucg_rc16_cpu_temperature
+      - sensor.ucg_rc16_cpu_utilization
+      - sensor.ucg_rc16_port_4_poe_power
+      - sensor.ucg_rc16_ucg_rc16_local_temperature
+      - sensor.rc16_memory_utilisation
+      - sensor.rc16_cpu_temperature
     data:
       keep_days: 2
   - action: recorder.purge
