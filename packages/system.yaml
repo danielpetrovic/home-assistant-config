@@ -5,6 +5,13 @@ input_text:
 
 template:
   - sensor:
+      - name: "Lights"
+        unique_id: lights
+        state: >
+          {% set lights = states.light | selectattr('entity_id', 'search', 'light') | list %}
+          {{ lights | selectattr('state', 'eq', 'on') | list | count }}
+        icon: mdi:lightbulb-group
+  - sensor:
       - name: "Switches"
         unique_id: switches
         state: >
