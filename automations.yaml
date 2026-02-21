@@ -1858,10 +1858,9 @@
       sequence:
       - data:
           volume_level: 0.35
-        target:
-          entity_id:
-          - media_player.bedroom
         action: media_player.volume_set
+        target:
+          entity_id: media_player.bedroom_kef
     - alias: lights off - volume down
       conditions:
       - condition: trigger
@@ -1870,10 +1869,9 @@
       sequence:
       - data:
           volume_level: 0.25
-        target:
-          entity_id:
-          - media_player.bedroom
         action: media_player.volume_set
+        target:
+          entity_id: media_player.bedroom_kef
     - conditions:
       - condition: trigger
         id:
@@ -4003,6 +4001,9 @@
   - at: '11:00:00'
     id: '11:00'
     trigger: time
+  - at: '12:00:00'
+    id: '12:00'
+    trigger: time
   - at: '18:00:00'
     id: '18:00'
     trigger: time
@@ -4156,6 +4157,18 @@
       conditions:
       - condition: trigger
         id: '11:00'
+      sequence:
+      - target:
+          entity_id:
+          - input_select.bedroom_covers
+          - input_select.gym_covers
+        data:
+          option: Partial
+        action: input_select.select_option
+    - alias: '11:00'
+      conditions:
+      - condition: trigger
+        id: '12:00'
       sequence:
       - target:
           entity_id:
@@ -5024,14 +5037,12 @@
         - motion clear
       sequence:
       - if:
-        - condition: or
-          conditions:
-          - condition: numeric_state
-            entity_id: sensor.gameroom_desk_power
-            below: 30
-          - condition: numeric_state
-            entity_id: sensor.gameroom_media_power
-            below: 100
+        - condition: numeric_state
+          entity_id: sensor.gameroom_desk_power
+          below: 30
+        - condition: numeric_state
+          entity_id: sensor.gameroom_media_power
+          below: 100
         then:
         - action: light.turn_off
           data:
@@ -5402,4 +5413,87 @@
             data:
               channel: Car
               notification_icon: mdi:car
+  mode: single
+- id: '1771663501285'
+  alias: Purge noisy sensor history
+  description: Keep short history for high-frequency sensors while preserving long-term
+    statistics
+  triggers:
+  - at: 03:30:00
+    platform: time
+  conditions: []
+  actions:
+  - action: recorder.purge_entities
+    target:
+      entity_id:
+      - sensor.roof_terrace_sensor_illuminance
+      - sensor.roof_terrace_sensor_wind_speed
+      - sensor.roof_terrace_sensor_gust_speed
+      - sensor.roof_terrace_sensor_wind_direction
+      - sensor.roof_terrace_sensor_uv_index
+      - sensor.roof_terrace_sensor_wind_chill
+      - sensor.roof_terrace_sensor_apparent_temperature
+      - sensor.rc16_cpu_utilisation
+      - sensor.system_monitor_processor_use
+      - sensor.ducobox_supply_fan_speed
+      - sensor.ducobox_exhaust_fan_speed
+      - sensor.ducobox_supply_fan_pwm
+      - sensor.ducobox_exhaust_fan_pwm
+      - sensor.p1_meter_power
+      - sensor.p1_meter_power_phase_1
+      - sensor.p1_meter_power_phase_2
+      - sensor.p1_meter_power_phase_3
+      - sensor.p1_meter_voltage_phase_1
+      - sensor.p1_meter_voltage_phase_2
+      - sensor.p1_meter_voltage_phase_3
+      - sensor.quooker_power
+      - sensor.quooker_voltage
+      - sensor.sauna_power
+      - sensor.sauna_voltage
+      - sensor.steam_oven_power
+      - sensor.steam_oven_voltage
+      - sensor.ac_power
+      - sensor.ac_voltage
+      - sensor.solar_power
+      - sensor.solar_voltage
+      - sensor.utility_closet_power
+      - sensor.utility_closet_voltage
+      - sensor.shed_power
+      - sensor.shed_voltage
+      - sensor.dishwasher_power
+      - sensor.dishwasher_voltage
+      - sensor.combination_oven_power
+      - sensor.combination_oven_voltage
+      - sensor.washing_machine_power
+      - sensor.washing_machine_voltage
+      - sensor.washing_dryer_power
+      - sensor.washing_dryer_voltage
+      - sensor.deni_pc_power
+      - sensor.deni_pc_voltage
+      - sensor.alex_pc_power
+      - sensor.alex_pc_voltage
+      - sensor.floor_heating_pump_0_power
+      - sensor.floor_heating_pump_0_voltage
+      - sensor.floor_heating_pump_1_power
+      - sensor.floor_heating_pump_1_voltage
+      - sensor.floor_heating_pump_2_power
+      - sensor.floor_heating_pump_2_voltage
+      - sensor.gameroom_media_power
+      - sensor.gameroom_media_voltage
+      - sensor.bedroom_media_power
+      - sensor.bedroom_media_voltage
+      - sensor.living_room_media_power
+      - sensor.living_room_media_voltage
+      - sensor.ventilation_power
+      - sensor.ventilation_voltage
+      - sensor.gym_freezer_power
+      - sensor.gym_freezer_voltage
+      - sensor.kitchen_media_fridge_freezer_power
+      - sensor.kitchen_media_fridge_freezer_voltage
+    data:
+      keep_days: 2
+  - action: recorder.purge
+    data:
+      keep_days: 5
+      repack: true
   mode: single

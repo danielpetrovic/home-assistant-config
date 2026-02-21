@@ -27,7 +27,6 @@ music_night:
       enqueue: replace
       media_id:
       - Classical
-      radio_mode: false
     target:
       entity_id: media_player.bedroom
   - action: media_player.media_play
@@ -79,12 +78,25 @@ music_home:
     metadata: {}
     data:
       media_type: playlist
-      enqueue: replace
+      enqueue: replace_next
       media_id:
-      - 500 Random tracks
-      radio_mode: false
+      - Dance
+      - Eurovision
+      - Hip Hop
+      - Jazz
+      - K-Pop
+      - Metal
+      - Nederpop
+      - Pop
+      - Rock
+      - Soul
     target:
       entity_id: media_player.bedroom
+  - action: media_player.media_play
+    metadata: {}
+    target:
+      entity_id: media_player.bedroom
+    data: {}
   - action: media_player.repeat_set
     metadata: {}
     data:
