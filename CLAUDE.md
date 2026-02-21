@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+@.claude/MEMORY.md
+@.claude/git-workflow.md
+@.claude/zigbee-patterns.md
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 # Home Assistant Configuration - Context for AI Assistants
