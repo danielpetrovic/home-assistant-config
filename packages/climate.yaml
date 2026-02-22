@@ -328,53 +328,68 @@ template:
           {% set min7 = states('sensor.outdoor_temperature_min') | float(0) %}
           {% set max4 = states('sensor.outdoor_temperature_max') | float(0) %}
 
-          {% set warm_enter_humidex = 29 %}
-          {% set warm_exit_humidex  = 27 %}
-          {% set warm_enter_hs = 75 %}
-          {% set warm_exit_hs  = 65 %}
-          {% set cold_enter_humidex = 17 %}
-          {% set cold_exit_humidex  = 19 %}
-          {% set cold_enter_hs = 25 %}
-          {% set cold_exit_hs  = 35 %}
-
           {% set last = states('sensor.climate_mode') | lower %}
-          {% if last in ['unknown','unavailable','none',''] %}
+          {% if last not in ['freezing', 'cold', 'mild', 'warm', 'hot'] %}
             {% set last = 'mild' %}
           {% endif %}
 
-          {% if last == 'warm' %}
-            {% if (humidex <= warm_exit_humidex and hs <= warm_exit_hs) %}
-              {% if humidex <= cold_enter_humidex and hs <= cold_enter_hs and min7 <= 10 %}
-                cold
-              {% else %}
-                mild
-              {% endif %}
+          {% set hot_enter = humidex >= 29 and hs >= 75 and max4 >= 25 and daylight_h > 13 %}
+          {% set hot_exit  = humidex <= 27 and hs <= 65 %}
+
+          {#
+            Cold-side thresholds (non-overlapping for stability):
+              freezing → mild  : max4 > 14 AND min7 > 6
+              freezing → cold  : max4 > 6  (and not meeting mild condition)
+              cold     → mild  : max4 > 14 AND min7 > 6
+              cold     → freeze: min7 < 0  AND max4 < 6
+              mild     → cold  : min7 < 2  AND max4 < 14
+            Gaps prevent simultaneous exit+re-entry (no oscillation).
+            cold→mild requires warm days AND warm nights together.
+          #}
+
+          {% if last == 'freezing' %}
+            {% if max4 > 14 and min7 > 6 %}
+              mild
+            {% elif max4 > 6 %}
+              cold
             {% else %}
-              warm
+              freezing
             {% endif %}
 
           {% elif last == 'cold' %}
-            {% if (humidex >= cold_exit_humidex or hs >= cold_exit_hs) %}
-              {% if (humidex >= warm_enter_humidex or hs >= warm_enter_hs)
-                    and max4 >= 25
-                    and daylight_h > 13 %}
-                warm
-              {% else %}
-                mild
-              {% endif %}
+            {% if max4 > 14 and min7 > 6 %}
+              mild
+            {% elif min7 < 0 and max4 < 6 %}
+              freezing
             {% else %}
               cold
             {% endif %}
 
-          {% else %}
-            {% if (humidex >= warm_enter_humidex or hs >= warm_enter_hs)
-                  and max4 >= 25
-                  and daylight_h > 13 %}
+          {% elif last == 'mild' %}
+            {% if hot_enter %}
+              hot
+            {% elif min7 > 14 %}
               warm
-            {% elif humidex <= cold_enter_humidex and hs <= cold_enter_hs and min7 <= 10 %}
+            {% elif min7 < 2 and max4 < 14 %}
               cold
             {% else %}
               mild
+            {% endif %}
+
+          {% elif last == 'warm' %}
+            {% if hot_enter %}
+              hot
+            {% elif min7 < 12 %}
+              mild
+            {% else %}
+              warm
+            {% endif %}
+
+          {% elif last == 'hot' %}
+            {% if hot_exit %}
+              warm
+            {% else %}
+              hot
             {% endif %}
           {% endif %}
         icon: mdi:sun-snowflake-variant
