@@ -3,6 +3,7 @@
 @.claude/MEMORY.md
 @.claude/git-workflow.md
 @.claude/zigbee-patterns.md
+@.claude/z2m-ha-discovery.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -165,7 +166,6 @@ The installation is organized across 3 floors:
 - `sensor.outdoor_luminosity` - 5-minute mean of illuminance (source: Ecowitt WS90 Powered by Shelly via Zigbee)
 - `sensor.outdoor_temperature_max` - 96-hour maximum outdoor temperature
 - `sensor.outdoor_temperature_min` - 168-hour (7-day) minimum outdoor temperature
-- `sensor.outdoor_temperature_mean` - 168-hour (7-day) mean outdoor temperature
 
 **Climate Template Sensors:**
 - `sensor.cooling` - Count of AC units actively cooling
