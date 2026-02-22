@@ -3302,6 +3302,17 @@
         state: 'on'
       sequence:
       - choose:
+        - alias: freezing
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: freezing
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 21
+            target:
+              entity_id: climate.living_room_heating
         - alias: cold
           conditions:
           - condition: state
@@ -3310,7 +3321,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 21
+              temperature: 20
             target:
               entity_id: climate.living_room_heating
         - alias: mild
@@ -3321,7 +3332,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 20
+              temperature: 19
             target:
               entity_id: climate.living_room_heating
         - alias: warm
@@ -3332,7 +3343,18 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 19
+              temperature: 16
+            target:
+              entity_id: climate.living_room_heating
+        - alias: hot
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: hot
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 16
             target:
               entity_id: climate.living_room_heating
     - alias: schedule off or away
@@ -3352,6 +3374,17 @@
           state: 'off'
       sequence:
       - choose:
+        - alias: freezing
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: freezing
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 19
+            target:
+              entity_id: climate.living_room_heating
         - alias: cold
           conditions:
           - condition: state
@@ -3360,7 +3393,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 19
+              temperature: 18
             target:
               entity_id: climate.living_room_heating
         - alias: mild
@@ -3371,7 +3404,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 17
             target:
               entity_id: climate.living_room_heating
         - alias: warm
@@ -3382,7 +3415,18 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 16
+            target:
+              entity_id: climate.living_room_heating
+        - alias: hot
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: hot
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 16
             target:
               entity_id: climate.living_room_heating
   mode: restart
@@ -3418,6 +3462,17 @@
         state: 'on'
       sequence:
       - choose:
+        - alias: freezing
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: freezing
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 21
+            target:
+              entity_id: climate.bedroom_heating
         - alias: cold
           conditions:
           - condition: state
@@ -3426,7 +3481,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 21
+              temperature: 20
             target:
               entity_id: climate.bedroom_heating
         - alias: mild
@@ -3437,7 +3492,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 20
+              temperature: 19
             target:
               entity_id: climate.bedroom_heating
         - alias: warm
@@ -3448,7 +3503,18 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 19
+              temperature: 16
+            target:
+              entity_id: climate.bedroom_heating
+        - alias: hot
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: hot
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 16
             target:
               entity_id: climate.bedroom_heating
     - alias: schedule off or away
@@ -3468,6 +3534,17 @@
           state: 'off'
       sequence:
       - choose:
+        - alias: freezing
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: freezing
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 19
+            target:
+              entity_id: climate.bedroom_heating
         - alias: cold
           conditions:
           - condition: state
@@ -3476,7 +3553,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 19
+              temperature: 18
             target:
               entity_id: climate.bedroom_heating
         - alias: mild
@@ -3487,7 +3564,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 17
             target:
               entity_id: climate.bedroom_heating
         - alias: warm
@@ -3498,7 +3575,18 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 16
+            target:
+              entity_id: climate.bedroom_heating
+        - alias: hot
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: hot
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 16
             target:
               entity_id: climate.bedroom_heating
   mode: restart
@@ -3534,6 +3622,17 @@
         state: 'on'
       sequence:
       - choose:
+        - alias: freezing
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: freezing
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 20
+            target:
+              entity_id: climate.office_heating
         - alias: cold
           conditions:
           - condition: state
@@ -3542,7 +3641,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 20
+              temperature: 19
             target:
               entity_id: climate.office_heating
         - alias: mild
@@ -3553,7 +3652,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 19
+              temperature: 18
             target:
               entity_id: climate.office_heating
         - alias: warm
@@ -3564,7 +3663,18 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 16
+            target:
+              entity_id: climate.office_heating
+        - alias: hot
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: hot
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 16
             target:
               entity_id: climate.office_heating
     - alias: schedule off or away
@@ -3584,6 +3694,17 @@
           state: 'off'
       sequence:
       - choose:
+        - alias: freezing
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: freezing
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 19
+            target:
+              entity_id: climate.office_heating
         - alias: cold
           conditions:
           - condition: state
@@ -3592,7 +3713,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 19
+              temperature: 18
             target:
               entity_id: climate.office_heating
         - alias: mild
@@ -3603,7 +3724,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 17
             target:
               entity_id: climate.office_heating
         - alias: warm
@@ -3614,7 +3735,18 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 16
+            target:
+              entity_id: climate.office_heating
+        - alias: hot
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: hot
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 16
             target:
               entity_id: climate.office_heating
   mode: restart
@@ -3650,6 +3782,17 @@
         state: 'on'
       sequence:
       - choose:
+        - alias: freezing
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: freezing
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 20
+            target:
+              entity_id: climate.gameroom_heating
         - alias: cold
           conditions:
           - condition: state
@@ -3658,7 +3801,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 20
+              temperature: 19
             target:
               entity_id: climate.gameroom_heating
         - alias: mild
@@ -3669,7 +3812,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 19
+              temperature: 18
             target:
               entity_id: climate.gameroom_heating
         - alias: warm
@@ -3680,7 +3823,18 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 16
+            target:
+              entity_id: climate.gameroom_heating
+        - alias: hot
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: hot
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 16
             target:
               entity_id: climate.gameroom_heating
     - alias: schedule off or away
@@ -3700,6 +3854,17 @@
           state: 'off'
       sequence:
       - choose:
+        - alias: freezing
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: freezing
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 19
+            target:
+              entity_id: climate.gameroom_heating
         - alias: cold
           conditions:
           - condition: state
@@ -3708,7 +3873,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 19
+              temperature: 18
             target:
               entity_id: climate.gameroom_heating
         - alias: mild
@@ -3719,7 +3884,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 17
             target:
               entity_id: climate.gameroom_heating
         - alias: warm
@@ -3730,7 +3895,18 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 16
+            target:
+              entity_id: climate.gameroom_heating
+        - alias: hot
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: hot
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 16
             target:
               entity_id: climate.gameroom_heating
   mode: restart
@@ -3766,6 +3942,17 @@
         state: 'on'
       sequence:
       - choose:
+        - alias: freezing
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: freezing
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 22
+            target:
+              entity_id: climate.gym_heating
         - alias: cold
           conditions:
           - condition: state
@@ -3774,7 +3961,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 22
+              temperature: 21
             target:
               entity_id: climate.gym_heating
         - alias: mild
@@ -3785,7 +3972,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 21
+              temperature: 20
             target:
               entity_id: climate.gym_heating
         - alias: warm
@@ -3796,7 +3983,18 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 20
+              temperature: 16
+            target:
+              entity_id: climate.gym_heating
+        - alias: hot
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: hot
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 16
             target:
               entity_id: climate.gym_heating
     - alias: schedule off or away
@@ -3816,6 +4014,17 @@
           state: 'off'
       sequence:
       - choose:
+        - alias: freezing
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: freezing
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 19
+            target:
+              entity_id: climate.gym_heating
         - alias: cold
           conditions:
           - condition: state
@@ -3824,7 +4033,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 19
+              temperature: 18
             target:
               entity_id: climate.gym_heating
         - alias: mild
@@ -3835,7 +4044,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 17
             target:
               entity_id: climate.gym_heating
         - alias: warm
@@ -3846,7 +4055,18 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 16
+            target:
+              entity_id: climate.gym_heating
+        - alias: hot
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: hot
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 16
             target:
               entity_id: climate.gym_heating
   mode: restart
@@ -3882,6 +4102,17 @@
         state: 'on'
       sequence:
       - choose:
+        - alias: freezing
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: freezing
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 22
+            target:
+              entity_id: climate.bathroom_heating
         - alias: cold
           conditions:
           - condition: state
@@ -3890,7 +4121,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 22
+              temperature: 21
             target:
               entity_id: climate.bathroom_heating
         - alias: mild
@@ -3901,7 +4132,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 21
+              temperature: 20
             target:
               entity_id: climate.bathroom_heating
         - alias: warm
@@ -3912,7 +4143,18 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 20
+              temperature: 16
+            target:
+              entity_id: climate.bathroom_heating
+        - alias: hot
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: hot
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 16
             target:
               entity_id: climate.bathroom_heating
     - alias: schedule off or away
@@ -3932,6 +4174,17 @@
           state: 'off'
       sequence:
       - choose:
+        - alias: freezing
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: freezing
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 19
+            target:
+              entity_id: climate.bathroom_heating
         - alias: cold
           conditions:
           - condition: state
@@ -3940,7 +4193,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 19
+              temperature: 18
             target:
               entity_id: climate.bathroom_heating
         - alias: mild
@@ -3951,7 +4204,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 17
             target:
               entity_id: climate.bathroom_heating
         - alias: warm
@@ -3962,7 +4215,18 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 16
+            target:
+              entity_id: climate.bathroom_heating
+        - alias: hot
+          conditions:
+          - condition: state
+            entity_id: sensor.climate_mode
+            state: hot
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 16
             target:
               entity_id: climate.bathroom_heating
   mode: restart
@@ -4233,7 +4497,9 @@
         - 09:00
       - condition: state
         entity_id: sensor.climate_mode
-        state: cold
+        state:
+        - cold
+        - freezing
       - condition: time
         after: 09:00:00
         before: '18:00:00'
@@ -4384,7 +4650,9 @@
         - 09:00
       - condition: state
         entity_id: sensor.climate_mode
-        state: warm
+        state:
+        - warm
+        - hot
       - condition: time
         after: 09:00:00
         before: '18:00:00'
@@ -5426,19 +5694,36 @@
   - action: recorder.purge_entities
     target:
       entity_id:
-      - sensor.roof_terrace_sensor_illuminance
-      - sensor.roof_terrace_sensor_wind_speed
-      - sensor.roof_terrace_sensor_gust_speed
-      - sensor.roof_terrace_sensor_wind_direction
-      - sensor.roof_terrace_sensor_uv_index
-      - sensor.roof_terrace_sensor_wind_chill
-      - sensor.roof_terrace_sensor_apparent_temperature
-      - sensor.rc16_cpu_utilisation
-      - sensor.system_monitor_processor_use
-      - sensor.ducobox_supply_fan_speed
+      - sensor.ac_power
+      - sensor.ac_voltage
+      - sensor.alex_pc_power
+      - sensor.alex_pc_voltage
+      - sensor.bedroom_media_power
+      - sensor.bedroom_media_voltage
+      - sensor.combination_oven_power
+      - sensor.combination_oven_voltage
+      - sensor.deni_pc_power
+      - sensor.deni_pc_voltage
+      - sensor.dishwasher_power
+      - sensor.dishwasher_voltage
+      - sensor.ducobox_exhaust_fan_pwm
       - sensor.ducobox_exhaust_fan_speed
       - sensor.ducobox_supply_fan_pwm
-      - sensor.ducobox_exhaust_fan_pwm
+      - sensor.ducobox_supply_fan_speed
+      - sensor.floor_heating_pump_0_power
+      - sensor.floor_heating_pump_0_voltage
+      - sensor.floor_heating_pump_1_power
+      - sensor.floor_heating_pump_1_voltage
+      - sensor.floor_heating_pump_2_power
+      - sensor.floor_heating_pump_2_voltage
+      - sensor.gameroom_media_power
+      - sensor.gameroom_media_voltage
+      - sensor.gym_freezer_power
+      - sensor.gym_freezer_voltage
+      - sensor.kitchen_media_fridge_freezer_power
+      - sensor.kitchen_media_fridge_freezer_voltage
+      - sensor.living_room_media_power
+      - sensor.living_room_media_voltage
       - sensor.p1_meter_power
       - sensor.p1_meter_power_phase_1
       - sensor.p1_meter_power_phase_2
@@ -5448,60 +5733,40 @@
       - sensor.p1_meter_voltage_phase_3
       - sensor.quooker_power
       - sensor.quooker_voltage
+      - sensor.rc16_cpu_temperature
+      - sensor.rc16_cpu_utilisation
+      - sensor.rc16_memory_utilisation
+      - sensor.roof_terrace_sensor_gust_speed
+      - sensor.roof_terrace_sensor_illuminance
+      - sensor.roof_terrace_sensor_uv_index
+      - sensor.roof_terrace_sensor_wind_chill
+      - sensor.roof_terrace_sensor_wind_direction
+      - sensor.roof_terrace_sensor_wind_speed
       - sensor.sauna_power
       - sensor.sauna_voltage
-      - sensor.steam_oven_power
-      - sensor.steam_oven_voltage
-      - sensor.ac_power
-      - sensor.ac_voltage
-      - sensor.solar_power
-      - sensor.solar_voltage
-      - sensor.utility_closet_power
-      - sensor.utility_closet_voltage
       - sensor.shed_power
       - sensor.shed_voltage
-      - sensor.dishwasher_power
-      - sensor.dishwasher_voltage
-      - sensor.combination_oven_power
-      - sensor.combination_oven_voltage
-      - sensor.washing_machine_power
-      - sensor.washing_machine_voltage
-      - sensor.washing_dryer_power
-      - sensor.washing_dryer_voltage
-      - sensor.deni_pc_power
-      - sensor.deni_pc_voltage
-      - sensor.alex_pc_power
-      - sensor.alex_pc_voltage
-      - sensor.floor_heating_pump_0_power
-      - sensor.floor_heating_pump_0_voltage
-      - sensor.floor_heating_pump_1_power
-      - sensor.floor_heating_pump_1_voltage
-      - sensor.floor_heating_pump_2_power
-      - sensor.floor_heating_pump_2_voltage
-      - sensor.gameroom_media_power
-      - sensor.gameroom_media_voltage
-      - sensor.bedroom_media_power
-      - sensor.bedroom_media_voltage
-      - sensor.living_room_media_power
-      - sensor.living_room_media_voltage
+      - sensor.solar_power
+      - sensor.solar_voltage
+      - sensor.steam_oven_power
+      - sensor.steam_oven_voltage
+      - sensor.system_monitor_processor_use
+      - sensor.ucg_rc16_cpu_utilization
+      - sensor.ucg_rc16_memory_utilization
+      - sensor.ucg_rc16_port_4_poe_power
+      - sensor.ucg_rc16_ucg_rc16_cpu_temperature
+      - sensor.ucg_rc16_ucg_rc16_local_temperature
+      - sensor.utility_closet_power
+      - sensor.utility_closet_voltage
       - sensor.ventilation_power
       - sensor.ventilation_voltage
-      - sensor.gym_freezer_power
-      - sensor.gym_freezer_voltage
-      - sensor.kitchen_media_fridge_freezer_power
-      - sensor.kitchen_media_fridge_freezer_voltage
-      - weather.roof_terrace
-      - sensor.ucg_rc16_memory_utilization
-      - sensor.ucg_rc16_ucg_rc16_cpu_temperature
-      - sensor.ucg_rc16_cpu_utilization
-      - sensor.ucg_rc16_port_4_poe_power
-      - sensor.ucg_rc16_ucg_rc16_local_temperature
-      - sensor.rc16_memory_utilisation
-      - sensor.rc16_cpu_temperature
+      - sensor.washing_dryer_power
+      - sensor.washing_dryer_voltage
+      - sensor.washing_machine_power
+      - sensor.washing_machine_voltage
     data:
       keep_days: 2
   - action: recorder.purge
     data:
-      keep_days: 5
       repack: true
   mode: single
