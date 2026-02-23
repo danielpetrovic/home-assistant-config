@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.14-blue?style=for-the-badge)
+    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.02.1-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -55,6 +55,11 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.02.1: Add debug logging and configurable double-click window**
+          - New: Debug logging toggle — writes to System Log at key points in double-click and dimming flows
+          - New: Configurable double-click window (150–500ms, default 300ms) in Debugging section
+          - Changed: Double-click timeout reduced from 400ms to 300ms for snappier response
+
         - **2026.01.14: Fix template errors and unified double-click timing**
           - Fixed: Template error 'dict object has no attribute action' by adding | default('')
           - Changed: Z2M double-click now uses unified elapsed timing (same as ZHA method)
@@ -1481,6 +1486,38 @@ blueprint:
             Apply color temperature while dimming. Enable to reset color, disable for pure brightness adjustment.
           selector:
             boolean:
+    debug:
+      name: "Debugging"
+      icon: mdi:bug
+      collapsed: true
+      input:
+        double_click_window:
+          name: Double-Click Window
+          description: |
+            `optional` `number`
+
+            Maximum time in milliseconds between the first and second press to register
+            a double-click. Lower values feel snappier but may miss slower taps. Higher
+            values are more forgiving but add delay to single-press actions.
+          default: 300
+          selector:
+            number:
+              min: 150
+              max: 500
+              step: 50
+              unit_of_measurement: ms
+        debug_logging:
+          name: Enable Debug Logging
+          description: |
+            `optional` `boolean`
+
+            When enabled, writes debug entries to the Home Assistant System Log
+            at key points in the double-click detection and dimming flows. Enable temporarily
+            when troubleshooting issues. Check entries via Settings → System → Logs,
+            filter on `niko_debug`.
+          default: false
+          selector:
+            boolean:
 mode: single
 max_exceeded: silent
 trigger_variables:
@@ -1501,6 +1538,8 @@ variables:
   button_2_light: !input button_2_light
   button_3_light: !input button_3_light
   button_4_light: !input button_4_light
+  double_click_window: !input double_click_window
+  debug_logging: !input debug_logging
 triggers:
   - trigger: event
     event_type: zha_event
@@ -1946,6 +1985,20 @@ actions:
                   {{ button_1_light_color }}
                 {% endif %}
           - if:
+              - "{{ debug_logging }}"
+            alias: "Debug Point E: button 1 dim up start"
+            then:
+              - action: system_log.write
+                data:
+                  level: warning
+                  logger: niko_debug.e.1u
+                  message: >-
+                    E: dim_start — button=1, direction=up,
+                    trigger={{ trigger.id }},
+                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    mode={{ button_1_dimmer_light_mode }}, has_light={{ button_1_has_light }},
+                    step_size={{ button_1_light_step_size }}, count={{ button_1_light_count }}
+          - if:
               - "{{ 'dim' in button_1_dimmer_light_mode and button_1_has_light }}"
             then:
               # Loop-based dimming with smooth transitions
@@ -1969,6 +2022,16 @@ actions:
                             then:
                               - variables:
                                   button_1_stop_flag: true
+                              - if:
+                                  - "{{ debug_logging }}"
+                                then:
+                                  - action: system_log.write
+                                    data:
+                                      level: warning
+                                      logger: niko_debug.f.1u
+                                      message: >-
+                                        F: dim_stop_received — button=1, direction=up,
+                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_1_light_count }}"
@@ -2036,6 +2099,20 @@ actions:
                   {{ button_2_light_color }}
                 {% endif %}
           - if:
+              - "{{ debug_logging }}"
+            alias: "Debug Point E: button 2 dim up start"
+            then:
+              - action: system_log.write
+                data:
+                  level: warning
+                  logger: niko_debug.e.2u
+                  message: >-
+                    E: dim_start — button=2, direction=up,
+                    trigger={{ trigger.id }},
+                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    mode={{ button_2_dimmer_light_mode }}, has_light={{ button_2_has_light }},
+                    step_size={{ button_2_light_step_size }}, count={{ button_2_light_count }}
+          - if:
               - "{{ 'dim' in button_2_dimmer_light_mode and button_2_has_light }}"
             then:
               # Loop-based dimming with smooth transitions
@@ -2059,6 +2136,16 @@ actions:
                             then:
                               - variables:
                                   button_2_stop_flag: true
+                              - if:
+                                  - "{{ debug_logging }}"
+                                then:
+                                  - action: system_log.write
+                                    data:
+                                      level: warning
+                                      logger: niko_debug.f.2u
+                                      message: >-
+                                        F: dim_stop_received — button=2, direction=up,
+                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_2_light_count }}"
@@ -2126,6 +2213,20 @@ actions:
                   {{ button_3_light_color }}
                 {% endif %}
           - if:
+              - "{{ debug_logging }}"
+            alias: "Debug Point E: button 3 dim up start"
+            then:
+              - action: system_log.write
+                data:
+                  level: warning
+                  logger: niko_debug.e.3u
+                  message: >-
+                    E: dim_start — button=3, direction=up,
+                    trigger={{ trigger.id }},
+                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    mode={{ button_3_dimmer_light_mode }}, has_light={{ button_3_has_light }},
+                    step_size={{ button_3_light_step_size }}, count={{ button_3_light_count }}
+          - if:
               - "{{ 'dim' in button_3_dimmer_light_mode and button_3_has_light }}"
             then:
               # Loop-based dimming with smooth transitions
@@ -2149,6 +2250,16 @@ actions:
                             then:
                               - variables:
                                   button_3_stop_flag: true
+                              - if:
+                                  - "{{ debug_logging }}"
+                                then:
+                                  - action: system_log.write
+                                    data:
+                                      level: warning
+                                      logger: niko_debug.f.3u
+                                      message: >-
+                                        F: dim_stop_received — button=3, direction=up,
+                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_3_light_count }}"
@@ -2216,6 +2327,20 @@ actions:
                   {{ button_4_light_color }}
                 {% endif %}
           - if:
+              - "{{ debug_logging }}"
+            alias: "Debug Point E: button 4 dim up start"
+            then:
+              - action: system_log.write
+                data:
+                  level: warning
+                  logger: niko_debug.e.4u
+                  message: >-
+                    E: dim_start — button=4, direction=up,
+                    trigger={{ trigger.id }},
+                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    mode={{ button_4_dimmer_light_mode }}, has_light={{ button_4_has_light }},
+                    step_size={{ button_4_light_step_size }}, count={{ button_4_light_count }}
+          - if:
               - "{{ 'dim' in button_4_dimmer_light_mode and button_4_has_light }}"
             then:
               # Loop-based dimming with smooth transitions
@@ -2239,6 +2364,16 @@ actions:
                             then:
                               - variables:
                                   button_4_stop_flag: true
+                              - if:
+                                  - "{{ debug_logging }}"
+                                then:
+                                  - action: system_log.write
+                                    data:
+                                      level: warning
+                                      logger: niko_debug.f.4u
+                                      message: >-
+                                        F: dim_stop_received — button=4, direction=up,
+                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_4_light_count }}"
@@ -2306,6 +2441,20 @@ actions:
                   {{ button_1_light_color }}
                 {% endif %}
           - if:
+              - "{{ debug_logging }}"
+            alias: "Debug Point E: button 1 dim down start"
+            then:
+              - action: system_log.write
+                data:
+                  level: warning
+                  logger: niko_debug.e.1d
+                  message: >-
+                    E: dim_start — button=1, direction=down,
+                    trigger={{ trigger.id }},
+                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    mode={{ button_1_dimmer_light_mode }}, has_light={{ button_1_has_light }},
+                    step_size={{ button_1_light_step_size }}, count={{ button_1_light_count }}
+          - if:
               - "{{ 'dim' in button_1_dimmer_light_mode and button_1_has_light }}"
             then:
               # Loop-based dimming with smooth transitions
@@ -2329,6 +2478,16 @@ actions:
                             then:
                               - variables:
                                   button_1_stop_flag: true
+                              - if:
+                                  - "{{ debug_logging }}"
+                                then:
+                                  - action: system_log.write
+                                    data:
+                                      level: warning
+                                      logger: niko_debug.f.1d
+                                      message: >-
+                                        F: dim_stop_received — button=1, direction=down,
+                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_1_light_count }}"
@@ -2394,6 +2553,20 @@ actions:
                   {{ button_2_light_color }}
                 {% endif %}
           - if:
+              - "{{ debug_logging }}"
+            alias: "Debug Point E: button 2 dim down start"
+            then:
+              - action: system_log.write
+                data:
+                  level: warning
+                  logger: niko_debug.e.2d
+                  message: >-
+                    E: dim_start — button=2, direction=down,
+                    trigger={{ trigger.id }},
+                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    mode={{ button_2_dimmer_light_mode }}, has_light={{ button_2_has_light }},
+                    step_size={{ button_2_light_step_size }}, count={{ button_2_light_count }}
+          - if:
               - "{{ 'dim' in button_2_dimmer_light_mode and button_2_has_light }}"
             then:
               # Loop-based dimming with smooth transitions
@@ -2417,6 +2590,16 @@ actions:
                             then:
                               - variables:
                                   button_2_stop_flag: true
+                              - if:
+                                  - "{{ debug_logging }}"
+                                then:
+                                  - action: system_log.write
+                                    data:
+                                      level: warning
+                                      logger: niko_debug.f.2d
+                                      message: >-
+                                        F: dim_stop_received — button=2, direction=down,
+                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_2_light_count }}"
@@ -2482,6 +2665,20 @@ actions:
                   {{ button_3_light_color }}
                 {% endif %}
           - if:
+              - "{{ debug_logging }}"
+            alias: "Debug Point E: button 3 dim down start"
+            then:
+              - action: system_log.write
+                data:
+                  level: warning
+                  logger: niko_debug.e.3d
+                  message: >-
+                    E: dim_start — button=3, direction=down,
+                    trigger={{ trigger.id }},
+                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    mode={{ button_3_dimmer_light_mode }}, has_light={{ button_3_has_light }},
+                    step_size={{ button_3_light_step_size }}, count={{ button_3_light_count }}
+          - if:
               - "{{ 'dim' in button_3_dimmer_light_mode and button_3_has_light }}"
             then:
               # Loop-based dimming with smooth transitions
@@ -2506,6 +2703,16 @@ actions:
                         then:
                           - variables:
                               button_3_stop_flag: true
+                          - if:
+                              - "{{ debug_logging }}"
+                            then:
+                              - action: system_log.write
+                                data:
+                                  level: warning
+                                  logger: niko_debug.f.3d
+                                  message: >-
+                                    F: dim_stop_received — button=3, direction=down,
+                                    raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_3_light_count }}"
@@ -2571,6 +2778,20 @@ actions:
                   {{ button_4_light_color }}
                 {% endif %}
           - if:
+              - "{{ debug_logging }}"
+            alias: "Debug Point E: button 4 dim down start"
+            then:
+              - action: system_log.write
+                data:
+                  level: warning
+                  logger: niko_debug.e.4d
+                  message: >-
+                    E: dim_start — button=4, direction=down,
+                    trigger={{ trigger.id }},
+                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    mode={{ button_4_dimmer_light_mode }}, has_light={{ button_4_has_light }},
+                    step_size={{ button_4_light_step_size }}, count={{ button_4_light_count }}
+          - if:
               - "{{ 'dim' in button_4_dimmer_light_mode and button_4_has_light }}"
             then:
               # Loop-based dimming with smooth transitions
@@ -2594,6 +2815,16 @@ actions:
                             then:
                               - variables:
                                   button_4_stop_flag: true
+                              - if:
+                                  - "{{ debug_logging }}"
+                                then:
+                                  - action: system_log.write
+                                    data:
+                                      level: warning
+                                      logger: niko_debug.f.4d
+                                      message: >-
+                                        F: dim_stop_received — button=4, direction=down,
+                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_4_light_count }}"
@@ -2661,6 +2892,20 @@ actions:
       first_press_time: "{{ as_timestamp(now()) }}"
       first_button: "{{ trigger.event.data.endpoint_id | default(1) if trigger.id == 'zha_button' else (1 if trigger.payload_json.action in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else 2 if trigger.payload_json.action in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else 3 if trigger.payload_json.action in ['on_top_right', 'off_top_right'] else 4) }}"
       first_action: "{{ 'on' if (trigger.id == 'zha_button' and trigger.event.data.command == 'on') or (trigger.id == 'z2m_button' and (trigger.payload_json.action | default('')).startswith('on')) else 'off' }}"
+  - if:
+      - "{{ debug_logging }}"
+    alias: "Debug Point A: first press"
+    then:
+      - action: system_log.write
+        data:
+          level: warning
+          logger: niko_debug.a
+          message: >-
+            A: first_press —
+            trigger={{ trigger.id }},
+            raw={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+            first_button={{ first_button }}, first_action={{ first_action }},
+            ts={{ first_press_time }}
   - wait_for_trigger:
       - trigger: event
         event_type: zha_event
@@ -2675,15 +2920,53 @@ actions:
                                     'on_top_left', 'off_top_left', 'on_bottom_left', 'off_bottom_left',
                                     'on_top_right', 'off_top_right', 'on_bottom_right', 'off_bottom_right'] }}
         alias: "Z2M second press"
-    timeout: 0.4
+    timeout: "{{ double_click_window / 1000 }}"
     continue_on_timeout: true
+  - if:
+      - "{{ debug_logging }}"
+    alias: "Debug Point B: wait result"
+    then:
+      - action: system_log.write
+        data:
+          level: warning
+          logger: niko_debug.b
+          message: >-
+            B: wait_result —
+            timed_out={{ wait.trigger is none }},
+            elapsed_ms={{ ((as_timestamp(now()) - first_press_time) * 1000) | round(0) }},
+            raw={{ ((wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('timeout')) if wait.trigger is not none else 'timeout' }},
+            platform={{ wait.trigger.platform | default('none') if wait.trigger is not none else 'none' }}
   - alias: "Parse second press details"
     variables:
       # Second action: 'on', 'off', or 'none' - single-line to avoid whitespace issues
-      # Universal elapsed check using first_press_time for both ZHA and Z2M (400ms double-click window)
-      second_action: "{{ 'none' if wait.trigger is none or (as_timestamp(now()) - first_press_time) * 1000 > 400 else (wait.trigger.event.data.command if wait.trigger.platform == 'event' else ('on' if wait.trigger.payload_json.action | default('') in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] else ('off' if wait.trigger.payload_json.action | default('') in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] else 'none'))) }}"
+      # Universal elapsed check using first_press_time for both ZHA and Z2M
+      second_action: "{{ 'none' if wait.trigger is none or (as_timestamp(now()) - first_press_time) * 1000 > double_click_window else (wait.trigger.event.data.command if wait.trigger.platform == 'event' else ('on' if wait.trigger.payload_json.action | default('') in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] else ('off' if wait.trigger.payload_json.action | default('') in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] else 'none'))) }}"
       # Second button: 1-4 or 0 if none - single-line to avoid whitespace issues
       second_button: "{{ 0 if wait.trigger is none else (wait.trigger.event.data.endpoint_id | default(1) if wait.trigger.platform == 'event' else (1 if wait.trigger.payload_json.action | default('') in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else (2 if wait.trigger.payload_json.action | default('') in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else (3 if wait.trigger.payload_json.action | default('') in ['on_top_right', 'off_top_right'] else 4)))) }}"
+  - if:
+      - "{{ debug_logging }}"
+    alias: "Debug Point C: parsed second press"
+    then:
+      - action: system_log.write
+        data:
+          level: warning
+          logger: niko_debug.c
+          message: >-
+            C: second_press —
+            second_action={{ second_action }}, second_button={{ second_button }}
+  - if:
+      - "{{ debug_logging }}"
+    alias: "Debug Point D: double-click condition"
+    then:
+      - action: system_log.write
+        data:
+          level: warning
+          logger: niko_debug.d
+          message: >-
+            D: double_click_check —
+            second_action={{ second_action }}, first_action={{ first_action }},
+            second_button={{ second_button }}, first_button={{ first_button }},
+            result={{ second_action in ['on', 'off'] and second_action != first_action and second_button == first_button }}
   - if:
       - "{{ second_action in ['on', 'off'] and second_action != first_action and second_button == first_button }}"
     alias: "Validate double-click: opposite action on same button"
