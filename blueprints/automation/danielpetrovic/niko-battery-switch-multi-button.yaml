@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.02.1-blue?style=for-the-badge)
+    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.02.2-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -55,6 +55,10 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.02.2: Fix double-click and dimming for Z2M 4-button (spurious MQTT trigger)**
+          - Fixed: Double-click not detected — Z2M sends a spurious empty-action MQTT message within ~10ms of each press that fired the wait prematurely; re-wait now absorbs it and continues listening for the real second press
+          - Fixed: Dimming stops after 1 step — same spurious trigger was immediately setting the dim-stop flag; stop flag now validates the received action is an actual brightness_stop event
+
         - **2026.02.1: Add debug logging and configurable double-click window**
           - New: Debug logging toggle — writes to System Log at key points in double-click and dimming flows
           - New: Configurable double-click window (150–500ms, default 300ms) in Debugging section
@@ -2018,7 +2022,7 @@ actions:
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
-                              - "{{ wait.trigger is not none }}"
+                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left']) }}"
                             then:
                               - variables:
                                   button_1_stop_flag: true
@@ -2132,7 +2136,7 @@ actions:
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
-                              - "{{ wait.trigger is not none }}"
+                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left']) }}"
                             then:
                               - variables:
                                   button_2_stop_flag: true
@@ -2246,7 +2250,7 @@ actions:
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
-                              - "{{ wait.trigger is not none }}"
+                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') == 'brightness_stop_top_right') }}"
                             then:
                               - variables:
                                   button_3_stop_flag: true
@@ -2360,7 +2364,7 @@ actions:
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
-                              - "{{ wait.trigger is not none }}"
+                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') == 'brightness_stop_bottom_right') }}"
                             then:
                               - variables:
                                   button_4_stop_flag: true
@@ -2474,7 +2478,7 @@ actions:
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
-                              - "{{ wait.trigger is not none }}"
+                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left']) }}"
                             then:
                               - variables:
                                   button_1_stop_flag: true
@@ -2586,7 +2590,7 @@ actions:
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
-                              - "{{ wait.trigger is not none }}"
+                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left']) }}"
                             then:
                               - variables:
                                   button_2_stop_flag: true
@@ -2699,7 +2703,7 @@ actions:
                             timeout: "30"
                             continue_on_timeout: true
                       - if:
-                          - "{{ wait.trigger is not none }}"
+                          - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') == 'brightness_stop_top_right') }}"
                         then:
                           - variables:
                               button_3_stop_flag: true
@@ -2811,7 +2815,7 @@ actions:
                             timeout: "30"
                             continue_on_timeout: true
                           - if:
-                              - "{{ wait.trigger is not none }}"
+                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') == 'brightness_stop_bottom_right') }}"
                             then:
                               - variables:
                                   button_4_stop_flag: true
@@ -2943,6 +2947,29 @@ actions:
       second_action: "{{ 'none' if wait.trigger is none or (as_timestamp(now()) - first_press_time) * 1000 > double_click_window else (wait.trigger.event.data.command if wait.trigger.platform == 'event' else ('on' if wait.trigger.payload_json.action | default('') in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] else ('off' if wait.trigger.payload_json.action | default('') in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] else 'none'))) }}"
       # Second button: 1-4 or 0 if none - single-line to avoid whitespace issues
       second_button: "{{ 0 if wait.trigger is none else (wait.trigger.event.data.endpoint_id | default(1) if wait.trigger.platform == 'event' else (1 if wait.trigger.payload_json.action | default('') in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else (2 if wait.trigger.payload_json.action | default('') in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else (3 if wait.trigger.payload_json.action | default('') in ['on_top_right', 'off_top_right'] else 4)))) }}"
+  - if:
+      - "{{ second_action == 'none' and wait.trigger is not none and (as_timestamp(now()) - first_press_time) * 1000 < double_click_window }}"
+    alias: "Re-wait if first trigger was spurious (fired immediately with invalid action)"
+    then:
+      - wait_for_trigger:
+          - trigger: event
+            event_type: zha_event
+            event_data:
+              device_id: !input zha_remote
+            alias: "ZHA second press (re-wait)"
+          - trigger: mqtt
+            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+            value_template: >-
+              {{ value_json.action is defined and
+                 value_json.action in ['on', 'off', 'on_left', 'off_left', 'on_right', 'off_right',
+                                        'on_top_left', 'off_top_left', 'on_bottom_left', 'off_bottom_left',
+                                        'on_top_right', 'off_top_right', 'on_bottom_right', 'off_bottom_right'] }}
+            alias: "Z2M second press (re-wait)"
+        timeout: "{{ [(double_click_window - (as_timestamp(now()) - first_press_time) * 1000) / 1000, 0.01] | max }}"
+        continue_on_timeout: true
+      - variables:
+          second_action: "{{ 'none' if wait.trigger is none or (as_timestamp(now()) - first_press_time) * 1000 > double_click_window else (wait.trigger.event.data.command if wait.trigger.platform == 'event' else ('on' if wait.trigger.payload_json.action | default('') in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] else ('off' if wait.trigger.payload_json.action | default('') in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] else 'none'))) }}"
+          second_button: "{{ 0 if wait.trigger is none else (wait.trigger.event.data.endpoint_id | default(1) if wait.trigger.platform == 'event' else (1 if wait.trigger.payload_json.action | default('') in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else (2 if wait.trigger.payload_json.action | default('') in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else (3 if wait.trigger.payload_json.action | default('') in ['on_top_right', 'off_top_right'] else 4)))) }}"
   - if:
       - "{{ debug_logging }}"
     alias: "Debug Point C: parsed second press"
