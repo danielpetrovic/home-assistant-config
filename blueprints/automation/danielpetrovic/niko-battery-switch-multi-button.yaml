@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.02.2-blue?style=for-the-badge)
+    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.02.3-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -55,6 +55,9 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.02.3: Fix double-click with loop-based wait (MQTT trigger fires on all messages)**
+          - Fixed: Double-click not detected — HA's MQTT wait_for_trigger fires on every message on the device topic regardless of value_template (spurious empty-action messages, battery updates, linkquality updates all fire the wait prematurely); replaced single re-wait with a repeat loop that keeps waiting until a valid action is received or the window truly expires via wait.trigger is none
+
         - **2026.02.2: Fix double-click and dimming for Z2M 4-button (spurious MQTT trigger)**
           - Fixed: Double-click not detected — Z2M sends a spurious empty-action MQTT message within ~10ms of each press that fired the wait prematurely; re-wait now absorbs it and continues listening for the real second press
           - Fixed: Dimming stops after 1 step — same spurious trigger was immediately setting the dim-stop flag; stop flag now validates the received action is an actual brightness_stop event
@@ -2910,66 +2913,48 @@ actions:
             raw={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
             first_button={{ first_button }}, first_action={{ first_action }},
             ts={{ first_press_time }}
-  - wait_for_trigger:
-      - trigger: event
-        event_type: zha_event
-        event_data:
-          device_id: !input zha_remote
-        alias: "ZHA second press"
-      - trigger: mqtt
-        topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-        value_template: >-
-          {{ value_json.action is defined and
-             value_json.action in ['on', 'off', 'on_left', 'off_left', 'on_right', 'off_right',
-                                    'on_top_left', 'off_top_left', 'on_bottom_left', 'off_bottom_left',
-                                    'on_top_right', 'off_top_right', 'on_bottom_right', 'off_bottom_right'] }}
-        alias: "Z2M second press"
-    timeout: "{{ double_click_window / 1000 }}"
-    continue_on_timeout: true
-  - if:
-      - "{{ debug_logging }}"
-    alias: "Debug Point B: wait result"
-    then:
-      - action: system_log.write
-        data:
-          level: warning
-          logger: niko_debug.b
-          message: >-
-            B: wait_result —
-            timed_out={{ wait.trigger is none }},
-            elapsed_ms={{ ((as_timestamp(now()) - first_press_time) * 1000) | round(0) }},
-            raw={{ ((wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('timeout')) if wait.trigger is not none else 'timeout' }},
-            platform={{ wait.trigger.platform | default('none') if wait.trigger is not none else 'none' }}
-  - alias: "Parse second press details"
+  - alias: "Initialize second press state"
     variables:
-      # Second action: 'on', 'off', or 'none' - single-line to avoid whitespace issues
-      # Universal elapsed check using first_press_time for both ZHA and Z2M
-      second_action: "{{ 'none' if wait.trigger is none or (as_timestamp(now()) - first_press_time) * 1000 > double_click_window else (wait.trigger.event.data.command if wait.trigger.platform == 'event' else ('on' if wait.trigger.payload_json.action | default('') in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] else ('off' if wait.trigger.payload_json.action | default('') in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] else 'none'))) }}"
-      # Second button: 1-4 or 0 if none - single-line to avoid whitespace issues
-      second_button: "{{ 0 if wait.trigger is none else (wait.trigger.event.data.endpoint_id | default(1) if wait.trigger.platform == 'event' else (1 if wait.trigger.payload_json.action | default('') in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else (2 if wait.trigger.payload_json.action | default('') in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else (3 if wait.trigger.payload_json.action | default('') in ['on_top_right', 'off_top_right'] else 4)))) }}"
-  - if:
-      - "{{ second_action == 'none' and wait.trigger is not none and (as_timestamp(now()) - first_press_time) * 1000 < double_click_window }}"
-    alias: "Re-wait if first trigger was spurious (fired immediately with invalid action)"
-    then:
-      - wait_for_trigger:
-          - trigger: event
-            event_type: zha_event
-            event_data:
-              device_id: !input zha_remote
-            alias: "ZHA second press (re-wait)"
-          - trigger: mqtt
-            topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-            value_template: >-
-              {{ value_json.action is defined and
-                 value_json.action in ['on', 'off', 'on_left', 'off_left', 'on_right', 'off_right',
-                                        'on_top_left', 'off_top_left', 'on_bottom_left', 'off_bottom_left',
-                                        'on_top_right', 'off_top_right', 'on_bottom_right', 'off_bottom_right'] }}
-            alias: "Z2M second press (re-wait)"
-        timeout: "{{ [(double_click_window - (as_timestamp(now()) - first_press_time) * 1000) / 1000, 0.01] | max }}"
-        continue_on_timeout: true
-      - variables:
-          second_action: "{{ 'none' if wait.trigger is none or (as_timestamp(now()) - first_press_time) * 1000 > double_click_window else (wait.trigger.event.data.command if wait.trigger.platform == 'event' else ('on' if wait.trigger.payload_json.action | default('') in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] else ('off' if wait.trigger.payload_json.action | default('') in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] else 'none'))) }}"
-          second_button: "{{ 0 if wait.trigger is none else (wait.trigger.event.data.endpoint_id | default(1) if wait.trigger.platform == 'event' else (1 if wait.trigger.payload_json.action | default('') in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else (2 if wait.trigger.payload_json.action | default('') in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else (3 if wait.trigger.payload_json.action | default('') in ['on_top_right', 'off_top_right'] else 4)))) }}"
+      second_action: "none"
+      second_button: 0
+      _timed_out: false
+  - alias: "Wait for valid second press (loop to skip spurious/non-action MQTT messages)"
+    repeat:
+      while:
+        - "{{ second_action == 'none' and not _timed_out }}"
+      sequence:
+        - wait_for_trigger:
+            - trigger: event
+              event_type: zha_event
+              event_data:
+                device_id: !input zha_remote
+              alias: "ZHA second press"
+            - trigger: mqtt
+              topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+              alias: "Z2M second press"
+          timeout: "{{ [(double_click_window - (as_timestamp(now()) - first_press_time) * 1000) / 1000, 0.001] | max }}"
+          continue_on_timeout: true
+        - if:
+            - "{{ debug_logging }}"
+          alias: "Debug Point B: wait result (per loop iteration)"
+          then:
+            - action: system_log.write
+              data:
+                level: warning
+                logger: niko_debug.b
+                message: >-
+                  B: wait_result —
+                  timed_out={{ wait.trigger is none }},
+                  elapsed_ms={{ ((as_timestamp(now()) - first_press_time) * 1000) | round(0) }},
+                  raw={{ ((wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('timeout')) if wait.trigger is not none else 'timeout' }},
+                  platform={{ wait.trigger.platform | default('none') if wait.trigger is not none else 'none' }}
+        - variables:
+            # Second action: 'on', 'off', or 'none' - single-line to avoid whitespace issues
+            second_action: "{{ 'none' if wait.trigger is none else (wait.trigger.event.data.command if wait.trigger.platform == 'event' else ('on' if wait.trigger.payload_json.action | default('') in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] else ('off' if wait.trigger.payload_json.action | default('') in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] else 'none'))) }}"
+            # Second button: 1-4 or 0 if none - single-line to avoid whitespace issues
+            second_button: "{{ 0 if wait.trigger is none else (wait.trigger.event.data.endpoint_id | default(1) if wait.trigger.platform == 'event' else (1 if wait.trigger.payload_json.action | default('') in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else (2 if wait.trigger.payload_json.action | default('') in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else (3 if wait.trigger.payload_json.action | default('') in ['on_top_right', 'off_top_right'] else 4)))) }}"
+            # Exit flag: true when wait timed out (no second press within window)
+            _timed_out: "{{ wait.trigger is none }}"
   - if:
       - "{{ debug_logging }}"
     alias: "Debug Point C: parsed second press"
