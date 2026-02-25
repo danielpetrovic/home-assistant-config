@@ -2481,7 +2481,7 @@
         metadata: {}
         data: {}
         target:
-          entity_id: switch.office_bureau
+          entity_id: switch.office_desk
       button_3_media: media_player.office
       button_3_media_leader: media_player.bedroom
       button_3_media_volume: 25
