@@ -69,6 +69,16 @@ music_night:
       - media_player.bathroom_kef
       - media_player.bedroom_kef
       - media_player.gym_kef
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - action: media_player.media_next_track
+    metadata: {}
+    target:
+      entity_id: media_player.bedroom
+    data: {}
 music_home:
   alias: Music - Home
   description: ''
