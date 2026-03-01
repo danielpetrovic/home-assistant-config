@@ -4429,7 +4429,7 @@
         data:
           option: Partial
         action: input_select.select_option
-    - alias: '11:00'
+    - alias: '12:00'
       conditions:
       - condition: trigger
         id: '12:00'
