@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.02.3-blue?style=for-the-badge)
+    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.03.1-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -55,6 +55,11 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.03.1: Fix dim-stop and double-click reliability for Z2M**
+          - Fixed: All Z2M MQTT triggers switched from the device topic (zigbee2mqtt/device) to the action sub-topic (zigbee2mqtt/device/action) — Z2M only publishes to this sub-topic when a real action occurs, so spurious messages (linkquality, battery updates, extra Zigbee frames from the 4-button firmware) never reach the blueprint; double-click window is now fully available for the user's second press; requires Z2M with Home Assistant integration enabled and advanced.output: json (both Z2M defaults)
+          - Fixed: Dim-stop broken on Z2M 4-button — spurious MQTT messages fired the dim-stop wait prematurely causing Thread 1 to exit before the real brightness_stop arrived; replaced single wait with a repeat:while loop that re-waits on non-matching messages and exits only on a real stop signal or 30s timeout
+          - Fixed: Button 3 DOWN dim-stop never worked — the condition validating the stop action was placed as a separate parallel branch, always running before the wait completed and never setting the stop flag; now correctly placed inside Thread 1's sequence
+
         - **2026.02.3: Fix double-click with loop-based wait (MQTT trigger fires on all messages)**
           - Fixed: Double-click not detected — HA's MQTT wait_for_trigger fires on every message on the device topic regardless of value_template (spurious empty-action messages, battery updates, linkquality updates all fire the wait prematurely); replaced single re-wait with a repeat loop that keeps waiting until a valid action is received or the window truly expires via wait.trigger is none
 
@@ -261,7 +266,7 @@ blueprint:
             `optional` `device`
 
             Select the Niko switch device from ZHA. Leave empty if not using ZHA.
-          default: {}
+          default:
           selector:
             device:
               filter:
@@ -1506,6 +1511,10 @@ blueprint:
             Maximum time in milliseconds between the first and second press to register
             a double-click. Lower values feel snappier but may miss slower taps. Higher
             values are more forgiving but add delay to single-press actions.
+
+            **Z2M 4-button (552-720X4) users:** Use 450–500 ms. The device sends
+            spurious empty-action MQTT messages ~150 ms after each press, which
+            consume part of the window before your second tap can arrive.
           default: 300
           selector:
             number:
@@ -1555,8 +1564,7 @@ triggers:
     alias: zha_button
     id: zha_button
   - trigger: mqtt
-    topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-    value_template: "{{ value_json.action is defined }}"
+    topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name ~ '/action' }}"
     alias: z2m_button
     id: z2m_button
   - trigger: state
@@ -1955,7 +1963,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 1 and trigger.event.data.command in ['move', 'move_with_on_off'] and trigger.event.data.params.move_mode == 0 }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['brightness_move_up', 'brightness_move_up_left', 'brightness_move_up_top_left'] }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload in ['brightness_move_up', 'brightness_move_up_left', 'brightness_move_up_top_left'] }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_1_increase
@@ -2002,7 +2010,7 @@ actions:
                   message: >-
                     E: dim_start — button=1, direction=up,
                     trigger={{ trigger.id }},
-                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_1_dimmer_light_mode }}, has_light={{ button_1_has_light }},
                     step_size={{ button_1_light_step_size }}, count={{ button_1_light_count }}
           - if:
@@ -2011,34 +2019,40 @@ actions:
               # Loop-based dimming with smooth transitions
               - parallel:
                       - sequence:
-                          - wait_for_trigger:
-                              - trigger: event
-                                event_type: zha_event
-                                event_data:
-                                  device_id: !input zha_remote
-                                  endpoint_id: 1
-                                  command: stop
-                              - trigger: mqtt
-                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                                value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}
-                            timeout: "30"
-                            continue_on_timeout: true
-                          - if:
-                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left']) }}"
-                            then:
-                              - variables:
-                                  button_1_stop_flag: true
-                              - if:
-                                  - "{{ debug_logging }}"
-                                then:
-                                  - action: system_log.write
-                                    data:
-                                      level: warning
-                                      logger: niko_debug.f.1u
-                                      message: >-
-                                        F: dim_stop_received — button=1, direction=up,
-                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
+                          - repeat:
+                              while:
+                                - "{{ not button_1_stop_flag }}"
+                              sequence:
+                                - wait_for_trigger:
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input zha_remote
+                                        endpoint_id: 1
+                                        command: stop
+                                    - trigger: mqtt
+                                      topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name ~ '/action' }}"
+                                  timeout: "30"
+                                  continue_on_timeout: true
+                                - if:
+                                    - "{{ wait.trigger is none }}"
+                                  then:
+                                    - stop: "Dim stop timed out"
+                                - if:
+                                    - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left']) }}"
+                                  then:
+                                    - variables:
+                                        button_1_stop_flag: true
+                                    - if:
+                                        - "{{ debug_logging }}"
+                                      then:
+                                        - action: system_log.write
+                                          data:
+                                            level: warning
+                                            logger: niko_debug.f.1u
+                                            message: >-
+                                              F: dim_stop_received — button=1, direction=up,
+                                              raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_1_light_count }}"
@@ -2069,7 +2083,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 2 and trigger.event.data.command in ['move', 'move_with_on_off'] and trigger.event.data.params.move_mode == 0 }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['brightness_move_up_right', 'brightness_move_up_bottom_left'] }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload in ['brightness_move_up_right', 'brightness_move_up_bottom_left'] }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_2_increase
@@ -2116,7 +2130,7 @@ actions:
                   message: >-
                     E: dim_start — button=2, direction=up,
                     trigger={{ trigger.id }},
-                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_2_dimmer_light_mode }}, has_light={{ button_2_has_light }},
                     step_size={{ button_2_light_step_size }}, count={{ button_2_light_count }}
           - if:
@@ -2125,34 +2139,40 @@ actions:
               # Loop-based dimming with smooth transitions
               - parallel:
                       - sequence:
-                          - wait_for_trigger:
-                              - trigger: event
-                                event_type: zha_event
-                                event_data:
-                                  device_id: !input zha_remote
-                                  endpoint_id: 2
-                                  command: stop
-                              - trigger: mqtt
-                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                                value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}
-                            timeout: "30"
-                            continue_on_timeout: true
-                          - if:
-                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left']) }}"
-                            then:
-                              - variables:
-                                  button_2_stop_flag: true
-                              - if:
-                                  - "{{ debug_logging }}"
-                                then:
-                                  - action: system_log.write
-                                    data:
-                                      level: warning
-                                      logger: niko_debug.f.2u
-                                      message: >-
-                                        F: dim_stop_received — button=2, direction=up,
-                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
+                          - repeat:
+                              while:
+                                - "{{ not button_2_stop_flag }}"
+                              sequence:
+                                - wait_for_trigger:
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input zha_remote
+                                        endpoint_id: 2
+                                        command: stop
+                                    - trigger: mqtt
+                                      topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name ~ '/action' }}"
+                                  timeout: "30"
+                                  continue_on_timeout: true
+                                - if:
+                                    - "{{ wait.trigger is none }}"
+                                  then:
+                                    - stop: "Dim stop timed out"
+                                - if:
+                                    - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left']) }}"
+                                  then:
+                                    - variables:
+                                        button_2_stop_flag: true
+                                    - if:
+                                        - "{{ debug_logging }}"
+                                      then:
+                                        - action: system_log.write
+                                          data:
+                                            level: warning
+                                            logger: niko_debug.f.2u
+                                            message: >-
+                                              F: dim_stop_received — button=2, direction=up,
+                                              raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_2_light_count }}"
@@ -2183,7 +2203,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 3 and trigger.event.data.command in ['move', 'move_with_on_off'] and trigger.event.data.params.move_mode == 0 }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'brightness_move_up_top_right' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload == 'brightness_move_up_top_right' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_3_increase
@@ -2230,7 +2250,7 @@ actions:
                   message: >-
                     E: dim_start — button=3, direction=up,
                     trigger={{ trigger.id }},
-                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_3_dimmer_light_mode }}, has_light={{ button_3_has_light }},
                     step_size={{ button_3_light_step_size }}, count={{ button_3_light_count }}
           - if:
@@ -2239,34 +2259,40 @@ actions:
               # Loop-based dimming with smooth transitions
               - parallel:
                       - sequence:
-                          - wait_for_trigger:
-                              - trigger: event
-                                event_type: zha_event
-                                event_data:
-                                  device_id: !input zha_remote
-                                  endpoint_id: 3
-                                  command: stop
-                              - trigger: mqtt
-                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                                value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_top_right'] }}
-                            timeout: "30"
-                            continue_on_timeout: true
-                          - if:
-                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') == 'brightness_stop_top_right') }}"
-                            then:
-                              - variables:
-                                  button_3_stop_flag: true
-                              - if:
-                                  - "{{ debug_logging }}"
-                                then:
-                                  - action: system_log.write
-                                    data:
-                                      level: warning
-                                      logger: niko_debug.f.3u
-                                      message: >-
-                                        F: dim_stop_received — button=3, direction=up,
-                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
+                          - repeat:
+                              while:
+                                - "{{ not button_3_stop_flag }}"
+                              sequence:
+                                - wait_for_trigger:
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input zha_remote
+                                        endpoint_id: 3
+                                        command: stop
+                                    - trigger: mqtt
+                                      topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name ~ '/action' }}"
+                                  timeout: "30"
+                                  continue_on_timeout: true
+                                - if:
+                                    - "{{ wait.trigger is none }}"
+                                  then:
+                                    - stop: "Dim stop timed out"
+                                - if:
+                                    - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload | default('') == 'brightness_stop_top_right') }}"
+                                  then:
+                                    - variables:
+                                        button_3_stop_flag: true
+                                    - if:
+                                        - "{{ debug_logging }}"
+                                      then:
+                                        - action: system_log.write
+                                          data:
+                                            level: warning
+                                            logger: niko_debug.f.3u
+                                            message: >-
+                                              F: dim_stop_received — button=3, direction=up,
+                                              raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_3_light_count }}"
@@ -2297,7 +2323,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 4 and trigger.event.data.command in ['move', 'move_with_on_off'] and trigger.event.data.params.move_mode == 0 }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'brightness_move_up_bottom_right' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload == 'brightness_move_up_bottom_right' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_4_increase
@@ -2344,7 +2370,7 @@ actions:
                   message: >-
                     E: dim_start — button=4, direction=up,
                     trigger={{ trigger.id }},
-                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_4_dimmer_light_mode }}, has_light={{ button_4_has_light }},
                     step_size={{ button_4_light_step_size }}, count={{ button_4_light_count }}
           - if:
@@ -2353,34 +2379,40 @@ actions:
               # Loop-based dimming with smooth transitions
               - parallel:
                       - sequence:
-                          - wait_for_trigger:
-                              - trigger: event
-                                event_type: zha_event
-                                event_data:
-                                  device_id: !input zha_remote
-                                  endpoint_id: 4
-                                  command: stop
-                              - trigger: mqtt
-                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                                value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_bottom_right'] }}
-                            timeout: "30"
-                            continue_on_timeout: true
-                          - if:
-                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') == 'brightness_stop_bottom_right') }}"
-                            then:
-                              - variables:
-                                  button_4_stop_flag: true
-                              - if:
-                                  - "{{ debug_logging }}"
-                                then:
-                                  - action: system_log.write
-                                    data:
-                                      level: warning
-                                      logger: niko_debug.f.4u
-                                      message: >-
-                                        F: dim_stop_received — button=4, direction=up,
-                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
+                          - repeat:
+                              while:
+                                - "{{ not button_4_stop_flag }}"
+                              sequence:
+                                - wait_for_trigger:
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input zha_remote
+                                        endpoint_id: 4
+                                        command: stop
+                                    - trigger: mqtt
+                                      topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name ~ '/action' }}"
+                                  timeout: "30"
+                                  continue_on_timeout: true
+                                - if:
+                                    - "{{ wait.trigger is none }}"
+                                  then:
+                                    - stop: "Dim stop timed out"
+                                - if:
+                                    - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload | default('') == 'brightness_stop_bottom_right') }}"
+                                  then:
+                                    - variables:
+                                        button_4_stop_flag: true
+                                    - if:
+                                        - "{{ debug_logging }}"
+                                      then:
+                                        - action: system_log.write
+                                          data:
+                                            level: warning
+                                            logger: niko_debug.f.4u
+                                            message: >-
+                                              F: dim_stop_received — button=4, direction=up,
+                                              raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_4_light_count }}"
@@ -2411,7 +2443,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 1 and trigger.event.data.command in ['move', 'move_with_on_off'] and trigger.event.data.params.move_mode == 1 }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['brightness_move_down', 'brightness_move_down_left', 'brightness_move_down_top_left'] }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload in ['brightness_move_down', 'brightness_move_down_left', 'brightness_move_down_top_left'] }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_1_decrease
@@ -2458,7 +2490,7 @@ actions:
                   message: >-
                     E: dim_start — button=1, direction=down,
                     trigger={{ trigger.id }},
-                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_1_dimmer_light_mode }}, has_light={{ button_1_has_light }},
                     step_size={{ button_1_light_step_size }}, count={{ button_1_light_count }}
           - if:
@@ -2467,34 +2499,40 @@ actions:
               # Loop-based dimming with smooth transitions
               - parallel:
                       - sequence:
-                          - wait_for_trigger:
-                              - trigger: event
-                                event_type: zha_event
-                                event_data:
-                                  device_id: !input zha_remote
-                                  endpoint_id: 1
-                                  command: stop
-                              - trigger: mqtt
-                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                                value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}
-                            timeout: "30"
-                            continue_on_timeout: true
-                          - if:
-                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left']) }}"
-                            then:
-                              - variables:
-                                  button_1_stop_flag: true
-                              - if:
-                                  - "{{ debug_logging }}"
-                                then:
-                                  - action: system_log.write
-                                    data:
-                                      level: warning
-                                      logger: niko_debug.f.1d
-                                      message: >-
-                                        F: dim_stop_received — button=1, direction=down,
-                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
+                          - repeat:
+                              while:
+                                - "{{ not button_1_stop_flag }}"
+                              sequence:
+                                - wait_for_trigger:
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input zha_remote
+                                        endpoint_id: 1
+                                        command: stop
+                                    - trigger: mqtt
+                                      topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name ~ '/action' }}"
+                                  timeout: "30"
+                                  continue_on_timeout: true
+                                - if:
+                                    - "{{ wait.trigger is none }}"
+                                  then:
+                                    - stop: "Dim stop timed out"
+                                - if:
+                                    - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload | default('') in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left']) }}"
+                                  then:
+                                    - variables:
+                                        button_1_stop_flag: true
+                                    - if:
+                                        - "{{ debug_logging }}"
+                                      then:
+                                        - action: system_log.write
+                                          data:
+                                            level: warning
+                                            logger: niko_debug.f.1d
+                                            message: >-
+                                              F: dim_stop_received — button=1, direction=down,
+                                              raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_1_light_count }}"
@@ -2523,7 +2561,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 2 and trigger.event.data.command in ['move', 'move_with_on_off'] and trigger.event.data.params.move_mode == 1 }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['brightness_move_down_right', 'brightness_move_down_bottom_left'] }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload in ['brightness_move_down_right', 'brightness_move_down_bottom_left'] }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_2_decrease
@@ -2570,7 +2608,7 @@ actions:
                   message: >-
                     E: dim_start — button=2, direction=down,
                     trigger={{ trigger.id }},
-                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_2_dimmer_light_mode }}, has_light={{ button_2_has_light }},
                     step_size={{ button_2_light_step_size }}, count={{ button_2_light_count }}
           - if:
@@ -2579,34 +2617,40 @@ actions:
               # Loop-based dimming with smooth transitions
               - parallel:
                       - sequence:
-                          - wait_for_trigger:
-                              - trigger: event
-                                event_type: zha_event
-                                event_data:
-                                  device_id: !input zha_remote
-                                  endpoint_id: 2
-                                  command: stop
-                              - trigger: mqtt
-                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                                value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}
-                            timeout: "30"
-                            continue_on_timeout: true
-                          - if:
-                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left']) }}"
-                            then:
-                              - variables:
-                                  button_2_stop_flag: true
-                              - if:
-                                  - "{{ debug_logging }}"
-                                then:
-                                  - action: system_log.write
-                                    data:
-                                      level: warning
-                                      logger: niko_debug.f.2d
-                                      message: >-
-                                        F: dim_stop_received — button=2, direction=down,
-                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
+                          - repeat:
+                              while:
+                                - "{{ not button_2_stop_flag }}"
+                              sequence:
+                                - wait_for_trigger:
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input zha_remote
+                                        endpoint_id: 2
+                                        command: stop
+                                    - trigger: mqtt
+                                      topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name ~ '/action' }}"
+                                  timeout: "30"
+                                  continue_on_timeout: true
+                                - if:
+                                    - "{{ wait.trigger is none }}"
+                                  then:
+                                    - stop: "Dim stop timed out"
+                                - if:
+                                    - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload | default('') in ['brightness_stop_right', 'brightness_stop_bottom_left']) }}"
+                                  then:
+                                    - variables:
+                                        button_2_stop_flag: true
+                                    - if:
+                                        - "{{ debug_logging }}"
+                                      then:
+                                        - action: system_log.write
+                                          data:
+                                            level: warning
+                                            logger: niko_debug.f.2d
+                                            message: >-
+                                              F: dim_stop_received — button=2, direction=down,
+                                              raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_2_light_count }}"
@@ -2635,7 +2679,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 3 and trigger.event.data.command in ['move', 'move_with_on_off'] and trigger.event.data.params.move_mode == 1 }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'brightness_move_down_top_right' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload == 'brightness_move_down_top_right' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_3_decrease
@@ -2682,7 +2726,7 @@ actions:
                   message: >-
                     E: dim_start — button=3, direction=down,
                     trigger={{ trigger.id }},
-                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_3_dimmer_light_mode }}, has_light={{ button_3_has_light }},
                     step_size={{ button_3_light_step_size }}, count={{ button_3_light_count }}
           - if:
@@ -2691,35 +2735,40 @@ actions:
               # Loop-based dimming with smooth transitions
               - parallel:
                       - sequence:
-                          - wait_for_trigger:
-                              - trigger: event
-                                event_type: zha_event
-                                event_data:
-                                  device_id: !input zha_remote
-                                  endpoint_id: 3
-                                  command: stop
-                              - trigger: mqtt
-                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                                value_template: >-
-                                  {% set action = value_json.action | default('') %}
-                                  {{ action == 'brightness_stop_top_right' }}
-                            timeout: "30"
-                            continue_on_timeout: true
-                      - if:
-                          - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') == 'brightness_stop_top_right') }}"
-                        then:
-                          - variables:
-                              button_3_stop_flag: true
-                          - if:
-                              - "{{ debug_logging }}"
-                            then:
-                              - action: system_log.write
-                                data:
-                                  level: warning
-                                  logger: niko_debug.f.3d
-                                  message: >-
-                                    F: dim_stop_received — button=3, direction=down,
-                                    raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
+                          - repeat:
+                              while:
+                                - "{{ not button_3_stop_flag }}"
+                              sequence:
+                                - wait_for_trigger:
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input zha_remote
+                                        endpoint_id: 3
+                                        command: stop
+                                    - trigger: mqtt
+                                      topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name ~ '/action' }}"
+                                  timeout: "30"
+                                  continue_on_timeout: true
+                                - if:
+                                    - "{{ wait.trigger is none }}"
+                                  then:
+                                    - stop: "Dim stop timed out"
+                                - if:
+                                    - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload | default('') == 'brightness_stop_top_right') }}"
+                                  then:
+                                    - variables:
+                                        button_3_stop_flag: true
+                                    - if:
+                                        - "{{ debug_logging }}"
+                                      then:
+                                        - action: system_log.write
+                                          data:
+                                            level: warning
+                                            logger: niko_debug.f.3d
+                                            message: >-
+                                              F: dim_stop_received — button=3, direction=down,
+                                              raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_3_light_count }}"
@@ -2748,7 +2797,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 4 and trigger.event.data.command in ['move', 'move_with_on_off'] and trigger.event.data.params.move_mode == 1 }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'brightness_move_down_bottom_right' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload == 'brightness_move_down_bottom_right' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_4_decrease
@@ -2795,7 +2844,7 @@ actions:
                   message: >-
                     E: dim_start — button=4, direction=down,
                     trigger={{ trigger.id }},
-                    action={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+                    action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_4_dimmer_light_mode }}, has_light={{ button_4_has_light }},
                     step_size={{ button_4_light_step_size }}, count={{ button_4_light_count }}
           - if:
@@ -2804,34 +2853,40 @@ actions:
               # Loop-based dimming with smooth transitions
               - parallel:
                       - sequence:
-                          - wait_for_trigger:
-                              - trigger: event
-                                event_type: zha_event
-                                event_data:
-                                  device_id: !input zha_remote
-                                  endpoint_id: 4
-                                  command: stop
-                              - trigger: mqtt
-                                topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
-                                value_template: >-
-                                  {{ value_json.action | default('') in ['brightness_stop_bottom_right'] }}
-                            timeout: "30"
-                            continue_on_timeout: true
-                          - if:
-                              - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload_json.action | default('') == 'brightness_stop_bottom_right') }}"
-                            then:
-                              - variables:
-                                  button_4_stop_flag: true
-                              - if:
-                                  - "{{ debug_logging }}"
-                                then:
-                                  - action: system_log.write
-                                    data:
-                                      level: warning
-                                      logger: niko_debug.f.4d
-                                      message: >-
-                                        F: dim_stop_received — button=4, direction=down,
-                                        raw={{ (wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('n/a') }}
+                          - repeat:
+                              while:
+                                - "{{ not button_4_stop_flag }}"
+                              sequence:
+                                - wait_for_trigger:
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input zha_remote
+                                        endpoint_id: 4
+                                        command: stop
+                                    - trigger: mqtt
+                                      topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name ~ '/action' }}"
+                                  timeout: "30"
+                                  continue_on_timeout: true
+                                - if:
+                                    - "{{ wait.trigger is none }}"
+                                  then:
+                                    - stop: "Dim stop timed out"
+                                - if:
+                                    - "{{ wait.trigger is not none and (wait.trigger.platform == 'event' or wait.trigger.payload | default('') == 'brightness_stop_bottom_right') }}"
+                                  then:
+                                    - variables:
+                                        button_4_stop_flag: true
+                                    - if:
+                                        - "{{ debug_logging }}"
+                                      then:
+                                        - action: system_log.write
+                                          data:
+                                            level: warning
+                                            logger: niko_debug.f.4d
+                                            message: >-
+                                              F: dim_stop_received — button=4, direction=down,
+                                              raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_4_light_count }}"
@@ -2860,7 +2915,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 1 and trigger.event.data.command == 'stop' }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload in ['brightness_stop', 'brightness_stop_left', 'brightness_stop_top_left'] }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_1_stop
@@ -2868,7 +2923,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 2 and trigger.event.data.command == 'stop' }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload in ['brightness_stop_right', 'brightness_stop_bottom_left'] }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_2_stop
@@ -2876,7 +2931,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 3 and trigger.event.data.command == 'stop' }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'brightness_stop_top_right' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload == 'brightness_stop_top_right' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_3_stop
@@ -2884,7 +2939,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 4 and trigger.event.data.command == 'stop' }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'brightness_stop_bottom_right' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload == 'brightness_stop_bottom_right' }}"
         sequence:
           - alias: Custom Action
             sequence: !input button_4_stop
@@ -2892,13 +2947,13 @@ actions:
     alias: "Check if button event (not schedule/adaptive trigger)"
   - condition: >-
       {{ (trigger.id == 'zha_button' and trigger.event.data.command in ['on', 'off']) or
-         (trigger.id == 'z2m_button' and ((trigger.payload_json.action | default('')).startswith('on') or (trigger.payload_json.action | default('')).startswith('off'))) }}
+         (trigger.id == 'z2m_button' and ((trigger.payload | default('')).startswith('on') or (trigger.payload | default('')).startswith('off'))) }}
     alias: "Check if on/off action (not dimming)"
   - alias: "Store first press details"
     variables:
       first_press_time: "{{ as_timestamp(now()) }}"
-      first_button: "{{ trigger.event.data.endpoint_id | default(1) if trigger.id == 'zha_button' else (1 if trigger.payload_json.action in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else 2 if trigger.payload_json.action in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else 3 if trigger.payload_json.action in ['on_top_right', 'off_top_right'] else 4) }}"
-      first_action: "{{ 'on' if (trigger.id == 'zha_button' and trigger.event.data.command == 'on') or (trigger.id == 'z2m_button' and (trigger.payload_json.action | default('')).startswith('on')) else 'off' }}"
+      first_button: "{{ trigger.event.data.endpoint_id | default(1) if trigger.id == 'zha_button' else (1 if trigger.payload in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else 2 if trigger.payload in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else 3 if trigger.payload in ['on_top_right', 'off_top_right'] else 4) }}"
+      first_action: "{{ 'on' if (trigger.id == 'zha_button' and trigger.event.data.command == 'on') or (trigger.id == 'z2m_button' and (trigger.payload | default('')).startswith('on')) else 'off' }}"
   - if:
       - "{{ debug_logging }}"
     alias: "Debug Point A: first press"
@@ -2910,7 +2965,7 @@ actions:
           message: >-
             A: first_press —
             trigger={{ trigger.id }},
-            raw={{ (trigger.payload_json.action if trigger.payload_json is defined else trigger.event.data.command) | default('n/a') }},
+            raw={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
             first_button={{ first_button }}, first_action={{ first_action }},
             ts={{ first_press_time }}
   - alias: "Initialize second press state"
@@ -2930,7 +2985,7 @@ actions:
                 device_id: !input zha_remote
               alias: "ZHA second press"
             - trigger: mqtt
-              topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name }}"
+              topic: "{{ z2m_base_topic ~ '/' ~ z2m_device_name ~ '/action' }}"
               alias: "Z2M second press"
           timeout: "{{ [(double_click_window - (as_timestamp(now()) - first_press_time) * 1000) / 1000, 0.001] | max }}"
           continue_on_timeout: true
@@ -2946,13 +3001,13 @@ actions:
                   B: wait_result —
                   timed_out={{ wait.trigger is none }},
                   elapsed_ms={{ ((as_timestamp(now()) - first_press_time) * 1000) | round(0) }},
-                  raw={{ ((wait.trigger.payload_json.action if wait.trigger.payload_json is defined else wait.trigger.event.data.command) | default('timeout')) if wait.trigger is not none else 'timeout' }},
+                  raw={{ ((wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('timeout')) if wait.trigger is not none else 'timeout' }},
                   platform={{ wait.trigger.platform | default('none') if wait.trigger is not none else 'none' }}
         - variables:
             # Second action: 'on', 'off', or 'none' - single-line to avoid whitespace issues
-            second_action: "{{ 'none' if wait.trigger is none else (wait.trigger.event.data.command if wait.trigger.platform == 'event' else ('on' if wait.trigger.payload_json.action | default('') in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] else ('off' if wait.trigger.payload_json.action | default('') in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] else 'none'))) }}"
+            second_action: "{{ 'none' if wait.trigger is none else (wait.trigger.event.data.command if wait.trigger.platform == 'event' else ('on' if wait.trigger.payload | default('') in ['on', 'on_left', 'on_right', 'on_top_left', 'on_bottom_left', 'on_top_right', 'on_bottom_right'] else ('off' if wait.trigger.payload | default('') in ['off', 'off_left', 'off_right', 'off_top_left', 'off_bottom_left', 'off_top_right', 'off_bottom_right'] else 'none'))) }}"
             # Second button: 1-4 or 0 if none - single-line to avoid whitespace issues
-            second_button: "{{ 0 if wait.trigger is none else (wait.trigger.event.data.endpoint_id | default(1) if wait.trigger.platform == 'event' else (1 if wait.trigger.payload_json.action | default('') in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else (2 if wait.trigger.payload_json.action | default('') in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else (3 if wait.trigger.payload_json.action | default('') in ['on_top_right', 'off_top_right'] else 4)))) }}"
+            second_button: "{{ 0 if wait.trigger is none else (wait.trigger.event.data.endpoint_id | default(1) if wait.trigger.platform == 'event' else (1 if wait.trigger.payload | default('') in ['on', 'off', 'on_left', 'off_left', 'on_top_left', 'off_top_left'] else (2 if wait.trigger.payload | default('') in ['on_right', 'off_right', 'on_bottom_left', 'off_bottom_left'] else (3 if wait.trigger.payload | default('') in ['on_top_right', 'off_top_right'] else 4)))) }}"
             # Exit flag: true when wait timed out (no second press within window)
             _timed_out: "{{ wait.trigger is none }}"
   - if:
@@ -3011,7 +3066,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 1 and trigger.event.data.command == 'on' }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['on', 'on_left', 'on_top_left'] }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload in ['on', 'on_left', 'on_top_left'] }}"
         alias: "Button 1 on"
         sequence:
           - alias: "Set button 1 configuration variables"
@@ -3130,7 +3185,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 1 and trigger.event.data.command == 'off' }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['off', 'off_left', 'off_top_left'] }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload in ['off', 'off_left', 'off_top_left'] }}"
         alias: "Button 1 off"
         sequence:
           - alias: "Set button 1 configuration variables"
@@ -3249,7 +3304,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 2 and trigger.event.data.command == 'on' }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['on_right', 'on_bottom_left'] }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload in ['on_right', 'on_bottom_left'] }}"
         alias: "Button 2 on"
         sequence:
           - alias: "Set button 2 configuration variables"
@@ -3368,7 +3423,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 2 and trigger.event.data.command == 'off' }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action in ['off_right', 'off_bottom_left'] }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload in ['off_right', 'off_bottom_left'] }}"
         alias: "Button 2 off"
         sequence:
           - alias: "Set button 2 configuration variables"
@@ -3487,7 +3542,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 3 and trigger.event.data.command == 'on' }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'on_top_right' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload == 'on_top_right' }}"
         alias: "Button 3 on"
         sequence:
           - alias: "Set button 3 configuration variables"
@@ -3606,7 +3661,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 3 and trigger.event.data.command == 'off' }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'off_top_right' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload == 'off_top_right' }}"
         alias: "Button 3 off"
         sequence:
           - alias: "Set button 3 configuration variables"
@@ -3725,7 +3780,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 4 and trigger.event.data.command == 'on' }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'on_bottom_right' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload == 'on_bottom_right' }}"
         alias: "Button 4 on"
         sequence:
           - alias: "Set button 4 configuration variables"
@@ -3844,7 +3899,7 @@ actions:
       - conditions:
           - or:
               - "{{ trigger.id == 'zha_button' and trigger.event.data.endpoint_id == 4 and trigger.event.data.command == 'off' }}"
-              - "{{ trigger.id == 'z2m_button' and trigger.payload_json.action == 'off_bottom_right' }}"
+              - "{{ trigger.id == 'z2m_button' and trigger.payload == 'off_bottom_right' }}"
         alias: "Button 4 off"
         sequence:
           - alias: "Set button 4 configuration variables"
