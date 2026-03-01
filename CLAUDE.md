@@ -2,8 +2,8 @@
 
 @.claude/MEMORY.md
 @.claude/git-workflow.md
-@.claude/zigbee-patterns.md
-@.claude/z2m-ha-discovery.md
+@.claude/zigbee-converters.md
+@.claude/zigbee-devices.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
