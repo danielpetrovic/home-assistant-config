@@ -12,6 +12,7 @@ music_away:
       - media_player.gym
       - media_player.bedroom
       - media_player.living_room
+      - media_player.group
   alias: Music - Away
   description: ''
   icon: mdi:music-note-off-outline
@@ -24,28 +25,28 @@ music_night:
     metadata: {}
     data:
       media_type: playlist
-      enqueue: replace
+      enqueue: replace_next
       media_id:
       - Classical
     target:
-      entity_id: media_player.bedroom
+      entity_id: media_player.group
   - action: media_player.media_play
     metadata: {}
     data: {}
     target:
-      entity_id: media_player.bedroom
+      entity_id: media_player.group
   - action: media_player.repeat_set
     metadata: {}
     data:
       repeat: all
     target:
-      entity_id: media_player.bedroom
+      entity_id: media_player.group
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.bedroom
+      entity_id: media_player.group
   - delay:
       hours: 0
       minutes: 0
@@ -53,13 +54,13 @@ music_night:
       milliseconds: 0
   - action: media_player.join
     metadata: {}
-    target:
-      entity_id: media_player.bedroom
     data:
       group_members:
       - media_player.bathroom
       - media_player.gym
       - media_player.kitchen
+    target:
+      entity_id: media_player.group
   - action: media_player.volume_set
     metadata: {}
     data:
@@ -69,16 +70,6 @@ music_night:
       - media_player.bathroom_kef
       - media_player.bedroom_kef
       - media_player.gym_kef
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 5
-      milliseconds: 0
-  - action: media_player.media_next_track
-    metadata: {}
-    target:
-      entity_id: media_player.bedroom
-    data: {}
 music_home:
   alias: Music - Home
   description: ''
@@ -101,33 +92,33 @@ music_home:
       - Rock
       - Soul
     target:
-      entity_id: media_player.bedroom
+      entity_id: media_player.group
   - action: media_player.media_play
     metadata: {}
-    target:
-      entity_id: media_player.bedroom
     data: {}
+    target:
+      entity_id: media_player.group
   - action: media_player.repeat_set
     metadata: {}
     data:
       repeat: all
     target:
-      entity_id: media_player.bedroom
+      entity_id: media_player.group
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.bedroom
+      entity_id: media_player.group
   - action: media_player.join
     metadata: {}
-    target:
-      entity_id: media_player.bedroom
     data:
       group_members:
       - media_player.bathroom
       - media_player.gym
       - media_player.kitchen
+    target:
+      entity_id: media_player.group
   - action: media_player.volume_set
     metadata: {}
     data:
