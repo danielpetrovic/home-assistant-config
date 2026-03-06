@@ -2,6 +2,7 @@
 .HA_VERSION
 /@eaDir
 /.aspnet
+/.cache
 /.claude
 /.cloud
 /.storage/*
