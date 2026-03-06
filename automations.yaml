@@ -145,14 +145,14 @@
           group_members:
           - media_player.bathroom
         target:
-          entity_id: media_player.bedroom
+          entity_id: media_player.group
       alias: player idle
     - conditions:
       - condition: trigger
         id:
         - 07:00
       - condition: state
-        entity_id: media_player.bedroom
+        entity_id: media_player.group
         state:
         - playing
       sequence:
@@ -176,7 +176,7 @@
           group_members:
           - media_player.bathroom
         target:
-          entity_id: media_player.bedroom
+          entity_id: media_player.group
       alias: 07:00
   mode: restart
 - id: '1704667361587'
@@ -1030,12 +1030,17 @@
         entity_id: input_select.office_covers
         state: Closed
       sequence:
+      - action: cover.set_cover_position
+        data:
+          position: 50
+        metadata: {}
+        target:
+          entity_id: cover.office_shades
       - action: cover.close_cover
         data: {}
         metadata: {}
         target:
           entity_id:
-          - cover.office_shades
           - cover.office_shutter
   mode: queued
   max: 10
@@ -1695,7 +1700,7 @@
         id:
         - player idle
       - condition: state
-        entity_id: media_player.bedroom
+        entity_id: media_player.group
         state:
         - playing
       sequence:
@@ -1715,7 +1720,7 @@
           group_members:
           - media_player.gym
         target:
-          entity_id: media_player.bedroom
+          entity_id: media_player.group
       alias: player idle
     - conditions:
       - condition: trigger
@@ -1728,7 +1733,7 @@
           group_members:
           - media_player.gym
         target:
-          entity_id: media_player.bedroom
+          entity_id: media_player.group
       - action: media_player.volume_set
         data:
           volume_level: 0.25
@@ -2243,7 +2248,7 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_3_media_leader: media_player.bedroom
+      button_3_media_leader: media_player.group
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2314,7 +2319,7 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.bedroom
+      button_3_media_leader: media_player.group
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2372,7 +2377,7 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.bedroom
+      button_3_media_leader: media_player.group
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2483,7 +2488,7 @@
         target:
           entity_id: switch.office_desk
       button_3_media: media_player.office
-      button_3_media_leader: media_player.bedroom
+      button_3_media_leader: media_player.group
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -2534,7 +2539,7 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.kitchen
-      button_3_media_leader: media_player.bedroom
+      button_3_media_leader: media_player.group
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2583,7 +2588,7 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.gym
-      button_3_media_leader: media_player.bedroom
+      button_3_media_leader: media_player.group
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -3224,7 +3229,7 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.bedroom
+      button_3_media_leader: media_player.group
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -3332,7 +3337,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 19
+              temperature: 20
             target:
               entity_id: climate.living_room_heating
         - alias: warm
@@ -3404,7 +3409,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 18
             target:
               entity_id: climate.living_room_heating
         - alias: warm
@@ -3492,7 +3497,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 19
+              temperature: 20
             target:
               entity_id: climate.bedroom_heating
         - alias: warm
@@ -3564,7 +3569,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 18
             target:
               entity_id: climate.bedroom_heating
         - alias: warm
@@ -3652,7 +3657,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 19
             target:
               entity_id: climate.office_heating
         - alias: warm
@@ -3724,7 +3729,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 18
             target:
               entity_id: climate.office_heating
         - alias: warm
@@ -3812,7 +3817,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 18
+              temperature: 19
             target:
               entity_id: climate.gameroom_heating
         - alias: warm
@@ -3884,7 +3889,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 18
             target:
               entity_id: climate.gameroom_heating
         - alias: warm
@@ -3972,7 +3977,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 20
+              temperature: 21
             target:
               entity_id: climate.gym_heating
         - alias: warm
@@ -4044,7 +4049,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 18
             target:
               entity_id: climate.gym_heating
         - alias: warm
@@ -4132,7 +4137,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 20
+              temperature: 21
             target:
               entity_id: climate.bathroom_heating
         - alias: warm
@@ -4204,7 +4209,7 @@
           sequence:
           - action: climate.set_temperature
             data:
-              temperature: 17
+              temperature: 18
             target:
               entity_id: climate.bathroom_heating
         - alias: warm
@@ -4360,20 +4365,13 @@
             state:
             - 'on'
           sequence:
-          - repeat:
-              for_each:
-              - entities:
-                - input_select.bedroom_covers
-                - input_select.gym_covers
-                preset: Partial
-              sequence:
-              - target:
-                  entity_id: '{{ repeat.item.entities }}'
-                data:
-                  option: '{{ repeat.item.preset }}'
-                action: input_select.select_option
-              - delay:
-                  seconds: 5
+          - target:
+              entity_id:
+              - input_select.bedroom_covers
+              - input_select.gym_covers
+            data:
+              option: Partial
+            action: input_select.select_option
           alias: 'Yes'
         - conditions:
           - condition: state
@@ -4381,19 +4379,13 @@
             state:
             - 'off'
           sequence:
-          - repeat:
-              for_each:
-              - entities:
-                - input_select.bedroom_covers
-                preset: Privacy
-              sequence:
-              - target:
-                  entity_id: '{{ repeat.item.entities }}'
-                data:
-                  option: '{{ repeat.item.preset }}'
-                action: input_select.select_option
-              - delay:
-                  seconds: 5
+          - target:
+              entity_id:
+              - input_select.bedroom_covers
+              - input_select.gym_covers
+            data:
+              option: Privacy
+            action: input_select.select_option
           alias: 'No'
     - alias: '10:00'
       conditions:
@@ -4422,13 +4414,37 @@
       - condition: trigger
         id: '11:00'
       sequence:
-      - target:
-          entity_id:
-          - input_select.bedroom_covers
-          - input_select.gym_covers
-        data:
-          option: Partial
-        action: input_select.select_option
+      - alias: Workday
+        choose:
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'on'
+          sequence:
+          - target:
+              entity_id:
+              - input_select.bedroom_covers
+              - input_select.gym_covers
+              - input_select.hallway_covers
+            data:
+              option: Open
+            action: input_select.select_option
+          alias: 'Yes'
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'off'
+          sequence:
+          - target:
+              entity_id:
+              - input_select.bedroom_covers
+              - input_select.gym_covers
+            data:
+              option: Partial
+            action: input_select.select_option
+          alias: 'No'
     - alias: '12:00'
       conditions:
       - condition: trigger
@@ -4863,13 +4879,15 @@
           transition: 60
   - alias: Luminosity
     choose:
-    - alias: dark
+    - alias: dark or low
       conditions:
       - condition: trigger
         id: luminosity
       - condition: state
         entity_id: sensor.climate_luminosity
-        state: dark
+        state:
+        - low
+        - dark
       - condition: time
         after: '12:00:00'
       sequence:
@@ -4900,7 +4918,6 @@
         entity_id: sensor.climate_luminosity
         state:
         - high
-        - low
         - mid
         - peak
       sequence:
@@ -4960,7 +4977,7 @@
         id:
         - player idle
       - condition: state
-        entity_id: media_player.bedroom
+        entity_id: media_player.group
         state:
         - playing
       sequence:
@@ -4980,14 +4997,14 @@
           group_members:
           - media_player.kitchen
         target:
-          entity_id: media_player.bedroom
+          entity_id: media_player.group
       alias: player idle
     - conditions:
       - condition: trigger
         id:
         - 07:00
       - condition: state
-        entity_id: media_player.bedroom
+        entity_id: media_player.group
         state:
         - playing
       sequence:
@@ -5006,7 +5023,7 @@
           group_members:
           - media_player.kitchen
         target:
-          entity_id: media_player.bedroom
+          entity_id: media_player.group
   mode: parallel
 - id: '1764237963995'
   alias: Office Motion
