@@ -305,17 +305,22 @@ template:
       - name: "Climate Luminosity"
         unique_id: climate_luminosity
         state: >
-          {% set lux = states('sensor.outdoor_luminosity') | int(0) %}
-          {% if lux < 1000 %}
-            dark
-          {% elif lux < 5000 %}
-            low
-          {% elif lux < 20000 %}
-            mid
-          {% elif lux < 50000 %}
-            high
+          {% set lux_state = states('sensor.outdoor_luminosity') %}
+          {% if lux_state in ('unknown', 'unavailable') %}
+            {{ this.state }}
           {% else %}
-            peak
+            {% set lux = lux_state | int(0) %}
+            {% if lux < 1000 %}
+              dark
+            {% elif lux < 5000 %}
+              low
+            {% elif lux < 20000 %}
+              mid
+            {% elif lux < 50000 %}
+              high
+            {% else %}
+              peak
+            {% endif %}
           {% endif %}
         icon: mdi:white-balance-sunny
   - sensor:
