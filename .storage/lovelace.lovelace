@@ -831,7 +831,7 @@
                     },
                     {
                       "type": "media-control",
-                      "entity": "media_player.bedroom",
+                      "entity": "media_player.group",
                       "name": "Music Assistant"
                     },
                     {
@@ -1760,40 +1760,54 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.kitchen_media_koelkast_vriezer_power",
+                      "entity": "sensor.dishwasher_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
-                      "name": "Media + Koelkast + Vriezer",
+                      "name": "Dishwasher",
+                      "icon": "mdi:dishwasher"
+                    },
+                    {
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "type": "tile",
+                      "entity": "sensor.combination_oven_power",
+                      "features_position": "inline",
+                      "vertical": false,
+                      "color": "yellow",
+                      "name": "Combination Oven",
+                      "icon": "mdi:microwave"
+                    },
+                    {
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "type": "tile",
+                      "entity": "sensor.steam_oven_power",
+                      "features_position": "inline",
+                      "vertical": false,
+                      "color": "yellow",
+                      "name": "Steam Oven",
+                      "icon": "mdi:microwave"
+                    },
+                    {
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "type": "tile",
+                      "entity": "sensor.kitchen_media_fridge_freezer_power",
+                      "features_position": "inline",
+                      "vertical": false,
+                      "color": "yellow",
+                      "name": "Media + Fridge + Freezer",
                       "icon": "mdi:audio-video"
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "trend-graph"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "sensor.oven_combi_power",
-                      "features_position": "inline",
-                      "vertical": false,
-                      "color": "yellow",
-                      "name": "Oven Combi",
-                      "icon": "mdi:microwave"
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "trend-graph"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "sensor.oven_stoom_power",
-                      "features_position": "inline",
-                      "vertical": false,
-                      "color": "yellow",
-                      "name": "Oven Combi",
-                      "icon": "mdi:microwave"
                     },
                     {
                       "features": [
@@ -1808,20 +1822,6 @@
                       "color": "yellow",
                       "name": "Quooker",
                       "icon": "mdi:water-boiler"
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "trend-graph"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "sensor.vaatwasser_power",
-                      "features_position": "inline",
-                      "vertical": false,
-                      "color": "yellow",
-                      "name": "Vaatwasser",
-                      "icon": "mdi:dishwasher"
                     }
                   ],
                   "columns": 1,
@@ -1834,20 +1834,57 @@
                     {
                       "features": [
                         {
+                          "type": "toggle"
+                        }
+                      ],
+                      "type": "tile",
+                      "entity": "switch.floor_heating_pump_0",
+                      "features_position": "bottom",
+                      "vertical": false,
+                      "hide_state": true
+                    },
+                    {
+                      "features": [
+                        {
                           "type": "trend-graph"
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.meterkast_power",
-                      "features_position": "inline",
+                      "entity": "sensor.floor_heating_pump_0_power",
+                      "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
-                      "name": "Meterkast",
-                      "icon": "mdi:server"
+                      "name": " "
+                    },
+                    {
+                      "features": [
+                        {
+                          "type": "toggle"
+                        }
+                      ],
+                      "type": "tile",
+                      "entity": "switch.living_room_media",
+                      "features_position": "bottom",
+                      "vertical": false,
+                      "hide_state": true
+                    },
+                    {
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "type": "tile",
+                      "entity": "sensor.living_room_media_power",
+                      "features_position": "bottom",
+                      "vertical": false,
+                      "color": "yellow",
+                      "name": " ",
+                      "hide_state": false
                     }
                   ],
-                  "columns": 1,
-                  "title": "Meterkast"
+                  "columns": 2,
+                  "title": "Living Room"
                 },
                 {
                   "square": false,
@@ -1860,7 +1897,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.schuur_power",
+                      "entity": "sensor.shed_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
@@ -1878,57 +1915,20 @@
                     {
                       "features": [
                         {
-                          "type": "toggle"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "switch.verwarmingspomp_0",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "hide_state": true
-                    },
-                    {
-                      "features": [
-                        {
                           "type": "trend-graph"
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.verwarmingspomp_0_power",
-                      "features_position": "bottom",
+                      "entity": "sensor.utility_closet_power",
+                      "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
-                      "name": " "
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "toggle"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "switch.woonkamer_media",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "hide_state": true
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "trend-graph"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "sensor.woonkamer_media_power",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "color": "yellow",
-                      "name": " ",
-                      "hide_state": false
+                      "name": "Utility Closet",
+                      "icon": "mdi:server"
                     }
                   ],
-                  "columns": 2,
-                  "title": "Woonkamer"
+                  "columns": 1,
+                  "title": "Utility Closet"
                 }
               ]
             },
@@ -1963,111 +1963,6 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "switch.kantoor_bureau",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "hide_state": true
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "trend-graph"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "sensor.kantoor_bureau_power",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "color": "yellow",
-                      "name": " ",
-                      "hide_state": false
-                    }
-                  ],
-                  "columns": 2,
-                  "title": "Office"
-                },
-                {
-                  "type": "heading",
-                  "icon": "mdi:spa",
-                  "heading": "Gym",
-                  "heading_style": "title"
-                },
-                {
-                  "features": [
-                    {
-                      "type": "trend-graph"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "sensor.gym_power",
-                  "features_position": "inline",
-                  "vertical": false,
-                  "color": "yellow",
-                  "name": "Gym",
-                  "icon": "mdi:spa"
-                },
-                {
-                  "features": [
-                    {
-                      "type": "toggle"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "switch.verwarmingspomp_1",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "hide_state": true
-                },
-                {
-                  "features": [
-                    {
-                      "type": "trend-graph"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "sensor.verwarmingspomp_1_power",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "color": "yellow",
-                  "name": " "
-                },
-                {
-                  "features": [
-                    {
-                      "type": "toggle"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "switch.vriezer_groot",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "hide_state": true
-                },
-                {
-                  "features": [
-                    {
-                      "type": "trend-graph"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "sensor.vriezer_groot_power",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "color": "yellow",
-                  "name": " ",
-                  "hide_state": false
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
-                    {
-                      "features": [
-                        {
-                          "type": "toggle"
-                        }
-                      ],
-                      "type": "tile",
                       "entity": "switch.bedroom_media",
                       "features_position": "bottom",
                       "vertical": false,
@@ -2090,6 +1985,120 @@
                   ],
                   "columns": 2,
                   "title": "Bedroom"
+                },
+                {
+                  "square": false,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "type": "tile",
+                      "entity": "sensor.sauna_power",
+                      "features_position": "inline",
+                      "vertical": false,
+                      "color": "yellow",
+                      "name": "Sauna",
+                      "icon": "mdi:spa"
+                    },
+                    {
+                      "square": false,
+                      "type": "grid",
+                      "cards": [
+                        {
+                          "features": [
+                            {
+                              "type": "toggle"
+                            }
+                          ],
+                          "type": "tile",
+                          "entity": "switch.floor_heating_pump_1",
+                          "features_position": "bottom",
+                          "vertical": false,
+                          "hide_state": true
+                        },
+                        {
+                          "features": [
+                            {
+                              "type": "trend-graph"
+                            }
+                          ],
+                          "type": "tile",
+                          "entity": "sensor.floor_heating_pump_1_power",
+                          "features_position": "bottom",
+                          "vertical": false,
+                          "color": "yellow",
+                          "name": " "
+                        },
+                        {
+                          "features": [
+                            {
+                              "type": "toggle"
+                            }
+                          ],
+                          "type": "tile",
+                          "entity": "switch.gym_freezer",
+                          "features_position": "bottom",
+                          "vertical": false,
+                          "hide_state": true
+                        },
+                        {
+                          "features": [
+                            {
+                              "type": "trend-graph"
+                            }
+                          ],
+                          "type": "tile",
+                          "entity": "sensor.gym_freezer_power",
+                          "features_position": "bottom",
+                          "vertical": false,
+                          "color": "yellow",
+                          "name": " ",
+                          "hide_state": false
+                        }
+                      ],
+                      "columns": 2
+                    }
+                  ],
+                  "columns": 1,
+                  "title": "Gym"
+                },
+                {
+                  "square": false,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "features": [
+                        {
+                          "type": "toggle"
+                        }
+                      ],
+                      "type": "tile",
+                      "entity": "switch.office_desk",
+                      "features_position": "bottom",
+                      "vertical": false,
+                      "hide_state": true
+                    },
+                    {
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "type": "tile",
+                      "entity": "sensor.office_desk_power",
+                      "features_position": "bottom",
+                      "vertical": false,
+                      "color": "yellow",
+                      "name": " ",
+                      "hide_state": false
+                    }
+                  ],
+                  "columns": 2,
+                  "title": "Office"
                 }
               ]
             },
@@ -2124,11 +2133,11 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.airco_power",
+                      "entity": "sensor.ac_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
-                      "name": "Airco",
+                      "name": "AC",
                       "icon": "mdi:hvac"
                     },
                     {
@@ -2138,11 +2147,11 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.zonnepanelen_power",
+                      "entity": "sensor.solar_power",
                       "features_position": "inline",
                       "vertical": false,
                       "color": "yellow",
-                      "name": "Zonnepanelen",
+                      "name": "Solar",
                       "icon": "mdi:solar-panel"
                     }
                   ],
@@ -2210,7 +2219,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "switch.gameroom_bureau",
+                      "entity": "switch.gameroom_desk",
                       "features_position": "bottom",
                       "vertical": false,
                       "hide_state": true
@@ -2222,7 +2231,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.gameroom_bureau_power",
+                      "entity": "sensor.gameroom_desk_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -2270,7 +2279,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "switch.verwarmingspomp_2",
+                      "entity": "switch.floor_heating_pump_2",
                       "features_position": "bottom",
                       "vertical": false,
                       "hide_state": true
@@ -2282,7 +2291,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.verwarmingspomp_2_power",
+                      "entity": "sensor.floor_heating_pump_2_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -2295,7 +2304,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "switch.wasdroger",
+                      "entity": "switch.washing_dryer",
                       "features_position": "bottom",
                       "vertical": false,
                       "hide_state": true
@@ -2307,7 +2316,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.wasdroger_power",
+                      "entity": "sensor.washing_dryer_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -2320,7 +2329,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "switch.wasmachine",
+                      "entity": "switch.washing_machine",
                       "features_position": "bottom",
                       "vertical": false,
                       "hide_state": true
@@ -2332,7 +2341,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.wasmachine_power",
+                      "entity": "sensor.washing_machine_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
@@ -2345,7 +2354,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "switch.wtw",
+                      "entity": "switch.ventilation",
                       "features_position": "bottom",
                       "vertical": false,
                       "hide_state": true
@@ -2357,7 +2366,7 @@
                         }
                       ],
                       "type": "tile",
-                      "entity": "sensor.wtw_power",
+                      "entity": "sensor.ventilation_power",
                       "features_position": "bottom",
                       "vertical": false,
                       "color": "yellow",
