@@ -25,28 +25,23 @@ music_night:
     metadata: {}
     data:
       media_type: playlist
-      enqueue: replace_next
+      enqueue: replace
       media_id:
       - Classical
     target:
-      entity_id: media_player.group
-  - action: media_player.media_play
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.group
+      entity_id: media_player.bedroom
   - action: media_player.repeat_set
     metadata: {}
     data:
       repeat: all
     target:
-      entity_id: media_player.group
+      entity_id: media_player.bedroom
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.group
+      entity_id: media_player.bedroom
   - delay:
       hours: 0
       minutes: 0
@@ -60,7 +55,7 @@ music_night:
       - media_player.gym
       - media_player.kitchen
     target:
-      entity_id: media_player.group
+      entity_id: media_player.bedroom
   - action: media_player.volume_set
     metadata: {}
     data:
@@ -70,6 +65,11 @@ music_night:
       - media_player.bathroom_kef
       - media_player.bedroom_kef
       - media_player.gym_kef
+  - action: media_player.media_play
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.bedroom
 music_home:
   alias: Music - Home
   description: ''
@@ -92,24 +92,19 @@ music_home:
       - Rock
       - Soul
     target:
-      entity_id: media_player.group
-  - action: media_player.media_play
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.group
+      entity_id: media_player.bedroom
   - action: media_player.repeat_set
     metadata: {}
     data:
       repeat: all
     target:
-      entity_id: media_player.group
+      entity_id: media_player.bedroom
   - action: media_player.shuffle_set
     metadata: {}
     data:
       shuffle: true
     target:
-      entity_id: media_player.group
+      entity_id: media_player.bedroom
   - action: media_player.join
     metadata: {}
     data:
@@ -118,7 +113,7 @@ music_home:
       - media_player.gym
       - media_player.kitchen
     target:
-      entity_id: media_player.group
+      entity_id: media_player.bedroom
   - action: media_player.volume_set
     metadata: {}
     data:
@@ -134,6 +129,11 @@ music_home:
       entity_id:
       - media_player.bedroom
       - media_player.gym
+  - action: media_player.media_play
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.bedroom
 lights_green:
   alias: Lights - Breathe Green
   description: ''
