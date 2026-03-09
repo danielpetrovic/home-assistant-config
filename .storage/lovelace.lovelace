@@ -831,7 +831,7 @@
                     },
                     {
                       "type": "media-control",
-                      "entity": "media_player.group",
+                      "entity": "media_player.bedroom",
                       "name": "Music Assistant"
                     },
                     {

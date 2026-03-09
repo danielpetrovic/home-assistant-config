@@ -137,7 +137,7 @@
       - delay:
           hours: 0
           minutes: 0
-          seconds: 2
+          seconds: 1
           milliseconds: 0
       - action: media_player.join
         metadata: {}
@@ -145,14 +145,14 @@
           group_members:
           - media_player.bathroom
         target:
-          entity_id: media_player.group
+          entity_id: media_player.bedroom
       alias: player idle
     - conditions:
       - condition: trigger
         id:
         - 07:00
       - condition: state
-        entity_id: media_player.group
+        entity_id: media_player.bedroom
         state:
         - playing
       sequence:
@@ -176,7 +176,7 @@
           group_members:
           - media_player.bathroom
         target:
-          entity_id: media_player.group
+          entity_id: media_player.bedroom
       alias: 07:00
   mode: restart
 - id: '1704667361587'
@@ -1700,7 +1700,7 @@
         id:
         - player idle
       - condition: state
-        entity_id: media_player.group
+        entity_id: media_player.bedroom
         state:
         - playing
       sequence:
@@ -1720,12 +1720,16 @@
           group_members:
           - media_player.gym
         target:
-          entity_id: media_player.group
+          entity_id: media_player.bedroom
       alias: player idle
     - conditions:
       - condition: trigger
         id:
         - 07:00
+      - condition: state
+        entity_id: media_player.bedroom
+        state:
+        - playing
       sequence:
       - action: media_player.join
         metadata: {}
@@ -1733,7 +1737,7 @@
           group_members:
           - media_player.gym
         target:
-          entity_id: media_player.group
+          entity_id: media_player.bedroom
       - action: media_player.volume_set
         data:
           volume_level: 0.25
@@ -1884,9 +1888,14 @@
       sequence:
       - action: media_player.media_next_track
         metadata: {}
+        data: {}
         target:
           entity_id: media_player.bedroom
+      - action: media_player.media_play
+        metadata: {}
         data: {}
+        target:
+          entity_id: media_player.bedroom
       alias: player idle
   mode: parallel
 - id: '1706694278160'
@@ -2248,7 +2257,7 @@
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
-      button_3_media_leader: media_player.group
+      button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2319,7 +2328,7 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.group
+      button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2377,7 +2386,7 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.group
+      button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2488,7 +2497,7 @@
         target:
           entity_id: switch.office_desk
       button_3_media: media_player.office
-      button_3_media_leader: media_player.group
+      button_3_media_leader: media_player.bedroom
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -2539,7 +2548,7 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.kitchen
-      button_3_media_leader: media_player.group
+      button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2588,7 +2597,7 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.gym
-      button_3_media_leader: media_player.group
+      button_3_media_leader: media_player.bedroom
       button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
@@ -3229,7 +3238,7 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.group
+      button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -4977,7 +4986,7 @@
         id:
         - player idle
       - condition: state
-        entity_id: media_player.group
+        entity_id: media_player.bedroom
         state:
         - playing
       sequence:
@@ -4997,14 +5006,14 @@
           group_members:
           - media_player.kitchen
         target:
-          entity_id: media_player.group
+          entity_id: media_player.bedroom
       alias: player idle
     - conditions:
       - condition: trigger
         id:
         - 07:00
       - condition: state
-        entity_id: media_player.group
+        entity_id: media_player.bedroom
         state:
         - playing
       sequence:
@@ -5023,7 +5032,7 @@
           group_members:
           - media_player.kitchen
         target:
-          entity_id: media_player.group
+          entity_id: media_player.bedroom
   mode: parallel
 - id: '1764237963995'
   alias: Office Motion
@@ -5361,8 +5370,7 @@
       alarm_auto_arm_away: true
       alarm_notifications_target:
       - 1b49bd1284b5afb6e9f5f081024a600c
-      - a41cc8827f1344e4edb8ff8bba988948
-      - d4d71140fffc1b75a2aa9099ec492e6f
+      - ed18014bbde1fefe8254e55a058ec7b7
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
       - media_player.utility_closet
@@ -5776,4 +5784,20 @@
   - action: recorder.purge
     data:
       repack: true
+  mode: single
+- id: '1773083136796'
+  alias: Living Room Tablet Reload
+  description: Reloads the Companion App on the living room tablet
+  triggers:
+  - event: start
+    trigger: homeassistant
+  - trigger: time_pattern
+    hours: '*'
+  actions:
+  - data:
+      message: command_activity
+      data:
+        intent_package_name: io.homeassistant.companion.android
+        intent_class_name: io.homeassistant.companion.android.launch.LaunchActivity
+    action: notify.mobile_app_living_room_tablet
   mode: single
