@@ -153,7 +153,6 @@ lights_green:
       - light.hallway_light
       - light.living_room_below_light
       - light.office_light
-      - light.shed_workbench_light
       - light.toilet_light
   - alias: Lights green, breathe
     action: light.turn_on
@@ -222,7 +221,6 @@ lights_blue:
       - light.hallway_light
       - light.living_room_below_light
       - light.office_light
-      - light.shed_workbench_light
       - light.toilet_light
   - alias: Lights blue, breathe
     action: light.turn_on
@@ -291,7 +289,6 @@ lights_red:
       - light.hallway_light
       - light.living_room_below_light
       - light.office_light
-      - light.shed_workbench_light
       - light.toilet_light
   - alias: Lights red, breathe
     action: light.turn_on
@@ -360,7 +357,6 @@ lights_orange:
       - light.hallway_light
       - light.living_room_below_light
       - light.office_light
-      - light.shed_workbench_light
       - light.toilet_light
   - alias: Lights orange, breathe
     action: light.turn_on
