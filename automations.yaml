@@ -4601,7 +4601,7 @@
                 - input_select.gameroom_covers
                 - input_select.office_covers
                 - input_select.living_room_covers
-                preset: Summer
+                preset: Winter
               - entities:
                 - input_select.roof_terrace_covers
                 - input_select.kitchen_covers
