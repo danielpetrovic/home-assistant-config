@@ -316,9 +316,9 @@ template:
             {% elif last == 'low' %}
               {% if lux < 800 %}dark{% elif lux >= 6000 %}mid{% else %}low{% endif %}
             {% elif last == 'mid' %}
-              {% if lux < 4000 %}low{% elif lux >= 22000 %}high{% else %}mid{% endif %}
+              {% if lux < 4000 %}low{% elif lux >= 30000 %}high{% else %}mid{% endif %}
             {% elif last == 'high' %}
-              {% if lux < 18000 %}mid{% elif lux >= 55000 %}peak{% else %}high{% endif %}
+              {% if lux < 25000 %}mid{% elif lux >= 55000 %}peak{% else %}high{% endif %}
             {% else %}
               {% if lux < 45000 %}high{% else %}peak{% endif %}
             {% endif %}
