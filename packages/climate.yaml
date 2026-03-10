@@ -310,16 +310,17 @@ template:
             {{ this.state }}
           {% else %}
             {% set lux = lux_state | int(0) %}
-            {% if lux < 1000 %}
-              dark
-            {% elif lux < 5000 %}
-              low
-            {% elif lux < 20000 %}
-              mid
-            {% elif lux < 50000 %}
-              high
+            {% set last = this.state if this.state in ('dark', 'low', 'mid', 'high', 'peak') else 'dark' %}
+            {% if last == 'dark' %}
+              {% if lux >= 1200 %}low{% else %}dark{% endif %}
+            {% elif last == 'low' %}
+              {% if lux < 800 %}dark{% elif lux >= 6000 %}mid{% else %}low{% endif %}
+            {% elif last == 'mid' %}
+              {% if lux < 4000 %}low{% elif lux >= 22000 %}high{% else %}mid{% endif %}
+            {% elif last == 'high' %}
+              {% if lux < 18000 %}mid{% elif lux >= 55000 %}peak{% else %}high{% endif %}
             {% else %}
-              peak
+              {% if lux < 45000 %}high{% else %}peak{% endif %}
             {% endif %}
           {% endif %}
         icon: mdi:white-balance-sunny
