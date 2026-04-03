@@ -2258,10 +2258,13 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media_leader: media_player.bedroom
+      button_3_media: media_player.bathroom
       button_3_short_release_media_mode:
       - turn_on
       - join
-      button_3_media: media_player.bathroom
+      button_3_long_release_media_mode:
+      - turn_off
+      - unjoin
 - id: '1736811938136'
   alias: Dining Table Button
   description: ''
@@ -2332,6 +2335,9 @@
       button_3_short_release_media_mode:
       - turn_on
       - join
+      button_3_long_release_media_mode:
+      - turn_off
+      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -2390,6 +2396,9 @@
       button_3_short_release_media_mode:
       - turn_on
       - join
+      button_3_long_release_media_mode:
+      - turn_off
+      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -2496,12 +2505,6 @@
         data: {}
         target:
           entity_id: switch.office_desk
-      button_3_media: media_player.office
-      button_3_media_leader: media_player.bedroom
-      button_3_media_volume: 25
-      button_3_short_release_media_mode:
-      - turn_on
-      - join
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -2516,6 +2519,15 @@
         metadata: {}
         target:
           entity_id: input_select.office_covers
+      button_3_media: media_player.office
+      button_3_media_leader: media_player.bedroom
+      button_3_media_volume: 25
+      button_3_short_release_media_mode:
+      - turn_on
+      - join
+      button_3_long_release_media_mode:
+      - turn_off
+      - unjoin
       button_4_short_release:
       - action: input_select.select_previous
         data:
@@ -2552,6 +2564,9 @@
       button_3_short_release_media_mode:
       - turn_on
       - join
+      button_3_long_release_media_mode:
+      - turn_off
+      - unjoin
       button_2_short_release:
       - action: input_select.select_option
         data:
@@ -2598,10 +2613,12 @@
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.gym
       button_3_media_leader: media_player.bedroom
-      button_3_media_volume: 25
       button_3_short_release_media_mode:
       - turn_on
       - join
+      button_3_long_release_media_mode:
+      - turn_off
+      - unjoin
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -2648,6 +2665,10 @@
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_3_media: media_player.bedroom
+      button_3_short_release_media_mode:
+      - turn_on
+      button_3_long_release_media_mode:
+      - turn_off
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -2845,57 +2866,10 @@
     - media_player.living_room_tv_cast
     from:
     to:
-    enabled: true
-  - trigger: state
-    entity_id:
-    - media_player.living_room_player
-    from:
-    to:
   conditions: []
   actions:
-  - delay:
-      seconds: 1
   - alias: Living Room TV
     choose:
-    - alias: OSMC HDMI 1 playing
-      conditions:
-      - condition: state
-        entity_id: media_player.living_room_tv_cast
-        state: playing
-      - condition: state
-        entity_id: media_player.living_room_tv_cast
-        attribute: media_title
-        state: OSMC HDMI 1
-      - condition: state
-        entity_id: media_player.living_room_player
-        state: playing
-      sequence:
-      - action: media_player.volume_set
-        target:
-          entity_id: media_player.kitchen
-        data:
-          volume_level: 0.01
-    - alias: OSMC HDMI 1 not playing
-      conditions:
-      - condition: state
-        entity_id: media_player.living_room_tv_cast
-        state: playing
-      - condition: state
-        entity_id: media_player.living_room_tv_cast
-        attribute: media_title
-        state: OSMC HDMI 1
-      - condition: state
-        entity_id: media_player.living_room_player
-        state:
-        - 'off'
-        - idle
-        - paused
-      sequence:
-      - action: media_player.volume_set
-        target:
-          entity_id: media_player.kitchen
-        data:
-          volume_level: 0.35
     - alias: NLZIET
       conditions:
       - condition: state
@@ -2908,6 +2882,14 @@
           entity_id: media_player.kitchen
         data:
           volume_level: 0.01
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id: light.living_room_tv_light
+        data:
+          transition: 30
+          color_temp_kelvin: 3000
+          brightness_pct: 25
     - alias: Playing
       conditions:
       - condition: state
@@ -2919,6 +2901,14 @@
           entity_id: media_player.kitchen
         data:
           volume_level: 0.01
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id: light.living_room_tv_light
+        data:
+          transition: 30
+          color_temp_kelvin: 3000
+          brightness_pct: 25
     - alias: Not playing
       conditions:
       - condition: state
@@ -2933,6 +2923,12 @@
           entity_id: media_player.kitchen
         data:
           volume_level: 0.35
+      - action: light.turn_off
+        metadata: {}
+        target:
+          entity_id: light.living_room_tv_light
+        data:
+          transition: 30
   mode: restart
 - id: '1745758491686'
   alias: Front Door
@@ -4266,28 +4262,58 @@
   triggers:
   - at: 07:30:00
     id: 07:30
-    trigger: time
+    platform: time
   - at: 08:30:00
     id: 08:30
-    trigger: time
+    platform: time
   - at: 09:00:00
     id: 09:00
-    trigger: time
+    platform: time
   - at: '10:00:00'
     id: '10:00'
-    trigger: time
+    platform: time
   - at: '11:00:00'
     id: '11:00'
-    trigger: time
+    platform: time
   - at: '12:00:00'
     id: '12:00'
-    trigger: time
+    platform: time
   - at: '18:00:00'
     id: '18:00'
-    trigger: time
-  - entity_id: sensor.climate_luminosity
-    id: luminosity
-    trigger: state
+    platform: time
+  - platform: numeric_state
+    entity_id: sensor.roof_terrace_sensor_illuminance
+    id: lux_to_low
+    below: 6000
+    for:
+      minutes: 15
+  - platform: numeric_state
+    entity_id: sensor.roof_terrace_sensor_illuminance
+    id: lux_to_mid
+    above: 6000
+    below: 30000
+    for:
+      minutes: 15
+  - platform: numeric_state
+    entity_id: sensor.roof_terrace_sensor_illuminance
+    id: lux_to_high
+    above: 25000
+    below: 55000
+    for:
+      minutes: 15
+  - platform: numeric_state
+    entity_id: sensor.roof_terrace_sensor_illuminance
+    id: lux_to_peak
+    above: 45000
+    for:
+      minutes: 15
+  - platform: numeric_state
+    entity_id: sensor.roof_terrace_sensor_illuminance
+    id: lux_dark
+    below: 800
+    for:
+      minutes: 2
+  conditions: []
   actions:
   - alias: Time-based logic
     choose:
@@ -4298,7 +4324,8 @@
       sequence:
       - alias: Workday
         choose:
-        - conditions:
+        - alias: 'Yes'
+          conditions:
           - condition: state
             entity_id: binary_sensor.workday_sensor
             state:
@@ -4329,8 +4356,8 @@
                 action: input_select.select_option
               - delay:
                   seconds: 5
-          alias: 'Yes'
-        - conditions:
+        - alias: 'No'
+          conditions:
           - condition: state
             entity_id: binary_sensor.workday_sensor
             state:
@@ -4360,7 +4387,6 @@
                 action: input_select.select_option
               - delay:
                   seconds: 5
-          alias: 'No'
     - alias: 08:30
       conditions:
       - condition: trigger
@@ -4368,7 +4394,8 @@
       sequence:
       - alias: Workday
         choose:
-        - conditions:
+        - alias: 'Yes'
+          conditions:
           - condition: state
             entity_id: binary_sensor.workday_sensor
             state:
@@ -4381,8 +4408,8 @@
             data:
               option: Partial
             action: input_select.select_option
-          alias: 'Yes'
-        - conditions:
+        - alias: 'No'
+          conditions:
           - condition: state
             entity_id: binary_sensor.workday_sensor
             state:
@@ -4395,7 +4422,6 @@
             data:
               option: Privacy
             action: input_select.select_option
-          alias: 'No'
     - alias: '10:00'
       conditions:
       - condition: trigger
@@ -4403,7 +4429,8 @@
       sequence:
       - alias: Workday
         choose:
-        - conditions:
+        - alias: 'Yes'
+          conditions:
           - condition: state
             entity_id: binary_sensor.workday_sensor
             state:
@@ -4417,7 +4444,6 @@
             data:
               option: Open
             action: input_select.select_option
-          alias: 'Yes'
     - alias: '11:00'
       conditions:
       - condition: trigger
@@ -4425,7 +4451,8 @@
       sequence:
       - alias: Workday
         choose:
-        - conditions:
+        - alias: 'Yes'
+          conditions:
           - condition: state
             entity_id: binary_sensor.workday_sensor
             state:
@@ -4439,8 +4466,8 @@
             data:
               option: Open
             action: input_select.select_option
-          alias: 'Yes'
-        - conditions:
+        - alias: 'No'
+          conditions:
           - condition: state
             entity_id: binary_sensor.workday_sensor
             state:
@@ -4453,7 +4480,6 @@
             data:
               option: Partial
             action: input_select.select_option
-          alias: 'No'
     - alias: '12:00'
       conditions:
       - condition: trigger
@@ -4472,10 +4498,18 @@
       - condition: trigger
         id: '18:00'
       sequence:
+      - target:
+          entity_id:
+          - input_select.hallway_covers
+          - input_select.gym_covers
+          - input_select.bedroom_covers
+        data:
+          option: Closed
+        action: input_select.select_option
       - if:
-        - condition: state
-          entity_id: sensor.climate_luminosity
-          state: dark
+        - condition: numeric_state
+          entity_id: sensor.roof_terrace_sensor_illuminance
+          below: 800
         then:
         - repeat:
             for_each:
@@ -4483,11 +4517,6 @@
               - input_select.gameroom_covers
               - input_select.office_covers
               - input_select.living_room_covers
-              preset: Closed
-            - entities:
-              - input_select.hallway_covers
-              - input_select.gym_covers
-              - input_select.bedroom_covers
               preset: Closed
             - entities:
               - input_select.roof_terrace_covers
@@ -4502,23 +4531,43 @@
               action: input_select.select_option
             - delay:
                 seconds: 5
-        else:
+  - alias: Dark after 18:00 - close remaining
+    if:
+    - condition: trigger
+      id: lux_dark
+    - condition: time
+      after: '18:00:00'
+    then:
+    - repeat:
+        for_each:
+        - entities:
+          - input_select.gameroom_covers
+          - input_select.office_covers
+          - input_select.living_room_covers
+          preset: Closed
+        - entities:
+          - input_select.roof_terrace_covers
+          - input_select.kitchen_covers
+          - input_select.garden_covers
+          preset: Closed
+        sequence:
         - target:
-            entity_id:
-            - input_select.hallway_covers
-            - input_select.gym_covers
-            - input_select.bedroom_covers
+            entity_id: '{{ repeat.item.entities }}'
           data:
-            option: Closed
+            option: '{{ repeat.item.preset }}'
           action: input_select.select_option
-        alias: Is it dark outside?
-  - alias: Climate-based logic
+        - delay:
+            seconds: 5
+  - alias: Climate-based logic during day
     choose:
-    - alias: cold during day
+    - alias: cold/freezing
       conditions:
       - condition: trigger
         id:
-        - luminosity
+        - lux_to_low
+        - lux_to_mid
+        - lux_to_high
+        - lux_to_peak
         - 09:00
       - condition: state
         entity_id: sensor.climate_mode
@@ -4549,11 +4598,12 @@
             action: input_select.select_option
           - delay:
               seconds: 5
-    - alias: mild during day
+    - alias: mild - low/mid
       conditions:
       - condition: trigger
         id:
-        - luminosity
+        - lux_to_low
+        - lux_to_mid
         - 09:00
       - condition: state
         entity_id: sensor.climate_mode
@@ -4562,116 +4612,65 @@
         after: 09:00:00
         before: '18:00:00'
       sequence:
-      - choose:
-        - alias: low
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_luminosity
-            state: low
+      - repeat:
+          for_each:
+          - entities:
+            - input_select.gameroom_covers
+            - input_select.office_covers
+            - input_select.living_room_covers
+            preset: Winter
+          - entities:
+            - input_select.roof_terrace_covers
+            - input_select.kitchen_covers
+            - input_select.garden_covers
+            preset: Winter
           sequence:
-          - repeat:
-              for_each:
-              - entities:
-                - input_select.gameroom_covers
-                - input_select.office_covers
-                - input_select.living_room_covers
-                preset: Winter
-              - entities:
-                - input_select.roof_terrace_covers
-                - input_select.kitchen_covers
-                - input_select.garden_covers
-                preset: Winter
-              sequence:
-              - target:
-                  entity_id: '{{ repeat.item.entities }}'
-                data:
-                  option: '{{ repeat.item.preset }}'
-                action: input_select.select_option
-              - delay:
-                  seconds: 5
-        - alias: mid
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_luminosity
-            state: mid
-          sequence:
-          - repeat:
-              for_each:
-              - entities:
-                - input_select.gameroom_covers
-                - input_select.office_covers
-                - input_select.living_room_covers
-                preset: Winter
-              - entities:
-                - input_select.roof_terrace_covers
-                - input_select.kitchen_covers
-                - input_select.garden_covers
-                preset: Winter
-              sequence:
-              - target:
-                  entity_id: '{{ repeat.item.entities }}'
-                data:
-                  option: '{{ repeat.item.preset }}'
-                action: input_select.select_option
-              - delay:
-                  seconds: 5
-        - alias: high
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_luminosity
-            state: high
-          sequence:
-          - repeat:
-              for_each:
-              - entities:
-                - input_select.gameroom_covers
-                - input_select.office_covers
-                - input_select.living_room_covers
-                preset: Summer
-              - entities:
-                - input_select.roof_terrace_covers
-                - input_select.kitchen_covers
-                - input_select.garden_covers
-                preset: Summer
-              sequence:
-              - target:
-                  entity_id: '{{ repeat.item.entities }}'
-                data:
-                  option: '{{ repeat.item.preset }}'
-                action: input_select.select_option
-              - delay:
-                  seconds: 5
-        - alias: peak
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_luminosity
-            state: peak
-          sequence:
-          - repeat:
-              for_each:
-              - entities:
-                - input_select.gameroom_covers
-                - input_select.office_covers
-                - input_select.living_room_covers
-                preset: Summer
-              - entities:
-                - input_select.roof_terrace_covers
-                - input_select.kitchen_covers
-                - input_select.garden_covers
-                preset: Summer
-              sequence:
-              - target:
-                  entity_id: '{{ repeat.item.entities }}'
-                data:
-                  option: '{{ repeat.item.preset }}'
-                action: input_select.select_option
-              - delay:
-                  seconds: 5
-    - alias: warm during day
+          - target:
+              entity_id: '{{ repeat.item.entities }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+    - alias: mild - high/peak
       conditions:
       - condition: trigger
         id:
-        - luminosity
+        - lux_to_high
+        - lux_to_peak
+        - 09:00
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: mild
+      - condition: time
+        after: 09:00:00
+        before: '18:00:00'
+      sequence:
+      - repeat:
+          for_each:
+          - entities:
+            - input_select.gameroom_covers
+            - input_select.office_covers
+            - input_select.living_room_covers
+            preset: Summer
+          - entities:
+            - input_select.roof_terrace_covers
+            - input_select.kitchen_covers
+            - input_select.garden_covers
+            preset: Summer
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item.entities }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+    - alias: warm/hot - low
+      conditions:
+      - condition: trigger
+        id:
+        - lux_to_low
         - 09:00
       - condition: state
         entity_id: sensor.climate_mode
@@ -4682,160 +4681,120 @@
         after: 09:00:00
         before: '18:00:00'
       sequence:
-      - choose:
-        - alias: low
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_luminosity
-            state: low
+      - repeat:
+          for_each:
+          - entities:
+            - input_select.gameroom_covers
+            - input_select.office_covers
+            - input_select.living_room_covers
+            preset: Summer
+          - entities:
+            - input_select.roof_terrace_covers
+            - input_select.kitchen_covers
+            - input_select.garden_covers
+            preset: Winter
           sequence:
-          - repeat:
-              for_each:
-              - entities:
-                - input_select.gameroom_covers
-                - input_select.office_covers
-                - input_select.living_room_covers
-                preset: Summer
-              - entities:
-                - input_select.roof_terrace_covers
-                - input_select.kitchen_covers
-                - input_select.garden_covers
-                preset: Winter
-              sequence:
-              - target:
-                  entity_id: '{{ repeat.item.entities }}'
-                data:
-                  option: '{{ repeat.item.preset }}'
-                action: input_select.select_option
-              - delay:
-                  seconds: 5
-        - alias: mid
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_luminosity
-            state: mid
-          sequence:
-          - repeat:
-              for_each:
-              - entities:
-                - input_select.gameroom_covers
-                - input_select.office_covers
-                - input_select.living_room_covers
-                preset: Summer
-              - entities:
-                - input_select.roof_terrace_covers
-                - input_select.kitchen_covers
-                - input_select.garden_covers
-                preset: Summer
-              sequence:
-              - target:
-                  entity_id: '{{ repeat.item.entities }}'
-                data:
-                  option: '{{ repeat.item.preset }}'
-                action: input_select.select_option
-              - delay:
-                  seconds: 5
-        - alias: high
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_luminosity
-            state: high
-          sequence:
-          - repeat:
-              for_each:
-              - entities:
-                - input_select.gameroom_covers
-                - input_select.office_covers
-                - input_select.living_room_covers
-                preset: Summer
-              - entities:
-                - input_select.roof_terrace_covers
-                - input_select.kitchen_covers
-                - input_select.garden_covers
-                preset: Summer
-              sequence:
-              - target:
-                  entity_id: '{{ repeat.item.entities }}'
-                data:
-                  option: '{{ repeat.item.preset }}'
-                action: input_select.select_option
-              - delay:
-                  seconds: 5
-        - alias: peak
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_luminosity
-            state: peak
-          sequence:
-          - repeat:
-              for_each:
-              - entities:
-                - input_select.gameroom_covers
-                - input_select.office_covers
-                - input_select.living_room_covers
-                preset: Privacy
-              - entities:
-                - input_select.roof_terrace_covers
-                - input_select.kitchen_covers
-                - input_select.garden_covers
-                preset: Summer
-              sequence:
-              - target:
-                  entity_id: '{{ repeat.item.entities }}'
-                data:
-                  option: '{{ repeat.item.preset }}'
-                action: input_select.select_option
-              - delay:
-                  seconds: 5
-    - alias: any during night
+          - target:
+              entity_id: '{{ repeat.item.entities }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+    - alias: warm/hot - mid/high
       conditions:
       - condition: trigger
         id:
-        - luminosity
+        - lux_to_mid
+        - lux_to_high
         - 09:00
+      - condition: state
+        entity_id: sensor.climate_mode
+        state:
+        - warm
+        - hot
       - condition: time
-        after: '18:00:00'
+        after: 09:00:00
+        before: '18:00:00'
       sequence:
-      - if:
-        - condition: state
-          entity_id: sensor.climate_luminosity
-          state: dark
-        then:
-        - repeat:
-            for_each:
-            - entities:
-              - input_select.gameroom_covers
-              - input_select.office_covers
-              - input_select.living_room_covers
-              preset: Closed
-            - entities:
-              - input_select.roof_terrace_covers
-              - input_select.kitchen_covers
-              - input_select.garden_covers
-              preset: Closed
-            sequence:
-            - target:
-                entity_id: '{{ repeat.item.entities }}'
-              data:
-                option: '{{ repeat.item.preset }}'
-              action: input_select.select_option
-            - delay:
-                seconds: 5
+      - repeat:
+          for_each:
+          - entities:
+            - input_select.gameroom_covers
+            - input_select.office_covers
+            - input_select.living_room_covers
+            preset: Summer
+          - entities:
+            - input_select.roof_terrace_covers
+            - input_select.kitchen_covers
+            - input_select.garden_covers
+            preset: Summer
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item.entities }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+    - alias: warm/hot - peak
+      conditions:
+      - condition: trigger
+        id:
+        - lux_to_peak
+      - condition: state
+        entity_id: sensor.climate_mode
+        state:
+        - warm
+        - hot
+      - condition: time
+        after: 09:00:00
+        before: '18:00:00'
+      sequence:
+      - repeat:
+          for_each:
+          - entities:
+            - input_select.gameroom_covers
+            - input_select.office_covers
+            - input_select.living_room_covers
+            preset: Privacy
+          - entities:
+            - input_select.roof_terrace_covers
+            - input_select.kitchen_covers
+            - input_select.garden_covers
+            preset: Summer
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item.entities }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
   mode: queued
-  max: 3
+  max: 2
 - id: '1761750325973'
   alias: Lighting
   description: All logic for lighting
   triggers:
   - at: 00:01:00
     id: 00:00
-    trigger: time
+    platform: time
   - at: 01:01:00
     id: 01:00
-    trigger: time
-  - entity_id: sensor.climate_luminosity
-    id: luminosity
-    trigger: state
+    platform: time
+  - platform: numeric_state
+    entity_id: sensor.roof_terrace_sensor_illuminance
+    id: luminosity_dark
+    below: 4000
+    for:
+      minutes: 2
+  - platform: numeric_state
+    entity_id: sensor.roof_terrace_sensor_illuminance
+    id: luminosity_bright
+    above: 6000
+    for:
+      minutes: 2
   conditions: []
   actions:
   - alias: Time
@@ -4891,12 +4850,7 @@
     - alias: dark or low
       conditions:
       - condition: trigger
-        id: luminosity
-      - condition: state
-        entity_id: sensor.climate_luminosity
-        state:
-        - low
-        - dark
+        id: luminosity_dark
       - condition: time
         after: '12:00:00'
       sequence:
@@ -4922,13 +4876,7 @@
     - alias: not dark
       conditions:
       - condition: trigger
-        id: luminosity
-      - condition: state
-        entity_id: sensor.climate_luminosity
-        state:
-        - high
-        - mid
-        - peak
+        id: luminosity_bright
       sequence:
       - action: light.turn_off
         target:
@@ -4937,9 +4885,8 @@
           - light.front_door_light
         data:
           transition: 3600
-    enabled: true
   mode: queued
-  max: 10
+  max: 2
 - id: '1761894045234'
   alias: Kitchen Media
   description: ''
@@ -5165,108 +5112,6 @@
           - light.kitchen
       alias: motion clear
   mode: restart
-- id: '1764313480952'
-  alias: Robot Vacuums
-  description: ''
-  triggers:
-  - trigger: time
-    at: 07:30:00
-    id: 07:30
-  - trigger: time
-    at: '12:00:00'
-    id: '12:00'
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - 07:30
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: sensor.bart_operation_state
-            state:
-            - actionrequired
-          sequence:
-          - action: select.select_option
-            metadata: {}
-            data:
-              option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_only
-            target:
-              entity_id:
-              - select.bart_cleaning_mode
-          - action: select.select_option
-            metadata: {}
-            data:
-              option: consumer_products_cleaning_robot_program_cleaning_clean_all
-            target:
-              entity_id:
-              - select.bart_active_programme
-          alias: Error
-        - conditions: []
-          sequence:
-          - action: select.select_option
-            metadata: {}
-            data:
-              option: consumer_products_cleaning_robot_enum_type_cleaning_mode_intelligent_mode
-            target:
-              entity_id:
-              - select.bart_cleaning_mode
-          - action: select.select_option
-            metadata: {}
-            data:
-              option: consumer_products_cleaning_robot_program_cleaning_clean_all
-            target:
-              entity_id:
-              - select.bart_active_programme
-          alias: No error
-    - conditions:
-      - condition: trigger
-        id:
-        - '12:00'
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: sensor.bert_operation_state
-            state:
-            - actionrequired
-          sequence:
-          - action: select.select_option
-            metadata: {}
-            data:
-              option: consumer_products_cleaning_robot_enum_type_cleaning_mode_vacuum_only
-            target:
-              entity_id:
-              - select.bert_cleaning_mode
-          - action: select.select_option
-            metadata: {}
-            data:
-              option: consumer_products_cleaning_robot_program_cleaning_clean_all
-            target:
-              entity_id:
-              - select.bert_active_programme
-          alias: Error
-        - conditions: []
-          sequence:
-          - action: select.select_option
-            metadata: {}
-            data:
-              option: consumer_products_cleaning_robot_enum_type_cleaning_mode_intelligent_mode
-            target:
-              entity_id:
-              - select.bert_cleaning_mode
-          - action: select.select_option
-            metadata: {}
-            data:
-              option: consumer_products_cleaning_robot_program_cleaning_clean_all
-            target:
-              entity_id:
-              - select.bert_active_programme
-          alias: No error
-  mode: single
 - id: '1764429546417'
   alias: Gameroom Motion
   description: ''
@@ -5322,8 +5167,6 @@
         target:
           entity_id:
           - light.gameroom_above_light
-          - light.gameroom_left_light
-          - light.gameroom_right_light
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -5345,8 +5188,6 @@
           target:
             entity_id:
             - light.gameroom_above_light
-            - light.gameroom_left_light
-            - light.gameroom_right_light
       alias: motion clear
   mode: restart
 - id: '1764712921094'
@@ -5604,8 +5445,6 @@
         - light.roof_terrace_light
         - light.dining_table_above_light
         - light.gameroom_above_light
-        - light.gameroom_left_light
-        - light.gameroom_right_light
         - light.office_light
         - light.kitchen
         - light.kitchen_cabinet
@@ -5707,84 +5546,6 @@
               channel: Car
               notification_icon: mdi:car
   mode: single
-- id: '1771663501285'
-  alias: Purge noisy sensor history
-  description: Keep short history for high-frequency sensors while preserving long-term
-    statistics
-  triggers:
-  - at: 03:30:00
-    trigger: time
-  conditions: []
-  actions:
-  - action: recorder.purge_entities
-    target:
-      entity_id:
-      - sensor.ac_power
-      - sensor.ac_voltage
-      - sensor.alex_pc_power
-      - sensor.alex_pc_voltage
-      - sensor.bedroom_media_power
-      - sensor.bedroom_media_voltage
-      - sensor.combination_oven_power
-      - sensor.combination_oven_voltage
-      - sensor.deni_pc_power
-      - sensor.deni_pc_voltage
-      - sensor.dishwasher_power
-      - sensor.dishwasher_voltage
-      - sensor.floor_heating_pump_0_power
-      - sensor.floor_heating_pump_0_voltage
-      - sensor.floor_heating_pump_1_power
-      - sensor.floor_heating_pump_1_voltage
-      - sensor.floor_heating_pump_2_power
-      - sensor.floor_heating_pump_2_voltage
-      - sensor.gameroom_media_power
-      - sensor.gameroom_media_voltage
-      - sensor.gym_freezer_power
-      - sensor.gym_freezer_voltage
-      - sensor.kitchen_media_fridge_freezer_power
-      - sensor.kitchen_media_fridge_freezer_voltage
-      - sensor.living_room_media_power
-      - sensor.living_room_media_voltage
-      - sensor.p1_meter_power
-      - sensor.p1_meter_power_phase_1
-      - sensor.p1_meter_power_phase_2
-      - sensor.p1_meter_power_phase_3
-      - sensor.p1_meter_voltage_phase_1
-      - sensor.p1_meter_voltage_phase_2
-      - sensor.p1_meter_voltage_phase_3
-      - sensor.quooker_power
-      - sensor.quooker_voltage
-      - sensor.rc16_cpu_temperature
-      - sensor.rc16_cpu_utilisation
-      - sensor.rc16_memory_utilisation
-      - sensor.sauna_power
-      - sensor.sauna_voltage
-      - sensor.shed_power
-      - sensor.shed_voltage
-      - sensor.solar_power
-      - sensor.solar_voltage
-      - sensor.steam_oven_power
-      - sensor.steam_oven_voltage
-      - sensor.system_monitor_processor_use
-      - sensor.ucg_rc16_cpu_utilization
-      - sensor.ucg_rc16_memory_utilization
-      - sensor.ucg_rc16_port_4_poe_power
-      - sensor.ucg_rc16_ucg_rc16_cpu_temperature
-      - sensor.ucg_rc16_ucg_rc16_local_temperature
-      - sensor.utility_closet_power
-      - sensor.utility_closet_voltage
-      - sensor.ventilation_power
-      - sensor.ventilation_voltage
-      - sensor.washing_dryer_power
-      - sensor.washing_dryer_voltage
-      - sensor.washing_machine_power
-      - sensor.washing_machine_voltage
-    data:
-      keep_days: 2
-  - action: recorder.purge
-    data:
-      repack: true
-  mode: single
 - id: '1773083136796'
   alias: Living Room Tablet Reload
   description: Reloads the Companion App on the living room tablet
@@ -5801,3 +5562,82 @@
         intent_class_name: io.homeassistant.companion.android.launch.LaunchActivity
     action: notify.mobile_app_living_room_tablet
   mode: single
+- id: '1774838850323'
+  alias: Gameroom Media
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.alex_tv_cast
+    from:
+    to:
+  - trigger: state
+    entity_id:
+    - media_player.deni_tv_cast
+    from:
+    to:
+  conditions: []
+  actions:
+  - alias: Alex TV
+    choose:
+    - alias: Playing
+      conditions:
+      - condition: state
+        entity_id: media_player.alex_tv_cast
+        state: playing
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          transition: 30
+          color_temp_kelvin: 3000
+          brightness_pct: 25
+        target:
+          entity_id: light.alex_tv_light
+    - alias: Not playing
+      conditions:
+      - condition: state
+        entity_id: media_player.alex_tv_cast
+        state:
+        - 'off'
+        - idle
+        - paused
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        data:
+          transition: 30
+        target:
+          entity_id: light.alex_tv_light
+  - alias: Deni TV
+    choose:
+    - alias: Playing
+      conditions:
+      - condition: state
+        entity_id: media_player.deni_tv_cast
+        state: playing
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          transition: 30
+          color_temp_kelvin: 3000
+          brightness_pct: 25
+        target:
+          entity_id: light.deni_tv_light
+    - alias: Not playing
+      conditions:
+      - condition: state
+        entity_id: media_player.deni_tv_cast
+        state:
+        - 'off'
+        - idle
+        - paused
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        data:
+          transition: 30
+        target:
+          entity_id: light.deni_tv_light
+  mode: restart
