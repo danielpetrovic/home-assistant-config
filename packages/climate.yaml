@@ -1,13 +1,5 @@
 sensor:
   - platform: statistics
-    name: "Outdoor Luminosity"
-    unique_id: outdoor_luminosity
-    entity_id: sensor.roof_terrace_sensor_illuminance
-    state_characteristic: mean
-    max_age:
-      minutes: 5
-    precision: 0
-  - platform: statistics
     name: "Outdoor Temperature Max"
     unique_id: outdoor_temperature_max
     entity_id: sensor.roof_terrace_sensor_apparent_temperature
@@ -301,29 +293,6 @@ template:
             {{ ((sunset + 86400 - sunrise) / 3600) | round(2) }}
           {% endif %}
         icon: mdi:sun-clock
-  - sensor:
-      - name: "Climate Luminosity"
-        unique_id: climate_luminosity
-        state: >
-          {% set lux_state = states('sensor.outdoor_luminosity') %}
-          {% if lux_state in ('unknown', 'unavailable') %}
-            {{ this.state }}
-          {% else %}
-            {% set lux = lux_state | int(0) %}
-            {% set last = this.state if this.state in ('dark', 'low', 'mid', 'high', 'peak') else 'dark' %}
-            {% if last == 'dark' %}
-              {% if lux >= 1200 %}low{% else %}dark{% endif %}
-            {% elif last == 'low' %}
-              {% if lux < 800 %}dark{% elif lux >= 6000 %}mid{% else %}low{% endif %}
-            {% elif last == 'mid' %}
-              {% if lux < 4000 %}low{% elif lux >= 30000 %}high{% else %}mid{% endif %}
-            {% elif last == 'high' %}
-              {% if lux < 25000 %}mid{% elif lux >= 55000 %}peak{% else %}high{% endif %}
-            {% else %}
-              {% if lux < 45000 %}high{% else %}peak{% endif %}
-            {% endif %}
-          {% endif %}
-        icon: mdi:white-balance-sunny
   - sensor:
       - name: "Climate Mode"
         unique_id: climate_mode
