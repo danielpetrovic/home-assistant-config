@@ -82,7 +82,7 @@ music_home:
       enqueue: replace_next
       media_id:
       - Dance
-      - Eurovision
+      - Europop
       - Hip Hop
       - Jazz
       - K-Pop
