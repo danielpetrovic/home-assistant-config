@@ -167,14 +167,17 @@ The installation is organized across 3 floors:
 - `sensor.outdoor_temperature_max` - 96-hour maximum outdoor temperature
 - `sensor.outdoor_temperature_min` - 168-hour (7-day) minimum outdoor temperature
 
+**WS90 Direct Sensors (via Z2M):**
+- `sensor.roof_terrace_sensor_heat_stress` - Heat stress percentage (0-100%)
+- `sensor.roof_terrace_sensor_humidex` - Humidex feels-like temperature (°C)
+- `sensor.roof_terrace_sensor_apparent_temperature` - Apparent temperature used for heating statistics
+
 **Climate Template Sensors:**
 - `sensor.cooling` - Count of AC units actively cooling
 - `sensor.heating` - Count of heating zones actively heating
 - `sensor.daylight_duration` - Hours between sunrise and sunset
-- `sensor.climate_heat_stress` - Calculated heat stress percentage (0-100%) based on temperature, solar radiation, humidity, wind, and rain
-- `sensor.climate_humidex` - Humidex calculation (feels-like temperature in °C)
-- `sensor.climate_luminosity` - Categorized outdoor brightness (dark/low/mid/high/peak)
-- `sensor.climate_mode` - State machine for seasonal climate mode (warm/mild/cold) with hysteresis
+- `sensor.outdoor_brightness` - Categorized outdoor brightness (dark/dim/overcast/bright/sunny) with hysteresis, based on sensor.outdoor_luminosity
+- `sensor.climate_mode` - State machine for seasonal climate mode (freezing/cold/mild/warm/hot) with hysteresis
 
 ### System Sensors
 
