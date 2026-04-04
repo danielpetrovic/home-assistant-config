@@ -1,5 +1,13 @@
 sensor:
   - platform: statistics
+    name: "Outdoor Luminosity"
+    unique_id: outdoor_luminosity
+    entity_id: sensor.roof_terrace_sensor_illuminance
+    state_characteristic: mean
+    max_age:
+      minutes: 5
+    precision: 0
+  - platform: statistics
     name: "Outdoor Temperature Max"
     unique_id: outdoor_temperature_max
     entity_id: sensor.roof_terrace_sensor_apparent_temperature
@@ -368,6 +376,29 @@ template:
             {% endif %}
           {% endif %}
         icon: mdi:sun-snowflake-variant
+  - sensor:
+      - name: "Outdoor Brightness"
+        unique_id: outdoor_brightness
+        state: >
+          {% set lux_state = states('sensor.outdoor_luminosity') %}
+          {% if lux_state in ('unknown', 'unavailable') %}
+            {{ this.state }}
+          {% else %}
+            {% set lux = lux_state | float(0) %}
+            {% set last = this.state if this.state in ('dark', 'dim', 'overcast', 'bright', 'sunny') else 'dark' %}
+            {% if last == 'dark' %}
+              {% if lux >= 1200 %}dim{% else %}dark{% endif %}
+            {% elif last == 'dim' %}
+              {% if lux < 800 %}dark{% elif lux >= 6000 %}overcast{% else %}dim{% endif %}
+            {% elif last == 'overcast' %}
+              {% if lux < 4000 %}dim{% elif lux >= 30000 %}bright{% else %}overcast{% endif %}
+            {% elif last == 'bright' %}
+              {% if lux < 25000 %}overcast{% elif lux >= 55000 %}sunny{% else %}bright{% endif %}
+            {% else %}
+              {% if lux < 45000 %}bright{% else %}sunny{% endif %}
+            {% endif %}
+          {% endif %}
+        icon: mdi:white-balance-sunny
   - weather:
       - name: "Roof Terrace"
         unique_id: roof_terrace
