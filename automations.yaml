@@ -4281,38 +4281,9 @@
   - at: '18:00:00'
     id: '18:00'
     platform: time
-  - platform: numeric_state
-    entity_id: sensor.roof_terrace_sensor_illuminance
-    id: lux_to_low
-    below: 6000
-    for:
-      minutes: 15
-  - platform: numeric_state
-    entity_id: sensor.roof_terrace_sensor_illuminance
-    id: lux_to_mid
-    above: 6000
-    below: 30000
-    for:
-      minutes: 15
-  - platform: numeric_state
-    entity_id: sensor.roof_terrace_sensor_illuminance
-    id: lux_to_high
-    above: 25000
-    below: 55000
-    for:
-      minutes: 15
-  - platform: numeric_state
-    entity_id: sensor.roof_terrace_sensor_illuminance
-    id: lux_to_peak
-    above: 45000
-    for:
-      minutes: 15
-  - platform: numeric_state
-    entity_id: sensor.roof_terrace_sensor_illuminance
-    id: lux_dark
-    below: 800
-    for:
-      minutes: 2
+  - platform: state
+    entity_id: sensor.outdoor_brightness
+    id: brightness
   conditions: []
   actions:
   - alias: Time-based logic
@@ -4507,9 +4478,9 @@
           option: Closed
         action: input_select.select_option
       - if:
-        - condition: numeric_state
-          entity_id: sensor.roof_terrace_sensor_illuminance
-          below: 800
+        - condition: state
+          entity_id: sensor.outdoor_brightness
+          state: dark
         then:
         - repeat:
             for_each:
@@ -4534,7 +4505,10 @@
   - alias: Dark after 18:00 - close remaining
     if:
     - condition: trigger
-      id: lux_dark
+      id: brightness
+    - condition: state
+      entity_id: sensor.outdoor_brightness
+      state: dark
     - condition: time
       after: '18:00:00'
     then:
@@ -4564,10 +4538,7 @@
       conditions:
       - condition: trigger
         id:
-        - lux_to_low
-        - lux_to_mid
-        - lux_to_high
-        - lux_to_peak
+        - brightness
         - 09:00
       - condition: state
         entity_id: sensor.climate_mode
@@ -4598,16 +4569,21 @@
             action: input_select.select_option
           - delay:
               seconds: 5
-    - alias: mild - low/mid
+    - alias: mild - dim/overcast
       conditions:
       - condition: trigger
         id:
-        - lux_to_low
-        - lux_to_mid
+        - brightness
         - 09:00
       - condition: state
         entity_id: sensor.climate_mode
         state: mild
+      - condition: state
+        entity_id: sensor.outdoor_brightness
+        state:
+        - dark
+        - dim
+        - overcast
       - condition: time
         after: 09:00:00
         before: '18:00:00'
@@ -4632,16 +4608,20 @@
             action: input_select.select_option
           - delay:
               seconds: 5
-    - alias: mild - high/peak
+    - alias: mild - bright/sunny
       conditions:
       - condition: trigger
         id:
-        - lux_to_high
-        - lux_to_peak
+        - brightness
         - 09:00
       - condition: state
         entity_id: sensor.climate_mode
         state: mild
+      - condition: state
+        entity_id: sensor.outdoor_brightness
+        state:
+        - bright
+        - sunny
       - condition: time
         after: 09:00:00
         before: '18:00:00'
@@ -4666,17 +4646,22 @@
             action: input_select.select_option
           - delay:
               seconds: 5
-    - alias: warm/hot - low
+    - alias: warm/hot - dark/dim
       conditions:
       - condition: trigger
         id:
-        - lux_to_low
+        - brightness
         - 09:00
       - condition: state
         entity_id: sensor.climate_mode
         state:
         - warm
         - hot
+      - condition: state
+        entity_id: sensor.outdoor_brightness
+        state:
+        - dark
+        - dim
       - condition: time
         after: 09:00:00
         before: '18:00:00'
@@ -4701,18 +4686,22 @@
             action: input_select.select_option
           - delay:
               seconds: 5
-    - alias: warm/hot - mid/high
+    - alias: warm/hot - overcast/bright
       conditions:
       - condition: trigger
         id:
-        - lux_to_mid
-        - lux_to_high
+        - brightness
         - 09:00
       - condition: state
         entity_id: sensor.climate_mode
         state:
         - warm
         - hot
+      - condition: state
+        entity_id: sensor.outdoor_brightness
+        state:
+        - overcast
+        - bright
       - condition: time
         after: 09:00:00
         before: '18:00:00'
@@ -4737,16 +4726,20 @@
             action: input_select.select_option
           - delay:
               seconds: 5
-    - alias: warm/hot - peak
+    - alias: warm/hot - sunny
       conditions:
       - condition: trigger
         id:
-        - lux_to_peak
+        - brightness
+        - 09:00
       - condition: state
         entity_id: sensor.climate_mode
         state:
         - warm
         - hot
+      - condition: state
+        entity_id: sensor.outdoor_brightness
+        state: sunny
       - condition: time
         after: 09:00:00
         before: '18:00:00'
@@ -4783,18 +4776,9 @@
   - at: 01:01:00
     id: 01:00
     platform: time
-  - platform: numeric_state
-    entity_id: sensor.roof_terrace_sensor_illuminance
-    id: luminosity_dark
-    below: 4000
-    for:
-      minutes: 2
-  - platform: numeric_state
-    entity_id: sensor.roof_terrace_sensor_illuminance
-    id: luminosity_bright
-    above: 6000
-    for:
-      minutes: 2
+  - platform: state
+    entity_id: sensor.outdoor_brightness
+    id: brightness
   conditions: []
   actions:
   - alias: Time
@@ -4847,10 +4831,15 @@
           transition: 60
   - alias: Luminosity
     choose:
-    - alias: dark or low
+    - alias: dark or dim
       conditions:
       - condition: trigger
-        id: luminosity_dark
+        id: brightness
+      - condition: state
+        entity_id: sensor.outdoor_brightness
+        state:
+        - dark
+        - dim
       - condition: time
         after: '12:00:00'
       sequence:
@@ -4876,7 +4865,13 @@
     - alias: not dark
       conditions:
       - condition: trigger
-        id: luminosity_bright
+        id: brightness
+      - condition: state
+        entity_id: sensor.outdoor_brightness
+        state:
+        - overcast
+        - bright
+        - sunny
       sequence:
       - action: light.turn_off
         target:
