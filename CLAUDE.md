@@ -165,7 +165,7 @@ The installation is organized across 3 floors:
 **Weather Statistics Sensors:**
 - `sensor.outdoor_luminosity` - 5-minute mean of illuminance (source: Ecowitt WS90 Powered by Shelly via Zigbee)
 - `sensor.outdoor_temperature_max` - 96-hour maximum outdoor temperature
-- `sensor.outdoor_temperature_min` - 168-hour (7-day) minimum outdoor temperature
+- `sensor.outdoor_temperature_min` - 120-hour (5-day) minimum outdoor temperature
 
 **WS90 Direct Sensors (via Z2M):**
 - `sensor.roof_terrace_sensor_heat_stress` - Heat stress percentage (0-100%)
