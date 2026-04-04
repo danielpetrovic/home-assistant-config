@@ -3,6 +3,9 @@ input_text:
     name: "Home Assistant Base URL"
     icon: mdi:link
 
+recorder:
+  purge_keep_days: 5
+
 template:
   - sensor:
       - name: "Lights"
