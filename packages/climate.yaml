@@ -21,7 +21,7 @@ sensor:
     entity_id: sensor.roof_terrace_sensor_apparent_temperature
     state_characteristic: value_min
     max_age:
-      hours: 168
+      hours: 120
     precision: 2
 
 climate:
