@@ -2867,6 +2867,10 @@
             },
             {
               "type": "entity",
+              "entity": "sensor.outdoor_brightness"
+            },
+            {
+              "type": "entity",
               "entity": "sensor.cooling",
               "tap_action": {
                 "action": "navigate",
