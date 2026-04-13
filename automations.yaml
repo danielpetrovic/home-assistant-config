@@ -628,7 +628,7 @@
           entity_id: cover.living_room_shade
       - action: cover.set_cover_position
         data:
-          position: 90
+          position: 50
         metadata: {}
         target:
           entity_id: cover.living_room_shutter
@@ -1495,6 +1495,9 @@
       - condition: trigger
         id:
         - motion detected
+      - condition: numeric_state
+        entity_id: sensor.alleyway_motion_illuminance
+        below: 500
       sequence:
       - choose:
         - conditions:
@@ -1774,6 +1777,9 @@
       - condition: trigger
         id:
         - motion detected
+      - condition: numeric_state
+        entity_id: sensor.hallway_motion_illuminance
+        below: 250
       sequence:
       - action: light.turn_on
         data:
@@ -2965,7 +2971,7 @@
           notification_icon: mdi:doorbell-video
           priority: high
           ttl: 0
-      enabled: true
+      enabled: false
     - alias: Living Room TV
       if:
       - condition: not
@@ -3015,6 +3021,9 @@
       - condition: trigger
         id:
         - motion detected
+      - condition: numeric_state
+        entity_id: sensor.bedroom_alex_motion_illuminance
+        below: 10
       sequence:
       - action: light.turn_on
         data:
@@ -3070,6 +3079,9 @@
       - condition: trigger
         id:
         - motion detected
+      - condition: numeric_state
+        entity_id: sensor.bedroom_deni_motion_illuminance
+        below: 10
       sequence:
       - action: light.turn_on
         data:
@@ -4569,7 +4581,7 @@
             action: input_select.select_option
           - delay:
               seconds: 5
-    - alias: mild - dim/overcast
+    - alias: mild
       conditions:
       - condition: trigger
         id:
@@ -4578,12 +4590,6 @@
       - condition: state
         entity_id: sensor.climate_mode
         state: mild
-      - condition: state
-        entity_id: sensor.outdoor_brightness
-        state:
-        - dark
-        - dim
-        - overcast
       - condition: time
         after: 09:00:00
         before: '18:00:00'
@@ -4600,44 +4606,6 @@
             - input_select.kitchen_covers
             - input_select.garden_covers
             preset: Winter
-          sequence:
-          - target:
-              entity_id: '{{ repeat.item.entities }}'
-            data:
-              option: '{{ repeat.item.preset }}'
-            action: input_select.select_option
-          - delay:
-              seconds: 5
-    - alias: mild - bright/sunny
-      conditions:
-      - condition: trigger
-        id:
-        - brightness
-        - 09:00
-      - condition: state
-        entity_id: sensor.climate_mode
-        state: mild
-      - condition: state
-        entity_id: sensor.outdoor_brightness
-        state:
-        - bright
-        - sunny
-      - condition: time
-        after: 09:00:00
-        before: '18:00:00'
-      sequence:
-      - repeat:
-          for_each:
-          - entities:
-            - input_select.gameroom_covers
-            - input_select.office_covers
-            - input_select.living_room_covers
-            preset: Summer
-          - entities:
-            - input_select.roof_terrace_covers
-            - input_select.kitchen_covers
-            - input_select.garden_covers
-            preset: Summer
           sequence:
           - target:
               entity_id: '{{ repeat.item.entities }}'
@@ -4997,6 +4965,11 @@
       hours: 0
       minutes: 1
       seconds: 0
+  - alias: too bright
+    entity_id: sensor.office_motion_illuminance
+    above: 400
+    id: too bright
+    trigger: numeric_state
   conditions:
   - condition: or
     conditions:
@@ -5019,6 +4992,9 @@
       - condition: trigger
         id:
         - motion detected
+      - condition: numeric_state
+        entity_id: sensor.office_motion_illuminance
+        below: 400
       sequence:
       - action: light.turn_on
         data:
@@ -5051,6 +5027,25 @@
             entity_id:
             - light.office_light
       alias: motion clear
+    - conditions:
+      - condition: trigger
+        id:
+        - too bright
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: sensor.office_desk_power
+          above: 30
+        then: []
+        else:
+        - action: light.turn_off
+          data:
+            transition: 30
+          metadata: {}
+          target:
+            entity_id:
+            - light.office_light
+      alias: too bright
   mode: restart
 - id: '1764268766514'
   alias: Kitchen Motion
@@ -5128,6 +5123,11 @@
       hours: 0
       minutes: 1
       seconds: 0
+  - alias: too bright
+    entity_id: sensor.gameroom_motion_illuminance
+    above: 200
+    id: too bright
+    trigger: numeric_state
   conditions:
   - condition: or
     conditions:
@@ -5150,6 +5150,9 @@
       - condition: trigger
         id:
         - motion detected
+      - condition: numeric_state
+        entity_id: sensor.gameroom_motion_illuminance
+        below: 200
       sequence:
       - action: light.turn_on
         data:
@@ -5184,6 +5187,27 @@
             entity_id:
             - light.gameroom_above_light
       alias: motion clear
+    - conditions:
+      - condition: trigger
+        id:
+        - too bright
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: sensor.gameroom_desk_power
+          below: 30
+        - condition: numeric_state
+          entity_id: sensor.gameroom_media_power
+          below: 100
+        then:
+        - action: light.turn_off
+          data:
+            transition: 30
+          metadata: {}
+          target:
+            entity_id:
+            - light.gameroom_above_light
+      alias: too bright
   mode: restart
 - id: '1764712921094'
   alias: Alarm
@@ -5294,6 +5318,9 @@
       - condition: trigger
         id:
         - motion detected
+      - condition: numeric_state
+        entity_id: sensor.gym_motion_illuminance
+        below: 300
       sequence:
       - action: light.turn_on
         data:
