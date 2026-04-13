@@ -209,7 +209,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.garden_covers
-        state: Winter
+        state: Exposed
       sequence:
       - action: cover.set_cover_position
         data:
@@ -265,7 +265,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.garden_covers
-        state: Summer
+        state: Shaded
       sequence:
       - action: cover.set_cover_position
         data:
@@ -399,7 +399,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.roof_terrace_covers
-        state: Winter
+        state: Exposed
       sequence:
       - action: cover.set_cover_position
         data:
@@ -440,7 +440,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.roof_terrace_covers
-        state: Summer
+        state: Shaded
       sequence:
       - action: cover.set_cover_position
         data:
@@ -543,7 +543,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.kitchen_covers
-        state: Winter
+        state: Exposed
       sequence:
       - action: cover.set_cover_position
         data:
@@ -560,7 +560,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.kitchen_covers
-        state: Summer
+        state: Shaded
       sequence:
       - action: cover.set_cover_position
         data:
@@ -618,7 +618,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.living_room_covers
-        state: Winter
+        state: Exposed
       sequence:
       - action: cover.set_cover_position
         data:
@@ -635,7 +635,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.living_room_covers
-        state: Summer
+        state: Shaded
       sequence:
       - action: cover.set_cover_position
         data:
@@ -711,7 +711,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.gameroom_covers
-        state: Winter
+        state: Exposed
       sequence:
       - action: cover.set_cover_position
         data:
@@ -736,7 +736,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.gameroom_covers
-        state: Summer
+        state: Shaded
       sequence:
       - action: cover.set_cover_position
         data:
@@ -817,7 +817,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.hallway_covers
-        state: Winter
+        state: Exposed
       sequence:
       - action: cover.set_cover_position
         data:
@@ -834,7 +834,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.hallway_covers
-        state: Summer
+        state: Shaded
       sequence:
       - action: cover.close_cover
         data: {}
@@ -974,7 +974,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.office_covers
-        state: Winter
+        state: Exposed
       sequence:
       - action: cover.set_cover_position
         data:
@@ -992,7 +992,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.office_covers
-        state: Summer
+        state: Shaded
       sequence:
       - action: cover.set_cover_position
         data:
@@ -4330,7 +4330,7 @@
                 - input_select.kitchen_covers
                 - input_select.living_room_covers
                 - input_select.roof_terrace_covers
-                preset: Winter
+                preset: Exposed
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entities }}'
@@ -4361,7 +4361,7 @@
                 - input_select.kitchen_covers
                 - input_select.living_room_covers
                 - input_select.roof_terrace_covers
-                preset: Winter
+                preset: Exposed
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entities }}'
@@ -4567,12 +4567,12 @@
             - input_select.gameroom_covers
             - input_select.office_covers
             - input_select.living_room_covers
-            preset: Winter
+            preset: Exposed
           - entities:
             - input_select.roof_terrace_covers
             - input_select.kitchen_covers
             - input_select.garden_covers
-            preset: Winter
+            preset: Exposed
           sequence:
           - target:
               entity_id: '{{ repeat.item.entities }}'
@@ -4600,12 +4600,12 @@
             - input_select.gameroom_covers
             - input_select.office_covers
             - input_select.living_room_covers
-            preset: Winter
+            preset: Exposed
           - entities:
             - input_select.roof_terrace_covers
             - input_select.kitchen_covers
             - input_select.garden_covers
-            preset: Winter
+            preset: Exposed
           sequence:
           - target:
               entity_id: '{{ repeat.item.entities }}'
@@ -4640,12 +4640,12 @@
             - input_select.gameroom_covers
             - input_select.office_covers
             - input_select.living_room_covers
-            preset: Summer
+            preset: Shaded
           - entities:
             - input_select.roof_terrace_covers
             - input_select.kitchen_covers
             - input_select.garden_covers
-            preset: Winter
+            preset: Exposed
           sequence:
           - target:
               entity_id: '{{ repeat.item.entities }}'
@@ -4680,12 +4680,12 @@
             - input_select.gameroom_covers
             - input_select.office_covers
             - input_select.living_room_covers
-            preset: Summer
+            preset: Shaded
           - entities:
             - input_select.roof_terrace_covers
             - input_select.kitchen_covers
             - input_select.garden_covers
-            preset: Summer
+            preset: Shaded
           sequence:
           - target:
               entity_id: '{{ repeat.item.entities }}'
@@ -4723,7 +4723,7 @@
             - input_select.roof_terrace_covers
             - input_select.kitchen_covers
             - input_select.garden_covers
-            preset: Summer
+            preset: Shaded
           sequence:
           - target:
               entity_id: '{{ repeat.item.entities }}'

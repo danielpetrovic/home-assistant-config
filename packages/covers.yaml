@@ -109,8 +109,8 @@ input_select:
     name: Roof Terrace Covers Preset
     options:
       - "Closed"
-      - "Summer"
-      - "Winter"
+      - "Shaded"
+      - "Exposed"
       - "Open"
     icon: mdi:window-shutter-auto
   gameroom_covers:
@@ -118,8 +118,8 @@ input_select:
     options:
       - "Closed"
       - "Privacy"
-      - "Summer"
-      - "Winter"
+      - "Shaded"
+      - "Exposed"
       - "Open"
     icon: mdi:window-shutter-auto
   hallway_covers:
@@ -127,8 +127,8 @@ input_select:
     options:
       - "Closed"
       - "Privacy"
-      - "Summer"
-      - "Winter"
+      - "Shaded"
+      - "Exposed"
       - "Open"
     icon: mdi:window-shutter-auto
   office_covers:
@@ -136,16 +136,16 @@ input_select:
     options:
       - "Closed"
       - "Privacy"
-      - "Summer"
-      - "Winter"
+      - "Shaded"
+      - "Exposed"
       - "Open"
     icon: mdi:window-shutter-auto
   kitchen_covers:
     name: Kitchen Covers Preset
     options:
       - "Closed"
-      - "Summer"
-      - "Winter"
+      - "Shaded"
+      - "Exposed"
       - "Open"
     icon: mdi:window-shutter-auto
   gym_covers:
@@ -176,8 +176,8 @@ input_select:
     name: Garden Covers Preset
     options:
       - "Closed"
-      - "Summer"
-      - "Winter"
+      - "Shaded"
+      - "Exposed"
       - "Open"
     icon: mdi:window-shutter-auto
   living_room_covers:
@@ -185,8 +185,8 @@ input_select:
     options:
       - "Closed"
       - "Privacy"
-      - "Summer"
-      - "Winter"
+      - "Shaded"
+      - "Exposed"
       - "Open"
     icon: mdi:window-shutter-auto
 
