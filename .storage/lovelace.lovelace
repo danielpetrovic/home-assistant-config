@@ -1400,6 +1400,10 @@
                         {
                           "entity": "light.living_room_below_light",
                           "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.living_room_tv_light",
+                          "secondary_info": "last-changed"
                         }
                       ]
                     },
@@ -1563,11 +1567,11 @@
                           "secondary_info": "last-changed"
                         },
                         {
-                          "entity": "light.gameroom_left_light",
+                          "entity": "light.alex_tv_light",
                           "secondary_info": "last-changed"
                         },
                         {
-                          "entity": "light.gameroom_right_light",
+                          "entity": "light.deni_tv_light",
                           "secondary_info": "last-changed"
                         }
                       ]
@@ -3664,7 +3668,7 @@
                 {
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
                   ],
                   "type": "tile",
@@ -3678,7 +3682,7 @@
                 {
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
                   ],
                   "type": "tile",
@@ -4785,7 +4789,7 @@
                 {
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
                   ],
                   "type": "tile",
@@ -4799,7 +4803,7 @@
                 {
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
                   ],
                   "type": "tile",
@@ -5384,32 +5388,32 @@
                   "name": "Preset"
                 },
                 {
-                  "features": [
-                    {
-                      "type": "cover-open-close"
-                    }
-                  ],
                   "type": "tile",
                   "entity": "cover.garden_shade",
                   "color": "green",
                   "show_entity_picture": false,
                   "vertical": false,
                   "name": "Shade",
-                  "features_position": "inline"
-                },
-                {
+                  "features_position": "inline",
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
-                  ],
+                  ]
+                },
+                {
                   "type": "tile",
                   "entity": "cover.garden_shutter",
                   "color": "dark-grey",
                   "show_entity_picture": false,
                   "vertical": false,
                   "name": "Shutter",
-                  "features_position": "inline"
+                  "features_position": "inline",
+                  "features": [
+                    {
+                      "type": "cover-position-favorite"
+                    }
+                  ]
                 }
               ]
             },
@@ -6199,7 +6203,7 @@
                 {
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
                   ],
                   "type": "tile",
@@ -6213,7 +6217,7 @@
                 {
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
                   ],
                   "type": "tile",
@@ -7466,28 +7470,28 @@
                   "name": "Preset"
                 },
                 {
-                  "features": [
-                    {
-                      "type": "cover-open-close"
-                    }
-                  ],
                   "type": "tile",
                   "entity": "cover.hallway_shade",
                   "features_position": "inline",
                   "vertical": false,
-                  "color": "blue"
-                },
-                {
+                  "color": "blue",
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
-                  ],
+                  ]
+                },
+                {
                   "type": "tile",
                   "features_position": "inline",
                   "vertical": false,
                   "entity": "cover.hallway_shutter",
-                  "color": "dark-grey"
+                  "color": "dark-grey",
+                  "features": [
+                    {
+                      "type": "cover-position-favorite"
+                    }
+                  ]
                 }
               ]
             },
@@ -8249,12 +8253,12 @@
                   "entity": "cover.office_shades",
                   "color": "blue",
                   "vertical": false,
+                  "features_position": "inline",
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
-                  ],
-                  "features_position": "inline"
+                  ]
                 },
                 {
                   "type": "tile",
@@ -8263,12 +8267,12 @@
                   "color": "dark-grey",
                   "show_entity_picture": false,
                   "vertical": false,
+                  "features_position": "inline",
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
-                  ],
-                  "features_position": "inline"
+                  ]
                 }
               ]
             },
@@ -8906,32 +8910,32 @@
                   "name": "Preset"
                 },
                 {
-                  "features": [
-                    {
-                      "type": "cover-open-close"
-                    }
-                  ],
                   "type": "tile",
                   "entity": "cover.gym_curtain",
                   "color": "red",
                   "show_entity_picture": false,
                   "vertical": false,
                   "name": "Shade",
-                  "features_position": "inline"
-                },
-                {
+                  "features_position": "inline",
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
-                  ],
+                  ]
+                },
+                {
                   "type": "tile",
                   "entity": "cover.gym_shutter",
                   "color": "dark-grey",
                   "show_entity_picture": false,
                   "vertical": false,
                   "name": "Shutter",
-                  "features_position": "inline"
+                  "features_position": "inline",
+                  "features": [
+                    {
+                      "type": "cover-position-favorite"
+                    }
+                  ]
                 },
                 {
                   "square": false,
@@ -9209,17 +9213,17 @@
                   "name": "Preset"
                 },
                 {
-                  "features": [
-                    {
-                      "type": "cover-open-close"
-                    }
-                  ],
                   "type": "tile",
                   "entity": "cover.bedroom_curtain",
                   "color": "deep-orange",
                   "name": "Shade",
                   "features_position": "inline",
-                  "vertical": false
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "cover-position-favorite"
+                    }
+                  ]
                 },
                 {
                   "type": "tile",
@@ -9227,38 +9231,38 @@
                   "name": "Left Shutter",
                   "color": "dark-grey",
                   "vertical": false,
+                  "features_position": "inline",
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
-                  ],
-                  "features_position": "inline"
+                  ]
                 },
                 {
-                  "features": [
-                    {
-                      "type": "cover-open-close"
-                    }
-                  ],
                   "type": "tile",
                   "entity": "cover.bedroom_middle_shutter",
                   "color": "dark-grey",
                   "name": "Middle Shutter",
                   "features_position": "inline",
-                  "vertical": false
-                },
-                {
+                  "vertical": false,
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
-                  ],
+                  ]
+                },
+                {
                   "type": "tile",
                   "entity": "cover.bedroom_right_shutter",
                   "color": "dark-grey",
                   "name": "Right Shutter",
                   "features_position": "inline",
-                  "vertical": false
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "cover-position-favorite"
+                    }
+                  ]
                 }
               ]
             },
@@ -10849,31 +10853,31 @@
                   "name": "Preset"
                 },
                 {
-                  "features": [
-                    {
-                      "type": "cover-open-close"
-                    }
-                  ],
                   "type": "tile",
                   "entity": "cover.roof_terrace_shade",
                   "color": "deep-purple",
                   "name": "Shade",
                   "features_position": "inline",
-                  "vertical": false
-                },
-                {
+                  "vertical": false,
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
-                  ],
+                  ]
+                },
+                {
                   "type": "tile",
                   "entity": "cover.roof_terrace_shutter",
                   "color": "dark-grey",
                   "show_entity_picture": false,
                   "vertical": false,
                   "name": "Shutter",
-                  "features_position": "inline"
+                  "features_position": "inline",
+                  "features": [
+                    {
+                      "type": "cover-position-favorite"
+                    }
+                  ]
                 }
               ]
             },
@@ -11578,6 +11582,380 @@
                       ]
                     }
                   ]
+                },
+                {
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "tile",
+                      "entity": "light.alex_tv_light",
+                      "icon": "",
+                      "state_content": [
+                        "brightness",
+                        "last_changed"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "light-brightness"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "square": true,
+                      "type": "grid",
+                      "columns": 5,
+                      "cards": [
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.alex_tv_light",
+                          "icon": "mdi:lightbulb-off-outline",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_000",
+                            "data": {
+                              "target_light": "light.alex_tv_light"
+                            }
+                          },
+                          "icon_height": "50px"
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.alex_tv_light",
+                          "icon": "mdi:lightbulb-on-10",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_025",
+                            "data": {
+                              "target_light": "light.alex_tv_light"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.alex_tv_light",
+                          "icon": "mdi:lightbulb-on-40",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_050",
+                            "data": {
+                              "target_light": "light.alex_tv_light"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "entity": "light.alex_tv_light",
+                          "icon": "mdi:lightbulb-on",
+                          "show_name": false,
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_100",
+                            "data": {
+                              "target_light": "light.alex_tv_light"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "entity": "light.alex_tv_light",
+                          "icon": "mdi:lightbulb-auto",
+                          "show_name": false,
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_adaptive",
+                            "data": {
+                              "target_light": "light.alex_tv_light"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "square": true,
+                      "type": "grid",
+                      "columns": 5,
+                      "cards": [
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "icon": "mdi:lightbulb",
+                          "color": "deep-orange",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "light.turn_on",
+                            "data": {
+                              "color_temp_kelvin": 2200
+                            },
+                            "target": {
+                              "entity_id": "light.alex_tv_light"
+                            }
+                          },
+                          "icon_height": "50px"
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "icon": "mdi:lightbulb",
+                          "color": "orange",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "light.turn_on",
+                            "data": {
+                              "color_temp_kelvin": 2700
+                            },
+                            "target": {
+                              "entity_id": "light.alex_tv_light"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "icon": "mdi:lightbulb",
+                          "color": "amber",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "light.turn_on",
+                            "data": {
+                              "color_temp_kelvin": 3500
+                            },
+                            "target": {
+                              "entity_id": "light.alex_tv_light"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "icon": "mdi:lightbulb",
+                          "color": "white",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "light.turn_on",
+                            "data": {
+                              "color_temp_kelvin": 4000
+                            },
+                            "target": {
+                              "entity_id": "light.alex_tv_light"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.alex_tv_light",
+                          "icon": "mdi:lightbulb-auto",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_adaptive_color",
+                            "data": {
+                              "target_light": "light.alex_tv_light"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "tile",
+                      "entity": "light.deni_tv_light",
+                      "icon": "",
+                      "state_content": [
+                        "brightness",
+                        "last_changed"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "light-brightness"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "square": true,
+                      "type": "grid",
+                      "columns": 5,
+                      "cards": [
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.deni_tv_light",
+                          "icon": "mdi:lightbulb-off-outline",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_000",
+                            "data": {
+                              "target_light": "light.deni_tv_light"
+                            }
+                          },
+                          "icon_height": "50px"
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.deni_tv_light",
+                          "icon": "mdi:lightbulb-on-10",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_025",
+                            "data": {
+                              "target_light": "light.deni_tv_light"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.deni_tv_light",
+                          "icon": "mdi:lightbulb-on-40",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_050",
+                            "data": {
+                              "target_light": "light.deni_tv_light"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "entity": "light.deni_tv_light",
+                          "icon": "mdi:lightbulb-on",
+                          "show_name": false,
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_100",
+                            "data": {
+                              "target_light": "light.deni_tv_light"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "entity": "light.deni_tv_light",
+                          "icon": "mdi:lightbulb-auto",
+                          "show_name": false,
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_adaptive",
+                            "data": {
+                              "target_light": "light.deni_tv_light"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "square": true,
+                      "type": "grid",
+                      "columns": 5,
+                      "cards": [
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "icon": "mdi:lightbulb",
+                          "color": "deep-orange",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "light.turn_on",
+                            "data": {
+                              "color_temp_kelvin": 2200
+                            },
+                            "target": {
+                              "entity_id": "light.deni_tv_light"
+                            }
+                          },
+                          "icon_height": "50px"
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "icon": "mdi:lightbulb",
+                          "color": "orange",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "light.turn_on",
+                            "data": {
+                              "color_temp_kelvin": 2700
+                            },
+                            "target": {
+                              "entity_id": "light.deni_tv_light"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "icon": "mdi:lightbulb",
+                          "color": "amber",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "light.turn_on",
+                            "data": {
+                              "color_temp_kelvin": 3500
+                            },
+                            "target": {
+                              "entity_id": "light.deni_tv_light"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "icon": "mdi:lightbulb",
+                          "color": "white",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "light.turn_on",
+                            "data": {
+                              "color_temp_kelvin": 4000
+                            },
+                            "target": {
+                              "entity_id": "light.deni_tv_light"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.deni_tv_light",
+                          "icon": "mdi:lightbulb-auto",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_adaptive_color",
+                            "data": {
+                              "target_light": "light.deni_tv_light"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             },
@@ -11606,17 +11984,17 @@
                   "name": "Preset"
                 },
                 {
-                  "features": [
-                    {
-                      "type": "cover-open-close"
-                    }
-                  ],
                   "type": "tile",
                   "entity": "cover.gameroom_left_1_shade",
                   "color": "deep-purple",
                   "name": "Left 1 Shade",
                   "features_position": "inline",
-                  "vertical": false
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "cover-position-favorite"
+                    }
+                  ]
                 },
                 {
                   "type": "tile",
@@ -11627,14 +12005,14 @@
                   "vertical": false,
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
                   ]
                 },
                 {
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
                   ],
                   "type": "tile",
@@ -11646,23 +12024,23 @@
                   "features_position": "inline"
                 },
                 {
-                  "features": [
-                    {
-                      "type": "cover-open-close"
-                    }
-                  ],
                   "type": "tile",
                   "entity": "cover.gameroom_left_2_shade",
                   "color": "deep-purple",
                   "show_entity_picture": false,
                   "vertical": false,
                   "name": "Left 2 Shade",
-                  "features_position": "inline"
+                  "features_position": "inline",
+                  "features": [
+                    {
+                      "type": "cover-position-favorite"
+                    }
+                  ]
                 },
                 {
                   "features": [
                     {
-                      "type": "cover-open-close"
+                      "type": "cover-position-favorite"
                     }
                   ],
                   "type": "tile",
@@ -11674,18 +12052,18 @@
                   "features_position": "inline"
                 },
                 {
-                  "features": [
-                    {
-                      "type": "cover-open-close"
-                    }
-                  ],
                   "type": "tile",
                   "entity": "cover.gameroom_right_shutter",
                   "color": "dark-grey",
                   "show_entity_picture": false,
                   "vertical": false,
                   "name": "Right Shutter",
-                  "features_position": "inline"
+                  "features_position": "inline",
+                  "features": [
+                    {
+                      "type": "cover-position-favorite"
+                    }
+                  ]
                 },
                 {
                   "square": false,
