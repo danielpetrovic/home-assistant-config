@@ -66,6 +66,92 @@ config/
 └── themes/                   # UI themes
 ```
 
+## 🪟 Window Coverings
+
+20 covers across 10 locations, controlled via `input_select` presets. Each room's automation triggers whenever the preset changes.
+
+### Preset Order
+`Closed → Privacy → Shaded → Exposed → Open` (not all rooms have all presets)
+
+- **Exposed** — lets sunlight/heat in (passive solar gain)
+- **Shaded** — blocks direct sun while keeping some light
+- **Privacy** — near-closed, maintains privacy
+- **Closed** — fully closed
+
+### Cover Positions by Room
+
+#### Floor 00
+
+| Room | Preset | Shade/Curtain | Shutter(s) |
+|------|--------|---------------|------------|
+| **Garden** | Open | 100% | 100% |
+| | Exposed | 50% | 90% |
+| | Shaded | 50% | 75% |
+| | Closed | 50% | 0% |
+| **Kitchen** | Open | 100% | 100% |
+| | Exposed | 50% | 90% |
+| | Shaded | 50% | 75% |
+| | Closed | 50% | 0% |
+| **Living Room** | Open | 100% | 100% |
+| | Exposed | 50% | 90% |
+| | Shaded | 50% | 50% |
+| | Privacy | 50% | 25% |
+| | Closed | 50% | 0% |
+| **Shed** | Open | — | Alleyway: 100% Garden: 100% |
+| | Alleyway | — | Alleyway: 100% Garden: 0% |
+| | Garden | — | Alleyway: 0% Garden: 100% |
+| | Closed | — | Alleyway: 0% Garden: 0% |
+
+#### Floor 01
+
+| Room | Preset | Shade/Curtain | Shutter(s) |
+|------|--------|---------------|------------|
+| **Bedroom** | Open | 100% | L/M/R: 100% |
+| | Shaded | 0% | L/M/R: 90% |
+| | Privacy | 0% | L/M/R: 25% |
+| | Closed | 0% | L/M/R: 0% |
+| **Gym** | Open | 100% | 100% |
+| | Shaded | 0% | 90% |
+| | Privacy | 0% | 25% |
+| | Closed | 0% | 0% |
+| **Hallway** | Open | 100% | 100% |
+| | Exposed | 50% | 90% |
+| | Shaded | 0% | 50% |
+| | Privacy | 0% | 25% |
+| | Closed | 0% | 0% |
+| **Office** | Open | 100% | 100% |
+| | Exposed | 50% | 90% |
+| | Shaded | 50% | 50% |
+| | Privacy | 0% | 25% |
+| | Closed | 0% | 0% |
+
+#### Floor 02
+
+| Room | Preset | Shade/Curtain | Shutter(s) |
+|------|--------|---------------|------------|
+| **Gameroom** | Open | 100% | L:100% R:100% |
+| | Exposed | 50% | L:50% R:90% |
+| | Shaded | 50% | L:25% R:50% |
+| | Privacy | 50% | L:25% R:25% |
+| | Closed | 0% | L:0% R:0% |
+| **Roof Terrace** | Open | 100% | 100% |
+| | Exposed | 50% | 90% |
+| | Shaded | 50% | 75% |
+| | Closed | 0% | 0% |
+
+### Climate-based Automation
+
+The `Covers` automation adjusts presets automatically based on `sensor.climate_mode` and `sensor.outdoor_brightness`:
+
+| Climate Mode | Time | Gameroom / Office / Living Room | Garden / Kitchen / Roof Terrace |
+|-------------|------|---------------------------------|---------------------------------|
+| freezing / cold | 09:00–18:00 | Exposed | Exposed |
+| mild | 09:00–14:00 | Exposed | Exposed |
+| mild | 14:00–18:00 | **Shaded** | Exposed |
+| warm / hot | 09:00–18:00 (dark/dim) | Shaded | Exposed |
+| warm / hot | 09:00–18:00 (overcast/bright) | Shaded | Shaded |
+| warm / hot | 09:00–18:00 (sunny) | Privacy | Privacy |
+
 ## 🎨 Custom Blueprints
 
 1. **Adaptive Lighting Scheduler** - Dynamic brightness/color temperature throughout the day

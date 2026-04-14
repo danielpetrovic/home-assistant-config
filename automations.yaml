@@ -285,7 +285,7 @@
           sequence:
           - action: cover.set_cover_position
             data:
-              position: 80
+              position: 75
             metadata: {}
             target:
               entity_id: cover.garden_shutter
@@ -313,7 +313,7 @@
             continue_on_timeout: true
           - action: cover.set_cover_position
             data:
-              position: 80
+              position: 75
             metadata: {}
             target:
               entity_id: cover.garden_shutter
@@ -457,7 +457,7 @@
           sequence:
           - action: cover.set_cover_position
             data:
-              position: 80
+              position: 75
             metadata: {}
             target:
               entity_id: cover.roof_terrace_shutter
@@ -474,7 +474,7 @@
             continue_on_timeout: true
           - action: cover.set_cover_position
             data:
-              position: 80
+              position: 75
             metadata: {}
             target:
               entity_id: cover.roof_terrace_shutter
@@ -570,7 +570,7 @@
           entity_id: cover.kitchen_shade
       - action: cover.set_cover_position
         data:
-          position: 80
+          position: 75
         metadata: {}
         target:
           entity_id: cover.kitchen_shutter
@@ -628,7 +628,7 @@
           entity_id: cover.living_room_shade
       - action: cover.set_cover_position
         data:
-          position: 50
+          position: 90
         metadata: {}
         target:
           entity_id: cover.living_room_shutter
@@ -645,7 +645,7 @@
           entity_id: cover.living_room_shade
       - action: cover.set_cover_position
         data:
-          position: 40
+          position: 50
         metadata: {}
         target:
           entity_id: cover.living_room_shutter
@@ -662,7 +662,7 @@
           entity_id: cover.living_room_shade
       - action: cover.set_cover_position
         data:
-          position: 20
+          position: 25
         metadata: {}
         target:
           entity_id: cover.living_room_shutter
@@ -721,7 +721,7 @@
           entity_id: cover.gameroom_shades
       - action: cover.set_cover_position
         data:
-          position: 60
+          position: 50
         metadata: {}
         target:
           entity_id:
@@ -746,14 +746,14 @@
           entity_id: cover.gameroom_shades
       - action: cover.set_cover_position
         data:
-          position: 30
+          position: 25
         metadata: {}
         target:
           entity_id:
           - cover.gameroom_left_shutter
       - action: cover.set_cover_position
         data:
-          position: 60
+          position: 50
         metadata: {}
         target:
           entity_id:
@@ -771,7 +771,7 @@
           entity_id: cover.gameroom_shades
       - action: cover.set_cover_position
         data:
-          position: 20
+          position: 25
         metadata: {}
         target:
           entity_id:
@@ -844,7 +844,7 @@
           - cover.hallway_shade
       - action: cover.set_cover_position
         data:
-          position: 60
+          position: 50
         metadata: {}
         target:
           entity_id: cover.hallway_shutter
@@ -861,7 +861,7 @@
           - cover.hallway_shade
       - action: cover.set_cover_position
         data:
-          position: 20
+          position: 25
         metadata: {}
         target:
           entity_id: cover.hallway_shutter
@@ -904,7 +904,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.gym_covers
-        state: Partial
+        state: Shaded
       sequence:
       - action: cover.close_cover
         data: {}
@@ -931,7 +931,7 @@
           - cover.gym_curtain
       - action: cover.set_cover_position
         data:
-          position: 20
+          position: 25
         metadata: {}
         target:
           entity_id: cover.gym_shutter
@@ -1002,7 +1002,7 @@
           entity_id: cover.office_shades
       - action: cover.set_cover_position
         data:
-          position: 60
+          position: 50
         metadata: {}
         target:
           entity_id:
@@ -1012,15 +1012,14 @@
         entity_id: input_select.office_covers
         state: Privacy
       sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
+      - action: cover.close_cover
+        data: {}
         metadata: {}
         target:
           entity_id: cover.office_shades
       - action: cover.set_cover_position
         data:
-          position: 20
+          position: 25
         metadata: {}
         target:
           entity_id:
@@ -1030,9 +1029,8 @@
         entity_id: input_select.office_covers
         state: Closed
       sequence:
-      - action: cover.set_cover_position
-        data:
-          position: 50
+      - action: cover.close_cover
+        data: {}
         metadata: {}
         target:
           entity_id: cover.office_shades
@@ -1234,7 +1232,7 @@
     - conditions:
       - condition: state
         entity_id: input_select.bedroom_covers
-        state: Partial
+        state: Shaded
       sequence:
       - action: cover.close_cover
         metadata: {}
@@ -1262,7 +1260,7 @@
         data: {}
       - action: cover.set_cover_position
         data:
-          position: 20
+          position: 25
         metadata: {}
         target:
           entity_id:
@@ -4290,6 +4288,9 @@
   - at: '12:00:00'
     id: '12:00'
     platform: time
+  - at: '14:00:00'
+    id: '14:00'
+    platform: time
   - at: '18:00:00'
     id: '18:00'
     platform: time
@@ -4389,7 +4390,7 @@
               - input_select.bedroom_covers
               - input_select.gym_covers
             data:
-              option: Partial
+              option: Shaded
             action: input_select.select_option
         - alias: 'No'
           conditions:
@@ -4461,7 +4462,7 @@
               - input_select.bedroom_covers
               - input_select.gym_covers
             data:
-              option: Partial
+              option: Shaded
             action: input_select.select_option
     - alias: '12:00'
       conditions:
@@ -4581,7 +4582,7 @@
             action: input_select.select_option
           - delay:
               seconds: 5
-    - alias: mild
+    - alias: mild - morning
       conditions:
       - condition: trigger
         id:
@@ -4592,7 +4593,7 @@
         state: mild
       - condition: time
         after: 09:00:00
-        before: '18:00:00'
+        before: '14:00:00'
       sequence:
       - repeat:
           for_each:
@@ -4601,6 +4602,39 @@
             - input_select.office_covers
             - input_select.living_room_covers
             preset: Exposed
+          - entities:
+            - input_select.roof_terrace_covers
+            - input_select.kitchen_covers
+            - input_select.garden_covers
+            preset: Exposed
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item.entities }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+    - alias: mild - afternoon
+      conditions:
+      - condition: trigger
+        id:
+        - brightness
+        - 14:00
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: mild
+      - condition: time
+        after: '14:00:00'
+        before: '18:00:00'
+      sequence:
+      - repeat:
+          for_each:
+          - entities:
+            - input_select.gameroom_covers
+            - input_select.office_covers
+            - input_select.living_room_covers
+            preset: Shaded
           - entities:
             - input_select.roof_terrace_covers
             - input_select.kitchen_covers

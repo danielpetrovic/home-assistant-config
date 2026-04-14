@@ -153,7 +153,7 @@ input_select:
     options:
       - "Closed"
       - "Privacy"
-      - "Partial"
+      - "Shaded"
       - "Open"
     icon: mdi:window-shutter-auto
   shed_covers:
@@ -169,7 +169,7 @@ input_select:
     options:
       - "Closed"
       - "Privacy"
-      - "Partial"
+      - "Shaded"
       - "Open"
     icon: mdi:window-shutter-auto
   garden_covers:
