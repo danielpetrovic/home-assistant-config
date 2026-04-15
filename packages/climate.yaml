@@ -10,7 +10,7 @@ sensor:
   - platform: statistics
     name: "Outdoor Temperature Max"
     unique_id: outdoor_temperature_max
-    entity_id: sensor.roof_terrace_sensor_apparent_temperature
+    entity_id: sensor.roof_terrace_sensor_temperature
     state_characteristic: value_max
     max_age:
       hours: 96
@@ -18,7 +18,7 @@ sensor:
   - platform: statistics
     name: "Outdoor Temperature Min"
     unique_id: outdoor_temperature_min
-    entity_id: sensor.roof_terrace_sensor_apparent_temperature
+    entity_id: sensor.roof_terrace_sensor_temperature
     state_characteristic: value_min
     max_age:
       hours: 120
