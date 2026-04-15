@@ -86,16 +86,16 @@ config/
 |------|--------|---------------|------------|
 | **Garden** | Open | 100% | 100% |
 | | Exposed | 50% | 90% |
-| | Shaded | 50% | 75% |
+| | Shaded | 50% | 80% |
 | | Closed | 50% | 0% |
 | **Kitchen** | Open | 100% | 100% |
 | | Exposed | 50% | 90% |
-| | Shaded | 50% | 75% |
+| | Shaded | 50% | 80% |
 | | Closed | 50% | 0% |
 | **Living Room** | Open | 100% | 100% |
 | | Exposed | 50% | 90% |
 | | Shaded | 50% | 50% |
-| | Privacy | 50% | 25% |
+| | Privacy | 50% | 20% |
 | | Closed | 50% | 0% |
 | **Shed** | Open | — | Alleyway: 100% Garden: 100% |
 | | Alleyway | — | Alleyway: 100% Garden: 0% |
@@ -108,21 +108,21 @@ config/
 |------|--------|---------------|------------|
 | **Bedroom** | Open | 100% | L/M/R: 100% |
 | | Shaded | 0% | L/M/R: 90% |
-| | Privacy | 0% | L/M/R: 25% |
+| | Privacy | 0% | L/M/R: 20% |
 | | Closed | 0% | L/M/R: 0% |
 | **Gym** | Open | 100% | 100% |
 | | Shaded | 0% | 90% |
-| | Privacy | 0% | 25% |
+| | Privacy | 0% | 20% |
 | | Closed | 0% | 0% |
 | **Hallway** | Open | 100% | 100% |
 | | Exposed | 50% | 90% |
 | | Shaded | 0% | 50% |
-| | Privacy | 0% | 25% |
+| | Privacy | 0% | 20% |
 | | Closed | 0% | 0% |
 | **Office** | Open | 100% | 100% |
 | | Exposed | 50% | 90% |
 | | Shaded | 50% | 50% |
-| | Privacy | 0% | 25% |
+| | Privacy | 0% | 20% |
 | | Closed | 0% | 0% |
 
 #### Floor 02
@@ -132,11 +132,11 @@ config/
 | **Gameroom** | Open | 100% | L:100% R:100% |
 | | Exposed | 50% | L:50% R:90% |
 | | Shaded | 50% | L:25% R:50% |
-| | Privacy | 50% | L:25% R:25% |
+| | Privacy | 50% | L:20% R:20% |
 | | Closed | 0% | L:0% R:0% |
 | **Roof Terrace** | Open | 100% | 100% |
 | | Exposed | 50% | 90% |
-| | Shaded | 50% | 75% |
+| | Shaded | 50% | 80% |
 | | Closed | 0% | 0% |
 
 ### Climate-based Automation

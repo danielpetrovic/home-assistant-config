@@ -56,6 +56,7 @@
   - trigger: time
     at: 07:00:00
     id: 07:00
+    enabled: false
   conditions: []
   actions:
   - choose:
@@ -285,7 +286,7 @@
           sequence:
           - action: cover.set_cover_position
             data:
-              position: 75
+              position: 80
             metadata: {}
             target:
               entity_id: cover.garden_shutter
@@ -313,7 +314,7 @@
             continue_on_timeout: true
           - action: cover.set_cover_position
             data:
-              position: 75
+              position: 80
             metadata: {}
             target:
               entity_id: cover.garden_shutter
@@ -457,7 +458,7 @@
           sequence:
           - action: cover.set_cover_position
             data:
-              position: 75
+              position: 80
             metadata: {}
             target:
               entity_id: cover.roof_terrace_shutter
@@ -474,7 +475,7 @@
             continue_on_timeout: true
           - action: cover.set_cover_position
             data:
-              position: 75
+              position: 80
             metadata: {}
             target:
               entity_id: cover.roof_terrace_shutter
@@ -662,7 +663,7 @@
           entity_id: cover.living_room_shade
       - action: cover.set_cover_position
         data:
-          position: 25
+          position: 20
         metadata: {}
         target:
           entity_id: cover.living_room_shutter
@@ -771,7 +772,7 @@
           entity_id: cover.gameroom_shades
       - action: cover.set_cover_position
         data:
-          position: 25
+          position: 20
         metadata: {}
         target:
           entity_id:
@@ -861,7 +862,7 @@
           - cover.hallway_shade
       - action: cover.set_cover_position
         data:
-          position: 25
+          position: 20
         metadata: {}
         target:
           entity_id: cover.hallway_shutter
@@ -931,7 +932,7 @@
           - cover.gym_curtain
       - action: cover.set_cover_position
         data:
-          position: 25
+          position: 20
         metadata: {}
         target:
           entity_id: cover.gym_shutter
@@ -1019,7 +1020,7 @@
           entity_id: cover.office_shades
       - action: cover.set_cover_position
         data:
-          position: 25
+          position: 20
         metadata: {}
         target:
           entity_id:
@@ -1260,7 +1261,7 @@
         data: {}
       - action: cover.set_cover_position
         data:
-          position: 25
+          position: 20
         metadata: {}
         target:
           entity_id:
@@ -4620,7 +4621,7 @@
       - condition: trigger
         id:
         - brightness
-        - 14:00
+        - 840
       - condition: state
         entity_id: sensor.climate_mode
         state: mild
