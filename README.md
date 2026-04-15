@@ -143,14 +143,14 @@ config/
 
 The `Covers` automation adjusts presets automatically based on `sensor.climate_mode` and `sensor.outdoor_brightness`:
 
-| Climate Mode | Time | Gameroom / Office / Living Room | Garden / Kitchen / Roof Terrace |
-|-------------|------|---------------------------------|---------------------------------|
-| freezing / cold | 09:00–18:00 | Exposed | Exposed |
-| mild | 09:00–14:00 | Exposed | Exposed |
-| mild | 14:00–18:00 | **Shaded** | Exposed |
-| warm / hot | 09:00–18:00 (dark/dim) | Shaded | Exposed |
-| warm / hot | 09:00–18:00 (overcast/bright) | Shaded | Shaded |
-| warm / hot | 09:00–18:00 (sunny) | Privacy | Privacy |
+| Condition | Gameroom / Office / Living Room | Garden / Kitchen / Roof Terrace |
+|-----------|--------------------------------|---------------------------------|
+| warm/hot + sunny | Privacy | Shaded |
+| warm/hot + overcast/bright | Shaded | Shaded |
+| warm/hot + dark/dim | Shaded | Exposed |
+| freezing/cold/mild + daylight ≥ 12h + bright/sunny | **Shaded** | Exposed |
+| freezing/cold/mild + dark/dim/overcast | Exposed | Exposed |
+| freezing/cold/mild + daylight < 12h (winter) | Exposed | Exposed |
 
 ## 🎨 Custom Blueprints
 

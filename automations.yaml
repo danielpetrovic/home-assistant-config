@@ -4289,9 +4289,6 @@
   - at: '12:00:00'
     id: '12:00'
     platform: time
-  - at: '14:00:00'
-    id: '14:00'
-    platform: time
   - at: '18:00:00'
     id: '18:00'
     platform: time
@@ -4492,6 +4489,17 @@
           option: Closed
         action: input_select.select_option
       - if:
+        - condition: numeric_state
+          entity_id: sensor.daylight_duration
+          above: 12
+        then:
+        - target:
+            entity_id:
+            - input_select.living_room_covers
+          data:
+            option: Privacy
+          action: input_select.select_option
+      - if:
         - condition: state
           entity_id: sensor.outdoor_brightness
           state: dark
@@ -4548,7 +4556,7 @@
             seconds: 5
   - alias: Climate-based logic during day
     choose:
-    - alias: cold/freezing
+    - alias: spring/summer - bright/sunny
       conditions:
       - condition: trigger
         id:
@@ -4557,76 +4565,19 @@
       - condition: state
         entity_id: sensor.climate_mode
         state:
-        - cold
         - freezing
+        - cold
+        - mild
+      - condition: numeric_state
+        entity_id: sensor.daylight_duration
+        above: 12
+      - condition: state
+        entity_id: sensor.outdoor_brightness
+        state:
+        - bright
+        - sunny
       - condition: time
         after: 09:00:00
-        before: '18:00:00'
-      sequence:
-      - repeat:
-          for_each:
-          - entities:
-            - input_select.gameroom_covers
-            - input_select.office_covers
-            - input_select.living_room_covers
-            preset: Exposed
-          - entities:
-            - input_select.roof_terrace_covers
-            - input_select.kitchen_covers
-            - input_select.garden_covers
-            preset: Exposed
-          sequence:
-          - target:
-              entity_id: '{{ repeat.item.entities }}'
-            data:
-              option: '{{ repeat.item.preset }}'
-            action: input_select.select_option
-          - delay:
-              seconds: 5
-    - alias: mild - morning
-      conditions:
-      - condition: trigger
-        id:
-        - brightness
-        - 09:00
-      - condition: state
-        entity_id: sensor.climate_mode
-        state: mild
-      - condition: time
-        after: 09:00:00
-        before: '14:00:00'
-      sequence:
-      - repeat:
-          for_each:
-          - entities:
-            - input_select.gameroom_covers
-            - input_select.office_covers
-            - input_select.living_room_covers
-            preset: Exposed
-          - entities:
-            - input_select.roof_terrace_covers
-            - input_select.kitchen_covers
-            - input_select.garden_covers
-            preset: Exposed
-          sequence:
-          - target:
-              entity_id: '{{ repeat.item.entities }}'
-            data:
-              option: '{{ repeat.item.preset }}'
-            action: input_select.select_option
-          - delay:
-              seconds: 5
-    - alias: mild - afternoon
-      conditions:
-      - condition: trigger
-        id:
-        - brightness
-        - 840
-      - condition: state
-        entity_id: sensor.climate_mode
-        state: mild
-      - condition: time
-        after: '14:00:00'
         before: '18:00:00'
       sequence:
       - repeat:
@@ -4636,6 +4587,87 @@
             - input_select.office_covers
             - input_select.living_room_covers
             preset: Shaded
+          - entities:
+            - input_select.roof_terrace_covers
+            - input_select.kitchen_covers
+            - input_select.garden_covers
+            preset: Exposed
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item.entities }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+    - alias: spring/summer - dark/dim/overcast
+      conditions:
+      - condition: trigger
+        id:
+        - brightness
+        - 09:00
+      - condition: state
+        entity_id: sensor.climate_mode
+        state:
+        - freezing
+        - cold
+        - mild
+      - condition: state
+        entity_id: sensor.outdoor_brightness
+        state:
+        - dark
+        - dim
+        - overcast
+      - condition: time
+        after: 09:00:00
+        before: '18:00:00'
+      sequence:
+      - repeat:
+          for_each:
+          - entities:
+            - input_select.gameroom_covers
+            - input_select.office_covers
+            - input_select.living_room_covers
+            preset: Exposed
+          - entities:
+            - input_select.roof_terrace_covers
+            - input_select.kitchen_covers
+            - input_select.garden_covers
+            preset: Exposed
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item.entities }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+    - alias: winter - short days
+      conditions:
+      - condition: trigger
+        id:
+        - brightness
+        - 09:00
+      - condition: state
+        entity_id: sensor.climate_mode
+        state:
+        - freezing
+        - cold
+        - mild
+      - condition: numeric_state
+        entity_id: sensor.daylight_duration
+        below: 12
+      - condition: time
+        after: 09:00:00
+        before: '18:00:00'
+      sequence:
+      - repeat:
+          for_each:
+          - entities:
+            - input_select.gameroom_covers
+            - input_select.office_covers
+            - input_select.living_room_covers
+            preset: Exposed
           - entities:
             - input_select.roof_terrace_covers
             - input_select.kitchen_covers
