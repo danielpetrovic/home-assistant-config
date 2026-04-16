@@ -391,11 +391,11 @@ template:
             {% elif last == 'dim' %}
               {% if lux < 800 %}dark{% elif lux >= 6000 %}overcast{% else %}dim{% endif %}
             {% elif last == 'overcast' %}
-              {% if lux < 4000 %}dim{% elif lux >= 30000 %}bright{% else %}overcast{% endif %}
+              {% if lux < 4000 %}dim{% elif lux >= 40000 %}bright{% else %}overcast{% endif %}
             {% elif last == 'bright' %}
-              {% if lux < 25000 %}overcast{% elif lux >= 55000 %}sunny{% else %}bright{% endif %}
+              {% if lux < 20000 %}overcast{% elif lux >= 65000 %}sunny{% else %}bright{% endif %}
             {% else %}
-              {% if lux < 45000 %}bright{% else %}sunny{% endif %}
+              {% if lux < 50000 %}bright{% else %}sunny{% endif %}
             {% endif %}
           {% endif %}
         icon: mdi:white-balance-sunny
