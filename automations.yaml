@@ -5644,6 +5644,11 @@
   - trigger: time_pattern
     hours: '*'
   actions:
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
   - data:
       message: command_activity
       data:
