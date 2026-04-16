@@ -5296,7 +5296,7 @@
       alarm_presence_sensor: binary_sensor.presence
       alarm_auto_arm_away: true
       alarm_notifications_target:
-      - 1b49bd1284b5afb6e9f5f081024a600c
+      - efb897be529e7cc4c74a2051355afcec
       - ed18014bbde1fefe8254e55a058ec7b7
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
