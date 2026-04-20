@@ -81,11 +81,11 @@ music_home:
       media_type: playlist
       enqueue: replace_next
       media_id:
+      - Asian
       - Dance
       - Europop
       - Hip Hop
       - Jazz
-      - K-Pop
       - Metal
       - Nederpop
       - Pop
