@@ -1,3 +1,6 @@
+shell_command:
+  dump_ma_logs: 'curl -s -H "Authorization: Bearer $SUPERVISOR_TOKEN" http://supervisor/addons/d5369777_music_assistant/logs | tail -120000 > /share/ma_logs.txt'
+
 input_text:
   base_url:
     name: "Home Assistant Base URL"
