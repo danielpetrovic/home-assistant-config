@@ -5642,12 +5642,12 @@
   - event: start
     trigger: homeassistant
   - trigger: time_pattern
-    hours: '*'
+    hours: /6
   actions:
   - delay:
       hours: 0
       minutes: 0
-      seconds: 10
+      seconds: 5
       milliseconds: 0
   - data:
       message: command_activity
@@ -5735,3 +5735,23 @@
         target:
           entity_id: light.deni_tv_light
   mode: restart
+- id: '1776680386659'
+  alias: System - Restart VS Code Server
+  description: Nightly restart of VS Code Server to reclaim leaked memory. Runs at
+    04:00 when not in use.
+  triggers:
+  - platform: time
+    at: 04:00:00
+  actions:
+  - action: hassio.addon_restart
+    data:
+      addon: a0d7b954_vscode
+  mode: single
+- id: '1776879197144'
+  alias: System - Dump Music Assistant Logs
+  triggers:
+  - platform: time_pattern
+    minutes: /5
+  actions:
+  - action: shell_command.dump_ma_logs
+  mode: single
