@@ -376,16 +376,26 @@ template:
             {% endif %}
           {% endif %}
         icon: mdi:sun-snowflake-variant
-  - sensor:
+  - triggers:
+      - trigger: state
+        entity_id: sensor.outdoor_luminosity
+      - trigger: homeassistant
+        event: start
+    sensor:
       - name: "Outdoor Brightness"
         unique_id: outdoor_brightness
         state: >
-          {% set lux_state = states('sensor.outdoor_luminosity') %}
+          {% if trigger.platform == 'state' %}
+            {% set lux_state = trigger.to_state.state %}
+          {% else %}
+            {% set lux_state = states('sensor.outdoor_luminosity') %}
+          {% endif %}
           {% if lux_state in ('unknown', 'unavailable') %}
-            {{ this.state }}
+            {{ states('sensor.outdoor_brightness') }}
           {% else %}
             {% set lux = lux_state | float(0) %}
-            {% set last = this.state if this.state in ('dark', 'dim', 'overcast', 'bright', 'sunny') else 'dark' %}
+            {% set last = states('sensor.outdoor_brightness') %}
+            {% set last = last if last in ('dark', 'dim', 'overcast', 'bright', 'sunny') else 'dark' %}
             {% if last == 'dark' %}
               {% if lux >= 1200 %}dim{% else %}dark{% endif %}
             {% elif last == 'dim' %}
