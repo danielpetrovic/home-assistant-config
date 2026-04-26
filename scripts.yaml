@@ -12,7 +12,18 @@ music_away:
       - media_player.gym
       - media_player.bedroom
       - media_player.living_room
-      - media_player.group
+  - action: media_player.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - media_player.bathroom_kef
+      - media_player.gameroom_kef
+      - media_player.office_kef
+      - media_player.kitchen_kef
+      - media_player.gym_kef
+      - media_player.bedroom_kef
+      - media_player.living_room_kef
   alias: Music - Away
   description: ''
   icon: mdi:music-note-off-outline
