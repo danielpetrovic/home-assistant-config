@@ -258,7 +258,7 @@ The installation is organized across 3 floors:
 - Schedule integration with auto-adjust
 - Requires HA 2024.10.0+
 
-### 3. Alarm System with Keypad (3,704 lines)
+### 3. Alarm System with Keypad (4,265 lines)
 - Author: danielpetrovic
 - Multi-keypad: Z2M, ZHA, Dashboard
 - Multi-user PIN + RFID support

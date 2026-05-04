@@ -4252,21 +4252,65 @@
               entity_id: climate.bathroom_heating
   mode: restart
 - id: '1759521293992'
-  alias: Geofence - Notification Extended
+  alias: Geofence - Zone Notifications
   description: ''
-  use_blueprint:
-    path: panhans/zone_notification_extended.yaml
-    input:
-      persons:
-      - person.alex
-      - person.deni
-      title_arriving: Home Assistant
-      message_arriving: '{{ person }} arrives at {{ zone }}.'
-      title_leaving: Home Assistant
-      message_leaving: '{{ person }} leaves {{ zone }}.'
-      notify_group: notify
-      channel: Geofence
-      group: Geofence
+  mode: parallel
+  variables:
+    notify_services:
+    - notify.mobile_app_alex_phone
+    - notify.mobile_app_deni_phone
+  triggers:
+  - platform: state
+    entity_id:
+    - person.alex
+    - person.deni
+  conditions:
+  - condition: template
+    value_template: "{{ trigger.to_state.state != trigger.from_state.state and\n   (trigger.to_state.state
+      != 'not_home' or trigger.from_state.state != 'not_home') }}"
+  actions:
+  - variables:
+      person: '{{ state_attr(trigger.entity_id, "friendly_name") }}'
+      zone_from: "{{ iif(trigger.from_state.state | lower == 'home',\n     state_attr('zone.home',
+        'friendly_name'),\n     trigger.from_state.state) }}"
+      zone_to: "{{ iif(trigger.to_state.state | lower == 'home',\n     state_attr('zone.home',
+        'friendly_name'),\n     trigger.to_state.state) }}"
+  - if:
+    - condition: template
+      value_template: '{{ trigger.from_state.state != "not_home" }}'
+    then:
+    - variables:
+        zone: '{{ zone_from }}'
+    - repeat:
+        for_each: '{{ notify_services }}'
+        sequence:
+        - action: '{{ repeat.item }}'
+          data:
+            title: Home Assistant
+            message: '{{ person }} leaves {{ zone }}.'
+            data:
+              ttl: 0
+              priority: high
+              channel: Geofence
+              group: Geofence
+  - if:
+    - condition: template
+      value_template: '{{ trigger.to_state.state != "not_home" }}'
+    then:
+    - variables:
+        zone: '{{ zone_to }}'
+    - repeat:
+        for_each: '{{ notify_services }}'
+        sequence:
+        - action: '{{ repeat.item }}'
+          data:
+            title: Home Assistant
+            message: '{{ person }} arrives at {{ zone }}.'
+            data:
+              ttl: 0
+              priority: high
+              channel: Geofence
+              group: Geofence
 - id: '1761738156612'
   alias: Covers
   description: All logic for window coverings (time + climate)
@@ -5244,7 +5288,7 @@
           below: 30
         - condition: numeric_state
           entity_id: sensor.gameroom_media_power
-          below: 100
+          below: 50
         then:
         - action: light.turn_off
           data:
@@ -5265,7 +5309,7 @@
           below: 30
         - condition: numeric_state
           entity_id: sensor.gameroom_media_power
-          below: 100
+          below: 50
         then:
         - action: light.turn_off
           data:
@@ -5357,6 +5401,8 @@
       alarm_camera_home: camera.entrance
       alarm_scripts_fire:
       - script.lights_breathe_orange
+      schedule_mode: workday
+      alarm_workday_sensor: binary_sensor.workday_sensor
 - id: '1765450835637'
   alias: Gym Motion
   description: ''
@@ -5634,27 +5680,6 @@
             data:
               channel: Car
               notification_icon: mdi:car
-  mode: single
-- id: '1773083136796'
-  alias: Living Room Tablet Reload
-  description: Reloads the Companion App on the living room tablet
-  triggers:
-  - event: start
-    trigger: homeassistant
-  - trigger: time_pattern
-    hours: /6
-  actions:
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 5
-      milliseconds: 0
-  - data:
-      message: command_activity
-      data:
-        intent_package_name: io.homeassistant.companion.android
-        intent_class_name: io.homeassistant.companion.android.launch.LaunchActivity
-    action: notify.mobile_app_living_room_tablet
   mode: single
 - id: '1774838850323'
   alias: Gameroom Media
