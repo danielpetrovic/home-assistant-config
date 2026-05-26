@@ -30,4 +30,4 @@ home-assistant_v2.db-shm
 home-assistant_v2.db-wal
 home-assistant.log.fault
 secrets.yaml
-zigbee.*
+/zha/zigbee.db*
