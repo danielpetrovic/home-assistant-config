@@ -8689,13 +8689,13 @@
                         "volume_level"
                       ],
                       "vertical": false,
+                      "features_position": "inline",
                       "features": [
                         {
                           "type": "media-player-volume-buttons",
                           "step": 5
                         }
-                      ],
-                      "features_position": "inline"
+                      ]
                     },
                     {
                       "type": "tile",
@@ -9153,13 +9153,13 @@
                         "volume_level"
                       ],
                       "vertical": false,
+                      "features_position": "inline",
                       "features": [
                         {
                           "type": "media-player-volume-buttons",
                           "step": 5
                         }
-                      ],
-                      "features_position": "inline"
+                      ]
                     },
                     {
                       "type": "tile",
@@ -10427,13 +10427,13 @@
                         "volume_level"
                       ],
                       "vertical": false,
+                      "features_position": "inline",
                       "features": [
                         {
                           "type": "media-player-volume-buttons",
                           "step": 5
                         }
-                      ],
-                      "features_position": "inline"
+                      ]
                     },
                     {
                       "type": "tile",
