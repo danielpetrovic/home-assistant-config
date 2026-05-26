@@ -17,3 +17,12 @@ http:
   use_x_forwarded_for: true
   trusted_proxies:
     - 172.30.33.0/24
+
+zha:
+  database_path: /config/zha/zigbee.db
+  custom_quirks_path: /config/zha/quirks
+  zigpy_config:
+    ota:
+      extra_providers:
+        - type: z2m
+          url: https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/index.json
