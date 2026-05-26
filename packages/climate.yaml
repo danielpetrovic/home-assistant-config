@@ -11,7 +11,8 @@ sensor:
     name: "Outdoor Temperature Max"
     unique_id: outdoor_temperature_max
     entity_id: sensor.roof_terrace_sensor_temperature
-    state_characteristic: value_max
+    state_characteristic: percentile
+    percentile: 99
     max_age:
       hours: 96
     precision: 2
@@ -19,7 +20,8 @@ sensor:
     name: "Outdoor Temperature Min"
     unique_id: outdoor_temperature_min
     entity_id: sensor.roof_terrace_sensor_temperature
-    state_characteristic: value_min
+    state_characteristic: percentile
+    percentile: 5
     max_age:
       hours: 120
     precision: 2
@@ -308,26 +310,31 @@ template:
           {% set hs = states('sensor.roof_terrace_sensor_heat_stress') | float(0) %}
           {% set humidex = states('sensor.roof_terrace_sensor_humidex') | float(0) %}
           {% set daylight_h = states('sensor.daylight_duration') | float(0) %}
-          {% set min7 = states('sensor.outdoor_temperature_min') | float(0) %}
-          {% set max4 = states('sensor.outdoor_temperature_max') | float(0) %}
+          {% set min7 = states('sensor.outdoor_temperature_min') | float(none) %}
+          {% set max4 = states('sensor.outdoor_temperature_max') | float(none) %}
 
           {% set last = states('sensor.climate_mode') | lower %}
           {% if last not in ['freezing', 'cold', 'mild', 'warm', 'hot'] %}
             {% set last = 'mild' %}
           {% endif %}
 
+          {% if min7 is none or max4 is none %}
+            {{ last }}
+          {% else %}
+
           {% set hot_enter = humidex >= 29 and hs >= 75 and max4 >= 25 and daylight_h > 13 %}
           {% set hot_exit  = humidex <= 27 and hs <= 65 %}
 
           {#
-            Cold-side thresholds (non-overlapping for stability):
+            Thresholds (non-overlapping for stability):
               freezing → mild  : max4 > 14 AND min7 > 6
               freezing → cold  : max4 > 6  (and not meeting mild condition)
               cold     → mild  : max4 > 14 AND min7 > 6
               cold     → freeze: min7 < 0  AND max4 < 6
               mild     → cold  : min7 < 2  AND max4 < 14
+              mild     → warm  : max4 > 18 AND min7 > 8
+              warm     → mild  : min7 < 6
             Gaps prevent simultaneous exit+re-entry (no oscillation).
-            cold→mild requires warm days AND warm nights together.
           #}
 
           {% if last == 'freezing' %}
@@ -351,7 +358,7 @@ template:
           {% elif last == 'mild' %}
             {% if hot_enter %}
               hot
-            {% elif min7 > 14 %}
+            {% elif max4 > 18 and min7 > 8 %}
               warm
             {% elif min7 < 2 and max4 < 14 %}
               cold
@@ -362,7 +369,7 @@ template:
           {% elif last == 'warm' %}
             {% if hot_enter %}
               hot
-            {% elif min7 < 12 %}
+            {% elif min7 < 6 %}
               mild
             {% else %}
               warm
@@ -374,6 +381,7 @@ template:
             {% else %}
               hot
             {% endif %}
+          {% endif %}
           {% endif %}
         icon: mdi:sun-snowflake-variant
   - triggers:
