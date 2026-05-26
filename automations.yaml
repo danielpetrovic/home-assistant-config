@@ -199,14 +199,14 @@
         metadata: {}
         data: {}
         target:
-          entity_id:
-          - cover.garden_shade
+          entity_id: cover.garden_shade
+      - delay:
+          seconds: 3
       - action: cover.open_cover
         metadata: {}
         data: {}
         target:
-          entity_id:
-          - cover.garden_shutter
+          entity_id: cover.garden_shutter
     - conditions:
       - condition: state
         entity_id: input_select.garden_covers
@@ -218,6 +218,8 @@
         metadata: {}
         target:
           entity_id: cover.garden_shade
+      - delay:
+          seconds: 3
       - alias: Door or shed shutter open?
         choose:
         - conditions:
@@ -274,6 +276,8 @@
         metadata: {}
         target:
           entity_id: cover.garden_shade
+      - delay:
+          seconds: 3
       - alias: Door or shed shutter open?
         choose:
         - conditions:
@@ -329,6 +333,8 @@
         metadata: {}
         target:
           entity_id: cover.garden_shade
+      - delay:
+          seconds: 3
       - alias: Door or shed shutter open?
         choose:
         - conditions:
@@ -394,9 +400,14 @@
         metadata: {}
         data: {}
         target:
-          entity_id:
-          - cover.roof_terrace_shade
-          - cover.roof_terrace_shutter
+          entity_id: cover.roof_terrace_shade
+      - delay:
+          seconds: 3
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.roof_terrace_shutter
     - conditions:
       - condition: state
         entity_id: input_select.roof_terrace_covers
@@ -408,6 +419,8 @@
         metadata: {}
         target:
           entity_id: cover.roof_terrace_shade
+      - delay:
+          seconds: 3
       - alias: Door open?
         choose:
         - conditions:
@@ -449,6 +462,8 @@
         metadata: {}
         target:
           entity_id: cover.roof_terrace_shade
+      - delay:
+          seconds: 3
       - alias: Door open?
         choose:
         - conditions:
@@ -489,6 +504,8 @@
         metadata: {}
         target:
           entity_id: cover.roof_terrace_shade
+      - delay:
+          seconds: 3
       - alias: Door open?
         choose:
         - conditions:
@@ -538,9 +555,14 @@
         metadata: {}
         data: {}
         target:
-          entity_id:
-          - cover.kitchen_shade
-          - cover.kitchen_shutter
+          entity_id: cover.kitchen_shade
+      - delay:
+          seconds: 3
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.kitchen_shutter
     - conditions:
       - condition: state
         entity_id: input_select.kitchen_covers
@@ -552,6 +574,8 @@
         metadata: {}
         target:
           entity_id: cover.kitchen_shade
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 90
@@ -569,9 +593,11 @@
         metadata: {}
         target:
           entity_id: cover.kitchen_shade
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
-          position: 75
+          position: 80
         metadata: {}
         target:
           entity_id: cover.kitchen_shutter
@@ -586,12 +612,13 @@
         metadata: {}
         target:
           entity_id: cover.kitchen_shade
+      - delay:
+          seconds: 3
       - action: cover.close_cover
         data: {}
         metadata: {}
         target:
-          entity_id:
-          - cover.kitchen_shutter
+          entity_id: cover.kitchen_shutter
   mode: queued
   max: 10
 - id: '1705102376305'
@@ -613,9 +640,14 @@
         metadata: {}
         data: {}
         target:
-          entity_id:
-          - cover.living_room_shade
-          - cover.living_room_shutter
+          entity_id: cover.living_room_shade
+      - delay:
+          seconds: 3
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.living_room_shutter
     - conditions:
       - condition: state
         entity_id: input_select.living_room_covers
@@ -627,6 +659,8 @@
         metadata: {}
         target:
           entity_id: cover.living_room_shade
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 90
@@ -644,6 +678,8 @@
         metadata: {}
         target:
           entity_id: cover.living_room_shade
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 40
@@ -661,6 +697,8 @@
         metadata: {}
         target:
           entity_id: cover.living_room_shade
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 20
@@ -678,12 +716,13 @@
         metadata: {}
         target:
           entity_id: cover.living_room_shade
+      - delay:
+          seconds: 3
       - action: cover.close_cover
         data: {}
         metadata: {}
         target:
-          entity_id:
-          - cover.living_room_shutter
+          entity_id: cover.living_room_shutter
   mode: queued
   max: 10
 - id: '1705102591662'
@@ -705,8 +744,14 @@
         data: {}
         metadata: {}
         target:
+          entity_id: cover.gameroom_shades
+      - delay:
+          seconds: 3
+      - action: cover.open_cover
+        data: {}
+        metadata: {}
+        target:
           entity_id:
-          - cover.gameroom_shades
           - cover.gameroom_left_shutter
           - cover.gameroom_right_shutter
     - conditions:
@@ -720,20 +765,22 @@
         metadata: {}
         target:
           entity_id: cover.gameroom_shades
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 50
         metadata: {}
         target:
-          entity_id:
-          - cover.gameroom_left_shutter
+          entity_id: cover.gameroom_left_shutter
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 90
         metadata: {}
         target:
-          entity_id:
-          - cover.gameroom_right_shutter
+          entity_id: cover.gameroom_right_shutter
     - conditions:
       - condition: state
         entity_id: input_select.gameroom_covers
@@ -745,20 +792,22 @@
         metadata: {}
         target:
           entity_id: cover.gameroom_shades
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 25
         metadata: {}
         target:
-          entity_id:
-          - cover.gameroom_left_shutter
+          entity_id: cover.gameroom_left_shutter
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 50
         metadata: {}
         target:
-          entity_id:
-          - cover.gameroom_right_shutter
+          entity_id: cover.gameroom_right_shutter
     - conditions:
       - condition: state
         entity_id: input_select.gameroom_covers
@@ -770,6 +819,8 @@
         metadata: {}
         target:
           entity_id: cover.gameroom_shades
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 20
@@ -787,10 +838,16 @@
         data: {}
         metadata: {}
         target:
+          entity_id: cover.gameroom_shades
+      - delay:
+          seconds: 3
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
           entity_id:
           - cover.gameroom_left_shutter
           - cover.gameroom_right_shutter
-          - cover.gameroom_shades
   mode: queued
   max: 10
 - id: '1705102937810'
@@ -812,9 +869,14 @@
         metadata: {}
         data: {}
         target:
-          entity_id:
-          - cover.hallway_shade
-          - cover.hallway_shutter
+          entity_id: cover.hallway_shade
+      - delay:
+          seconds: 3
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.hallway_shutter
     - conditions:
       - condition: state
         entity_id: input_select.hallway_covers
@@ -826,6 +888,8 @@
         metadata: {}
         target:
           entity_id: cover.hallway_shade
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 90
@@ -841,8 +905,9 @@
         data: {}
         metadata: {}
         target:
-          entity_id:
-          - cover.hallway_shade
+          entity_id: cover.hallway_shade
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 50
@@ -858,8 +923,9 @@
         data: {}
         metadata: {}
         target:
-          entity_id:
-          - cover.hallway_shade
+          entity_id: cover.hallway_shade
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 20
@@ -875,9 +941,14 @@
         data: {}
         metadata: {}
         target:
-          entity_id:
-          - cover.hallway_shade
-          - cover.hallway_shutter
+          entity_id: cover.hallway_shade
+      - delay:
+          seconds: 3
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id: cover.hallway_shutter
   mode: queued
   max: 10
 - id: '1705102977657'
@@ -899,9 +970,14 @@
         metadata: {}
         data: {}
         target:
-          entity_id:
-          - cover.gym_curtain
-          - cover.gym_shutter
+          entity_id: cover.gym_curtain
+      - delay:
+          seconds: 3
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.gym_shutter
     - conditions:
       - condition: state
         entity_id: input_select.gym_covers
@@ -911,8 +987,9 @@
         data: {}
         metadata: {}
         target:
-          entity_id:
-          - cover.gym_curtain
+          entity_id: cover.gym_curtain
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 90
@@ -928,8 +1005,9 @@
         data: {}
         metadata: {}
         target:
-          entity_id:
-          - cover.gym_curtain
+          entity_id: cover.gym_curtain
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 20
@@ -945,9 +1023,14 @@
         data: {}
         metadata: {}
         target:
-          entity_id:
-          - cover.gym_curtain
-          - cover.gym_shutter
+          entity_id: cover.gym_curtain
+      - delay:
+          seconds: 3
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id: cover.gym_shutter
   mode: queued
   max: 10
 - id: '1705484274062'
@@ -969,9 +1052,14 @@
         data: {}
         metadata: {}
         target:
-          entity_id:
-          - cover.office_shades
-          - cover.office_shutter
+          entity_id: cover.office_shades
+      - delay:
+          seconds: 3
+      - action: cover.open_cover
+        data: {}
+        metadata: {}
+        target:
+          entity_id: cover.office_shutter
     - conditions:
       - condition: state
         entity_id: input_select.office_covers
@@ -983,13 +1071,14 @@
         metadata: {}
         target:
           entity_id: cover.office_shades
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 90
         metadata: {}
         target:
-          entity_id:
-          - cover.office_shutter
+          entity_id: cover.office_shutter
     - conditions:
       - condition: state
         entity_id: input_select.office_covers
@@ -1001,13 +1090,14 @@
         metadata: {}
         target:
           entity_id: cover.office_shades
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 50
         metadata: {}
         target:
-          entity_id:
-          - cover.office_shutter
+          entity_id: cover.office_shutter
     - conditions:
       - condition: state
         entity_id: input_select.office_covers
@@ -1018,13 +1108,14 @@
         metadata: {}
         target:
           entity_id: cover.office_shades
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 20
         metadata: {}
         target:
-          entity_id:
-          - cover.office_shutter
+          entity_id: cover.office_shutter
     - conditions:
       - condition: state
         entity_id: input_select.office_covers
@@ -1035,12 +1126,13 @@
         metadata: {}
         target:
           entity_id: cover.office_shades
+      - delay:
+          seconds: 3
       - action: cover.close_cover
         data: {}
         metadata: {}
         target:
-          entity_id:
-          - cover.office_shutter
+          entity_id: cover.office_shutter
   mode: queued
   max: 10
 - id: '1705485008582'
@@ -1225,8 +1317,14 @@
         data: {}
         metadata: {}
         target:
+          entity_id: cover.bedroom_curtain
+      - delay:
+          seconds: 3
+      - action: cover.open_cover
+        data: {}
+        metadata: {}
+        target:
           entity_id:
-          - cover.bedroom_curtain
           - cover.bedroom_left_shutter
           - cover.bedroom_middle_shutter
           - cover.bedroom_right_shutter
@@ -1240,6 +1338,8 @@
         target:
           entity_id: cover.bedroom_curtain
         data: {}
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 90
@@ -1259,6 +1359,8 @@
         target:
           entity_id: cover.bedroom_curtain
         data: {}
+      - delay:
+          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 20
@@ -1277,8 +1379,14 @@
         data: {}
         metadata: {}
         target:
+          entity_id: cover.bedroom_curtain
+      - delay:
+          seconds: 3
+      - action: cover.close_cover
+        data: {}
+        metadata: {}
+        target:
           entity_id:
-          - cover.bedroom_curtain
           - cover.bedroom_left_shutter
           - cover.bedroom_middle_shutter
           - cover.bedroom_right_shutter
@@ -2186,17 +2294,18 @@
     entity_id:
     - sensor.alex_pc_power
     for:
-      hours: 0
-      minutes: 10
+      hours: 1
+      minutes: 0
       seconds: 0
     below: 10
     id: Alex PC
+    enabled: true
   - trigger: numeric_state
     entity_id:
     - sensor.deni_pc_power
     for:
-      hours: 0
-      minutes: 10
+      hours: 1
+      minutes: 0
       seconds: 0
     below: 10
     id: Deni PC
@@ -2204,8 +2313,8 @@
     entity_id:
     - sensor.gameroom_desk_power
     for:
-      hours: 0
-      minutes: 50
+      hours: 1
+      minutes: 0
       seconds: 0
     below: 50
     id: Desk
@@ -2253,9 +2362,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Bathroom Button
+      - zha
+      zha_remote: 84192abaadf3eedc3825376520c21ce6
       last_pressed: input_text.bathroom_button_last_pressed
       button_1_light:
         entity_id: light.bathroom_light
@@ -2277,9 +2385,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Dining Table Button
+      - zha
+      zha_remote: e4fa5332829f35501941ca02a51b3aec
       last_pressed: input_text.dining_table_button_last_pressed
       button_1_light:
         entity_id: light.dining_table_above_light
@@ -2326,9 +2433,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Gameroom Desk Button
+      - zha
+      zha_remote: 3886919eacf5749040e1a666a0cb5aeb
       last_pressed: input_text.gameroom_desk_button_last_pressed
       button_1_light:
         entity_id: light.gameroom_above_light
@@ -2386,9 +2492,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Gameroom Button
+      - zha
+      zha_remote: 84a541271d9d95eaa48fcec16ee55766
       last_pressed: input_text.gameroom_button_last_pressed
       button_1_light:
         entity_id:
@@ -2447,9 +2552,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Hallway Button
+      - zha
+      zha_remote: d5f2c8870dbfaaa314f7af2541ca41e1
       last_pressed: input_text.hallway_button_last_pressed
       button_1_light:
         entity_id: light.hallway_lighten
@@ -2494,9 +2598,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Office Button
+      - zha
+      zha_remote: 53bfebda4091067d3e13958e11f8b644
       last_pressed: input_text.office_button_last_pressed
       button_1_light:
         entity_id:
@@ -2554,9 +2657,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Kitchen Button
+      - zha
+      zha_remote: bd34f8b3c4b73fe1ee49a37358e87280
       last_pressed: input_text.kitchen_button_last_pressed
       button_1_light:
         entity_id:
@@ -2607,9 +2709,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Gym Button
+      - zha
+      zha_remote: 95a98355a6d98829917e9e1575fc308a
       last_pressed: input_text.gym_button_last_pressed
       button_1_light:
         entity_id: light.gym_light
@@ -2659,9 +2760,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Bedroom Button
+      - zha
+      zha_remote: 4e350e6a94ad6931c4d1bc90dcc6660f
       last_pressed: input_text.bedroom_button_last_pressed
       button_1_light:
         entity_id:
@@ -2709,9 +2809,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Bedroom Alex Button
+      - zha
+      zha_remote: ec7a45ef9d2486df053cf8201b966db8
       last_pressed: input_text.bedroom_alex_button_last_pressed
       button_1_light:
         entity_id: light.bedroom_light
@@ -2740,9 +2839,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Bedroom Deni Button
+      - zha
+      zha_remote: d4eba72b3181cee5df2cac24d5bc0ff0
       last_pressed: input_text.bedroom_deni_button_last_pressed
       button_1_light:
         entity_id: light.bedroom_light
@@ -2771,9 +2869,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Living Room Button
+      - zha
+      zha_remote: 4c442f0d310404a76a2ea1e86a4e243c
       last_pressed: input_text.living_room_button_last_pressed
       button_1_light:
         entity_id:
@@ -2822,9 +2919,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Shed Garden Button
+      - zha
+      zha_remote: fd833704a7a92a419ff7bc224ef81480
       last_pressed: input_text.shed_garden_button_last_pressed
       button_1_light:
         entity_id: light.shed
@@ -2959,7 +3055,7 @@
       target:
         entity_id: tts.home_assistant_cloud
     - alias: Notify
-      action: notify.notify
+      action: notify.mobile_app_alex_phone_bigme
       data:
         message: Someone rang the doorbell!
         data:
@@ -2970,7 +3066,20 @@
           notification_icon: mdi:doorbell-video
           priority: high
           ttl: 0
-      enabled: false
+      enabled: true
+    - alias: Notify
+      action: notify.mobile_app_deni_phone
+      data:
+        message: Someone rang the doorbell!
+        data:
+          channel: Doorbell
+          clickAction: /lovelace/front_door
+          image: /api/camera_proxy/camera.front_door
+          importance: high
+          notification_icon: mdi:doorbell-video
+          priority: high
+          ttl: 0
+      enabled: true
     - alias: Living Room TV
       if:
       - condition: not
@@ -3136,9 +3245,8 @@
     path: danielpetrovic/niko-battery-switch-multi-button.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Entrance Button
+      - zha
+      zha_remote: dad325a441e874ef613105165199456d
       button_1_light:
         entity_id:
         - light.entrance_light
@@ -3162,9 +3270,8 @@
     path: danielpetrovic/niko-battery-switch-multi-button.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Toilet Button
+      - zha
+      zha_remote: 0611fc594244c9c75c3d79f971dfece4
       button_1_light:
         entity_id:
         - light.toilet_light
@@ -3188,9 +3295,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Shed Alleyway Button
+      - zha
+      zha_remote: aca53a94c85363eaf1309dc70ab5fdbe
       last_pressed: input_text.shed_alleyway_button_last_pressed
       button_1_light:
         entity_id: light.shed
@@ -3235,9 +3341,8 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
-      z2m_base_topic: zigbee2mqtt
-      z2m_device_name: Roof Terrace Button
+      - zha
+      zha_remote: e5b792f28515a5c9e514e6f599f89166
       last_pressed: input_text.roof_terrace_button_last_pressed
       button_1_light:
         entity_id: light.gameroom_above_light
@@ -3306,15 +3411,18 @@
     trigger: state
   conditions: []
   actions:
+  - if:
+    - condition: trigger
+      id: climate_mode
+    - condition: time
+      after: 00:00:00
+      before: 09:00:00
+    then:
+    - stop: Night guard active
   - alias: presence or schedule
     choose:
     - alias: schedule on and home
       conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
-        - climate_mode
       - condition: state
         entity_id: schedule.living_room_climate
         state: 'on'
@@ -3334,6 +3442,9 @@
               temperature: 21
             target:
               entity_id: climate.living_room_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.living_room_ac
         - alias: cold
           conditions:
           - condition: state
@@ -3345,6 +3456,9 @@
               temperature: 20
             target:
               entity_id: climate.living_room_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.living_room_ac
         - alias: mild
           conditions:
           - condition: state
@@ -3356,35 +3470,59 @@
               temperature: 20
             target:
               entity_id: climate.living_room_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.living_room_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.living_room_ac
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.living_room_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 27
+              hvac_mode: cool
+            target:
+              entity_id: climate.living_room_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.living_room_ac
         - alias: hot
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: hot
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.living_room_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 25
+              hvac_mode: cool
+            target:
+              entity_id: climate.living_room_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.living_room_ac
     - alias: schedule off or away
       conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
-        - climate_mode
       - condition: or
         conditions:
         - condition: state
@@ -3406,6 +3544,9 @@
               temperature: 19
             target:
               entity_id: climate.living_room_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.living_room_ac
         - alias: cold
           conditions:
           - condition: state
@@ -3417,6 +3558,9 @@
               temperature: 18
             target:
               entity_id: climate.living_room_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.living_room_ac
         - alias: mild
           conditions:
           - condition: state
@@ -3428,28 +3572,57 @@
               temperature: 18
             target:
               entity_id: climate.living_room_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.living_room_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.living_room_ac
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.living_room_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.living_room_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.living_room_ac
         - alias: hot
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: hot
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.living_room_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.living_room_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.living_room_ac
   mode: restart
 - id: '1757451909221'
   alias: Bedroom Climate
@@ -3466,15 +3639,18 @@
     trigger: state
   conditions: []
   actions:
+  - if:
+    - condition: trigger
+      id: climate_mode
+    - condition: time
+      after: 00:00:00
+      before: 09:00:00
+    then:
+    - stop: Night guard active
   - alias: presence or schedule
     choose:
     - alias: schedule on and home
       conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
-        - climate_mode
       - condition: state
         entity_id: schedule.bedroom_climate
         state: 'on'
@@ -3494,6 +3670,9 @@
               temperature: 21
             target:
               entity_id: climate.bedroom_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.bedroom_ac
         - alias: cold
           conditions:
           - condition: state
@@ -3505,6 +3684,9 @@
               temperature: 20
             target:
               entity_id: climate.bedroom_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.bedroom_ac
         - alias: mild
           conditions:
           - condition: state
@@ -3516,35 +3698,61 @@
               temperature: 20
             target:
               entity_id: climate.bedroom_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.bedroom_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.bedroom_ac
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.bedroom_heating
+            data: {}
+          - action: climate.set_temperature
+            data:
+              temperature: 26
+              hvac_mode: cool
+            target:
+              entity_id: climate.bedroom_ac
+          - action: climate.set_fan_mode
+            metadata: {}
+            target:
+              entity_id: climate.bedroom_ac
+            data:
+              fan_mode: Silence
         - alias: hot
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: hot
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.bedroom_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 25
+              hvac_mode: cool
+            target:
+              entity_id: climate.bedroom_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.bedroom_ac
     - alias: schedule off or away
       conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
-        - climate_mode
       - condition: or
         conditions:
         - condition: state
@@ -3566,6 +3774,9 @@
               temperature: 19
             target:
               entity_id: climate.bedroom_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.bedroom_ac
         - alias: cold
           conditions:
           - condition: state
@@ -3577,6 +3788,9 @@
               temperature: 18
             target:
               entity_id: climate.bedroom_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.bedroom_ac
         - alias: mild
           conditions:
           - condition: state
@@ -3588,28 +3802,57 @@
               temperature: 18
             target:
               entity_id: climate.bedroom_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.bedroom_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.bedroom_ac
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.bedroom_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.bedroom_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.bedroom_ac
         - alias: hot
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: hot
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.bedroom_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.bedroom_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.bedroom_ac
   mode: restart
 - id: '1757451939527'
   alias: Office Climate
@@ -3624,17 +3867,34 @@
   - entity_id: sensor.climate_mode
     id: climate_mode
     trigger: state
+  - trigger: time
+    at: 09:00:00
+    id: time_09
+  - trigger: time
+    at: '18:00:00'
+    id: time_18
+  - trigger: numeric_state
+    entity_id: sensor.office_desk_power
+    id: desk_on
+    above: 50
+  - trigger: numeric_state
+    entity_id: sensor.office_desk_power
+    id: desk_off
+    below: 50
   conditions: []
   actions:
+  - if:
+    - condition: trigger
+      id: climate_mode
+    - condition: time
+      after: 00:00:00
+      before: 09:00:00
+    then:
+    - stop: Night guard active
   - alias: presence or schedule
     choose:
     - alias: schedule on and home
       conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
-        - climate_mode
       - condition: state
         entity_id: schedule.office_climate
         state: 'on'
@@ -3654,6 +3914,9 @@
               temperature: 20
             target:
               entity_id: climate.office_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.office_ac
         - alias: cold
           conditions:
           - condition: state
@@ -3665,6 +3928,9 @@
               temperature: 19
             target:
               entity_id: climate.office_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.office_ac
         - alias: mild
           conditions:
           - condition: state
@@ -3676,35 +3942,99 @@
               temperature: 19
             target:
               entity_id: climate.office_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.office_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.office_ac
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.office_heating
+          - if:
+            - condition: time
+              after: 09:00:00
+              before: '18:00:00'
+            - condition: numeric_state
+              entity_id: sensor.office_desk_power
+              above: 50
+            then:
+            - action: climate.set_temperature
+              data:
+                temperature: 26
+                hvac_mode: cool
+              target:
+                entity_id: climate.office_ac
+            - action: climate.set_fan_mode
+              data:
+                fan_mode: Silence
+              target:
+                entity_id: climate.office_ac
+            else:
+            - action: climate.set_temperature
+              data:
+                temperature: 28
+                hvac_mode: cool
+              target:
+                entity_id: climate.office_ac
+            - action: climate.set_fan_mode
+              data:
+                fan_mode: Silence
+              target:
+                entity_id: climate.office_ac
         - alias: hot
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: hot
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.office_heating
+          - if:
+            - condition: time
+              after: 09:00:00
+              before: '18:00:00'
+            - condition: numeric_state
+              entity_id: sensor.office_desk_power
+              above: 50
+            then:
+            - action: climate.set_temperature
+              data:
+                temperature: 25
+                hvac_mode: cool
+              target:
+                entity_id: climate.office_ac
+            - action: climate.set_fan_mode
+              data:
+                fan_mode: Silence
+              target:
+                entity_id: climate.office_ac
+            else:
+            - action: climate.set_temperature
+              data:
+                temperature: 28
+                hvac_mode: cool
+              target:
+                entity_id: climate.office_ac
+            - action: climate.set_fan_mode
+              data:
+                fan_mode: Silence
+              target:
+                entity_id: climate.office_ac
     - alias: schedule off or away
       conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
-        - climate_mode
       - condition: or
         conditions:
         - condition: state
@@ -3726,6 +4056,9 @@
               temperature: 19
             target:
               entity_id: climate.office_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.office_ac
         - alias: cold
           conditions:
           - condition: state
@@ -3737,6 +4070,9 @@
               temperature: 18
             target:
               entity_id: climate.office_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.office_ac
         - alias: mild
           conditions:
           - condition: state
@@ -3748,28 +4084,57 @@
               temperature: 18
             target:
               entity_id: climate.office_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.office_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.office_ac
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.office_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.office_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.office_ac
         - alias: hot
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: hot
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.office_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.office_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.office_ac
   mode: restart
 - id: '1757451987268'
   alias: Gameroom Climate
@@ -3784,17 +4149,34 @@
   - entity_id: sensor.climate_mode
     id: climate_mode
     trigger: state
+  - trigger: time
+    at: 09:00:00
+    id: time_09
+  - trigger: time
+    at: '18:00:00'
+    id: time_18
+  - trigger: numeric_state
+    entity_id: sensor.gameroom_desk_power
+    id: desk_on
+    above: 50
+  - trigger: numeric_state
+    entity_id: sensor.gameroom_desk_power
+    id: desk_off
+    below: 50
   conditions: []
   actions:
+  - if:
+    - condition: trigger
+      id: climate_mode
+    - condition: time
+      after: 00:00:00
+      before: 09:00:00
+    then:
+    - stop: Night guard active
   - alias: presence or schedule
     choose:
     - alias: schedule on and home
       conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
-        - climate_mode
       - condition: state
         entity_id: schedule.gameroom_climate
         state: 'on'
@@ -3814,6 +4196,9 @@
               temperature: 20
             target:
               entity_id: climate.gameroom_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.gameroom_ac
         - alias: cold
           conditions:
           - condition: state
@@ -3825,6 +4210,9 @@
               temperature: 19
             target:
               entity_id: climate.gameroom_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.gameroom_ac
         - alias: mild
           conditions:
           - condition: state
@@ -3836,35 +4224,99 @@
               temperature: 19
             target:
               entity_id: climate.gameroom_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.gameroom_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.gameroom_ac
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.gameroom_heating
+          - if:
+            - condition: time
+              after: 09:00:00
+              before: '18:00:00'
+            - condition: numeric_state
+              entity_id: sensor.gameroom_desk_power
+              above: 50
+            then:
+            - action: climate.set_temperature
+              data:
+                temperature: 26
+                hvac_mode: cool
+              target:
+                entity_id: climate.gameroom_ac
+            - action: climate.set_fan_mode
+              data:
+                fan_mode: Auto
+              target:
+                entity_id: climate.gameroom_ac
+            else:
+            - action: climate.set_temperature
+              data:
+                temperature: 28
+                hvac_mode: cool
+              target:
+                entity_id: climate.gameroom_ac
+            - action: climate.set_fan_mode
+              data:
+                fan_mode: Silence
+              target:
+                entity_id: climate.gameroom_ac
         - alias: hot
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: hot
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.gameroom_heating
+          - if:
+            - condition: time
+              after: 09:00:00
+              before: '18:00:00'
+            - condition: numeric_state
+              entity_id: sensor.gameroom_desk_power
+              above: 50
+            then:
+            - action: climate.set_temperature
+              data:
+                temperature: 25
+                hvac_mode: cool
+              target:
+                entity_id: climate.gameroom_ac
+            - action: climate.set_fan_mode
+              data:
+                fan_mode: Auto
+              target:
+                entity_id: climate.gameroom_ac
+            else:
+            - action: climate.set_temperature
+              data:
+                temperature: 28
+                hvac_mode: cool
+              target:
+                entity_id: climate.gameroom_ac
+            - action: climate.set_fan_mode
+              data:
+                fan_mode: Silence
+              target:
+                entity_id: climate.gameroom_ac
     - alias: schedule off or away
       conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
-        - climate_mode
       - condition: or
         conditions:
         - condition: state
@@ -3886,6 +4338,9 @@
               temperature: 19
             target:
               entity_id: climate.gameroom_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.gameroom_ac
         - alias: cold
           conditions:
           - condition: state
@@ -3897,6 +4352,9 @@
               temperature: 18
             target:
               entity_id: climate.gameroom_heating
+          - action: climate.turn_off
+            target:
+              entity_id: climate.gameroom_ac
         - alias: mild
           conditions:
           - condition: state
@@ -3908,28 +4366,57 @@
               temperature: 18
             target:
               entity_id: climate.gameroom_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.gameroom_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.gameroom_ac
         - alias: warm
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.gameroom_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.gameroom_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.gameroom_ac
         - alias: hot
           conditions:
           - condition: state
             entity_id: sensor.climate_mode
             state: hot
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.gameroom_heating
+          - action: climate.set_temperature
+            data:
+              temperature: 28
+              hvac_mode: cool
+            target:
+              entity_id: climate.gameroom_ac
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: Silence
+            target:
+              entity_id: climate.gameroom_ac
   mode: restart
 - id: '1757452017459'
   alias: Gym Climate
@@ -3950,11 +4437,6 @@
     choose:
     - alias: schedule on and home
       conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
-        - climate_mode
       - condition: state
         entity_id: schedule.gym_climate
         state: 'on'
@@ -4002,9 +4484,7 @@
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.gym_heating
         - alias: hot
@@ -4013,18 +4493,11 @@
             entity_id: sensor.climate_mode
             state: hot
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.gym_heating
     - alias: schedule off or away
       conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
-        - climate_mode
       - condition: or
         conditions:
         - condition: state
@@ -4074,9 +4547,7 @@
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.gym_heating
         - alias: hot
@@ -4085,9 +4556,7 @@
             entity_id: sensor.climate_mode
             state: hot
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.gym_heating
   mode: restart
@@ -4110,11 +4579,6 @@
     choose:
     - alias: schedule on and home
       conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
-        - climate_mode
       - condition: state
         entity_id: schedule.bathroom_climate
         state: 'on'
@@ -4162,9 +4626,7 @@
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.bathroom_heating
         - alias: hot
@@ -4173,18 +4635,11 @@
             entity_id: sensor.climate_mode
             state: hot
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.bathroom_heating
     - alias: schedule off or away
       conditions:
-      - condition: trigger
-        id:
-        - presence
-        - schedule
-        - climate_mode
       - condition: or
         conditions:
         - condition: state
@@ -4234,9 +4689,7 @@
             entity_id: sensor.climate_mode
             state: warm
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.bathroom_heating
         - alias: hot
@@ -4245,9 +4698,7 @@
             entity_id: sensor.climate_mode
             state: hot
           sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 16
+          - action: climate.turn_off
             target:
               entity_id: climate.bathroom_heating
   mode: restart
@@ -4255,12 +4706,8 @@
   alias: Geofence - Zone Notifications
   description: ''
   mode: parallel
-  variables:
-    notify_services:
-    - notify.mobile_app_alex_phone
-    - notify.mobile_app_deni_phone
   triggers:
-  - platform: state
+  - trigger: state
     entity_id:
     - person.alex
     - person.deni
@@ -4269,48 +4716,56 @@
     value_template: "{{ trigger.to_state.state != trigger.from_state.state and\n   (trigger.to_state.state
       != 'not_home' or trigger.from_state.state != 'not_home') }}"
   actions:
-  - variables:
-      person: '{{ state_attr(trigger.entity_id, "friendly_name") }}'
-      zone_from: "{{ iif(trigger.from_state.state | lower == 'home',\n     state_attr('zone.home',
-        'friendly_name'),\n     trigger.from_state.state) }}"
-      zone_to: "{{ iif(trigger.to_state.state | lower == 'home',\n     state_attr('zone.home',
-        'friendly_name'),\n     trigger.to_state.state) }}"
   - if:
     - condition: template
       value_template: '{{ trigger.from_state.state != "not_home" }}'
     then:
-    - variables:
-        zone: '{{ zone_from }}'
-    - repeat:
-        for_each: '{{ notify_services }}'
-        sequence:
-        - action: '{{ repeat.item }}'
+    - parallel:
+      - action: notify.mobile_app_alex_phone_bigme
+        data:
+          title: Home Assistant
+          message: '{{ state_attr(trigger.entity_id, "friendly_name") }} leaves {{
+            trigger.from_state.state | title }}.'
           data:
-            title: Home Assistant
-            message: '{{ person }} leaves {{ zone }}.'
-            data:
-              ttl: 0
-              priority: high
-              channel: Geofence
-              group: Geofence
+            ttl: 0
+            priority: high
+            channel: Geofence
+            group: Geofence
+      - action: notify.mobile_app_deni_phone
+        data:
+          title: Home Assistant
+          message: '{{ state_attr(trigger.entity_id, "friendly_name") }} leaves {{
+            trigger.from_state.state | title }}.'
+          data:
+            ttl: 0
+            priority: high
+            channel: Geofence
+            group: Geofence
   - if:
     - condition: template
       value_template: '{{ trigger.to_state.state != "not_home" }}'
     then:
-    - variables:
-        zone: '{{ zone_to }}'
-    - repeat:
-        for_each: '{{ notify_services }}'
-        sequence:
-        - action: '{{ repeat.item }}'
+    - parallel:
+      - action: notify.mobile_app_alex_phone_bigme
+        data:
+          title: Home Assistant
+          message: '{{ state_attr(trigger.entity_id, "friendly_name") }} arrives at
+            {{ trigger.to_state.state | title }}.'
           data:
-            title: Home Assistant
-            message: '{{ person }} arrives at {{ zone }}.'
-            data:
-              ttl: 0
-              priority: high
-              channel: Geofence
-              group: Geofence
+            ttl: 0
+            priority: high
+            channel: Geofence
+            group: Geofence
+      - action: notify.mobile_app_deni_phone
+        data:
+          title: Home Assistant
+          message: '{{ state_attr(trigger.entity_id, "friendly_name") }} arrives at
+            {{ trigger.to_state.state | title }}.'
+          data:
+            ttl: 0
+            priority: high
+            channel: Geofence
+            group: Geofence
 - id: '1761738156612'
   alias: Covers
   description: All logic for window coverings (time + climate)
@@ -4359,24 +4814,27 @@
           sequence:
           - repeat:
               for_each:
-              - entities:
-                - input_select.bedroom_covers
-                - input_select.gym_covers
-                - input_select.hallway_covers
+              - entity: input_select.bedroom_covers
                 preset: Privacy
-              - entities:
-                - input_select.gameroom_covers
-                - input_select.office_covers
+              - entity: input_select.gym_covers
                 preset: Privacy
-              - entities:
-                - input_select.garden_covers
-                - input_select.kitchen_covers
-                - input_select.living_room_covers
-                - input_select.roof_terrace_covers
+              - entity: input_select.hallway_covers
+                preset: Privacy
+              - entity: input_select.gameroom_covers
+                preset: Privacy
+              - entity: input_select.office_covers
+                preset: Privacy
+              - entity: input_select.garden_covers
+                preset: Exposed
+              - entity: input_select.kitchen_covers
+                preset: Exposed
+              - entity: input_select.living_room_covers
+                preset: Exposed
+              - entity: input_select.roof_terrace_covers
                 preset: Exposed
               sequence:
               - target:
-                  entity_id: '{{ repeat.item.entities }}'
+                  entity_id: '{{ repeat.item.entity }}'
                 data:
                   option: '{{ repeat.item.preset }}'
                 action: input_select.select_option
@@ -4391,23 +4849,25 @@
           sequence:
           - repeat:
               for_each:
-              - entities:
-                - input_select.gym_covers
-                - input_select.hallway_covers
+              - entity: input_select.gym_covers
                 preset: Privacy
-              - entities:
-                - input_select.gameroom_covers
-                - input_select.office_covers
+              - entity: input_select.hallway_covers
                 preset: Privacy
-              - entities:
-                - input_select.garden_covers
-                - input_select.kitchen_covers
-                - input_select.living_room_covers
-                - input_select.roof_terrace_covers
+              - entity: input_select.gameroom_covers
+                preset: Privacy
+              - entity: input_select.office_covers
+                preset: Privacy
+              - entity: input_select.garden_covers
+                preset: Exposed
+              - entity: input_select.kitchen_covers
+                preset: Exposed
+              - entity: input_select.living_room_covers
+                preset: Exposed
+              - entity: input_select.roof_terrace_covers
                 preset: Exposed
               sequence:
               - target:
-                  entity_id: '{{ repeat.item.entities }}'
+                  entity_id: '{{ repeat.item.entity }}'
                 data:
                   option: '{{ repeat.item.preset }}'
                 action: input_select.select_option
@@ -4428,9 +4888,14 @@
             - 'on'
           sequence:
           - target:
-              entity_id:
-              - input_select.bedroom_covers
-              - input_select.gym_covers
+              entity_id: input_select.bedroom_covers
+            data:
+              option: Shaded
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+          - target:
+              entity_id: input_select.gym_covers
             data:
               option: Shaded
             action: input_select.select_option
@@ -4442,9 +4907,14 @@
             - 'off'
           sequence:
           - target:
-              entity_id:
-              - input_select.bedroom_covers
-              - input_select.gym_covers
+              entity_id: input_select.bedroom_covers
+            data:
+              option: Privacy
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+          - target:
+              entity_id: input_select.gym_covers
             data:
               option: Privacy
             action: input_select.select_option
@@ -4463,10 +4933,21 @@
             - 'on'
           sequence:
           - target:
-              entity_id:
-              - input_select.bedroom_covers
-              - input_select.gym_covers
-              - input_select.hallway_covers
+              entity_id: input_select.bedroom_covers
+            data:
+              option: Open
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+          - target:
+              entity_id: input_select.gym_covers
+            data:
+              option: Open
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+          - target:
+              entity_id: input_select.hallway_covers
             data:
               option: Open
             action: input_select.select_option
@@ -4485,10 +4966,21 @@
             - 'on'
           sequence:
           - target:
-              entity_id:
-              - input_select.bedroom_covers
-              - input_select.gym_covers
-              - input_select.hallway_covers
+              entity_id: input_select.bedroom_covers
+            data:
+              option: Open
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+          - target:
+              entity_id: input_select.gym_covers
+            data:
+              option: Open
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+          - target:
+              entity_id: input_select.hallway_covers
             data:
               option: Open
             action: input_select.select_option
@@ -4500,9 +4992,14 @@
             - 'off'
           sequence:
           - target:
-              entity_id:
-              - input_select.bedroom_covers
-              - input_select.gym_covers
+              entity_id: input_select.bedroom_covers
+            data:
+              option: Shaded
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+          - target:
+              entity_id: input_select.gym_covers
             data:
               option: Shaded
             action: input_select.select_option
@@ -4512,10 +5009,21 @@
         id: '12:00'
       sequence:
       - target:
-          entity_id:
-          - input_select.bedroom_covers
-          - input_select.gym_covers
-          - input_select.hallway_covers
+          entity_id: input_select.bedroom_covers
+        data:
+          option: Open
+        action: input_select.select_option
+      - delay:
+          seconds: 5
+      - target:
+          entity_id: input_select.gym_covers
+        data:
+          option: Open
+        action: input_select.select_option
+      - delay:
+          seconds: 5
+      - target:
+          entity_id: input_select.hallway_covers
         data:
           option: Open
         action: input_select.select_option
@@ -4525,10 +5033,21 @@
         id: '18:00'
       sequence:
       - target:
-          entity_id:
-          - input_select.hallway_covers
-          - input_select.gym_covers
-          - input_select.bedroom_covers
+          entity_id: input_select.hallway_covers
+        data:
+          option: Closed
+        action: input_select.select_option
+      - delay:
+          seconds: 5
+      - target:
+          entity_id: input_select.gym_covers
+        data:
+          option: Closed
+        action: input_select.select_option
+      - delay:
+          seconds: 5
+      - target:
+          entity_id: input_select.bedroom_covers
         data:
           option: Closed
         action: input_select.select_option
@@ -4537,9 +5056,10 @@
           entity_id: sensor.daylight_duration
           above: 12
         then:
+        - delay:
+            seconds: 5
         - target:
-            entity_id:
-            - input_select.living_room_covers
+            entity_id: input_select.living_room_covers
           data:
             option: Privacy
           action: input_select.select_option
@@ -4550,19 +5070,21 @@
         then:
         - repeat:
             for_each:
-            - entities:
-              - input_select.gameroom_covers
-              - input_select.office_covers
-              - input_select.living_room_covers
+            - entity: input_select.gameroom_covers
               preset: Closed
-            - entities:
-              - input_select.roof_terrace_covers
-              - input_select.kitchen_covers
-              - input_select.garden_covers
+            - entity: input_select.office_covers
+              preset: Closed
+            - entity: input_select.living_room_covers
+              preset: Closed
+            - entity: input_select.roof_terrace_covers
+              preset: Closed
+            - entity: input_select.kitchen_covers
+              preset: Closed
+            - entity: input_select.garden_covers
               preset: Closed
             sequence:
             - target:
-                entity_id: '{{ repeat.item.entities }}'
+                entity_id: '{{ repeat.item.entity }}'
               data:
                 option: '{{ repeat.item.preset }}'
               action: input_select.select_option
@@ -4580,19 +5102,21 @@
     then:
     - repeat:
         for_each:
-        - entities:
-          - input_select.gameroom_covers
-          - input_select.office_covers
-          - input_select.living_room_covers
+        - entity: input_select.gameroom_covers
           preset: Closed
-        - entities:
-          - input_select.roof_terrace_covers
-          - input_select.kitchen_covers
-          - input_select.garden_covers
+        - entity: input_select.office_covers
+          preset: Closed
+        - entity: input_select.living_room_covers
+          preset: Closed
+        - entity: input_select.roof_terrace_covers
+          preset: Closed
+        - entity: input_select.kitchen_covers
+          preset: Closed
+        - entity: input_select.garden_covers
           preset: Closed
         sequence:
         - target:
-            entity_id: '{{ repeat.item.entities }}'
+            entity_id: '{{ repeat.item.entity }}'
           data:
             option: '{{ repeat.item.preset }}'
           action: input_select.select_option
@@ -4600,249 +5124,295 @@
             seconds: 5
   - alias: Climate-based logic during day
     choose:
-    - alias: spring/summer - bright/sunny
+    - alias: freezing
       conditions:
-      - condition: trigger
-        id:
-        - brightness
-        - 09:00
       - condition: state
         entity_id: sensor.climate_mode
-        state:
-        - freezing
-        - cold
-        - mild
-      - condition: numeric_state
-        entity_id: sensor.daylight_duration
-        above: 12
-      - condition: state
-        entity_id: sensor.outdoor_brightness
-        state:
-        - bright
-        - sunny
+        state: freezing
       - condition: time
         after: 09:00:00
         before: '18:00:00'
       sequence:
       - repeat:
           for_each:
-          - entities:
-            - input_select.gameroom_covers
-            - input_select.office_covers
-            - input_select.living_room_covers
+          - entity: input_select.gameroom_covers
+            preset: Exposed
+          - entity: input_select.office_covers
+            preset: Exposed
+          - entity: input_select.living_room_covers
+            preset: Exposed
+          - entity: input_select.roof_terrace_covers
+            preset: Exposed
+          - entity: input_select.kitchen_covers
+            preset: Exposed
+          - entity: input_select.garden_covers
+            preset: Exposed
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item.entity }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+    - alias: cold
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: cold
+      - condition: time
+        after: 09:00:00
+        before: '18:00:00'
+      sequence:
+      - repeat:
+          for_each:
+          - entity: input_select.gameroom_covers
+            preset: Exposed
+          - entity: input_select.office_covers
+            preset: Exposed
+          - entity: input_select.living_room_covers
+            preset: Exposed
+          - entity: input_select.roof_terrace_covers
+            preset: Exposed
+          - entity: input_select.kitchen_covers
+            preset: Exposed
+          - entity: input_select.garden_covers
+            preset: Exposed
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item.entity }}'
+            data:
+              option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+          - delay:
+              seconds: 5
+    - alias: mild
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: mild
+      - condition: time
+        after: 09:00:00
+        before: '18:00:00'
+      sequence:
+      - repeat:
+          for_each:
+          - entity: input_select.gameroom_covers
+            preset: Exposed
+          - entity: input_select.office_covers
+            preset: Exposed
+          - entity: input_select.living_room_covers
             preset: Shaded
-          - entities:
-            - input_select.roof_terrace_covers
-            - input_select.kitchen_covers
-            - input_select.garden_covers
+          - entity: input_select.roof_terrace_covers
+            preset: Exposed
+          - entity: input_select.kitchen_covers
+            preset: Exposed
+          - entity: input_select.garden_covers
             preset: Exposed
           sequence:
           - target:
-              entity_id: '{{ repeat.item.entities }}'
+              entity_id: '{{ repeat.item.entity }}'
             data:
               option: '{{ repeat.item.preset }}'
             action: input_select.select_option
           - delay:
               seconds: 5
-    - alias: spring/summer - dark/dim/overcast
+    - alias: warm
       conditions:
-      - condition: trigger
-        id:
-        - brightness
-        - 09:00
       - condition: state
         entity_id: sensor.climate_mode
-        state:
-        - freezing
-        - cold
-        - mild
-      - condition: state
-        entity_id: sensor.outdoor_brightness
-        state:
-        - dark
-        - dim
-        - overcast
+        state: warm
       - condition: time
         after: 09:00:00
         before: '18:00:00'
       sequence:
-      - repeat:
-          for_each:
-          - entities:
-            - input_select.gameroom_covers
-            - input_select.office_covers
-            - input_select.living_room_covers
-            preset: Exposed
-          - entities:
-            - input_select.roof_terrace_covers
-            - input_select.kitchen_covers
-            - input_select.garden_covers
-            preset: Exposed
+      - choose:
+        - alias: sunny
+          conditions:
+          - condition: state
+            entity_id: sensor.outdoor_brightness
+            state: sunny
           sequence:
-          - target:
-              entity_id: '{{ repeat.item.entities }}'
-            data:
-              option: '{{ repeat.item.preset }}'
-            action: input_select.select_option
-          - delay:
-              seconds: 5
-    - alias: winter - short days
+          - repeat:
+              for_each:
+              - entity: input_select.gameroom_covers
+                preset: Shaded
+              - entity: input_select.office_covers
+                preset: Shaded
+              - entity: input_select.living_room_covers
+                preset: Shaded
+              - entity: input_select.roof_terrace_covers
+                preset: Shaded
+              - entity: input_select.kitchen_covers
+                preset: Shaded
+              - entity: input_select.garden_covers
+                preset: Shaded
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entity }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+        - alias: overcast/bright
+          conditions:
+          - condition: state
+            entity_id: sensor.outdoor_brightness
+            state:
+            - overcast
+            - bright
+          sequence:
+          - repeat:
+              for_each:
+              - entity: input_select.gameroom_covers
+                preset: Shaded
+              - entity: input_select.office_covers
+                preset: Shaded
+              - entity: input_select.living_room_covers
+                preset: Shaded
+              - entity: input_select.roof_terrace_covers
+                preset: Shaded
+              - entity: input_select.kitchen_covers
+                preset: Shaded
+              - entity: input_select.garden_covers
+                preset: Shaded
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entity }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+        - alias: dark/dim
+          conditions:
+          - condition: state
+            entity_id: sensor.outdoor_brightness
+            state:
+            - dark
+            - dim
+          sequence:
+          - repeat:
+              for_each:
+              - entity: input_select.gameroom_covers
+                preset: Shaded
+              - entity: input_select.office_covers
+                preset: Shaded
+              - entity: input_select.living_room_covers
+                preset: Shaded
+              - entity: input_select.roof_terrace_covers
+                preset: Exposed
+              - entity: input_select.kitchen_covers
+                preset: Exposed
+              - entity: input_select.garden_covers
+                preset: Exposed
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entity }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+    - alias: hot
       conditions:
-      - condition: trigger
-        id:
-        - brightness
-        - 09:00
       - condition: state
         entity_id: sensor.climate_mode
-        state:
-        - freezing
-        - cold
-        - mild
-      - condition: numeric_state
-        entity_id: sensor.daylight_duration
-        below: 12
+        state: hot
       - condition: time
         after: 09:00:00
         before: '18:00:00'
       sequence:
-      - repeat:
-          for_each:
-          - entities:
-            - input_select.gameroom_covers
-            - input_select.office_covers
-            - input_select.living_room_covers
-            preset: Exposed
-          - entities:
-            - input_select.roof_terrace_covers
-            - input_select.kitchen_covers
-            - input_select.garden_covers
-            preset: Exposed
+      - choose:
+        - alias: sunny
+          conditions:
+          - condition: state
+            entity_id: sensor.outdoor_brightness
+            state: sunny
           sequence:
-          - target:
-              entity_id: '{{ repeat.item.entities }}'
-            data:
-              option: '{{ repeat.item.preset }}'
-            action: input_select.select_option
-          - delay:
-              seconds: 5
-    - alias: warm/hot - dark/dim
-      conditions:
-      - condition: trigger
-        id:
-        - brightness
-        - 09:00
-      - condition: state
-        entity_id: sensor.climate_mode
-        state:
-        - warm
-        - hot
-      - condition: state
-        entity_id: sensor.outdoor_brightness
-        state:
-        - dark
-        - dim
-      - condition: time
-        after: 09:00:00
-        before: '18:00:00'
-      sequence:
-      - repeat:
-          for_each:
-          - entities:
-            - input_select.gameroom_covers
-            - input_select.office_covers
-            - input_select.living_room_covers
-            preset: Shaded
-          - entities:
-            - input_select.roof_terrace_covers
-            - input_select.kitchen_covers
-            - input_select.garden_covers
-            preset: Exposed
+          - repeat:
+              for_each:
+              - entity: input_select.gameroom_covers
+                preset: Privacy
+              - entity: input_select.office_covers
+                preset: Privacy
+              - entity: input_select.living_room_covers
+                preset: Privacy
+              - entity: input_select.roof_terrace_covers
+                preset: Shaded
+              - entity: input_select.kitchen_covers
+                preset: Shaded
+              - entity: input_select.garden_covers
+                preset: Shaded
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entity }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+        - alias: overcast/bright
+          conditions:
+          - condition: state
+            entity_id: sensor.outdoor_brightness
+            state:
+            - overcast
+            - bright
           sequence:
-          - target:
-              entity_id: '{{ repeat.item.entities }}'
-            data:
-              option: '{{ repeat.item.preset }}'
-            action: input_select.select_option
-          - delay:
-              seconds: 5
-    - alias: warm/hot - overcast/bright
-      conditions:
-      - condition: trigger
-        id:
-        - brightness
-        - 09:00
-      - condition: state
-        entity_id: sensor.climate_mode
-        state:
-        - warm
-        - hot
-      - condition: state
-        entity_id: sensor.outdoor_brightness
-        state:
-        - overcast
-        - bright
-      - condition: time
-        after: 09:00:00
-        before: '18:00:00'
-      sequence:
-      - repeat:
-          for_each:
-          - entities:
-            - input_select.gameroom_covers
-            - input_select.office_covers
-            - input_select.living_room_covers
-            preset: Shaded
-          - entities:
-            - input_select.roof_terrace_covers
-            - input_select.kitchen_covers
-            - input_select.garden_covers
-            preset: Shaded
+          - repeat:
+              for_each:
+              - entity: input_select.gameroom_covers
+                preset: Shaded
+              - entity: input_select.office_covers
+                preset: Shaded
+              - entity: input_select.living_room_covers
+                preset: Shaded
+              - entity: input_select.roof_terrace_covers
+                preset: Shaded
+              - entity: input_select.kitchen_covers
+                preset: Shaded
+              - entity: input_select.garden_covers
+                preset: Shaded
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entity }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+        - alias: dark/dim
+          conditions:
+          - condition: state
+            entity_id: sensor.outdoor_brightness
+            state:
+            - dark
+            - dim
           sequence:
-          - target:
-              entity_id: '{{ repeat.item.entities }}'
-            data:
-              option: '{{ repeat.item.preset }}'
-            action: input_select.select_option
-          - delay:
-              seconds: 5
-    - alias: warm/hot - sunny
-      conditions:
-      - condition: trigger
-        id:
-        - brightness
-        - 09:00
-      - condition: state
-        entity_id: sensor.climate_mode
-        state:
-        - warm
-        - hot
-      - condition: state
-        entity_id: sensor.outdoor_brightness
-        state: sunny
-      - condition: time
-        after: 09:00:00
-        before: '18:00:00'
-      sequence:
-      - repeat:
-          for_each:
-          - entities:
-            - input_select.gameroom_covers
-            - input_select.office_covers
-            - input_select.living_room_covers
-            preset: Privacy
-          - entities:
-            - input_select.roof_terrace_covers
-            - input_select.kitchen_covers
-            - input_select.garden_covers
-            preset: Shaded
-          sequence:
-          - target:
-              entity_id: '{{ repeat.item.entities }}'
-            data:
-              option: '{{ repeat.item.preset }}'
-            action: input_select.select_option
-          - delay:
-              seconds: 5
+          - repeat:
+              for_each:
+              - entity: input_select.gameroom_covers
+                preset: Shaded
+              - entity: input_select.office_covers
+                preset: Shaded
+              - entity: input_select.living_room_covers
+                preset: Shaded
+              - entity: input_select.roof_terrace_covers
+                preset: Exposed
+              - entity: input_select.kitchen_covers
+                preset: Exposed
+              - entity: input_select.garden_covers
+                preset: Exposed
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entity }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
   mode: queued
   max: 2
 - id: '1761750325973'
@@ -5340,8 +5910,8 @@
       alarm_presence_sensor: binary_sensor.presence
       alarm_auto_arm_away: true
       alarm_notifications_target:
-      - 1b49bd1284b5afb6e9f5f081024a600c
       - ed18014bbde1fefe8254e55a058ec7b7
+      - 98d9ae04b7a1a1fc1b674540398cdb11
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
       - media_player.utility_closet
@@ -5656,7 +6226,15 @@
             cache: true
             media_player_entity_id: media_player.utility_closet
             message: Car charging started at {{ states('sensor.t047zg_battery') }}%
-        - action: notify.notify
+        - action: notify.mobile_app_alex_phone_bigme
+          metadata: {}
+          data:
+            message: Car charging started at {{ states('sensor.t047zg_battery') }}%
+            data:
+              channel: Car
+              notification_icon: mdi:car
+        - action: notify.mobile_app_deni_phone
+          metadata: {}
           data:
             message: Car charging started at {{ states('sensor.t047zg_battery') }}%
             data:
@@ -5674,7 +6252,15 @@
             cache: true
             media_player_entity_id: media_player.utility_closet
             message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
-        - action: notify.notify
+        - action: notify.mobile_app_alex_phone_bigme
+          metadata: {}
+          data:
+            message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
+            data:
+              channel: Car
+              notification_icon: mdi:car
+        - action: notify.mobile_app_deni_phone
+          metadata: {}
           data:
             message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
             data:
@@ -5710,7 +6296,7 @@
         data:
           transition: 30
           color_temp_kelvin: 3000
-          brightness_pct: 25
+          brightness_pct: 50
         target:
           entity_id: light.alex_tv_light
     - alias: Not playing
@@ -5741,7 +6327,7 @@
         data:
           transition: 30
           color_temp_kelvin: 3000
-          brightness_pct: 25
+          brightness_pct: 50
         target:
           entity_id: light.deni_tv_light
     - alias: Not playing
