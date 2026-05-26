@@ -6358,11 +6358,3 @@
     data:
       addon: a0d7b954_vscode
   mode: single
-- id: '1776879197144'
-  alias: System - Dump Music Assistant Logs
-  triggers:
-  - platform: time_pattern
-    minutes: /5
-  actions:
-  - action: shell_command.dump_ma_logs
-  mode: single
