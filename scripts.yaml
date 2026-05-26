@@ -38,7 +38,7 @@ music_night:
       media_type: playlist
       enqueue: replace
       media_id:
-      - Classical
+      - Piano
     target:
       entity_id: media_player.bedroom
   - action: media_player.repeat_set
@@ -170,7 +170,7 @@ lights_green:
     data:
       brightness_pct: 100
       color_name: green
-      effect: breathe
+      flash: long
       transition: 1
     target:
       entity_id:
@@ -238,7 +238,7 @@ lights_blue:
     data:
       brightness_pct: 100
       color_name: blue
-      effect: breathe
+      flash: long
       transition: 1
     target:
       entity_id:
@@ -306,7 +306,7 @@ lights_red:
     data:
       brightness_pct: 100
       color_name: red
-      effect: breathe
+      flash: long
       transition: 1
     target:
       entity_id:
@@ -374,7 +374,7 @@ lights_orange:
     data:
       brightness_pct: 100
       color_name: orange
-      effect: breathe
+      flash: long
       transition: 1
     target:
       entity_id:
