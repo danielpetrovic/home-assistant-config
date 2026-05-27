@@ -3409,13 +3409,15 @@
   - entity_id: sensor.climate_mode
     id: climate_mode
     trigger: state
+  - trigger: time
+    at: 09:00:00
+    id: time_09
   conditions: []
   actions:
   - if:
     - condition: trigger
       id: climate_mode
     - condition: time
-      after: 00:00:00
       before: 09:00:00
     then:
     - stop: Night guard active
@@ -3472,7 +3474,7 @@
               entity_id: climate.living_room_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.living_room_ac
@@ -3490,17 +3492,33 @@
           - action: climate.turn_off
             target:
               entity_id: climate.living_room_heating
-          - action: climate.set_temperature
-            data:
-              temperature: 27
-              hvac_mode: cool
-            target:
-              entity_id: climate.living_room_ac
-          - action: climate.set_fan_mode
-            data:
-              fan_mode: Silence
-            target:
-              entity_id: climate.living_room_ac
+          - if:
+            - condition: time
+              before: 09:00:00
+            then:
+            - action: climate.set_temperature
+              data:
+                temperature: 30
+                hvac_mode: cool
+              target:
+                entity_id: climate.living_room_ac
+            - action: climate.set_fan_mode
+              data:
+                fan_mode: Silence
+              target:
+                entity_id: climate.living_room_ac
+            else:
+            - action: climate.set_temperature
+              data:
+                temperature: 27
+                hvac_mode: cool
+              target:
+                entity_id: climate.living_room_ac
+            - action: climate.set_fan_mode
+              data:
+                fan_mode: Silence
+              target:
+                entity_id: climate.living_room_ac
         - alias: hot
           conditions:
           - condition: state
@@ -3510,17 +3528,33 @@
           - action: climate.turn_off
             target:
               entity_id: climate.living_room_heating
-          - action: climate.set_temperature
-            data:
-              temperature: 25
-              hvac_mode: cool
-            target:
-              entity_id: climate.living_room_ac
-          - action: climate.set_fan_mode
-            data:
-              fan_mode: Silence
-            target:
-              entity_id: climate.living_room_ac
+          - if:
+            - condition: time
+              before: 09:00:00
+            then:
+            - action: climate.set_temperature
+              data:
+                temperature: 30
+                hvac_mode: cool
+              target:
+                entity_id: climate.living_room_ac
+            - action: climate.set_fan_mode
+              data:
+                fan_mode: Silence
+              target:
+                entity_id: climate.living_room_ac
+            else:
+            - action: climate.set_temperature
+              data:
+                temperature: 25
+                hvac_mode: cool
+              target:
+                entity_id: climate.living_room_ac
+            - action: climate.set_fan_mode
+              data:
+                fan_mode: Silence
+              target:
+                entity_id: climate.living_room_ac
     - alias: schedule off or away
       conditions:
       - condition: or
@@ -3574,7 +3608,7 @@
               entity_id: climate.living_room_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.living_room_ac
@@ -3594,7 +3628,7 @@
               entity_id: climate.living_room_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.living_room_ac
@@ -3614,7 +3648,7 @@
               entity_id: climate.living_room_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.living_room_ac
@@ -3643,7 +3677,6 @@
     - condition: trigger
       id: climate_mode
     - condition: time
-      after: 00:00:00
       before: 09:00:00
     then:
     - stop: Night guard active
@@ -3700,7 +3733,7 @@
               entity_id: climate.bedroom_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.bedroom_ac
@@ -3721,7 +3754,7 @@
             data: {}
           - action: climate.set_temperature
             data:
-              temperature: 26
+              temperature: 25
               hvac_mode: cool
             target:
               entity_id: climate.bedroom_ac
@@ -3740,9 +3773,10 @@
           - action: climate.turn_off
             target:
               entity_id: climate.bedroom_heating
+            data: {}
           - action: climate.set_temperature
             data:
-              temperature: 25
+              temperature: 24
               hvac_mode: cool
             target:
               entity_id: climate.bedroom_ac
@@ -3804,7 +3838,7 @@
               entity_id: climate.bedroom_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.bedroom_ac
@@ -3824,7 +3858,7 @@
               entity_id: climate.bedroom_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.bedroom_ac
@@ -3844,7 +3878,7 @@
               entity_id: climate.bedroom_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.bedroom_ac
@@ -3887,7 +3921,6 @@
     - condition: trigger
       id: climate_mode
     - condition: time
-      after: 00:00:00
       before: 09:00:00
     then:
     - stop: Night guard active
@@ -3944,7 +3977,7 @@
               entity_id: climate.office_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.office_ac
@@ -3984,7 +4017,7 @@
             else:
             - action: climate.set_temperature
               data:
-                temperature: 28
+                temperature: 30
                 hvac_mode: cool
               target:
                 entity_id: climate.office_ac
@@ -4024,7 +4057,7 @@
             else:
             - action: climate.set_temperature
               data:
-                temperature: 28
+                temperature: 30
                 hvac_mode: cool
               target:
                 entity_id: climate.office_ac
@@ -4086,7 +4119,7 @@
               entity_id: climate.office_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.office_ac
@@ -4106,7 +4139,7 @@
               entity_id: climate.office_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.office_ac
@@ -4126,7 +4159,7 @@
               entity_id: climate.office_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.office_ac
@@ -4169,7 +4202,6 @@
     - condition: trigger
       id: climate_mode
     - condition: time
-      after: 00:00:00
       before: 09:00:00
     then:
     - stop: Night guard active
@@ -4226,7 +4258,7 @@
               entity_id: climate.gameroom_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.gameroom_ac
@@ -4266,7 +4298,7 @@
             else:
             - action: climate.set_temperature
               data:
-                temperature: 28
+                temperature: 30
                 hvac_mode: cool
               target:
                 entity_id: climate.gameroom_ac
@@ -4306,7 +4338,7 @@
             else:
             - action: climate.set_temperature
               data:
-                temperature: 28
+                temperature: 30
                 hvac_mode: cool
               target:
                 entity_id: climate.gameroom_ac
@@ -4368,7 +4400,7 @@
               entity_id: climate.gameroom_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.gameroom_ac
@@ -4388,7 +4420,7 @@
               entity_id: climate.gameroom_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.gameroom_ac
@@ -4408,7 +4440,7 @@
               entity_id: climate.gameroom_heating
           - action: climate.set_temperature
             data:
-              temperature: 28
+              temperature: 30
               hvac_mode: cool
             target:
               entity_id: climate.gameroom_ac
