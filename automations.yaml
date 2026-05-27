@@ -4196,6 +4196,14 @@
     entity_id: sensor.gameroom_desk_power
     id: desk_off
     below: 50
+  - trigger: numeric_state
+    entity_id: sensor.gameroom_media_power
+    id: media_on
+    above: 20
+  - trigger: numeric_state
+    entity_id: sensor.gameroom_media_power
+    id: media_off
+    below: 20
   conditions: []
   actions:
   - if:
@@ -4277,12 +4285,19 @@
             target:
               entity_id: climate.gameroom_heating
           - if:
-            - condition: time
-              after: 09:00:00
-              before: '18:00:00'
-            - condition: numeric_state
-              entity_id: sensor.gameroom_desk_power
-              above: 50
+            - condition: or
+              conditions:
+              - condition: and
+                conditions:
+                - condition: time
+                  after: 09:00:00
+                  before: '18:00:00'
+                - condition: numeric_state
+                  entity_id: sensor.gameroom_desk_power
+                  above: 50
+              - condition: numeric_state
+                entity_id: sensor.gameroom_media_power
+                above: 20
             then:
             - action: climate.set_temperature
               data:
@@ -4317,12 +4332,19 @@
             target:
               entity_id: climate.gameroom_heating
           - if:
-            - condition: time
-              after: 09:00:00
-              before: '18:00:00'
-            - condition: numeric_state
-              entity_id: sensor.gameroom_desk_power
-              above: 50
+            - condition: or
+              conditions:
+              - condition: and
+                conditions:
+                - condition: time
+                  after: 09:00:00
+                  before: '18:00:00'
+                - condition: numeric_state
+                  entity_id: sensor.gameroom_desk_power
+                  above: 50
+              - condition: numeric_state
+                entity_id: sensor.gameroom_media_power
+                above: 20
             then:
             - action: climate.set_temperature
               data:
