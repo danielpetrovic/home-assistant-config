@@ -1103,8 +1103,9 @@
         entity_id: input_select.office_covers
         state: Privacy
       sequence:
-      - action: cover.close_cover
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
           entity_id: cover.office_shades
@@ -2362,8 +2363,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: 84192abaadf3eedc3825376520c21ce6
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Bathroom Button
       last_pressed: input_text.bathroom_button_last_pressed
       button_1_light:
         entity_id: light.bathroom_light
@@ -2385,8 +2387,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: e4fa5332829f35501941ca02a51b3aec
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Dining Table Button
       last_pressed: input_text.dining_table_button_last_pressed
       button_1_light:
         entity_id: light.dining_table_above_light
@@ -2433,8 +2436,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: 3886919eacf5749040e1a666a0cb5aeb
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Gameroom Desk Button
       last_pressed: input_text.gameroom_desk_button_last_pressed
       button_1_light:
         entity_id: light.gameroom_above_light
@@ -2492,8 +2496,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: 84a541271d9d95eaa48fcec16ee55766
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Gameroom Button
       last_pressed: input_text.gameroom_button_last_pressed
       button_1_light:
         entity_id:
@@ -2552,8 +2557,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: d5f2c8870dbfaaa314f7af2541ca41e1
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Hallway Button
       last_pressed: input_text.hallway_button_last_pressed
       button_1_light:
         entity_id: light.hallway_lighten
@@ -2598,8 +2604,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: 53bfebda4091067d3e13958e11f8b644
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Office Button
       last_pressed: input_text.office_button_last_pressed
       button_1_light:
         entity_id:
@@ -2657,8 +2664,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: bd34f8b3c4b73fe1ee49a37358e87280
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Kitchen Button
       last_pressed: input_text.kitchen_button_last_pressed
       button_1_light:
         entity_id:
@@ -2709,8 +2717,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: 95a98355a6d98829917e9e1575fc308a
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Gym Button
       last_pressed: input_text.gym_button_last_pressed
       button_1_light:
         entity_id: light.gym_light
@@ -2760,8 +2769,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: 4e350e6a94ad6931c4d1bc90dcc6660f
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Bedroom Button
       last_pressed: input_text.bedroom_button_last_pressed
       button_1_light:
         entity_id:
@@ -2809,8 +2819,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: ec7a45ef9d2486df053cf8201b966db8
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Bedroom Alex Button
       last_pressed: input_text.bedroom_alex_button_last_pressed
       button_1_light:
         entity_id: light.bedroom_light
@@ -2839,8 +2850,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: d4eba72b3181cee5df2cac24d5bc0ff0
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Bedroom Deni Button
       last_pressed: input_text.bedroom_deni_button_last_pressed
       button_1_light:
         entity_id: light.bedroom_light
@@ -2869,8 +2881,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: 4c442f0d310404a76a2ea1e86a4e243c
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Living Room Button
       last_pressed: input_text.living_room_button_last_pressed
       button_1_light:
         entity_id:
@@ -2919,8 +2932,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: fd833704a7a92a419ff7bc224ef81480
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Shed Garden Button
       last_pressed: input_text.shed_garden_button_last_pressed
       button_1_light:
         entity_id: light.shed
@@ -3245,8 +3259,9 @@
     path: danielpetrovic/niko-battery-switch-multi-button.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: dad325a441e874ef613105165199456d
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Entrance Button
       button_1_light:
         entity_id:
         - light.entrance_light
@@ -3270,8 +3285,9 @@
     path: danielpetrovic/niko-battery-switch-multi-button.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: 0611fc594244c9c75c3d79f971dfece4
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Toilet Button
       button_1_light:
         entity_id:
         - light.toilet_light
@@ -3295,8 +3311,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: aca53a94c85363eaf1309dc70ab5fdbe
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Shed Alleyway Button
       last_pressed: input_text.shed_alleyway_button_last_pressed
       button_1_light:
         entity_id: light.shed
@@ -3341,8 +3358,9 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
-      zha_remote: e5b792f28515a5c9e514e6f599f89166
+      - z2m
+      z2m_base_topic: zigbee2mqtt
+      z2m_device_name: Roof Terrace Button
       last_pressed: input_text.roof_terrace_button_last_pressed
       button_1_light:
         entity_id: light.gameroom_above_light
@@ -3910,11 +3928,15 @@
   - trigger: numeric_state
     entity_id: sensor.office_desk_power
     id: desk_on
-    above: 50
+    above: 35
+    for:
+      minutes: 1
   - trigger: numeric_state
     entity_id: sensor.office_desk_power
     id: desk_off
-    below: 50
+    below: 10
+    for:
+      minutes: 1
   conditions: []
   actions:
   - if:
@@ -4001,7 +4023,7 @@
               before: '18:00:00'
             - condition: numeric_state
               entity_id: sensor.office_desk_power
-              above: 50
+              above: 10
             then:
             - action: climate.set_temperature
               data:
@@ -4041,7 +4063,7 @@
               before: '18:00:00'
             - condition: numeric_state
               entity_id: sensor.office_desk_power
-              above: 50
+              above: 10
             then:
             - action: climate.set_temperature
               data:
@@ -4191,11 +4213,15 @@
   - trigger: numeric_state
     entity_id: sensor.gameroom_desk_power
     id: desk_on
-    above: 50
+    above: 35
+    for:
+      minutes: 1
   - trigger: numeric_state
     entity_id: sensor.gameroom_desk_power
     id: desk_off
-    below: 50
+    below: 10
+    for:
+      minutes: 1
   - trigger: numeric_state
     entity_id: sensor.gameroom_media_power
     id: media_on
@@ -4294,7 +4320,7 @@
                   before: '18:00:00'
                 - condition: numeric_state
                   entity_id: sensor.gameroom_desk_power
-                  above: 50
+                  above: 10
               - condition: numeric_state
                 entity_id: sensor.gameroom_media_power
                 above: 20
@@ -4341,7 +4367,7 @@
                   before: '18:00:00'
                 - condition: numeric_state
                   entity_id: sensor.gameroom_desk_power
-                  above: 50
+                  above: 10
               - condition: numeric_state
                 entity_id: sensor.gameroom_media_power
                 above: 20
