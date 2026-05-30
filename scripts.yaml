@@ -170,7 +170,7 @@ lights_green:
     data:
       brightness_pct: 100
       color_name: green
-      flash: long
+      effect: breathe
       transition: 1
     target:
       entity_id:
@@ -238,7 +238,7 @@ lights_blue:
     data:
       brightness_pct: 100
       color_name: blue
-      flash: long
+      effect: breathe
       transition: 1
     target:
       entity_id:
@@ -306,7 +306,7 @@ lights_red:
     data:
       brightness_pct: 100
       color_name: red
-      flash: long
+      effect: breathe
       transition: 1
     target:
       entity_id:
@@ -374,7 +374,7 @@ lights_orange:
     data:
       brightness_pct: 100
       color_name: orange
-      flash: long
+      effect: breathe
       transition: 1
     target:
       entity_id:
