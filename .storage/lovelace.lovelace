@@ -1343,12 +1343,21 @@
                         {
                           "entity": "light.alleyway",
                           "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.alleyway_house_light"
+                        },
+                        {
+                          "entity": "light.alleyway_shed_light"
                         }
                       ]
                     },
                     {
                       "type": "entities",
                       "entities": [
+                        {
+                          "entity": "light.dining_table"
+                        },
                         {
                           "entity": "light.dining_table_above_light",
                           "secondary_info": "last-changed"
@@ -1363,6 +1372,9 @@
                       "type": "entities",
                       "entities": [
                         {
+                          "entity": "light.entrance"
+                        },
+                        {
                           "entity": "light.entrance_light",
                           "secondary_info": "last-changed"
                         }
@@ -1373,6 +1385,50 @@
                       "entities": [
                         {
                           "entity": "light.garden",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.garden_left_1_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.garden_left_2_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.garden_left_3_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.garden_left_4_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.garden_left_5_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.garden_left_6_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.garden_right_1_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.garden_right_2_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.garden_right_3_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.garden_right_4_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.garden_right_5_light",
                           "secondary_info": "last-changed"
                         }
                       ]
@@ -1385,7 +1441,31 @@
                           "secondary_info": "last-changed"
                         },
                         {
+                          "entity": "light.kitchen_spot_1_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.kitchen_spot_2_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.kitchen_spot_3_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.kitchen_spot_4_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
                           "entity": "light.kitchen_cabinet",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.kitchen_cabinet_spot_1_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.kitchen_cabinet_spot_2_light",
                           "secondary_info": "last-changed"
                         }
                       ]
@@ -1393,6 +1473,10 @@
                     {
                       "type": "entities",
                       "entities": [
+                        {
+                          "entity": "light.living_room",
+                          "secondary_info": "last-changed"
+                        },
                         {
                           "entity": "light.living_room_above_light",
                           "secondary_info": "last-changed"
@@ -1410,6 +1494,10 @@
                     {
                       "type": "entities",
                       "entities": [
+                        {
+                          "entity": "light.shed",
+                          "secondary_info": "last-changed"
+                        },
                         {
                           "entity": "light.shed_left_light",
                           "secondary_info": "last-changed"
@@ -1431,6 +1519,10 @@
                     {
                       "type": "entities",
                       "entities": [
+                        {
+                          "entity": "light.toilet",
+                          "secondary_info": "last-changed"
+                        },
                         {
                           "entity": "light.toilet_light",
                           "secondary_info": "last-changed"
@@ -1464,6 +1556,10 @@
                       "type": "entities",
                       "entities": [
                         {
+                          "entity": "light.bathroom",
+                          "secondary_info": "last-changed"
+                        },
+                        {
                           "entity": "light.bathroom_light",
                           "secondary_info": "last-changed"
                         }
@@ -1472,6 +1568,10 @@
                     {
                       "type": "entities",
                       "entities": [
+                        {
+                          "entity": "light.bedroom",
+                          "secondary_info": "last-changed"
+                        },
                         {
                           "entity": "light.bedroom_light",
                           "secondary_info": "last-changed"
@@ -1498,6 +1598,10 @@
                       "type": "entities",
                       "entities": [
                         {
+                          "entity": "light.gym",
+                          "secondary_info": "last-changed"
+                        },
+                        {
                           "entity": "light.gym_light",
                           "secondary_info": "last-changed"
                         }
@@ -1507,7 +1611,19 @@
                       "type": "entities",
                       "entities": [
                         {
+                          "entity": "light.hallway",
+                          "secondary_info": "last-changed"
+                        },
+                        {
                           "entity": "light.hallway_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.hallway_stairs_1_light",
+                          "secondary_info": "last-changed"
+                        },
+                        {
+                          "entity": "light.hallway_stairs_2_light",
                           "secondary_info": "last-changed"
                         }
                       ]
@@ -1515,6 +1631,10 @@
                     {
                       "type": "entities",
                       "entities": [
+                        {
+                          "entity": "light.office",
+                          "secondary_info": "last-changed"
+                        },
                         {
                           "entity": "light.office_light",
                           "secondary_info": "last-changed"
@@ -1550,6 +1670,10 @@
                       "type": "entities",
                       "entities": [
                         {
+                          "entity": "light.laundry_room",
+                          "secondary_info": "last-changed"
+                        },
+                        {
                           "entity": "light.laundry_room_light",
                           "secondary_info": "last-changed"
                         }
@@ -1558,6 +1682,10 @@
                     {
                       "type": "entities",
                       "entities": [
+                        {
+                          "entity": "light.gameroom",
+                          "secondary_info": "last-changed"
+                        },
                         {
                           "entity": "light.gameroom_above_light",
                           "secondary_info": "last-changed"
@@ -1579,6 +1707,10 @@
                     {
                       "type": "entities",
                       "entities": [
+                        {
+                          "entity": "light.roof_terrace",
+                          "secondary_info": "last-changed"
+                        },
                         {
                           "entity": "light.roof_terrace_light",
                           "secondary_info": "last-changed"
