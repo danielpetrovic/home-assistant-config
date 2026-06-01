@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Adaptive Lighting Scheduler
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/adaptive-lighting-scheduler.yaml) ![Version](https://img.shields.io/badge/Version-2026.01.2-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/adaptive-lighting-scheduler.yaml) ![Version](https://img.shields.io/badge/Version-2026.06.1-blue?style=for-the-badge)
 
     This blueprint calculates optimal brightness and color temperature values throughout the day and stores them in input_number helpers for use by other automations and blueprints.
 
@@ -15,7 +15,7 @@ blueprint:
     - **Smooth Ramping**: Gradual transitions between day phases (wake, morning, evening, sleep, night)
     - **Helper Output**: Stores values in input_number entities for use by switches, dashboards, and other automations
     - **Direct Light Control**: Optionally control lights directly through this blueprint. Works standalone without button automations, or alongside them for centralized adaptive scheduling
-    - **Auto-Adjust**: Automatically update selected lights when schedule changes (only affects lights that are ON)
+    - **Auto-Adjust**: Independently enable auto-adjust for brightness and/or color temperature (only affects lights that are ON)
     - **Multiple Zones**: Create multiple instances with different helper pairs for different lighting zones
 
     *Each configuration option below includes detailed instructions in the automation editor.*
@@ -55,14 +55,15 @@ blueprint:
     You can optionally select lights in the "Direct Light Control" section to have them automatically adjust based on the schedule:
 
     - **Lights to Control**: Select any lights, devices, or areas you want to control
-    - **Enable Auto-Adjust**: Turn this on to automatically update lights when the schedule changes
+    - **Auto-Adjust Brightness**: Automatically update brightness on value change
+    - **Auto-Adjust Color Temperature**: Automatically update color temperature on value change
     - **Auto-Adjust Transition**: Set how smoothly lights transition (default: 5 minutes)
+
+    Both toggles are independent — enable either, both, or neither. Lights will only be updated when they're already ON.
 
     **Two ways to use this:**
     - **Standalone**: Perfect if you don't use button automations but still want automatic light adjustments throughout the day
     - **With Button Automations**: Even if you use the button blueprints, you can handle adaptive scheduling here instead of enabling auto-adjust in each button automation. This centralizes your adaptive lighting control in one place
-
-    The lights will only be updated when they're already ON - the blueprint won't turn lights on or off automatically.
 
     ## 📋 Requirements
     - **Home Assistant**: Version 2024.10.0 or later
@@ -76,6 +77,9 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.06.1: Split Auto-Adjust into Separate Brightness and Color Temperature Toggles**
+          - Replaced single "Enable Auto-Adjust" toggle with two independent toggles: "Auto-Adjust Brightness" and "Auto-Adjust Color Temperature"
+          - Either or both can be enabled independently — useful when you want to lock brightness while still letting color temperature follow the value change, or vice versa
         - **2026.01.2: Bug Fix - "Already Running" Errors**
           - Fixed automation triggering twice simultaneously causing "Already running" errors
           - Removed unnecessary sun.sun state trigger (time_pattern every 5 minutes is sufficient)
@@ -199,13 +203,23 @@ blueprint:
               entity:
                 - domain:
                     - light
-        auto_adjust_enabled:
-          name: Enable Auto-Adjust
+        auto_adjust_brightness:
+          name: Auto-Adjust Brightness
           default: false
           description: |
             `optional` `boolean`
 
-            Automatically update the selected lights when adaptive values change.
+            Automatically update brightness on the selected lights on value change.
+            Only affects lights that are currently ON.
+          selector:
+            boolean: {}
+        auto_adjust_color_temp:
+          name: Auto-Adjust Color Temperature
+          default: false
+          description: |
+            `optional` `boolean`
+
+            Automatically update color temperature on the selected lights on value change.
             Only affects lights that are currently ON.
           selector:
             boolean: {}
@@ -1115,7 +1129,8 @@ variables:
   brightness_helper: !input brightness_helper
   color_temp_helper: !input color_temp_helper
   target_lights: !input target_lights
-  auto_adjust_enabled: !input auto_adjust_enabled
+  auto_adjust_brightness: !input auto_adjust_brightness
+  auto_adjust_color_temp: !input auto_adjust_color_temp
   auto_adjust_transition: !input auto_adjust_transition
   has_light_target: >-
     {{ target_lights.entity_id | default([]) | length > 0
@@ -1432,7 +1447,7 @@ actions:
     data:
       value: "{{ calculated_color_temp }}"
   - if:
-      - "{{ auto_adjust_enabled and has_light_target }}"
+      - "{{ has_light_target and (auto_adjust_brightness or auto_adjust_color_temp) }}"
     then:
       - repeat:
           for_each: "{{ light_entities }}"
@@ -1440,10 +1455,29 @@ actions:
             - if:
                 - "{{ is_state(repeat.item, 'on') }}"
               then:
-                - action: light.turn_on
-                  target:
-                    entity_id: "{{ repeat.item }}"
-                  data:
-                    brightness_pct: "{{ calculated_brightness }}"
-                    color_temp_kelvin: "{{ calculated_color_temp }}"
-                    transition: "{{ auto_adjust_transition }}"
+                - choose:
+                    - conditions: "{{ auto_adjust_brightness and auto_adjust_color_temp }}"
+                      sequence:
+                        - action: light.turn_on
+                          target:
+                            entity_id: "{{ repeat.item }}"
+                          data:
+                            brightness_pct: "{{ calculated_brightness }}"
+                            color_temp_kelvin: "{{ calculated_color_temp }}"
+                            transition: "{{ auto_adjust_transition }}"
+                    - conditions: "{{ auto_adjust_brightness }}"
+                      sequence:
+                        - action: light.turn_on
+                          target:
+                            entity_id: "{{ repeat.item }}"
+                          data:
+                            brightness_pct: "{{ calculated_brightness }}"
+                            transition: "{{ auto_adjust_transition }}"
+                    - conditions: "{{ auto_adjust_color_temp }}"
+                      sequence:
+                        - action: light.turn_on
+                          target:
+                            entity_id: "{{ repeat.item }}"
+                          data:
+                            color_temp_kelvin: "{{ calculated_color_temp }}"
+                            transition: "{{ auto_adjust_transition }}"
