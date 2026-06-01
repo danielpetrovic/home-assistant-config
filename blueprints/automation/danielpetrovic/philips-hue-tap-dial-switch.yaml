@@ -5,20 +5,22 @@ blueprint:
   description: |
     # Philips Hue Tap Dial Switch (Z2M / ZHA)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) ![Version](https://img.shields.io/badge/Version-2026.04.1-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) ![Version](https://img.shields.io/badge/Version-2026.06.1-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of a Philips Hue Tap Dial Switch through Zigbee2MQTT or ZHA integration, supporting custom actions, light automation, and media player control.
 
     ## ✨ Key Features
-    - **Multiple Integration Options**: Choose Zigbee2MQTT (Z2M), ZHA, or both
-    - **4 Buttons**: Each with short press, long press, and multi-press support (Z2M: double, ZHA: double/triple/quad/quint)
-    - **Rotary Dial**: Context-aware based on last button pressed
-    - **Custom Mode**: Program buttons to execute personalized home automation routines
+    - **Multiple Integration Options**: Zigbee2MQTT (Z2M), ZHA, or both
+    - **4 Buttons**: Short press, long press, double press, and multi-press with built-in light, media, and custom actions
     - **Light Mode**: Control lights with brightness, color temperature, and transitions
     - **Media Mode**: Control media players with volume, playback, and grouping
-    - **Adaptive Lighting Support**: Integrates with Home Assistant schedule helpers and adaptive lighting sensors for dynamic brightness and color temperature adjustments throughout the day
-    - **Auto-Adjust**: Optionally enable automatic light adjustment when your schedule changes - lights will smoothly transition to match the current schedule settings
-    - **Configurable Dimming Speed**: Adjust how fast lights dim with the dial
+    - **Custom Mode**: Execute personalized home automation routines from any button
+    - **Dial Brightness Control**: Context-aware brightness adjustment based on the last button pressed
+    - **Dial Color Temperature Control**: Context-aware color temperature adjustment based on the last button pressed
+    - **Dynamic Dial Mode**: Switch the dial between brightness and color temperature control from any button action
+    - **Configurable Dial Speed**: Independent speed settings for brightness and color temperature
+    - **Adaptive Lighting Support**: Time-based brightness and color temperature via schedule helpers and adaptive lighting sensors
+    - **Auto-Adjust**: Automatically update lights when adaptive or schedule values change, independently for brightness and color temperature
 
     *Each configuration option below includes detailed instructions in the automation editor.*
 
@@ -26,7 +28,7 @@ blueprint:
     - **Home Assistant**: Version 2024.10.0 or later
     - **Zigbee Integration**: Zigbee2MQTT (Z2M) and/or Zigbee Home Automation (ZHA)
     - **Compatible Model**: Philips Hue Tap Dial Switch (RDM002)
-    - **Text Helper**: One per switch (for dial context)
+    - **Text Helper**: One per switch for dial context; one optional per button for dynamic dial mode switching
   domain: automation
   homeassistant:
     min_version: 2024.10.0
@@ -34,6 +36,17 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.06.1: Dial color temperature control and double press light mode**
+          - Added: "Color Temperature" option in Rotate Mode — dial can now adjust color temp instead of (or alongside) brightness
+          - Added: Color Temp Speed input per button (1–10 slider) — mirrors Dimming Speed, controls how fast color temperature changes
+          - Added: Rotate Mode Helper input per button — optional input_text entity that overrides the static Rotate Mode at runtime, enabling toggling between brightness and color temp
+          - Added: "Toggle Rotate Mode" action option in short release, long release, and double press light mode selectors
+          - Added: Double Press Mode light selector per button — turn_on/turn_off/toggle/toggle_rotate_mode (double press previously had no built-in light mode)
+          - Added: Separate "Auto-Adjust Brightness" and "Auto-Adjust Color Temperature" toggles per button — allows dial color temperature control to coexist with adaptive/schedule brightness auto-adjust
+          - Added: Button Helpers Configuration setup guide — explains how to create the required Last Pressed helper and optional Rotate Mode helper, with a YAML example for `buttons.yaml`
+          - Improved: "Dim" option in Rotate Mode renamed to "Brightness" (value `dim` → `brightness`; stored `dim` values are silently ignored — re-save automation to restore rotation if needed)
+          - Breaking: "Auto-Adjust on Value Change" replaced by separate `_brightness` and `_color_temp` toggles — re-enable the relevant toggle(s) if previously active
+
         - **2026.04.1: Fix template warning in Z2M double-press detection**
           - Fixed: Added `| default('')` to `value_json.action` in the two `wait_for_trigger` blocks used for double-press detection
           - Fixed: Silences template variable warning triggered by spurious Z2M MQTT messages (linkquality, battery updates) that don't carry an action field
@@ -90,6 +103,68 @@ blueprint:
           - First release with basic Philips Hue Tap Dial Switch support
       collapsed: true
       icon: mdi:history
+      input: {}
+    button_helpers_info:
+      name: Button Helpers Configuration
+      description: |
+        Two `input_text` helpers are used by this blueprint. Both can be defined in the same
+        package file for easy management.
+
+        ### Setting up Packages (Optional)
+        Organize helpers into packages for easier management. Create a `packages` folder in `/config/` and add to your configuration:
+
+        ```yaml
+        homeassistant:
+          packages: !include_dir_named packages
+        ```
+
+        ### Last Pressed Helper (Required)
+        Tracks which button was last pressed so the dial knows which button's lights or media
+        to control when rotating. **Each switch requires its own unique helper.**
+
+        ### Rotate Mode Helper (Optional)
+        Stores the current dial mode (`brightness` or `color_temp`). When configured, it overrides
+        the static Rotate Mode selector — so the same dial can switch between controlling brightness
+        and color temperature at runtime.
+
+        ### YAML Example
+        Create `/config/packages/buttons.yaml`:
+
+        ```yaml
+        input_text:
+          living_room_button_last_pressed:
+            name: "Living Room Button Last Pressed"
+            icon: mdi:knob
+            min: 0
+            max: 1
+            mode: text
+            pattern: "[1-4]"
+
+          living_room_dial_mode:
+            name: "Living Room Dial Mode"
+            icon: mdi:tune-variant
+            initial: brightness
+        ```
+
+        ### Wiring up the Rotate Mode Toggle
+        In the **Double Press Mode** selector for your button, choose **Toggle Rotate Mode**.
+        The blueprint will flip the helper between `brightness` and `color_temp` on each double press.
+
+        Alternatively, use any custom action slot to set the value manually:
+
+        ```yaml
+        - action: input_text.set_value
+          target:
+            entity_id: input_text.living_room_dial_mode
+          data:
+            value: color_temp
+        ```
+
+        ### Rotate Mode Selector vs Helper
+        - **No helper configured**: dial always uses the static Rotate Mode selector
+        - **Helper configured**: helper value takes over — toggle it from any button, script, or dashboard
+      collapsed: true
+      icon: mdi:tune-variant
       input: {}
     schedule_helper_info:
       name: Schedule Helper Configuration
@@ -358,6 +433,8 @@ blueprint:
                   value: turn_off
                 - label: "Toggle"
                   value: toggle
+                - label: "Toggle Rotate Mode"
+                  value: toggle_rotate_mode
               custom_value: false
               multiple: true
         button_1_long_release_light_mode:
@@ -376,11 +453,33 @@ blueprint:
                   value: turn_off
                 - label: "Toggle"
                   value: toggle
+                - label: "Toggle Rotate Mode"
+                  value: toggle_rotate_mode
+              custom_value: false
+              multiple: true
+        button_1_double_light_mode:
+          name: Double Press Mode
+          default: []
+          description: |
+            `optional` `select`
+
+            Light actions for double press. Multiple selections trigger simultaneously.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Toggle Rotate Mode"
+                  value: toggle_rotate_mode
               custom_value: false
               multiple: true
         button_1_rotate_light_mode:
           name: Rotate Mode
-          default: dim
+          default: brightness
           description: |
             `optional` `select`
 
@@ -388,8 +487,10 @@ blueprint:
           selector:
             select:
               options:
-                - label: "Dim"
-                  value: dim
+                - label: "Brightness"
+                  value: brightness
+                - label: "Color Temperature"
+                  value: color_temp
               custom_value: false
               multiple: true
         button_1_dimming_speed:
@@ -405,6 +506,36 @@ blueprint:
               max: 10
               step: 1
               mode: slider
+        button_1_color_temp_step:
+          name: Color Temp Speed
+          default: 5
+          description: |
+            `optional` `number`
+
+            Controls how fast color temperature changes when using the dial (1=slowest/smoothest, 10=fastest/jumpiest).
+            Only used when Rotate Mode includes "Color Temperature".
+          selector:
+            number:
+              min: 1
+              max: 10
+              step: 1
+              mode: slider
+        button_1_rotate_mode_helper:
+          name: Rotate Mode Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            An input_text helper that controls which mode the dial uses at runtime.
+            When configured, this overrides the Rotate Mode selector above.
+            Set its value to `brightness` or `color_temp` from any action (script, button, dashboard).
+            Leave empty to use the static Rotate Mode selection.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_text
+              multiple: false
     button_1_light_settings:
       name: Button 1 - Light Mode Settings
       icon: mdi:cog
@@ -507,13 +638,23 @@ blueprint:
                 - domain:
                     - schedule
               multiple: false
-        button_1_light_auto_adjust:
-          name: Auto-Adjust on Value Change
+        button_1_light_auto_adjust_brightness:
+          name: Auto-Adjust Brightness on Value Change
           default: false
           description: |
             `optional` `boolean`
 
-            Automatically update lights when adaptive or schedule values change. Only affects currently on lights.
+            Automatically update light brightness when adaptive or schedule values change. Only affects currently on lights.
+          selector:
+            boolean: {}
+        button_1_light_auto_adjust_color_temp:
+          name: Auto-Adjust Color Temperature on Value Change
+          default: false
+          description: |
+            `optional` `boolean`
+
+            Automatically update light color temperature when adaptive or schedule values change. Only affects currently on lights.
+            Disable this when using dial color temperature control to prevent the schedule or adaptive mode from overriding manual adjustments.
           selector:
             boolean: {}
         button_1_light_auto_adjust_transition:
@@ -913,6 +1054,8 @@ blueprint:
                   value: turn_off
                 - label: "Toggle"
                   value: toggle
+                - label: "Toggle Rotate Mode"
+                  value: toggle_rotate_mode
               custom_value: false
               multiple: true
         button_2_long_release_light_mode:
@@ -931,11 +1074,33 @@ blueprint:
                   value: turn_off
                 - label: "Toggle"
                   value: toggle
+                - label: "Toggle Rotate Mode"
+                  value: toggle_rotate_mode
+              custom_value: false
+              multiple: true
+        button_2_double_light_mode:
+          name: Double Press Mode
+          default: []
+          description: |
+            `optional` `select`
+
+            Light actions for double press. Multiple selections trigger simultaneously.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Toggle Rotate Mode"
+                  value: toggle_rotate_mode
               custom_value: false
               multiple: true
         button_2_rotate_light_mode:
           name: Rotate Mode
-          default: dim
+          default: brightness
           description: |
             `optional` `select`
 
@@ -943,8 +1108,10 @@ blueprint:
           selector:
             select:
               options:
-                - label: "Dim"
-                  value: dim
+                - label: "Brightness"
+                  value: brightness
+                - label: "Color Temperature"
+                  value: color_temp
               custom_value: false
               multiple: true
         button_2_dimming_speed:
@@ -960,6 +1127,36 @@ blueprint:
               max: 10
               step: 1
               mode: slider
+        button_2_color_temp_step:
+          name: Color Temp Speed
+          default: 5
+          description: |
+            `optional` `number`
+
+            Controls how fast color temperature changes when using the dial (1=slowest/smoothest, 10=fastest/jumpiest).
+            Only used when Rotate Mode includes "Color Temperature".
+          selector:
+            number:
+              min: 1
+              max: 10
+              step: 1
+              mode: slider
+        button_2_rotate_mode_helper:
+          name: Rotate Mode Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            An input_text helper that controls which mode the dial uses at runtime.
+            When configured, this overrides the Rotate Mode selector above.
+            Set its value to `brightness` or `color_temp` from any action (script, button, dashboard).
+            Leave empty to use the static Rotate Mode selection.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_text
+              multiple: false
     button_2_light_settings:
       name: Button 2 - Light Mode Settings
       icon: mdi:cog
@@ -1062,13 +1259,23 @@ blueprint:
                 - domain:
                     - schedule
               multiple: false
-        button_2_light_auto_adjust:
-          name: Auto-Adjust on Value Change
+        button_2_light_auto_adjust_brightness:
+          name: Auto-Adjust Brightness on Value Change
           default: false
           description: |
             `optional` `boolean`
 
-            Automatically update lights when adaptive or schedule values change. Only affects currently on lights.
+            Automatically update light brightness when adaptive or schedule values change. Only affects currently on lights.
+          selector:
+            boolean: {}
+        button_2_light_auto_adjust_color_temp:
+          name: Auto-Adjust Color Temperature on Value Change
+          default: false
+          description: |
+            `optional` `boolean`
+
+            Automatically update light color temperature when adaptive or schedule values change. Only affects currently on lights.
+            Disable this when using dial color temperature control to prevent the schedule or adaptive mode from overriding manual adjustments.
           selector:
             boolean: {}
         button_2_light_auto_adjust_transition:
@@ -1468,6 +1675,8 @@ blueprint:
                   value: turn_off
                 - label: "Toggle"
                   value: toggle
+                - label: "Toggle Rotate Mode"
+                  value: toggle_rotate_mode
               custom_value: false
               multiple: true
         button_3_long_release_light_mode:
@@ -1486,11 +1695,33 @@ blueprint:
                   value: turn_off
                 - label: "Toggle"
                   value: toggle
+                - label: "Toggle Rotate Mode"
+                  value: toggle_rotate_mode
+              custom_value: false
+              multiple: true
+        button_3_double_light_mode:
+          name: Double Press Mode
+          default: []
+          description: |
+            `optional` `select`
+
+            Light actions for double press. Multiple selections trigger simultaneously.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Toggle Rotate Mode"
+                  value: toggle_rotate_mode
               custom_value: false
               multiple: true
         button_3_rotate_light_mode:
           name: Rotate Mode
-          default: dim
+          default: brightness
           description: |
             `optional` `select`
 
@@ -1498,8 +1729,10 @@ blueprint:
           selector:
             select:
               options:
-                - label: "Dim"
-                  value: dim
+                - label: "Brightness"
+                  value: brightness
+                - label: "Color Temperature"
+                  value: color_temp
               custom_value: false
               multiple: true
         button_3_dimming_speed:
@@ -1515,6 +1748,36 @@ blueprint:
               max: 10
               step: 1
               mode: slider
+        button_3_color_temp_step:
+          name: Color Temp Speed
+          default: 5
+          description: |
+            `optional` `number`
+
+            Controls how fast color temperature changes when using the dial (1=slowest/smoothest, 10=fastest/jumpiest).
+            Only used when Rotate Mode includes "Color Temperature".
+          selector:
+            number:
+              min: 1
+              max: 10
+              step: 1
+              mode: slider
+        button_3_rotate_mode_helper:
+          name: Rotate Mode Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            An input_text helper that controls which mode the dial uses at runtime.
+            When configured, this overrides the Rotate Mode selector above.
+            Set its value to `brightness` or `color_temp` from any action (script, button, dashboard).
+            Leave empty to use the static Rotate Mode selection.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_text
+              multiple: false
     button_3_light_settings:
       name: Button 3 - Light Mode Settings
       icon: mdi:cog
@@ -1617,13 +1880,23 @@ blueprint:
                 - domain:
                     - schedule
               multiple: false
-        button_3_light_auto_adjust:
-          name: Auto-Adjust on Value Change
+        button_3_light_auto_adjust_brightness:
+          name: Auto-Adjust Brightness on Value Change
           default: false
           description: |
             `optional` `boolean`
 
-            Automatically update lights when adaptive or schedule values change. Only affects currently on lights.
+            Automatically update light brightness when adaptive or schedule values change. Only affects currently on lights.
+          selector:
+            boolean: {}
+        button_3_light_auto_adjust_color_temp:
+          name: Auto-Adjust Color Temperature on Value Change
+          default: false
+          description: |
+            `optional` `boolean`
+
+            Automatically update light color temperature when adaptive or schedule values change. Only affects currently on lights.
+            Disable this when using dial color temperature control to prevent the schedule or adaptive mode from overriding manual adjustments.
           selector:
             boolean: {}
         button_3_light_auto_adjust_transition:
@@ -2023,6 +2296,8 @@ blueprint:
                   value: turn_off
                 - label: "Toggle"
                   value: toggle
+                - label: "Toggle Rotate Mode"
+                  value: toggle_rotate_mode
               custom_value: false
               multiple: true
         button_4_long_release_light_mode:
@@ -2041,11 +2316,33 @@ blueprint:
                   value: turn_off
                 - label: "Toggle"
                   value: toggle
+                - label: "Toggle Rotate Mode"
+                  value: toggle_rotate_mode
+              custom_value: false
+              multiple: true
+        button_4_double_light_mode:
+          name: Double Press Mode
+          default: []
+          description: |
+            `optional` `select`
+
+            Light actions for double press. Multiple selections trigger simultaneously.
+          selector:
+            select:
+              options:
+                - label: "Turn On"
+                  value: turn_on
+                - label: "Turn Off"
+                  value: turn_off
+                - label: "Toggle"
+                  value: toggle
+                - label: "Toggle Rotate Mode"
+                  value: toggle_rotate_mode
               custom_value: false
               multiple: true
         button_4_rotate_light_mode:
           name: Rotate Mode
-          default: dim
+          default: brightness
           description: |
             `optional` `select`
 
@@ -2053,8 +2350,10 @@ blueprint:
           selector:
             select:
               options:
-                - label: "Dim"
-                  value: dim
+                - label: "Brightness"
+                  value: brightness
+                - label: "Color Temperature"
+                  value: color_temp
               custom_value: false
               multiple: true
         button_4_dimming_speed:
@@ -2070,6 +2369,36 @@ blueprint:
               max: 10
               step: 1
               mode: slider
+        button_4_color_temp_step:
+          name: Color Temp Speed
+          default: 5
+          description: |
+            `optional` `number`
+
+            Controls how fast color temperature changes when using the dial (1=slowest/smoothest, 10=fastest/jumpiest).
+            Only used when Rotate Mode includes "Color Temperature".
+          selector:
+            number:
+              min: 1
+              max: 10
+              step: 1
+              mode: slider
+        button_4_rotate_mode_helper:
+          name: Rotate Mode Helper
+          default: []
+          description: |
+            `optional` `entity`
+
+            An input_text helper that controls which mode the dial uses at runtime.
+            When configured, this overrides the Rotate Mode selector above.
+            Set its value to `brightness` or `color_temp` from any action (script, button, dashboard).
+            Leave empty to use the static Rotate Mode selection.
+          selector:
+            entity:
+              filter:
+                - domain:
+                    - input_text
+              multiple: false
     button_4_light_settings:
       name: Button 4 - Light Mode Settings
       icon: mdi:cog
@@ -2172,13 +2501,23 @@ blueprint:
                 - domain:
                     - schedule
               multiple: false
-        button_4_light_auto_adjust:
-          name: Auto-Adjust on Value Change
+        button_4_light_auto_adjust_brightness:
+          name: Auto-Adjust Brightness on Value Change
           default: false
           description: |
             `optional` `boolean`
 
-            Automatically update lights when adaptive or schedule values change. Only affects currently on lights.
+            Automatically update light brightness when adaptive or schedule values change. Only affects currently on lights.
+          selector:
+            boolean: {}
+        button_4_light_auto_adjust_color_temp:
+          name: Auto-Adjust Color Temperature on Value Change
+          default: false
+          description: |
+            `optional` `boolean`
+
+            Automatically update light color temperature when adaptive or schedule values change. Only affects currently on lights.
+            Disable this when using dial color temperature control to prevent the schedule or adaptive mode from overriding manual adjustments.
           selector:
             boolean: {}
         button_4_light_auto_adjust_transition:
@@ -2571,6 +2910,7 @@ variables:
     {% endif %}
   button_1_short_release_light_mode: !input button_1_short_release_light_mode
   button_1_long_release_light_mode: !input button_1_long_release_light_mode
+  button_1_double_light_mode: !input button_1_double_light_mode
   button_1_rotate_light_mode: !input button_1_rotate_light_mode
   button_1_media: !input button_1_media
   button_1_media_leader: !input button_1_media_leader
@@ -2589,11 +2929,15 @@ variables:
   button_1_has_media: "{{ button_1_media is string and button_1_media != '' }}"
   button_1_dimming_speed: !input button_1_dimming_speed
   button_1_step_size: "{{ (button_1_dimming_speed * 2.5) | int }}"
+  button_1_color_temp_speed: !input button_1_color_temp_step
+  button_1_color_temp_step_size: "{{ (button_1_color_temp_speed * 50) | int }}"
+  button_1_rotate_mode_helper: !input button_1_rotate_mode_helper
   button_1_short_release_reset_brightness: !input button_1_short_release_reset_brightness
   button_1_short_release_reset_color: !input button_1_short_release_reset_color
   button_1_long_release_reset_brightness: !input button_1_long_release_reset_brightness
   button_1_long_release_reset_color: !input button_1_long_release_reset_color
-  button_1_light_auto_adjust: !input button_1_light_auto_adjust
+  button_1_light_auto_adjust_brightness: !input button_1_light_auto_adjust_brightness
+  button_1_light_auto_adjust_color_temp: !input button_1_light_auto_adjust_color_temp
   button_1_light_auto_adjust_transition: !input button_1_light_auto_adjust_transition
   button_1_light_entities: >-
     {% set ns = namespace(entities=[]) %}
@@ -2675,6 +3019,7 @@ variables:
     {% endif %}
   button_2_short_release_light_mode: !input button_2_short_release_light_mode
   button_2_long_release_light_mode: !input button_2_long_release_light_mode
+  button_2_double_light_mode: !input button_2_double_light_mode
   button_2_rotate_light_mode: !input button_2_rotate_light_mode
   button_2_media: !input button_2_media
   button_2_media_leader: !input button_2_media_leader
@@ -2693,11 +3038,15 @@ variables:
   button_2_has_media: "{{ button_2_media is string and button_2_media != '' }}"
   button_2_dimming_speed: !input button_2_dimming_speed
   button_2_step_size: "{{ (button_2_dimming_speed * 2.5) | int }}"
+  button_2_color_temp_speed: !input button_2_color_temp_step
+  button_2_color_temp_step_size: "{{ (button_2_color_temp_speed * 50) | int }}"
+  button_2_rotate_mode_helper: !input button_2_rotate_mode_helper
   button_2_short_release_reset_brightness: !input button_2_short_release_reset_brightness
   button_2_short_release_reset_color: !input button_2_short_release_reset_color
   button_2_long_release_reset_brightness: !input button_2_long_release_reset_brightness
   button_2_long_release_reset_color: !input button_2_long_release_reset_color
-  button_2_light_auto_adjust: !input button_2_light_auto_adjust
+  button_2_light_auto_adjust_brightness: !input button_2_light_auto_adjust_brightness
+  button_2_light_auto_adjust_color_temp: !input button_2_light_auto_adjust_color_temp
   button_2_light_auto_adjust_transition: !input button_2_light_auto_adjust_transition
   button_2_light_entities: >-
     {% set ns = namespace(entities=[]) %}
@@ -2779,6 +3128,7 @@ variables:
     {% endif %}
   button_3_short_release_light_mode: !input button_3_short_release_light_mode
   button_3_long_release_light_mode: !input button_3_long_release_light_mode
+  button_3_double_light_mode: !input button_3_double_light_mode
   button_3_rotate_light_mode: !input button_3_rotate_light_mode
   button_3_media: !input button_3_media
   button_3_media_leader: !input button_3_media_leader
@@ -2797,11 +3147,15 @@ variables:
   button_3_has_media: "{{ button_3_media is string and button_3_media != '' }}"
   button_3_dimming_speed: !input button_3_dimming_speed
   button_3_step_size: "{{ (button_3_dimming_speed * 2.5) | int }}"
+  button_3_color_temp_speed: !input button_3_color_temp_step
+  button_3_color_temp_step_size: "{{ (button_3_color_temp_speed * 50) | int }}"
+  button_3_rotate_mode_helper: !input button_3_rotate_mode_helper
   button_3_short_release_reset_brightness: !input button_3_short_release_reset_brightness
   button_3_short_release_reset_color: !input button_3_short_release_reset_color
   button_3_long_release_reset_brightness: !input button_3_long_release_reset_brightness
   button_3_long_release_reset_color: !input button_3_long_release_reset_color
-  button_3_light_auto_adjust: !input button_3_light_auto_adjust
+  button_3_light_auto_adjust_brightness: !input button_3_light_auto_adjust_brightness
+  button_3_light_auto_adjust_color_temp: !input button_3_light_auto_adjust_color_temp
   button_3_light_auto_adjust_transition: !input button_3_light_auto_adjust_transition
   button_3_light_entities: >-
     {% set ns = namespace(entities=[]) %}
@@ -2883,6 +3237,7 @@ variables:
     {% endif %}
   button_4_short_release_light_mode: !input button_4_short_release_light_mode
   button_4_long_release_light_mode: !input button_4_long_release_light_mode
+  button_4_double_light_mode: !input button_4_double_light_mode
   button_4_rotate_light_mode: !input button_4_rotate_light_mode
   button_4_media: !input button_4_media
   button_4_media_leader: !input button_4_media_leader
@@ -2901,11 +3256,15 @@ variables:
   button_4_has_media: "{{ button_4_media is string and button_4_media != '' }}"
   button_4_dimming_speed: !input button_4_dimming_speed
   button_4_step_size: "{{ (button_4_dimming_speed * 2.5) | int }}"
+  button_4_color_temp_speed: !input button_4_color_temp_step
+  button_4_color_temp_step_size: "{{ (button_4_color_temp_speed * 50) | int }}"
+  button_4_rotate_mode_helper: !input button_4_rotate_mode_helper
   button_4_short_release_reset_brightness: !input button_4_short_release_reset_brightness
   button_4_short_release_reset_color: !input button_4_short_release_reset_color
   button_4_long_release_reset_brightness: !input button_4_long_release_reset_brightness
   button_4_long_release_reset_color: !input button_4_long_release_reset_color
-  button_4_light_auto_adjust: !input button_4_light_auto_adjust
+  button_4_light_auto_adjust_brightness: !input button_4_light_auto_adjust_brightness
+  button_4_light_auto_adjust_color_temp: !input button_4_light_auto_adjust_color_temp
   button_4_light_auto_adjust_transition: !input button_4_light_auto_adjust_transition
   button_4_light_entities: >-
     {% set ns = namespace(entities=[]) %}
@@ -3049,7 +3408,7 @@ actions:
       - conditions:
           - "{{ trigger.id in ['adaptive_1_brightness_change', 'adaptive_1_color_change'] }}"
           - "{{ button_1_adjustment_mode == 'adaptive' }}"
-          - "{{ button_1_light_auto_adjust }}"
+          - "{{ button_1_light_auto_adjust_brightness or button_1_light_auto_adjust_color_temp }}"
           - "{{ button_1_has_light }}"
         sequence:
           - repeat:
@@ -3062,14 +3421,14 @@ actions:
                       target:
                         entity_id: "{{ repeat.item }}"
                       data:
-                        brightness_pct: "{{ button_1_brightness_pct }}"
-                        color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                        brightness_pct: "{{ button_1_brightness_pct if button_1_light_auto_adjust_brightness else omit }}"
+                        color_temp_kelvin: "{{ button_1_color_temp_kelvin if button_1_light_auto_adjust_color_temp else omit }}"
                         transition: "{{ button_1_light_auto_adjust_transition }}"
           - stop: Adaptive 1 auto-adjust completed
       - conditions:
           - "{{ trigger.id == 'schedule_1_change' }}"
           - "{{ button_1_adjustment_mode == 'schedule' }}"
-          - "{{ button_1_light_auto_adjust }}"
+          - "{{ button_1_light_auto_adjust_brightness or button_1_light_auto_adjust_color_temp }}"
           - "{{ button_1_has_light }}"
           - "{{ button_1_schedule not in [none, '', []] }}"
         sequence:
@@ -3083,14 +3442,14 @@ actions:
                       target:
                         entity_id: "{{ repeat.item }}"
                       data:
-                        brightness_pct: "{{ button_1_brightness_pct }}"
-                        color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                        brightness_pct: "{{ button_1_brightness_pct if button_1_light_auto_adjust_brightness else omit }}"
+                        color_temp_kelvin: "{{ button_1_color_temp_kelvin if button_1_light_auto_adjust_color_temp else omit }}"
                         transition: "{{ button_1_light_auto_adjust_transition }}"
           - stop: Schedule 1 auto-adjust completed
       - conditions:
           - "{{ trigger.id in ['adaptive_2_brightness_change', 'adaptive_2_color_change'] }}"
           - "{{ button_2_adjustment_mode == 'adaptive' }}"
-          - "{{ button_2_light_auto_adjust }}"
+          - "{{ button_2_light_auto_adjust_brightness or button_2_light_auto_adjust_color_temp }}"
           - "{{ button_2_has_light }}"
         sequence:
           - repeat:
@@ -3103,14 +3462,14 @@ actions:
                       target:
                         entity_id: "{{ repeat.item }}"
                       data:
-                        brightness_pct: "{{ button_2_brightness_pct }}"
-                        color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                        brightness_pct: "{{ button_2_brightness_pct if button_2_light_auto_adjust_brightness else omit }}"
+                        color_temp_kelvin: "{{ button_2_color_temp_kelvin if button_2_light_auto_adjust_color_temp else omit }}"
                         transition: "{{ button_2_light_auto_adjust_transition }}"
           - stop: Adaptive 2 auto-adjust completed
       - conditions:
           - "{{ trigger.id == 'schedule_2_change' }}"
           - "{{ button_2_adjustment_mode == 'schedule' }}"
-          - "{{ button_2_light_auto_adjust }}"
+          - "{{ button_2_light_auto_adjust_brightness or button_2_light_auto_adjust_color_temp }}"
           - "{{ button_2_has_light }}"
           - "{{ button_2_schedule not in [none, '', []] }}"
         sequence:
@@ -3124,14 +3483,14 @@ actions:
                       target:
                         entity_id: "{{ repeat.item }}"
                       data:
-                        brightness_pct: "{{ button_2_brightness_pct }}"
-                        color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                        brightness_pct: "{{ button_2_brightness_pct if button_2_light_auto_adjust_brightness else omit }}"
+                        color_temp_kelvin: "{{ button_2_color_temp_kelvin if button_2_light_auto_adjust_color_temp else omit }}"
                         transition: "{{ button_2_light_auto_adjust_transition }}"
           - stop: Schedule 2 auto-adjust completed
       - conditions:
           - "{{ trigger.id in ['adaptive_3_brightness_change', 'adaptive_3_color_change'] }}"
           - "{{ button_3_adjustment_mode == 'adaptive' }}"
-          - "{{ button_3_light_auto_adjust }}"
+          - "{{ button_3_light_auto_adjust_brightness or button_3_light_auto_adjust_color_temp }}"
           - "{{ button_3_has_light }}"
         sequence:
           - repeat:
@@ -3144,14 +3503,14 @@ actions:
                       target:
                         entity_id: "{{ repeat.item }}"
                       data:
-                        brightness_pct: "{{ button_3_brightness_pct }}"
-                        color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                        brightness_pct: "{{ button_3_brightness_pct if button_3_light_auto_adjust_brightness else omit }}"
+                        color_temp_kelvin: "{{ button_3_color_temp_kelvin if button_3_light_auto_adjust_color_temp else omit }}"
                         transition: "{{ button_3_light_auto_adjust_transition }}"
           - stop: Adaptive 3 auto-adjust completed
       - conditions:
           - "{{ trigger.id == 'schedule_3_change' }}"
           - "{{ button_3_adjustment_mode == 'schedule' }}"
-          - "{{ button_3_light_auto_adjust }}"
+          - "{{ button_3_light_auto_adjust_brightness or button_3_light_auto_adjust_color_temp }}"
           - "{{ button_3_has_light }}"
           - "{{ button_3_schedule not in [none, '', []] }}"
         sequence:
@@ -3165,14 +3524,14 @@ actions:
                       target:
                         entity_id: "{{ repeat.item }}"
                       data:
-                        brightness_pct: "{{ button_3_brightness_pct }}"
-                        color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                        brightness_pct: "{{ button_3_brightness_pct if button_3_light_auto_adjust_brightness else omit }}"
+                        color_temp_kelvin: "{{ button_3_color_temp_kelvin if button_3_light_auto_adjust_color_temp else omit }}"
                         transition: "{{ button_3_light_auto_adjust_transition }}"
           - stop: Schedule 3 auto-adjust completed
       - conditions:
           - "{{ trigger.id in ['adaptive_4_brightness_change', 'adaptive_4_color_change'] }}"
           - "{{ button_4_adjustment_mode == 'adaptive' }}"
-          - "{{ button_4_light_auto_adjust }}"
+          - "{{ button_4_light_auto_adjust_brightness or button_4_light_auto_adjust_color_temp }}"
           - "{{ button_4_has_light }}"
         sequence:
           - repeat:
@@ -3185,14 +3544,14 @@ actions:
                       target:
                         entity_id: "{{ repeat.item }}"
                       data:
-                        brightness_pct: "{{ button_4_brightness_pct }}"
-                        color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                        brightness_pct: "{{ button_4_brightness_pct if button_4_light_auto_adjust_brightness else omit }}"
+                        color_temp_kelvin: "{{ button_4_color_temp_kelvin if button_4_light_auto_adjust_color_temp else omit }}"
                         transition: "{{ button_4_light_auto_adjust_transition }}"
           - stop: Adaptive 4 auto-adjust completed
       - conditions:
           - "{{ trigger.id == 'schedule_4_change' }}"
           - "{{ button_4_adjustment_mode == 'schedule' }}"
-          - "{{ button_4_light_auto_adjust }}"
+          - "{{ button_4_light_auto_adjust_brightness or button_4_light_auto_adjust_color_temp }}"
           - "{{ button_4_has_light }}"
           - "{{ button_4_schedule not in [none, '', []] }}"
         sequence:
@@ -3206,8 +3565,8 @@ actions:
                       target:
                         entity_id: "{{ repeat.item }}"
                       data:
-                        brightness_pct: "{{ button_4_brightness_pct }}"
-                        color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                        brightness_pct: "{{ button_4_brightness_pct if button_4_light_auto_adjust_brightness else omit }}"
+                        color_temp_kelvin: "{{ button_4_color_temp_kelvin if button_4_light_auto_adjust_color_temp else omit }}"
                         transition: "{{ button_4_light_auto_adjust_transition }}"
           - stop: Schedule 4 auto-adjust completed
       # ========== BUTTON 1 ==========
@@ -3285,6 +3644,15 @@ actions:
                             target: "{{ button_1_light }}"
                             data:
                               transition: "{{ button_1_transition }}"
+                  - if: >-
+                      {{ 'toggle_rotate_mode' in button_1_short_release_light_mode and
+                      button_1_rotate_mode_helper not in [none, '', []] }}
+                    then:
+                      - action: input_text.set_value
+                        target:
+                          entity_id: "{{ button_1_rotate_mode_helper }}"
+                        data:
+                          value: "{{ 'color_temp' if states(button_1_rotate_mode_helper) == 'brightness' else 'brightness' }}"
           - if: "{{ button_1_has_media }}"
             then:
               - parallel:
@@ -3406,6 +3774,15 @@ actions:
                             target: "{{ button_1_light }}"
                             data:
                               transition: "{{ button_1_transition }}"
+                  - if: >-
+                      {{ 'toggle_rotate_mode' in button_1_long_release_light_mode and
+                      button_1_rotate_mode_helper not in [none, '', []] }}
+                    then:
+                      - action: input_text.set_value
+                        target:
+                          entity_id: "{{ button_1_rotate_mode_helper }}"
+                        data:
+                          value: "{{ 'color_temp' if states(button_1_rotate_mode_helper) == 'brightness' else 'brightness' }}"
           - if: "{{ button_1_has_media }}"
             then:
               - parallel:
@@ -3456,6 +3833,40 @@ actions:
       - conditions: "{{ command == 'button_1_double_press' }}"
         sequence:
           - sequence: !input button_1_double
+          - if: "{{ button_1_has_light }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_1_double_light_mode }}"
+                    then:
+                      - action: light.turn_on
+                        target: "{{ button_1_light }}"
+                        data:
+                          brightness_pct: "{{ button_1_brightness_pct }}"
+                          color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                          transition: "{{ button_1_transition }}"
+                  - if: "{{ 'turn_off' in button_1_double_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        target: "{{ button_1_light }}"
+                        data:
+                          transition: "{{ button_1_transition }}"
+                  - if: "{{ 'toggle' in button_1_double_light_mode }}"
+                    then:
+                      - action: light.toggle
+                        target: "{{ button_1_light }}"
+                        data:
+                          brightness_pct: "{{ button_1_brightness_pct }}"
+                          color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                          transition: "{{ button_1_transition }}"
+                  - if: >-
+                      {{ 'toggle_rotate_mode' in button_1_double_light_mode and
+                      button_1_rotate_mode_helper not in [none, '', []] }}
+                    then:
+                      - action: input_text.set_value
+                        target:
+                          entity_id: "{{ button_1_rotate_mode_helper }}"
+                        data:
+                          value: "{{ 'color_temp' if states(button_1_rotate_mode_helper) == 'brightness' else 'brightness' }}"
           - if: "{{ button_1_has_media }}"
             then:
               - parallel:
@@ -3560,13 +3971,33 @@ actions:
       - conditions: "{{ rotate_left and states(last_pressed) == '1' }}"
         sequence:
           - sequence: !input button_1_rotate_left
-          - if: "{{ button_1_has_light and 'dim' in button_1_rotate_light_mode }}"
+          - if: >-
+              {{ button_1_has_light and
+              ((button_1_rotate_mode_helper not in [none, '', []] and states(button_1_rotate_mode_helper) in ['brightness', '']) or
+              (button_1_rotate_mode_helper in [none, '', []] and 'brightness' in button_1_rotate_light_mode)) }}
             then:
               - action: light.turn_on
                 target: "{{ button_1_light }}"
                 data:
                   brightness_step: "-{{ (step_size | int(0) * button_1_step_size / 10) | int }}"
                   transition: "{{ button_1_transition }}"
+          - if: >-
+              {{ button_1_has_light and
+              ((button_1_rotate_mode_helper not in [none, '', []] and states(button_1_rotate_mode_helper) == 'color_temp') or
+              (button_1_rotate_mode_helper in [none, '', []] and 'color_temp' in button_1_rotate_light_mode)) }}
+            then:
+              - action: light.turn_on
+                target: "{{ button_1_light }}"
+                data:
+                  transition: "{{ button_1_transition }}"
+                  color_temp_kelvin: >
+                    {% set entities = button_1_light_entities %}
+                    {% set first = entities[0] if entities | length > 0 else '' %}
+                    {% set current = state_attr(first, 'color_temp_kelvin') | int(button_1_color_temp_kelvin) if first != '' else button_1_color_temp_kelvin %}
+                    {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
+                    {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
+                    {% set delta = (step_size | int(0) * button_1_color_temp_step_size / 10) | int %}
+                    {{ [[current - delta, min_k] | max, max_k] | min }}
           - if: "{{ button_1_has_media and 'volume' in button_1_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -3577,13 +4008,33 @@ actions:
       - conditions: "{{ rotate_right and states(last_pressed) == '1' }}"
         sequence:
           - sequence: !input button_1_rotate_right
-          - if: "{{ button_1_has_light and 'dim' in button_1_rotate_light_mode }}"
+          - if: >-
+              {{ button_1_has_light and
+              ((button_1_rotate_mode_helper not in [none, '', []] and states(button_1_rotate_mode_helper) in ['brightness', '']) or
+              (button_1_rotate_mode_helper in [none, '', []] and 'brightness' in button_1_rotate_light_mode)) }}
             then:
               - action: light.turn_on
                 target: "{{ button_1_light }}"
                 data:
                   brightness_step: "{{ (step_size | int(0) * button_1_step_size / 10) | int }}"
                   transition: "{{ button_1_transition }}"
+          - if: >-
+              {{ button_1_has_light and
+              ((button_1_rotate_mode_helper not in [none, '', []] and states(button_1_rotate_mode_helper) == 'color_temp') or
+              (button_1_rotate_mode_helper in [none, '', []] and 'color_temp' in button_1_rotate_light_mode)) }}
+            then:
+              - action: light.turn_on
+                target: "{{ button_1_light }}"
+                data:
+                  transition: "{{ button_1_transition }}"
+                  color_temp_kelvin: >
+                    {% set entities = button_1_light_entities %}
+                    {% set first = entities[0] if entities | length > 0 else '' %}
+                    {% set current = state_attr(first, 'color_temp_kelvin') | int(button_1_color_temp_kelvin) if first != '' else button_1_color_temp_kelvin %}
+                    {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
+                    {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
+                    {% set delta = (step_size | int(0) * button_1_color_temp_step_size / 10) | int %}
+                    {{ [[current + delta, min_k] | max, max_k] | min }}
           - if: "{{ button_1_has_media and 'volume' in button_1_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -3666,6 +4117,15 @@ actions:
                             target: "{{ button_2_light }}"
                             data:
                               transition: "{{ button_2_transition }}"
+                  - if: >-
+                      {{ 'toggle_rotate_mode' in button_2_short_release_light_mode and
+                      button_2_rotate_mode_helper not in [none, '', []] }}
+                    then:
+                      - action: input_text.set_value
+                        target:
+                          entity_id: "{{ button_2_rotate_mode_helper }}"
+                        data:
+                          value: "{{ 'color_temp' if states(button_2_rotate_mode_helper) == 'brightness' else 'brightness' }}"
           - if: "{{ button_2_has_media }}"
             then:
               - parallel:
@@ -3787,6 +4247,15 @@ actions:
                             target: "{{ button_2_light }}"
                             data:
                               transition: "{{ button_2_transition }}"
+                  - if: >-
+                      {{ 'toggle_rotate_mode' in button_2_long_release_light_mode and
+                      button_2_rotate_mode_helper not in [none, '', []] }}
+                    then:
+                      - action: input_text.set_value
+                        target:
+                          entity_id: "{{ button_2_rotate_mode_helper }}"
+                        data:
+                          value: "{{ 'color_temp' if states(button_2_rotate_mode_helper) == 'brightness' else 'brightness' }}"
           - if: "{{ button_2_has_media }}"
             then:
               - parallel:
@@ -3837,6 +4306,40 @@ actions:
       - conditions: "{{ command == 'button_2_double_press' }}"
         sequence:
           - sequence: !input button_2_double
+          - if: "{{ button_2_has_light }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_2_double_light_mode }}"
+                    then:
+                      - action: light.turn_on
+                        target: "{{ button_2_light }}"
+                        data:
+                          brightness_pct: "{{ button_2_brightness_pct }}"
+                          color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                          transition: "{{ button_2_transition }}"
+                  - if: "{{ 'turn_off' in button_2_double_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        target: "{{ button_2_light }}"
+                        data:
+                          transition: "{{ button_2_transition }}"
+                  - if: "{{ 'toggle' in button_2_double_light_mode }}"
+                    then:
+                      - action: light.toggle
+                        target: "{{ button_2_light }}"
+                        data:
+                          brightness_pct: "{{ button_2_brightness_pct }}"
+                          color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                          transition: "{{ button_2_transition }}"
+                  - if: >-
+                      {{ 'toggle_rotate_mode' in button_2_double_light_mode and
+                      button_2_rotate_mode_helper not in [none, '', []] }}
+                    then:
+                      - action: input_text.set_value
+                        target:
+                          entity_id: "{{ button_2_rotate_mode_helper }}"
+                        data:
+                          value: "{{ 'color_temp' if states(button_2_rotate_mode_helper) == 'brightness' else 'brightness' }}"
           - if: "{{ button_2_has_media }}"
             then:
               - parallel:
@@ -3941,13 +4444,33 @@ actions:
       - conditions: "{{ rotate_left and states(last_pressed) == '2' }}"
         sequence:
           - sequence: !input button_2_rotate_left
-          - if: "{{ button_2_has_light and 'dim' in button_2_rotate_light_mode }}"
+          - if: >-
+              {{ button_2_has_light and
+              ((button_2_rotate_mode_helper not in [none, '', []] and states(button_2_rotate_mode_helper) in ['brightness', '']) or
+              (button_2_rotate_mode_helper in [none, '', []] and 'brightness' in button_2_rotate_light_mode)) }}
             then:
               - action: light.turn_on
                 target: "{{ button_2_light }}"
                 data:
                   brightness_step: "-{{ (step_size | int(0) * button_2_step_size / 10) | int }}"
                   transition: "{{ button_2_transition }}"
+          - if: >-
+              {{ button_2_has_light and
+              ((button_2_rotate_mode_helper not in [none, '', []] and states(button_2_rotate_mode_helper) == 'color_temp') or
+              (button_2_rotate_mode_helper in [none, '', []] and 'color_temp' in button_2_rotate_light_mode)) }}
+            then:
+              - action: light.turn_on
+                target: "{{ button_2_light }}"
+                data:
+                  transition: "{{ button_2_transition }}"
+                  color_temp_kelvin: >
+                    {% set entities = button_2_light_entities %}
+                    {% set first = entities[0] if entities | length > 0 else '' %}
+                    {% set current = state_attr(first, 'color_temp_kelvin') | int(button_2_color_temp_kelvin) if first != '' else button_2_color_temp_kelvin %}
+                    {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
+                    {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
+                    {% set delta = (step_size | int(0) * button_2_color_temp_step_size / 10) | int %}
+                    {{ [[current - delta, min_k] | max, max_k] | min }}
           - if: "{{ button_2_has_media and 'volume' in button_2_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -3958,13 +4481,33 @@ actions:
       - conditions: "{{ rotate_right and states(last_pressed) == '2' }}"
         sequence:
           - sequence: !input button_2_rotate_right
-          - if: "{{ button_2_has_light and 'dim' in button_2_rotate_light_mode }}"
+          - if: >-
+              {{ button_2_has_light and
+              ((button_2_rotate_mode_helper not in [none, '', []] and states(button_2_rotate_mode_helper) in ['brightness', '']) or
+              (button_2_rotate_mode_helper in [none, '', []] and 'brightness' in button_2_rotate_light_mode)) }}
             then:
               - action: light.turn_on
                 target: "{{ button_2_light }}"
                 data:
                   brightness_step: "{{ (step_size | int(0) * button_2_step_size / 10) | int }}"
                   transition: "{{ button_2_transition }}"
+          - if: >-
+              {{ button_2_has_light and
+              ((button_2_rotate_mode_helper not in [none, '', []] and states(button_2_rotate_mode_helper) == 'color_temp') or
+              (button_2_rotate_mode_helper in [none, '', []] and 'color_temp' in button_2_rotate_light_mode)) }}
+            then:
+              - action: light.turn_on
+                target: "{{ button_2_light }}"
+                data:
+                  transition: "{{ button_2_transition }}"
+                  color_temp_kelvin: >
+                    {% set entities = button_2_light_entities %}
+                    {% set first = entities[0] if entities | length > 0 else '' %}
+                    {% set current = state_attr(first, 'color_temp_kelvin') | int(button_2_color_temp_kelvin) if first != '' else button_2_color_temp_kelvin %}
+                    {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
+                    {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
+                    {% set delta = (step_size | int(0) * button_2_color_temp_step_size / 10) | int %}
+                    {{ [[current + delta, min_k] | max, max_k] | min }}
           - if: "{{ button_2_has_media and 'volume' in button_2_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -4047,6 +4590,15 @@ actions:
                             target: "{{ button_3_light }}"
                             data:
                               transition: "{{ button_3_transition }}"
+                  - if: >-
+                      {{ 'toggle_rotate_mode' in button_3_short_release_light_mode and
+                      button_3_rotate_mode_helper not in [none, '', []] }}
+                    then:
+                      - action: input_text.set_value
+                        target:
+                          entity_id: "{{ button_3_rotate_mode_helper }}"
+                        data:
+                          value: "{{ 'color_temp' if states(button_3_rotate_mode_helper) == 'brightness' else 'brightness' }}"
           - if: "{{ button_3_has_media }}"
             then:
               - parallel:
@@ -4168,6 +4720,15 @@ actions:
                             target: "{{ button_3_light }}"
                             data:
                               transition: "{{ button_3_transition }}"
+                  - if: >-
+                      {{ 'toggle_rotate_mode' in button_3_long_release_light_mode and
+                      button_3_rotate_mode_helper not in [none, '', []] }}
+                    then:
+                      - action: input_text.set_value
+                        target:
+                          entity_id: "{{ button_3_rotate_mode_helper }}"
+                        data:
+                          value: "{{ 'color_temp' if states(button_3_rotate_mode_helper) == 'brightness' else 'brightness' }}"
           - if: "{{ button_3_has_media }}"
             then:
               - parallel:
@@ -4218,6 +4779,40 @@ actions:
       - conditions: "{{ command == 'button_3_double_press' }}"
         sequence:
           - sequence: !input button_3_double
+          - if: "{{ button_3_has_light }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_3_double_light_mode }}"
+                    then:
+                      - action: light.turn_on
+                        target: "{{ button_3_light }}"
+                        data:
+                          brightness_pct: "{{ button_3_brightness_pct }}"
+                          color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                          transition: "{{ button_3_transition }}"
+                  - if: "{{ 'turn_off' in button_3_double_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        target: "{{ button_3_light }}"
+                        data:
+                          transition: "{{ button_3_transition }}"
+                  - if: "{{ 'toggle' in button_3_double_light_mode }}"
+                    then:
+                      - action: light.toggle
+                        target: "{{ button_3_light }}"
+                        data:
+                          brightness_pct: "{{ button_3_brightness_pct }}"
+                          color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                          transition: "{{ button_3_transition }}"
+                  - if: >-
+                      {{ 'toggle_rotate_mode' in button_3_double_light_mode and
+                      button_3_rotate_mode_helper not in [none, '', []] }}
+                    then:
+                      - action: input_text.set_value
+                        target:
+                          entity_id: "{{ button_3_rotate_mode_helper }}"
+                        data:
+                          value: "{{ 'color_temp' if states(button_3_rotate_mode_helper) == 'brightness' else 'brightness' }}"
           - if: "{{ button_3_has_media }}"
             then:
               - parallel:
@@ -4322,13 +4917,33 @@ actions:
       - conditions: "{{ rotate_left and states(last_pressed) == '3' }}"
         sequence:
           - sequence: !input button_3_rotate_left
-          - if: "{{ button_3_has_light and 'dim' in button_3_rotate_light_mode }}"
+          - if: >-
+              {{ button_3_has_light and
+              ((button_3_rotate_mode_helper not in [none, '', []] and states(button_3_rotate_mode_helper) in ['brightness', '']) or
+              (button_3_rotate_mode_helper in [none, '', []] and 'brightness' in button_3_rotate_light_mode)) }}
             then:
               - action: light.turn_on
                 target: "{{ button_3_light }}"
                 data:
                   brightness_step: "-{{ (step_size | int(0) * button_3_step_size / 10) | int }}"
                   transition: "{{ button_3_transition }}"
+          - if: >-
+              {{ button_3_has_light and
+              ((button_3_rotate_mode_helper not in [none, '', []] and states(button_3_rotate_mode_helper) == 'color_temp') or
+              (button_3_rotate_mode_helper in [none, '', []] and 'color_temp' in button_3_rotate_light_mode)) }}
+            then:
+              - action: light.turn_on
+                target: "{{ button_3_light }}"
+                data:
+                  transition: "{{ button_3_transition }}"
+                  color_temp_kelvin: >
+                    {% set entities = button_3_light_entities %}
+                    {% set first = entities[0] if entities | length > 0 else '' %}
+                    {% set current = state_attr(first, 'color_temp_kelvin') | int(button_3_color_temp_kelvin) if first != '' else button_3_color_temp_kelvin %}
+                    {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
+                    {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
+                    {% set delta = (step_size | int(0) * button_3_color_temp_step_size / 10) | int %}
+                    {{ [[current - delta, min_k] | max, max_k] | min }}
           - if: "{{ button_3_has_media and 'volume' in button_3_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -4339,13 +4954,33 @@ actions:
       - conditions: "{{ rotate_right and states(last_pressed) == '3' }}"
         sequence:
           - sequence: !input button_3_rotate_right
-          - if: "{{ button_3_has_light and 'dim' in button_3_rotate_light_mode }}"
+          - if: >-
+              {{ button_3_has_light and
+              ((button_3_rotate_mode_helper not in [none, '', []] and states(button_3_rotate_mode_helper) in ['brightness', '']) or
+              (button_3_rotate_mode_helper in [none, '', []] and 'brightness' in button_3_rotate_light_mode)) }}
             then:
               - action: light.turn_on
                 target: "{{ button_3_light }}"
                 data:
                   brightness_step: "{{ (step_size | int(0) * button_3_step_size / 10) | int }}"
                   transition: "{{ button_3_transition }}"
+          - if: >-
+              {{ button_3_has_light and
+              ((button_3_rotate_mode_helper not in [none, '', []] and states(button_3_rotate_mode_helper) == 'color_temp') or
+              (button_3_rotate_mode_helper in [none, '', []] and 'color_temp' in button_3_rotate_light_mode)) }}
+            then:
+              - action: light.turn_on
+                target: "{{ button_3_light }}"
+                data:
+                  transition: "{{ button_3_transition }}"
+                  color_temp_kelvin: >
+                    {% set entities = button_3_light_entities %}
+                    {% set first = entities[0] if entities | length > 0 else '' %}
+                    {% set current = state_attr(first, 'color_temp_kelvin') | int(button_3_color_temp_kelvin) if first != '' else button_3_color_temp_kelvin %}
+                    {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
+                    {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
+                    {% set delta = (step_size | int(0) * button_3_color_temp_step_size / 10) | int %}
+                    {{ [[current + delta, min_k] | max, max_k] | min }}
           - if: "{{ button_3_has_media and 'volume' in button_3_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -4428,6 +5063,15 @@ actions:
                             target: "{{ button_4_light }}"
                             data:
                               transition: "{{ button_4_transition }}"
+                  - if: >-
+                      {{ 'toggle_rotate_mode' in button_4_short_release_light_mode and
+                      button_4_rotate_mode_helper not in [none, '', []] }}
+                    then:
+                      - action: input_text.set_value
+                        target:
+                          entity_id: "{{ button_4_rotate_mode_helper }}"
+                        data:
+                          value: "{{ 'color_temp' if states(button_4_rotate_mode_helper) == 'brightness' else 'brightness' }}"
           - if: "{{ button_4_has_media }}"
             then:
               - parallel:
@@ -4549,6 +5193,15 @@ actions:
                             target: "{{ button_4_light }}"
                             data:
                               transition: "{{ button_4_transition }}"
+                  - if: >-
+                      {{ 'toggle_rotate_mode' in button_4_long_release_light_mode and
+                      button_4_rotate_mode_helper not in [none, '', []] }}
+                    then:
+                      - action: input_text.set_value
+                        target:
+                          entity_id: "{{ button_4_rotate_mode_helper }}"
+                        data:
+                          value: "{{ 'color_temp' if states(button_4_rotate_mode_helper) == 'brightness' else 'brightness' }}"
           - if: "{{ button_4_has_media }}"
             then:
               - parallel:
@@ -4599,6 +5252,40 @@ actions:
       - conditions: "{{ command == 'button_4_double_press' }}"
         sequence:
           - sequence: !input button_4_double
+          - if: "{{ button_4_has_light }}"
+            then:
+              - parallel:
+                  - if: "{{ 'turn_on' in button_4_double_light_mode }}"
+                    then:
+                      - action: light.turn_on
+                        target: "{{ button_4_light }}"
+                        data:
+                          brightness_pct: "{{ button_4_brightness_pct }}"
+                          color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                          transition: "{{ button_4_transition }}"
+                  - if: "{{ 'turn_off' in button_4_double_light_mode }}"
+                    then:
+                      - action: light.turn_off
+                        target: "{{ button_4_light }}"
+                        data:
+                          transition: "{{ button_4_transition }}"
+                  - if: "{{ 'toggle' in button_4_double_light_mode }}"
+                    then:
+                      - action: light.toggle
+                        target: "{{ button_4_light }}"
+                        data:
+                          brightness_pct: "{{ button_4_brightness_pct }}"
+                          color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                          transition: "{{ button_4_transition }}"
+                  - if: >-
+                      {{ 'toggle_rotate_mode' in button_4_double_light_mode and
+                      button_4_rotate_mode_helper not in [none, '', []] }}
+                    then:
+                      - action: input_text.set_value
+                        target:
+                          entity_id: "{{ button_4_rotate_mode_helper }}"
+                        data:
+                          value: "{{ 'color_temp' if states(button_4_rotate_mode_helper) == 'brightness' else 'brightness' }}"
           - if: "{{ button_4_has_media }}"
             then:
               - parallel:
@@ -4703,13 +5390,33 @@ actions:
       - conditions: "{{ rotate_left and states(last_pressed) == '4' }}"
         sequence:
           - sequence: !input button_4_rotate_left
-          - if: "{{ button_4_has_light and 'dim' in button_4_rotate_light_mode }}"
+          - if: >-
+              {{ button_4_has_light and
+              ((button_4_rotate_mode_helper not in [none, '', []] and states(button_4_rotate_mode_helper) in ['brightness', '']) or
+              (button_4_rotate_mode_helper in [none, '', []] and 'brightness' in button_4_rotate_light_mode)) }}
             then:
               - action: light.turn_on
                 target: "{{ button_4_light }}"
                 data:
                   brightness_step: "-{{ (step_size | int(0) * button_4_step_size / 10) | int }}"
                   transition: "{{ button_4_transition }}"
+          - if: >-
+              {{ button_4_has_light and
+              ((button_4_rotate_mode_helper not in [none, '', []] and states(button_4_rotate_mode_helper) == 'color_temp') or
+              (button_4_rotate_mode_helper in [none, '', []] and 'color_temp' in button_4_rotate_light_mode)) }}
+            then:
+              - action: light.turn_on
+                target: "{{ button_4_light }}"
+                data:
+                  transition: "{{ button_4_transition }}"
+                  color_temp_kelvin: >
+                    {% set entities = button_4_light_entities %}
+                    {% set first = entities[0] if entities | length > 0 else '' %}
+                    {% set current = state_attr(first, 'color_temp_kelvin') | int(button_4_color_temp_kelvin) if first != '' else button_4_color_temp_kelvin %}
+                    {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
+                    {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
+                    {% set delta = (step_size | int(0) * button_4_color_temp_step_size / 10) | int %}
+                    {{ [[current - delta, min_k] | max, max_k] | min }}
           - if: "{{ button_4_has_media and 'volume' in button_4_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -4720,13 +5427,33 @@ actions:
       - conditions: "{{ rotate_right and states(last_pressed) == '4' }}"
         sequence:
           - sequence: !input button_4_rotate_right
-          - if: "{{ button_4_has_light and 'dim' in button_4_rotate_light_mode }}"
+          - if: >-
+              {{ button_4_has_light and
+              ((button_4_rotate_mode_helper not in [none, '', []] and states(button_4_rotate_mode_helper) in ['brightness', '']) or
+              (button_4_rotate_mode_helper in [none, '', []] and 'brightness' in button_4_rotate_light_mode)) }}
             then:
               - action: light.turn_on
                 target: "{{ button_4_light }}"
                 data:
                   brightness_step: "{{ (step_size | int(0) * button_4_step_size / 10) | int }}"
                   transition: "{{ button_4_transition }}"
+          - if: >-
+              {{ button_4_has_light and
+              ((button_4_rotate_mode_helper not in [none, '', []] and states(button_4_rotate_mode_helper) == 'color_temp') or
+              (button_4_rotate_mode_helper in [none, '', []] and 'color_temp' in button_4_rotate_light_mode)) }}
+            then:
+              - action: light.turn_on
+                target: "{{ button_4_light }}"
+                data:
+                  transition: "{{ button_4_transition }}"
+                  color_temp_kelvin: >
+                    {% set entities = button_4_light_entities %}
+                    {% set first = entities[0] if entities | length > 0 else '' %}
+                    {% set current = state_attr(first, 'color_temp_kelvin') | int(button_4_color_temp_kelvin) if first != '' else button_4_color_temp_kelvin %}
+                    {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
+                    {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
+                    {% set delta = (step_size | int(0) * button_4_color_temp_step_size / 10) | int %}
+                    {{ [[current + delta, min_k] | max, max_k] | min }}
           - if: "{{ button_4_has_media and 'volume' in button_4_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
