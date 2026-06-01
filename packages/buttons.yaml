@@ -6,76 +6,10 @@ input_text:
     max: 1
     mode: text
     pattern: "[1-4]"
-  dining_table_button_last_pressed:
-    name: Dining Table Button Last Pressed
-    icon: mdi:knob
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
-  gameroom_desk_button_last_pressed:
-    name: Gameroom Desk Button Last Pressed
-    icon: mdi:knob
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
-  roof_terrace_button_last_pressed:
-    name: Roof Terrace Button Last Pressed
-    icon: mdi:knob
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
-  gameroom_button_last_pressed:
-    name: Gameroom Button Last Pressed
-    icon: mdi:knob
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
-  hallway_button_last_pressed:
-    name: Hallway Button Last Pressed
-    icon: mdi:knob
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
-  office_button_last_pressed:
-    name: Office Button Last Pressed
-    icon: mdi:knob
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
-  kitchen_button_last_pressed:
-    name: Kitchen Button Last Pressed
-    icon: mdi:knob
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
-  gym_button_last_pressed:
-    name: Gym Button Last Pressed
-    icon: mdi:knob
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
-  shed_alleyway_button_last_pressed:
-    name: Shed Alleyway Button Last Pressed
-    icon: mdi:knob
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
-  shed_garden_button_last_pressed:
-    name: Shed Garden Button Last Pressed
-    icon: mdi:knob
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
+  bathroom_dial_mode:
+    name: "Bathroom Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
   bedroom_alex_button_last_pressed:
     name: Bedroom Alex Button Last Pressed
     icon: mdi:knob
@@ -83,13 +17,10 @@ input_text:
     max: 1
     mode: text
     pattern: "[1-4]"
-  bedroom_deni_button_last_pressed:
-    name: Bedroom Deni Button Last Pressed
-    icon: mdi:knob
-    min: 0
-    max: 1
-    mode: text
-    pattern: "[1-4]"
+  bedroom_alex_dial_mode:
+    name: "Bedroom Alex Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
   bedroom_button_last_pressed:
     name: Bedroom Button Last Pressed
     icon: mdi:knob
@@ -97,6 +28,87 @@ input_text:
     max: 1
     mode: text
     pattern: "[1-4]"
+  bedroom_dial_mode:
+    name: "Bedroom Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
+  bedroom_deni_button_last_pressed:
+    name: Bedroom Deni Button Last Pressed
+    icon: mdi:knob
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  bedroom_deni_dial_mode:
+    name: "Bedroom Deni Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
+  dining_table_button_last_pressed:
+    name: Dining Table Button Last Pressed
+    icon: mdi:knob
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  dining_table_dial_mode:
+    name: "Dining Table Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
+  gameroom_button_last_pressed:
+    name: Gameroom Button Last Pressed
+    icon: mdi:knob
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  gameroom_dial_mode:
+    name: "Gameroom Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
+  gameroom_desk_button_last_pressed:
+    name: Gameroom Desk Button Last Pressed
+    icon: mdi:knob
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  gameroom_desk_dial_mode:
+    name: "Gameroom Desk Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
+  gym_button_last_pressed:
+    name: Gym Button Last Pressed
+    icon: mdi:knob
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  gym_dial_mode:
+    name: "Gym Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
+  hallway_button_last_pressed:
+    name: Hallway Button Last Pressed
+    icon: mdi:knob
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  hallway_dial_mode:
+    name: "Hallway Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
+  kitchen_button_last_pressed:
+    name: Kitchen Button Last Pressed
+    icon: mdi:knob
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  kitchen_dial_mode:
+    name: "Kitchen Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
   living_room_button_last_pressed:
     name: Living Room Button Last Pressed
     icon: mdi:knob
@@ -104,3 +116,51 @@ input_text:
     max: 1
     mode: text
     pattern: "[1-4]"
+  living_room_dial_mode:
+    name: "Living Room Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
+  office_button_last_pressed:
+    name: Office Button Last Pressed
+    icon: mdi:knob
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  office_dial_mode:
+    name: "Office Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
+  roof_terrace_button_last_pressed:
+    name: Roof Terrace Button Last Pressed
+    icon: mdi:knob
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  roof_terrace_dial_mode:
+    name: "Roof Terrace Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
+  shed_alleyway_button_last_pressed:
+    name: Shed Alleyway Button Last Pressed
+    icon: mdi:knob
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  shed_alleyway_dial_mode:
+    name: "Shed Alleyway Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
+  shed_garden_button_last_pressed:
+    name: Shed Garden Button Last Pressed
+    icon: mdi:knob
+    min: 0
+    max: 1
+    mode: text
+    pattern: "[1-4]"
+  shed_garden_dial_mode:
+    name: "Shed Garden Dial Mode"
+    icon: mdi:tune-variant
+    initial: brightness
