@@ -1621,8 +1621,7 @@
               transition: 10
             target:
               entity_id:
-              - light.alleyway_house_light
-              - light.alleyway_shed_light
+              - light.alleyway_lights
           alias: sunrise-sunset
         - conditions:
           - condition: sun
@@ -1637,8 +1636,7 @@
               transition: 10
             target:
               entity_id:
-              - light.alleyway_house_light
-              - light.alleyway_shed_light
+              - light.alleyway_lights
           alias: sunset-sunrise
       alias: motion detected
     - conditions:
@@ -1652,8 +1650,7 @@
           transition: 10
         target:
           entity_id:
-          - light.alleyway_house_light
-          - light.alleyway_shed_light
+          - light.alleyway_lights
       alias: motion clear
   mode: restart
 - id: '1706166372098'
@@ -2441,6 +2438,12 @@
         metadata: {}
         target:
           entity_id: input_select.garden_covers
+      button_3_double_light_mode:
+      - toggle_rotate_mode
+      button_3_rotate_mode_helper: input_text.dining_table_dial_mode
+      button_3_light_schedule: schedule.lights_dimmed
+      button_3_light_auto_adjust_brightness: true
+      button_3_light_auto_adjust_color_temp: true
 - id: '1736812245757'
   alias: Gameroom Desk Button
   description: ''
@@ -2586,7 +2589,7 @@
       z2m_device_name: Hallway Button
       last_pressed: input_text.hallway_button_last_pressed
       button_1_light:
-        entity_id: light.hallway
+        entity_id: light.hallway_light
       button_1_light_adjustment_mode: adaptive
       button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
@@ -2650,12 +2653,7 @@
       button_1_light_schedule: schedule.lights_bright
       button_1_light_auto_adjust_brightness: true
       button_1_light_auto_adjust_color_temp: true
-      button_1_double:
-      - action: switch.toggle
-        metadata: {}
-        data: {}
-        target:
-          entity_id: switch.office_desk
+      button_1_double: []
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -2997,6 +2995,12 @@
         metadata: {}
         target:
           entity_id: input_select.living_room_covers
+      button_3_double_light_mode:
+      - toggle_rotate_mode
+      button_3_rotate_mode_helper: input_text.living_room_dial_mode
+      button_3_light_schedule: schedule.lights_dimmed
+      button_3_light_auto_adjust_brightness: true
+      button_3_light_auto_adjust_color_temp: true
 - id: '1736862489459'
   alias: Shed Garden Button
   description: ''
@@ -3356,6 +3360,8 @@
       - turn_on
       button_1_off_light_mode:
       - turn_off
+      button_1_light_schedule: schedule.lights_bright
+      button_1_light_auto_adjust: true
 - id: '1755899171238'
   alias: Toilet Button
   description: ''
@@ -3382,6 +3388,8 @@
         data: {}
         target:
           entity_id: automation.toilet_door_contact
+      button_1_light_schedule: schedule.lights_bright
+      button_1_light_auto_adjust: true
 - id: '1755965337801'
   alias: Shed Alleyway Button
   description: ''
@@ -4117,7 +4125,7 @@
             then:
             - action: climate.set_temperature
               data:
-                temperature: 26
+                temperature: 27
                 hvac_mode: cool
               target:
                 entity_id: climate.office_ac
@@ -4417,7 +4425,7 @@
             then:
             - action: climate.set_temperature
               data:
-                temperature: 26
+                temperature: 27
                 hvac_mode: cool
               target:
                 entity_id: climate.gameroom_ac
@@ -4435,7 +4443,7 @@
                 entity_id: climate.gameroom_ac
             - action: climate.set_fan_mode
               data:
-                fan_mode: Silence
+                fan_mode: Auto
               target:
                 entity_id: climate.gameroom_ac
         - alias: hot
@@ -4482,7 +4490,7 @@
                 entity_id: climate.gameroom_ac
             - action: climate.set_fan_mode
               data:
-                fan_mode: Silence
+                fan_mode: Auto
               target:
                 entity_id: climate.gameroom_ac
     - alias: schedule off or away
@@ -4511,6 +4519,7 @@
           - action: climate.turn_off
             target:
               entity_id: climate.gameroom_ac
+            data: {}
         - alias: cold
           conditions:
           - condition: state
@@ -4525,6 +4534,7 @@
           - action: climate.turn_off
             target:
               entity_id: climate.gameroom_ac
+            data: {}
         - alias: mild
           conditions:
           - condition: state
@@ -4544,7 +4554,7 @@
               entity_id: climate.gameroom_ac
           - action: climate.set_fan_mode
             data:
-              fan_mode: Silence
+              fan_mode: Auto
             target:
               entity_id: climate.gameroom_ac
         - alias: warm
@@ -4564,7 +4574,7 @@
               entity_id: climate.gameroom_ac
           - action: climate.set_fan_mode
             data:
-              fan_mode: Silence
+              fan_mode: Auto
             target:
               entity_id: climate.gameroom_ac
         - alias: hot
@@ -4584,7 +4594,7 @@
               entity_id: climate.gameroom_ac
           - action: climate.set_fan_mode
             data:
-              fan_mode: Silence
+              fan_mode: Auto
             target:
               entity_id: climate.gameroom_ac
   mode: restart
@@ -5311,12 +5321,6 @@
             preset: Exposed
           - entity: input_select.living_room_covers
             preset: Exposed
-          - entity: input_select.roof_terrace_covers
-            preset: Exposed
-          - entity: input_select.kitchen_covers
-            preset: Exposed
-          - entity: input_select.garden_covers
-            preset: Exposed
           sequence:
           - target:
               entity_id: '{{ repeat.item.entity }}'
@@ -5341,12 +5345,6 @@
           - entity: input_select.office_covers
             preset: Exposed
           - entity: input_select.living_room_covers
-            preset: Exposed
-          - entity: input_select.roof_terrace_covers
-            preset: Exposed
-          - entity: input_select.kitchen_covers
-            preset: Exposed
-          - entity: input_select.garden_covers
             preset: Exposed
           sequence:
           - target:
@@ -5373,12 +5371,6 @@
             preset: Exposed
           - entity: input_select.living_room_covers
             preset: Shaded
-          - entity: input_select.roof_terrace_covers
-            preset: Exposed
-          - entity: input_select.kitchen_covers
-            preset: Exposed
-          - entity: input_select.garden_covers
-            preset: Exposed
           sequence:
           - target:
               entity_id: '{{ repeat.item.entity }}'
@@ -5411,12 +5403,6 @@
                 preset: Shaded
               - entity: input_select.living_room_covers
                 preset: Shaded
-              - entity: input_select.roof_terrace_covers
-                preset: Shaded
-              - entity: input_select.kitchen_covers
-                preset: Shaded
-              - entity: input_select.garden_covers
-                preset: Shaded
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entity }}'
@@ -5441,12 +5427,6 @@
                 preset: Shaded
               - entity: input_select.living_room_covers
                 preset: Shaded
-              - entity: input_select.roof_terrace_covers
-                preset: Shaded
-              - entity: input_select.kitchen_covers
-                preset: Shaded
-              - entity: input_select.garden_covers
-                preset: Shaded
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entity }}'
@@ -5466,16 +5446,10 @@
           - repeat:
               for_each:
               - entity: input_select.gameroom_covers
-                preset: Shaded
+                preset: Exposed
               - entity: input_select.office_covers
-                preset: Shaded
+                preset: Exposed
               - entity: input_select.living_room_covers
-                preset: Shaded
-              - entity: input_select.roof_terrace_covers
-                preset: Exposed
-              - entity: input_select.kitchen_covers
-                preset: Exposed
-              - entity: input_select.garden_covers
                 preset: Exposed
               sequence:
               - target:
@@ -5509,12 +5483,6 @@
                 preset: Privacy
               - entity: input_select.living_room_covers
                 preset: Privacy
-              - entity: input_select.roof_terrace_covers
-                preset: Shaded
-              - entity: input_select.kitchen_covers
-                preset: Shaded
-              - entity: input_select.garden_covers
-                preset: Shaded
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entity }}'
@@ -5538,12 +5506,6 @@
               - entity: input_select.office_covers
                 preset: Shaded
               - entity: input_select.living_room_covers
-                preset: Shaded
-              - entity: input_select.roof_terrace_covers
-                preset: Shaded
-              - entity: input_select.kitchen_covers
-                preset: Shaded
-              - entity: input_select.garden_covers
                 preset: Shaded
               sequence:
               - target:
@@ -5569,12 +5531,6 @@
                 preset: Shaded
               - entity: input_select.living_room_covers
                 preset: Shaded
-              - entity: input_select.roof_terrace_covers
-                preset: Exposed
-              - entity: input_select.kitchen_covers
-                preset: Exposed
-              - entity: input_select.garden_covers
-                preset: Exposed
               sequence:
               - target:
                   entity_id: '{{ repeat.item.entity }}'
@@ -5849,9 +5805,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
             | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
             | int }}'
           transition: 1
         metadata: {}
@@ -5929,9 +5885,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
             | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
             | int }}'
           transition: 3
         metadata: {}
@@ -6007,9 +5963,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
             | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
             | int }}'
           transition: 1
         metadata: {}
@@ -6177,9 +6133,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
             | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
             | int }}'
           transition: 3
         metadata: {}
@@ -6230,9 +6186,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
             | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
             | int }}'
           transition: 3
         metadata: {}
@@ -6283,9 +6239,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
             | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
             | int }}'
           transition: 3
         metadata: {}
