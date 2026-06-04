@@ -528,6 +528,7 @@ light:
     entities:
       - light.living_room_above_light
       - light.living_room_below_light
+      - light.living_room_tv_light
 
   # First Floor Areas
   - platform: group
@@ -579,8 +580,8 @@ light:
     entities:
       - light.gameroom_above_light
       - light.gameroom_below_light
-      - light.gameroom_left_light
-      - light.gameroom_right_light
+      - light.alex_tv_light
+      - light.deni_tv_light
 
   - platform: group
     name: Laundry Room Lights
