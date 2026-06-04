@@ -43,7 +43,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.alleyway"
+                          "entity": "light.alleyway_lights"
                         },
                         {
                           "show_name": false,
@@ -60,7 +60,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.dining_table"
+                          "entity": "light.dining_table_lights"
                         },
                         {
                           "show_name": false,
@@ -76,7 +76,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.entrance"
+                          "entity": "light.entrance_lights"
                         },
                         {
                           "show_name": false,
@@ -91,7 +91,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.front_door"
+                          "entity": "light.front_door_lights"
                         },
                         {
                           "show_name": false,
@@ -107,7 +107,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.garden"
+                          "entity": "light.garden_lights"
                         },
                         {
                           "show_name": false,
@@ -123,7 +123,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.kitchen"
+                          "entity": "light.kitchen_lights"
                         },
                         {
                           "show_name": false,
@@ -139,7 +139,7 @@
                             "grid_columns": 2,
                             "grid_rows": 2
                           },
-                          "entity": "light.living_room"
+                          "entity": "light.living_room_lights"
                         },
                         {
                           "show_name": false,
@@ -155,7 +155,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.shed"
+                          "entity": "light.shed_lights"
                         },
                         {
                           "show_name": false,
@@ -171,7 +171,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.toilet"
+                          "entity": "light.toilet_lights"
                         }
                       ],
                       "columns": 3
@@ -202,7 +202,7 @@
                             "grid_columns": 2,
                             "grid_rows": 2
                           },
-                          "entity": "light.bathroom"
+                          "entity": "light.bathroom_lights"
                         },
                         {
                           "show_name": false,
@@ -218,7 +218,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.bedroom"
+                          "entity": "light.bedroom_lights"
                         },
                         {
                           "show_name": false,
@@ -234,7 +234,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.gym"
+                          "entity": "light.gym_lights"
                         },
                         {
                           "show_name": false,
@@ -250,7 +250,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.hallway",
+                          "entity": "light.hallway_lights",
                           "show_state": false
                         },
                         {
@@ -266,7 +266,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.office"
+                          "entity": "light.office_lights"
                         },
                         {
                           "show_name": false,
@@ -311,7 +311,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.laundry_room"
+                          "entity": "light.laundry_room_lights"
                         },
                         {
                           "show_name": false,
@@ -327,7 +327,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.gameroom"
+                          "entity": "light.gameroom_lights"
                         },
                         {
                           "show_name": false,
@@ -343,7 +343,7 @@
                             "grid_columns": 1,
                             "grid_rows": 2
                           },
-                          "entity": "light.roof_terrace"
+                          "entity": "light.roof_terrace_lights"
                         }
                       ],
                       "columns": 3
@@ -1341,7 +1341,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.alleyway",
+                          "entity": "light.alleyway_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1356,7 +1356,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.dining_table"
+                          "entity": "light.dining_table_lights"
                         },
                         {
                           "entity": "light.dining_table_above_light",
@@ -1372,7 +1372,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.entrance"
+                          "entity": "light.entrance_lights"
                         },
                         {
                           "entity": "light.entrance_light",
@@ -1384,7 +1384,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.garden",
+                          "entity": "light.garden_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1437,7 +1437,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.kitchen",
+                          "entity": "light.kitchen_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1474,7 +1474,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.living_room",
+                          "entity": "light.living_room_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1495,7 +1495,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.shed",
+                          "entity": "light.shed_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1520,7 +1520,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.toilet",
+                          "entity": "light.toilet_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1556,7 +1556,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.bathroom",
+                          "entity": "light.bathroom_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1569,7 +1569,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.bedroom",
+                          "entity": "light.bedroom_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1598,7 +1598,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.gym",
+                          "entity": "light.gym_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1611,7 +1611,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.hallway",
+                          "entity": "light.hallway_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1632,7 +1632,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.office",
+                          "entity": "light.office_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1670,7 +1670,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.laundry_room",
+                          "entity": "light.laundry_room_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1683,7 +1683,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.gameroom",
+                          "entity": "light.gameroom_lights",
                           "secondary_info": "last-changed"
                         },
                         {
@@ -1708,7 +1708,7 @@
                       "type": "entities",
                       "entities": [
                         {
-                          "entity": "light.roof_terrace",
+                          "entity": "light.roof_terrace_lights",
                           "secondary_info": "last-changed"
                         },
                         {
