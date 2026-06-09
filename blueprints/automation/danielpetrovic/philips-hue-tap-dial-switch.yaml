@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Philips Hue Tap Dial Switch (Z2M / ZHA)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) ![Version](https://img.shields.io/badge/Version-2026.06.1-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) ![Version](https://img.shields.io/badge/Version-2026.06.2-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of a Philips Hue Tap Dial Switch through Zigbee2MQTT or ZHA integration, supporting custom actions, light automation, and media player control.
 
@@ -36,6 +36,9 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.06.2: Fix adaptive auto-adjust only working for Button 1**
+          - Fixed: Auto-Adjust now correctly applies to all buttons when multiple adaptive helpers update simultaneously (e.g. lights_bright + lights_dimmed schedulers firing at the same time). Previously, mode:single caused only the first trigger to execute, silently dropping the others. All buttons are now processed in a single automation run, eliminating the race condition.
+
         - **2026.06.1: Dial color temperature control and double press light mode**
           - Added: "Color Temperature" option in Rotate Mode — dial can now adjust color temp instead of (or alongside) brightness
           - Added: Color Temp Speed input per button (1–10 slider) — mirrors Dimming Speed, controls how fast color temperature changes
@@ -3405,170 +3408,91 @@ actions:
           value: "{{ button_num }}"
   - choose:
       # ========== ADAPTIVE/SCHEDULE AUTO-ADJUST ==========
+      # Single unified case: processes all buttons in one run to avoid mode:single race conditions
+      # when multiple adaptive helpers update simultaneously (e.g. lights_bright + lights_dimmed schedulers).
       - conditions:
-          - "{{ trigger.id in ['adaptive_1_brightness_change', 'adaptive_1_color_change'] }}"
-          - "{{ button_1_adjustment_mode == 'adaptive' }}"
-          - "{{ button_1_light_auto_adjust_brightness or button_1_light_auto_adjust_color_temp }}"
-          - "{{ button_1_has_light }}"
+          - >-
+            {{ trigger.id in [
+              'adaptive_1_brightness_change', 'adaptive_1_color_change',
+              'adaptive_2_brightness_change', 'adaptive_2_color_change',
+              'adaptive_3_brightness_change', 'adaptive_3_color_change',
+              'adaptive_4_brightness_change', 'adaptive_4_color_change',
+              'schedule_1_change', 'schedule_2_change', 'schedule_3_change', 'schedule_4_change'
+            ] }}
         sequence:
-          - repeat:
-              for_each: "{{ button_1_light_entities }}"
-              sequence:
-                - if:
-                    - "{{ is_state(repeat.item, 'on') }}"
-                  then:
-                    - action: light.turn_on
-                      target:
-                        entity_id: "{{ repeat.item }}"
-                      data:
-                        brightness_pct: "{{ button_1_brightness_pct if button_1_light_auto_adjust_brightness else omit }}"
-                        color_temp_kelvin: "{{ button_1_color_temp_kelvin if button_1_light_auto_adjust_color_temp else omit }}"
-                        transition: "{{ button_1_light_auto_adjust_transition }}"
-          - stop: Adaptive 1 auto-adjust completed
-      - conditions:
-          - "{{ trigger.id == 'schedule_1_change' }}"
-          - "{{ button_1_adjustment_mode == 'schedule' }}"
-          - "{{ button_1_light_auto_adjust_brightness or button_1_light_auto_adjust_color_temp }}"
-          - "{{ button_1_has_light }}"
-          - "{{ button_1_schedule not in [none, '', []] }}"
-        sequence:
-          - repeat:
-              for_each: "{{ button_1_light_entities }}"
-              sequence:
-                - if:
-                    - "{{ is_state(repeat.item, 'on') }}"
-                  then:
-                    - action: light.turn_on
-                      target:
-                        entity_id: "{{ repeat.item }}"
-                      data:
-                        brightness_pct: "{{ button_1_brightness_pct if button_1_light_auto_adjust_brightness else omit }}"
-                        color_temp_kelvin: "{{ button_1_color_temp_kelvin if button_1_light_auto_adjust_color_temp else omit }}"
-                        transition: "{{ button_1_light_auto_adjust_transition }}"
-          - stop: Schedule 1 auto-adjust completed
-      - conditions:
-          - "{{ trigger.id in ['adaptive_2_brightness_change', 'adaptive_2_color_change'] }}"
-          - "{{ button_2_adjustment_mode == 'adaptive' }}"
-          - "{{ button_2_light_auto_adjust_brightness or button_2_light_auto_adjust_color_temp }}"
-          - "{{ button_2_has_light }}"
-        sequence:
-          - repeat:
-              for_each: "{{ button_2_light_entities }}"
-              sequence:
-                - if:
-                    - "{{ is_state(repeat.item, 'on') }}"
-                  then:
-                    - action: light.turn_on
-                      target:
-                        entity_id: "{{ repeat.item }}"
-                      data:
-                        brightness_pct: "{{ button_2_brightness_pct if button_2_light_auto_adjust_brightness else omit }}"
-                        color_temp_kelvin: "{{ button_2_color_temp_kelvin if button_2_light_auto_adjust_color_temp else omit }}"
-                        transition: "{{ button_2_light_auto_adjust_transition }}"
-          - stop: Adaptive 2 auto-adjust completed
-      - conditions:
-          - "{{ trigger.id == 'schedule_2_change' }}"
-          - "{{ button_2_adjustment_mode == 'schedule' }}"
-          - "{{ button_2_light_auto_adjust_brightness or button_2_light_auto_adjust_color_temp }}"
-          - "{{ button_2_has_light }}"
-          - "{{ button_2_schedule not in [none, '', []] }}"
-        sequence:
-          - repeat:
-              for_each: "{{ button_2_light_entities }}"
-              sequence:
-                - if:
-                    - "{{ is_state(repeat.item, 'on') }}"
-                  then:
-                    - action: light.turn_on
-                      target:
-                        entity_id: "{{ repeat.item }}"
-                      data:
-                        brightness_pct: "{{ button_2_brightness_pct if button_2_light_auto_adjust_brightness else omit }}"
-                        color_temp_kelvin: "{{ button_2_color_temp_kelvin if button_2_light_auto_adjust_color_temp else omit }}"
-                        transition: "{{ button_2_light_auto_adjust_transition }}"
-          - stop: Schedule 2 auto-adjust completed
-      - conditions:
-          - "{{ trigger.id in ['adaptive_3_brightness_change', 'adaptive_3_color_change'] }}"
-          - "{{ button_3_adjustment_mode == 'adaptive' }}"
-          - "{{ button_3_light_auto_adjust_brightness or button_3_light_auto_adjust_color_temp }}"
-          - "{{ button_3_has_light }}"
-        sequence:
-          - repeat:
-              for_each: "{{ button_3_light_entities }}"
-              sequence:
-                - if:
-                    - "{{ is_state(repeat.item, 'on') }}"
-                  then:
-                    - action: light.turn_on
-                      target:
-                        entity_id: "{{ repeat.item }}"
-                      data:
-                        brightness_pct: "{{ button_3_brightness_pct if button_3_light_auto_adjust_brightness else omit }}"
-                        color_temp_kelvin: "{{ button_3_color_temp_kelvin if button_3_light_auto_adjust_color_temp else omit }}"
-                        transition: "{{ button_3_light_auto_adjust_transition }}"
-          - stop: Adaptive 3 auto-adjust completed
-      - conditions:
-          - "{{ trigger.id == 'schedule_3_change' }}"
-          - "{{ button_3_adjustment_mode == 'schedule' }}"
-          - "{{ button_3_light_auto_adjust_brightness or button_3_light_auto_adjust_color_temp }}"
-          - "{{ button_3_has_light }}"
-          - "{{ button_3_schedule not in [none, '', []] }}"
-        sequence:
-          - repeat:
-              for_each: "{{ button_3_light_entities }}"
-              sequence:
-                - if:
-                    - "{{ is_state(repeat.item, 'on') }}"
-                  then:
-                    - action: light.turn_on
-                      target:
-                        entity_id: "{{ repeat.item }}"
-                      data:
-                        brightness_pct: "{{ button_3_brightness_pct if button_3_light_auto_adjust_brightness else omit }}"
-                        color_temp_kelvin: "{{ button_3_color_temp_kelvin if button_3_light_auto_adjust_color_temp else omit }}"
-                        transition: "{{ button_3_light_auto_adjust_transition }}"
-          - stop: Schedule 3 auto-adjust completed
-      - conditions:
-          - "{{ trigger.id in ['adaptive_4_brightness_change', 'adaptive_4_color_change'] }}"
-          - "{{ button_4_adjustment_mode == 'adaptive' }}"
-          - "{{ button_4_light_auto_adjust_brightness or button_4_light_auto_adjust_color_temp }}"
-          - "{{ button_4_has_light }}"
-        sequence:
-          - repeat:
-              for_each: "{{ button_4_light_entities }}"
-              sequence:
-                - if:
-                    - "{{ is_state(repeat.item, 'on') }}"
-                  then:
-                    - action: light.turn_on
-                      target:
-                        entity_id: "{{ repeat.item }}"
-                      data:
-                        brightness_pct: "{{ button_4_brightness_pct if button_4_light_auto_adjust_brightness else omit }}"
-                        color_temp_kelvin: "{{ button_4_color_temp_kelvin if button_4_light_auto_adjust_color_temp else omit }}"
-                        transition: "{{ button_4_light_auto_adjust_transition }}"
-          - stop: Adaptive 4 auto-adjust completed
-      - conditions:
-          - "{{ trigger.id == 'schedule_4_change' }}"
-          - "{{ button_4_adjustment_mode == 'schedule' }}"
-          - "{{ button_4_light_auto_adjust_brightness or button_4_light_auto_adjust_color_temp }}"
-          - "{{ button_4_has_light }}"
-          - "{{ button_4_schedule not in [none, '', []] }}"
-        sequence:
-          - repeat:
-              for_each: "{{ button_4_light_entities }}"
-              sequence:
-                - if:
-                    - "{{ is_state(repeat.item, 'on') }}"
-                  then:
-                    - action: light.turn_on
-                      target:
-                        entity_id: "{{ repeat.item }}"
-                      data:
-                        brightness_pct: "{{ button_4_brightness_pct if button_4_light_auto_adjust_brightness else omit }}"
-                        color_temp_kelvin: "{{ button_4_color_temp_kelvin if button_4_light_auto_adjust_color_temp else omit }}"
-                        transition: "{{ button_4_light_auto_adjust_transition }}"
-          - stop: Schedule 4 auto-adjust completed
+          - if:
+              - "{{ button_1_has_light }}"
+              - "{{ button_1_light_auto_adjust_brightness or button_1_light_auto_adjust_color_temp }}"
+              - "{{ button_1_adjustment_mode == 'adaptive' or (button_1_adjustment_mode == 'schedule' and button_1_schedule not in [none, '', []]) }}"
+            then:
+              - repeat:
+                  for_each: "{{ button_1_light_entities }}"
+                  sequence:
+                    - if:
+                        - "{{ is_state(repeat.item, 'on') }}"
+                      then:
+                        - action: light.turn_on
+                          target:
+                            entity_id: "{{ repeat.item }}"
+                          data:
+                            brightness_pct: "{{ button_1_brightness_pct if button_1_light_auto_adjust_brightness else omit }}"
+                            color_temp_kelvin: "{{ button_1_color_temp_kelvin if button_1_light_auto_adjust_color_temp else omit }}"
+                            transition: "{{ button_1_light_auto_adjust_transition }}"
+          - if:
+              - "{{ button_2_has_light }}"
+              - "{{ button_2_light_auto_adjust_brightness or button_2_light_auto_adjust_color_temp }}"
+              - "{{ button_2_adjustment_mode == 'adaptive' or (button_2_adjustment_mode == 'schedule' and button_2_schedule not in [none, '', []]) }}"
+            then:
+              - repeat:
+                  for_each: "{{ button_2_light_entities }}"
+                  sequence:
+                    - if:
+                        - "{{ is_state(repeat.item, 'on') }}"
+                      then:
+                        - action: light.turn_on
+                          target:
+                            entity_id: "{{ repeat.item }}"
+                          data:
+                            brightness_pct: "{{ button_2_brightness_pct if button_2_light_auto_adjust_brightness else omit }}"
+                            color_temp_kelvin: "{{ button_2_color_temp_kelvin if button_2_light_auto_adjust_color_temp else omit }}"
+                            transition: "{{ button_2_light_auto_adjust_transition }}"
+          - if:
+              - "{{ button_3_has_light }}"
+              - "{{ button_3_light_auto_adjust_brightness or button_3_light_auto_adjust_color_temp }}"
+              - "{{ button_3_adjustment_mode == 'adaptive' or (button_3_adjustment_mode == 'schedule' and button_3_schedule not in [none, '', []]) }}"
+            then:
+              - repeat:
+                  for_each: "{{ button_3_light_entities }}"
+                  sequence:
+                    - if:
+                        - "{{ is_state(repeat.item, 'on') }}"
+                      then:
+                        - action: light.turn_on
+                          target:
+                            entity_id: "{{ repeat.item }}"
+                          data:
+                            brightness_pct: "{{ button_3_brightness_pct if button_3_light_auto_adjust_brightness else omit }}"
+                            color_temp_kelvin: "{{ button_3_color_temp_kelvin if button_3_light_auto_adjust_color_temp else omit }}"
+                            transition: "{{ button_3_light_auto_adjust_transition }}"
+          - if:
+              - "{{ button_4_has_light }}"
+              - "{{ button_4_light_auto_adjust_brightness or button_4_light_auto_adjust_color_temp }}"
+              - "{{ button_4_adjustment_mode == 'adaptive' or (button_4_adjustment_mode == 'schedule' and button_4_schedule not in [none, '', []]) }}"
+            then:
+              - repeat:
+                  for_each: "{{ button_4_light_entities }}"
+                  sequence:
+                    - if:
+                        - "{{ is_state(repeat.item, 'on') }}"
+                      then:
+                        - action: light.turn_on
+                          target:
+                            entity_id: "{{ repeat.item }}"
+                          data:
+                            brightness_pct: "{{ button_4_brightness_pct if button_4_light_auto_adjust_brightness else omit }}"
+                            color_temp_kelvin: "{{ button_4_color_temp_kelvin if button_4_light_auto_adjust_color_temp else omit }}"
+                            transition: "{{ button_4_light_auto_adjust_transition }}"
+          - stop: Auto-adjust completed
       # ========== BUTTON 1 ==========
       - conditions: "{{ command == 'button_1_press' }}"
         sequence: !input button_1_press
