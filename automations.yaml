@@ -1160,14 +1160,15 @@
           - cover.shed_garden_shutter
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+            | int }}'
+          transition: 3
         metadata: {}
         target:
           entity_id:
-          - light.shed
+          - light.shed_lights
       - action: scene.create
         data:
           scene_id: garden_before
@@ -1199,14 +1200,15 @@
           - cover.shed_garden_shutter
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+            | int }}'
+          transition: 3
         metadata: {}
         target:
           entity_id:
-          - light.shed
+          - light.shed_lights
     - conditions:
       - condition: state
         entity_id: input_select.shed_covers
@@ -1226,14 +1228,15 @@
           - cover.shed_alleyway_shutter
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
-            }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
-            }}'
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+            | int }}'
+          transition: 3
         metadata: {}
         target:
           entity_id:
-          - light.shed
+          - light.shed_lights
       - action: scene.create
         data:
           scene_id: garden_before
@@ -1259,11 +1262,12 @@
           - cover.shed_alleyway_shutter
           - cover.shed_garden_shutter
       - action: light.turn_off
-        data: {}
+        data:
+          transition: 3
         metadata: {}
         target:
           entity_id:
-          - light.shed
+          - light.shed_lights
       - if:
         - condition: state
           entity_id: binary_sensor.garden_door_contact
@@ -1553,9 +1557,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
             | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
             | int }}'
           transition: 3
         metadata: {}
@@ -1811,6 +1815,8 @@
         entity_id: media_player.bedroom
         state:
         - playing
+      - condition: time
+        after: 07:00:00
       sequence:
       - action: media_player.unjoin
         metadata: {}
@@ -3231,9 +3237,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
             | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
             | int }}'
           transition: 10
         metadata: {}
@@ -3289,9 +3295,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
             | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
             | int }}'
           transition: 10
         metadata: {}
@@ -5706,6 +5712,8 @@
         entity_id: media_player.bedroom
         state:
         - playing
+      - condition: time
+        after: 07:00:00
       sequence:
       - action: media_player.unjoin
         metadata: {}
@@ -5805,9 +5813,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
             | int }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
             | int }}'
           transition: 1
         metadata: {}
@@ -5885,9 +5893,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
             | int }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
             | int }}'
           transition: 3
         metadata: {}
@@ -5963,9 +5971,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
             | int }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
             | int }}'
           transition: 1
         metadata: {}
@@ -6133,9 +6141,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_bright'', ''brightness_pct'')
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
             | int }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_bright'', ''color_temp_kelvin'')
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
             | int }}'
           transition: 3
         metadata: {}
@@ -6186,9 +6194,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
             | int }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
             | int }}'
           transition: 3
         metadata: {}
@@ -6239,9 +6247,9 @@
       sequence:
       - action: light.turn_on
         data:
-          brightness_pct: '{{ state_attr(''schedule.lights_dimmed'', ''brightness_pct'')
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
             | int }}'
-          color_temp_kelvin: '{{ state_attr(''schedule.lights_dimmed'', ''color_temp_kelvin'')
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
             | int }}'
           transition: 3
         metadata: {}
