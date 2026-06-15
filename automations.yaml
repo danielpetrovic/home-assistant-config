@@ -2829,12 +2829,12 @@
         entity_id:
         - light.bedroom_light
       button_1_light_adjustment_mode: adaptive
-      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
-      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_dimmed
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_dimmed
       button_1_double_light_mode:
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.bedroom_dial_mode
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_schedule: schedule.lights_dimmed
       button_1_light_auto_adjust_brightness: true
       button_1_light_auto_adjust_color_temp: true
       button_3_media: media_player.bedroom
@@ -3065,8 +3065,17 @@
   description: ''
   triggers:
   - trigger: state
-    entity_id:
-    - media_player.living_room_tv_cast
+    entity_id: media_player.living_room_tv_cast
+    id: tv
+    from:
+    to:
+  - trigger: state
+    entity_id: media_player.living_room_tv_cast
+    id: tv_title
+    attribute: media_title
+  - trigger: state
+    entity_id: media_player.living_room_osmc
+    id: osmc
     from:
     to:
   conditions: []
@@ -3093,11 +3102,80 @@
           transition: 30
           color_temp_kelvin: 3000
           brightness_pct: 25
+    - alias: TV title available
+      conditions:
+      - condition: trigger
+        id: tv_title
+      - condition: state
+        entity_id: media_player.living_room_tv_cast
+        state: playing
+      - condition: template
+        value_template: '{{ state_attr(''media_player.living_room_tv_cast'', ''media_title'')
+          not in [none, '''', ''OSMC HDMI 1''] }}'
+      sequence:
+      - action: media_player.volume_set
+        target:
+          entity_id: media_player.kitchen
+        data:
+          volume_level: 0.01
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id: light.living_room_tv_light
+        data:
+          transition: 30
+          color_temp_kelvin: 3000
+          brightness_pct: 25
+    - alias: OSMC
+      conditions:
+      - condition: trigger
+        id: osmc
+      - condition: state
+        entity_id: media_player.living_room_osmc
+        state: playing
+      sequence:
+      - action: media_player.volume_set
+        target:
+          entity_id: media_player.kitchen
+        data:
+          volume_level: 0.01
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id: light.living_room_tv_light
+        data:
+          transition: 30
+          color_temp_kelvin: 3000
+          brightness_pct: 25
+    - alias: OSMC not playing
+      conditions:
+      - condition: trigger
+        id: osmc
+      - condition: state
+        entity_id: media_player.living_room_osmc
+        state:
+        - paused
+        - idle
+      sequence:
+      - action: media_player.volume_set
+        target:
+          entity_id: media_player.kitchen
+        data:
+          volume_level: 0.35
+      - action: light.turn_off
+        metadata: {}
+        target:
+          entity_id: light.living_room_tv_light
+        data:
+          transition: 30
     - alias: Playing
       conditions:
       - condition: state
         entity_id: media_player.living_room_tv_cast
         state: playing
+      - condition: template
+        value_template: '{{ state_attr(''media_player.living_room_tv_cast'', ''media_title'')
+          not in [none, '''', ''OSMC HDMI 1''] }}'
       sequence:
       - action: media_player.volume_set
         target:
