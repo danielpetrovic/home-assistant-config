@@ -2678,6 +2678,44 @@
                   "forecast_type": "hourly"
                 },
                 {
+                  "type": "tile",
+                  "entity": "sensor.roof_terrace_sensor_heat_stress",
+                  "name": {
+                    "type": "entity"
+                  },
+                  "color": "red",
+                  "hide_state": false,
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "bar-gauge"
+                    },
+                    {
+                      "type": "trend-graph"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.roof_terrace_sensor_humidex",
+                  "name": {
+                    "type": "entity"
+                  },
+                  "color": "blue",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "bar-gauge",
+                      "max": 50
+                    },
+                    {
+                      "type": "trend-graph"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
                   "square": false,
                   "type": "grid",
                   "cards": [
