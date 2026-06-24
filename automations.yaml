@@ -990,10 +990,9 @@
           entity_id: cover.gym_curtain
       - delay:
           seconds: 3
-      - action: cover.set_cover_position
-        data:
-          position: 90
+      - action: cover.open_cover
         metadata: {}
+        data: {}
         target:
           entity_id: cover.gym_shutter
     - conditions:
@@ -1345,9 +1344,8 @@
         data: {}
       - delay:
           seconds: 3
-      - action: cover.set_cover_position
-        data:
-          position: 90
+      - action: cover.open_cover
+        data: {}
         metadata: {}
         target:
           entity_id:
@@ -3174,7 +3172,8 @@
         entity_id: media_player.living_room_tv_cast
         state: playing
       - condition: template
-        value_template: '{{ state_attr(''media_player.living_room_tv_cast'', ''media_title'')
+        value_template: '{{ state_attr(''media_player.living_room_tv_cast'', ''app_name'')
+          != ''TV'' or state_attr(''media_player.living_room_tv_cast'', ''media_title'')
           not in [none, '''', ''OSMC HDMI 1''] }}'
       sequence:
       - action: media_player.volume_set
@@ -3680,7 +3679,7 @@
               entity_id: climate.living_room_ac
           - action: climate.set_fan_mode
             data:
-              fan_mode: Silence
+              fan_mode: Auto
             target:
               entity_id: climate.living_room_ac
         - alias: warm
@@ -3704,7 +3703,7 @@
                 entity_id: climate.living_room_ac
             - action: climate.set_fan_mode
               data:
-                fan_mode: Silence
+                fan_mode: Auto
               target:
                 entity_id: climate.living_room_ac
             else:
@@ -3716,7 +3715,7 @@
                 entity_id: climate.living_room_ac
             - action: climate.set_fan_mode
               data:
-                fan_mode: Silence
+                fan_mode: Auto
               target:
                 entity_id: climate.living_room_ac
         - alias: hot
@@ -3740,7 +3739,7 @@
                 entity_id: climate.living_room_ac
             - action: climate.set_fan_mode
               data:
-                fan_mode: Silence
+                fan_mode: Auto
               target:
                 entity_id: climate.living_room_ac
             else:
@@ -3752,7 +3751,7 @@
                 entity_id: climate.living_room_ac
             - action: climate.set_fan_mode
               data:
-                fan_mode: Silence
+                fan_mode: Auto
               target:
                 entity_id: climate.living_room_ac
     - alias: schedule off or away
@@ -3814,7 +3813,7 @@
               entity_id: climate.living_room_ac
           - action: climate.set_fan_mode
             data:
-              fan_mode: Silence
+              fan_mode: Auto
             target:
               entity_id: climate.living_room_ac
         - alias: warm
@@ -3834,7 +3833,7 @@
               entity_id: climate.living_room_ac
           - action: climate.set_fan_mode
             data:
-              fan_mode: Silence
+              fan_mode: Auto
             target:
               entity_id: climate.living_room_ac
         - alias: hot
@@ -3854,7 +3853,7 @@
               entity_id: climate.living_room_ac
           - action: climate.set_fan_mode
             data:
-              fan_mode: Silence
+              fan_mode: Auto
             target:
               entity_id: climate.living_room_ac
   mode: restart
@@ -4187,7 +4186,7 @@
               entity_id: climate.office_ac
           - action: climate.set_fan_mode
             data:
-              fan_mode: Silence
+              fan_mode: Auto
             target:
               entity_id: climate.office_ac
         - alias: warm
@@ -4215,7 +4214,7 @@
                 entity_id: climate.office_ac
             - action: climate.set_fan_mode
               data:
-                fan_mode: Silence
+                fan_mode: Auto
               target:
                 entity_id: climate.office_ac
             else:
@@ -4227,7 +4226,7 @@
                 entity_id: climate.office_ac
             - action: climate.set_fan_mode
               data:
-                fan_mode: Silence
+                fan_mode: Auto
               target:
                 entity_id: climate.office_ac
         - alias: hot
@@ -4255,7 +4254,7 @@
                 entity_id: climate.office_ac
             - action: climate.set_fan_mode
               data:
-                fan_mode: Silence
+                fan_mode: Auto
               target:
                 entity_id: climate.office_ac
             else:
@@ -4267,7 +4266,7 @@
                 entity_id: climate.office_ac
             - action: climate.set_fan_mode
               data:
-                fan_mode: Silence
+                fan_mode: Auto
               target:
                 entity_id: climate.office_ac
     - alias: schedule off or away
@@ -4329,7 +4328,7 @@
               entity_id: climate.office_ac
           - action: climate.set_fan_mode
             data:
-              fan_mode: Silence
+              fan_mode: Auto
             target:
               entity_id: climate.office_ac
         - alias: warm
@@ -4349,7 +4348,7 @@
               entity_id: climate.office_ac
           - action: climate.set_fan_mode
             data:
-              fan_mode: Silence
+              fan_mode: Auto
             target:
               entity_id: climate.office_ac
         - alias: hot
@@ -4369,7 +4368,7 @@
               entity_id: climate.office_ac
           - action: climate.set_fan_mode
             data:
-              fan_mode: Silence
+              fan_mode: Auto
             target:
               entity_id: climate.office_ac
   mode: restart
@@ -4480,7 +4479,7 @@
               entity_id: climate.gameroom_ac
           - action: climate.set_fan_mode
             data:
-              fan_mode: Silence
+              fan_mode: Auto
             target:
               entity_id: climate.gameroom_ac
         - alias: warm
@@ -5519,13 +5518,11 @@
                 action: input_select.select_option
               - delay:
                   seconds: 5
-        - alias: dark/dim
+        - alias: dim
           conditions:
           - condition: state
             entity_id: sensor.outdoor_brightness
-            state:
-            - dark
-            - dim
+            state: dim
           sequence:
           - repeat:
               for_each:
@@ -5575,13 +5572,33 @@
                 action: input_select.select_option
               - delay:
                   seconds: 5
-        - alias: overcast/bright
+        - alias: bright
           conditions:
           - condition: state
             entity_id: sensor.outdoor_brightness
-            state:
-            - overcast
-            - bright
+            state: bright
+          sequence:
+          - repeat:
+              for_each:
+              - entity: input_select.gameroom_covers
+                preset: Privacy
+              - entity: input_select.office_covers
+                preset: Privacy
+              - entity: input_select.living_room_covers
+                preset: Privacy
+              sequence:
+              - target:
+                  entity_id: '{{ repeat.item.entity }}'
+                data:
+                  option: '{{ repeat.item.preset }}'
+                action: input_select.select_option
+              - delay:
+                  seconds: 5
+        - alias: overcast
+          conditions:
+          - condition: state
+            entity_id: sensor.outdoor_brightness
+            state: overcast
           sequence:
           - repeat:
               for_each:
@@ -5599,13 +5616,11 @@
                 action: input_select.select_option
               - delay:
                   seconds: 5
-        - alias: dark/dim
+        - alias: dim
           conditions:
           - condition: state
             entity_id: sensor.outdoor_brightness
-            state:
-            - dark
-            - dim
+            state: dim
           sequence:
           - repeat:
               for_each:
@@ -6546,4 +6561,154 @@
   - action: hassio.addon_restart
     data:
       addon: a0d7b954_vscode
+  mode: single
+- id: '1781989329439'
+  alias: Vacuum Robots
+  description: ''
+  triggers:
+  - trigger: time
+    at: 07:30:00
+    id: 07:30
+  - trigger: time
+    at: 08:30:00
+    id: 08:30
+  - trigger: time
+    at: '12:00:00'
+    id: '12:00'
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: 07:30
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: 'on'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: time
+            weekday:
+            - mon
+            - wed
+            - fri
+            - sun
+          sequence:
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: Vacuum-Only
+            target:
+              entity_id: select.dining_table_bart_clean_mode
+          - action: vacuum.start
+            metadata: {}
+            data: {}
+            target:
+              entity_id: vacuum.dining_table_bart
+        - conditions:
+          - condition: time
+            weekday:
+            - tue
+            - thu
+            - sat
+          sequence:
+          - action: select.select_option
+            metadata: {}
+            target:
+              entity_id: select.dining_table_bart_clean_mode
+            data:
+              option: Vacuum & Mop
+          - action: vacuum.start
+            metadata: {}
+            target:
+              entity_id: vacuum.dining_table_bart
+            data: {}
+    - conditions:
+      - condition: trigger
+        id: 08:30
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: 'off'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: time
+            weekday:
+            - mon
+            - wed
+            - fri
+            - sun
+          sequence:
+          - action: select.select_option
+            metadata: {}
+            target:
+              entity_id: select.dining_table_bart_clean_mode
+            data:
+              option: Vacuum-Only
+          - action: vacuum.start
+            metadata: {}
+            target:
+              entity_id: vacuum.dining_table_bart
+            data: {}
+        - conditions:
+          - condition: time
+            weekday:
+            - tue
+            - thu
+            - sat
+          sequence:
+          - action: select.select_option
+            metadata: {}
+            target:
+              entity_id: select.dining_table_bart_clean_mode
+            data:
+              option: Vacuum & Mop
+          - action: vacuum.start
+            metadata: {}
+            target:
+              entity_id: vacuum.dining_table_bart
+            data: {}
+    - conditions:
+      - condition: trigger
+        id: '12:00'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: time
+            weekday:
+            - mon
+            - wed
+            - fri
+            - sun
+          sequence:
+          - action: select.select_option
+            metadata: {}
+            target:
+              entity_id:
+              - select.gym_bert_clean_mode
+            data:
+              option: Vacuum-Only
+          - action: vacuum.start
+            metadata: {}
+            data: {}
+            target:
+              entity_id: vacuum.gym_bert
+        - conditions:
+          - condition: time
+            weekday:
+            - tue
+            - thu
+            - sat
+          sequence:
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: Vacuum & Mop
+            target:
+              entity_id: select.gym_bert_clean_mode
+          - action: vacuum.start
+            metadata: {}
+            data: {}
+            target:
+              entity_id: vacuum.gym_bert
   mode: single
