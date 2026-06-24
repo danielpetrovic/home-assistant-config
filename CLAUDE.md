@@ -34,7 +34,7 @@ config/
 ├── packages/                      # Modular configuration
 │   ├── alarm.yaml                 # Manual alarm panel with keypad
 │   ├── buttons.yaml               # Button press state tracking
-│   ├── climate.yaml               # Climate control, weather sensors & schedules
+│   ├── climate.yaml               # Climate control, weather sensors & time-based schedules
 │   ├── covers.yaml                # Window covering presets
 │   ├── duco.yaml                  # DucoBox ventilation REST API
 │   ├── lights.yaml                # Adaptive lighting system & sensors
@@ -296,12 +296,28 @@ Uses the [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting) in
 
 ## Climate Schedules
 
+Implemented via inline `time` triggers + `time` conditions + `homeassistant.start` trigger (no schedule entities). Each automation has two independent `if` blocks: one for heating, one for cooling/AC.
+
+### Heating Windows
+
 | Location | Weekdays | Weekends |
 |----------|----------|----------|
-| Bathroom/Gym | 06:00-10:00 | 06:00-10:00 |
-| Office/Gameroom | 06:00-18:00 | Off |
-| Bedroom | 06:00-10:00, 20:00-24:00 | 06:00-10:00, 20:00-24:00 |
-| Living Room | 06:00-10:00, 16:00-24:00 | 06:00-24:00 |
+| Bathroom/Gym | 06:00–10:00 | 06:00–10:00 |
+| Office/Gameroom | 06:00–18:00 | Off |
+| Bedroom | 06:00–10:00, 20:00–24:00 | 06:00–10:00, 20:00–24:00 |
+| Living Room | 06:00–10:00, 16:00–24:00 | 06:00–24:00 |
+
+### Cooling/AC Windows
+
+| Location | Active cooling | Passive (ceiling guard) | Sleep setpoint |
+|----------|---------------|------------------------|----------------|
+| Bathroom/Gym | — (no AC) | — | — |
+| Office | desk_power > 10W (any time, any day) | 30°C when desk ≤ 10W | — |
+| Gameroom | desk_power > 10W OR media_power > 20W (any time, any day) | 30°C otherwise | — |
+| Bedroom | 22:00–01:00, 06:00–08:00 (presence required) | 30°C outside window | 27°C (warm/hot) during 01:00–06:00 |
+| Living Room | media_power > 20W + presence (any time) | 30°C when media off | — |
+
+**Setpoints (active):** mild→30°C, warm→27°C (LR)/25°C (Bed), hot→25°C (LR)/24°C (Bed); freezing/cold→AC off
 
 ## Alarm System
 
@@ -378,7 +394,7 @@ Uses the [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting) in
 ### Package Organization
 - **alarm.yaml** - Security and access control
 - **buttons.yaml** - Physical button state tracking
-- **climate.yaml** - HVAC thermostats and schedules, weather statistics sensors (outdoor luminosity, temperature min/max/mean), climate template sensors (daylight duration, heat stress, humidex, luminosity categories, climate mode)
+- **climate.yaml** - HVAC thermostats, weather statistics sensors (outdoor luminosity, temperature min/max/mean), climate template sensors (daylight duration, heat stress, humidex, luminosity categories, climate mode). No schedule entities — climate automations use inline time triggers.
 - **covers.yaml** - Window covering presets
 - **duco.yaml** - Ventilation system integration
 - **lights.yaml** - Adaptive lighting helpers and schedules, automatic light counter sensor
