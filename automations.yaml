@@ -3774,101 +3774,91 @@
         - action: climate.turn_off
           target:
             entity_id: climate.living_room_heating
-  - if:
-    - condition: state
-      entity_id: binary_sensor.presence
-      state: 'on'
-    - condition: numeric_state
-      entity_id: sensor.living_room_media_power
-      above: 20
-    then:
-    - alias: cooling active
-      choose:
-      - alias: mild
+  - alias: cooling
+    choose:
+    - alias: freezing or cold
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: freezing
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: cold
+      sequence:
+      - action: climate.turn_off
+        target:
+          entity_id: climate.living_room_ac
+    - alias: warm - media active
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: warm
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.living_room_media_power
+        above: 20
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 27
+          hvac_mode: cool
+        target:
+          entity_id: climate.living_room_ac
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Auto
+        target:
+          entity_id: climate.living_room_ac
+    - alias: hot - media active
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: hot
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.living_room_media_power
+        above: 20
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 25
+          hvac_mode: cool
+        target:
+          entity_id: climate.living_room_ac
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Auto
+        target:
+          entity_id: climate.living_room_ac
+    - alias: mild or warm or hot - passive
+      conditions:
+      - condition: or
         conditions:
         - condition: state
           entity_id: sensor.climate_mode
           state: mild
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 30
-            hvac_mode: cool
-          target:
-            entity_id: climate.living_room_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Auto
-          target:
-            entity_id: climate.living_room_ac
-      - alias: warm
-        conditions:
         - condition: state
           entity_id: sensor.climate_mode
           state: warm
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 27
-            hvac_mode: cool
-          target:
-            entity_id: climate.living_room_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Auto
-          target:
-            entity_id: climate.living_room_ac
-      - alias: hot
-        conditions:
         - condition: state
           entity_id: sensor.climate_mode
           state: hot
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 25
-            hvac_mode: cool
-          target:
-            entity_id: climate.living_room_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Auto
-          target:
-            entity_id: climate.living_room_ac
-      default:
-      - action: climate.turn_off
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 30
+          hvac_mode: cool
         target:
           entity_id: climate.living_room_ac
-    else:
-    - alias: cooling passive
-      choose:
-      - alias: mild or warm or hot
-        conditions:
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_mode
-            state: mild
-          - condition: state
-            entity_id: sensor.climate_mode
-            state: warm
-          - condition: state
-            entity_id: sensor.climate_mode
-            state: hot
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 30
-            hvac_mode: cool
-          target:
-            entity_id: climate.living_room_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Auto
-          target:
-            entity_id: climate.living_room_ac
-      default:
-      - action: climate.turn_off
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Auto
         target:
           entity_id: climate.living_room_ac
   mode: restart
@@ -4024,172 +4014,130 @@
         - action: climate.turn_off
           target:
             entity_id: climate.bedroom_heating
-  - if:
-    - condition: state
-      entity_id: binary_sensor.presence
-      state: 'on'
-    - condition: or
+  - alias: cooling
+    choose:
+    - alias: freezing or cold
       conditions:
-      - condition: time
-        after: '22:00:00'
-      - condition: time
-        before: '01:00:00'
-      - condition: time
-        after: '06:00:00'
-        before: '08:00:00'
-    then:
-    - alias: cooling active
-      choose:
-      - alias: mild
+      - condition: or
         conditions:
         - condition: state
           entity_id: sensor.climate_mode
-          state: mild
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 30
-            hvac_mode: cool
-          target:
-            entity_id: climate.bedroom_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Silence
-          target:
-            entity_id: climate.bedroom_ac
-      - alias: warm
+          state: freezing
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: cold
+      sequence:
+      - action: climate.turn_off
+        target:
+          entity_id: climate.bedroom_ac
+    - alias: warm - active window
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: warm
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'on'
+      - condition: or
+        conditions:
+        - condition: time
+          after: '22:00:00'
+        - condition: time
+          before: '01:00:00'
+        - condition: time
+          after: '06:00:00'
+          before: '08:00:00'
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 25
+          hvac_mode: cool
+        target:
+          entity_id: climate.bedroom_ac
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Silence
+        target:
+          entity_id: climate.bedroom_ac
+    - alias: hot - active window
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: hot
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'on'
+      - condition: or
+        conditions:
+        - condition: time
+          after: '22:00:00'
+        - condition: time
+          before: '01:00:00'
+        - condition: time
+          after: '06:00:00'
+          before: '08:00:00'
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 24
+          hvac_mode: cool
+        target:
+          entity_id: climate.bedroom_ac
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Silence
+        target:
+          entity_id: climate.bedroom_ac
+    - alias: warm or hot - sleep
+      conditions:
+      - condition: or
         conditions:
         - condition: state
           entity_id: sensor.climate_mode
           state: warm
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 25
-            hvac_mode: cool
-          target:
-            entity_id: climate.bedroom_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Silence
-          target:
-            entity_id: climate.bedroom_ac
-      - alias: hot
-        conditions:
         - condition: state
           entity_id: sensor.climate_mode
           state: hot
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 24
-            hvac_mode: cool
-          target:
-            entity_id: climate.bedroom_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Silence
-          target:
-            entity_id: climate.bedroom_ac
-      default:
-      - action: climate.turn_off
-        target:
-          entity_id: climate.bedroom_ac
-    else:
-    - if:
       - condition: time
         after: '01:00:00'
         before: '06:00:00'
-      then:
-      - alias: cooling sleep
-        choose:
-        - alias: warm
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_mode
-            state: warm
-          sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 27
-              hvac_mode: cool
-            target:
-              entity_id: climate.bedroom_ac
-          - action: climate.set_fan_mode
-            data:
-              fan_mode: Silence
-            target:
-              entity_id: climate.bedroom_ac
-        - alias: hot
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_mode
-            state: hot
-          sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 27
-              hvac_mode: cool
-            target:
-              entity_id: climate.bedroom_ac
-          - action: climate.set_fan_mode
-            data:
-              fan_mode: Silence
-            target:
-              entity_id: climate.bedroom_ac
-        - alias: mild
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_mode
-            state: mild
-          sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 30
-              hvac_mode: cool
-            target:
-              entity_id: climate.bedroom_ac
-          - action: climate.set_fan_mode
-            data:
-              fan_mode: Silence
-            target:
-              entity_id: climate.bedroom_ac
-        default:
-        - action: climate.turn_off
-          target:
-            entity_id: climate.bedroom_ac
-      else:
-      - alias: cooling passive
-        choose:
-        - alias: mild or warm or hot
-          conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: sensor.climate_mode
-              state: mild
-            - condition: state
-              entity_id: sensor.climate_mode
-              state: warm
-            - condition: state
-              entity_id: sensor.climate_mode
-              state: hot
-          sequence:
-          - action: climate.set_temperature
-            data:
-              temperature: 30
-              hvac_mode: cool
-            target:
-              entity_id: climate.bedroom_ac
-          - action: climate.set_fan_mode
-            data:
-              fan_mode: Silence
-            target:
-              entity_id: climate.bedroom_ac
-        default:
-        - action: climate.turn_off
-          target:
-            entity_id: climate.bedroom_ac
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 27
+          hvac_mode: cool
+        target:
+          entity_id: climate.bedroom_ac
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Silence
+        target:
+          entity_id: climate.bedroom_ac
+    - alias: mild or warm or hot - passive
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: mild
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: warm
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: hot
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 30
+          hvac_mode: cool
+        target:
+          entity_id: climate.bedroom_ac
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Silence
+        target:
+          entity_id: climate.bedroom_ac
   mode: restart
 - id: '1757451939527'
   alias: Office Climate
@@ -4214,7 +4162,7 @@
   - trigger: numeric_state
     entity_id: sensor.office_desk_power
     id: desk_off
-    below: 10
+    below: 40
     for:
       minutes: 1
   - trigger: homeassistant
@@ -4349,101 +4297,91 @@
         - action: climate.turn_off
           target:
             entity_id: climate.office_heating
-  - if:
-    - condition: state
-      entity_id: binary_sensor.presence
-      state: 'on'
-    - condition: numeric_state
-      entity_id: sensor.office_desk_power
-      above: 10
-    then:
-    - alias: cooling active
-      choose:
-      - alias: mild
+  - alias: cooling
+    choose:
+    - alias: freezing or cold
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: freezing
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: cold
+      sequence:
+      - action: climate.turn_off
+        target:
+          entity_id: climate.office_ac
+    - alias: warm - desk active
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: warm
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.office_desk_power
+        above: 40
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 27
+          hvac_mode: cool
+        target:
+          entity_id: climate.office_ac
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Auto
+        target:
+          entity_id: climate.office_ac
+    - alias: hot - desk active
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: hot
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.office_desk_power
+        above: 40
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 25
+          hvac_mode: cool
+        target:
+          entity_id: climate.office_ac
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Auto
+        target:
+          entity_id: climate.office_ac
+    - alias: mild or warm or hot - passive
+      conditions:
+      - condition: or
         conditions:
         - condition: state
           entity_id: sensor.climate_mode
           state: mild
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 30
-            hvac_mode: cool
-          target:
-            entity_id: climate.office_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Auto
-          target:
-            entity_id: climate.office_ac
-      - alias: warm
-        conditions:
         - condition: state
           entity_id: sensor.climate_mode
           state: warm
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 27
-            hvac_mode: cool
-          target:
-            entity_id: climate.office_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Auto
-          target:
-            entity_id: climate.office_ac
-      - alias: hot
-        conditions:
         - condition: state
           entity_id: sensor.climate_mode
           state: hot
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 25
-            hvac_mode: cool
-          target:
-            entity_id: climate.office_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Auto
-          target:
-            entity_id: climate.office_ac
-      default:
-      - action: climate.turn_off
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 30
+          hvac_mode: cool
         target:
           entity_id: climate.office_ac
-    else:
-    - alias: cooling passive
-      choose:
-      - alias: mild or warm or hot
-        conditions:
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_mode
-            state: mild
-          - condition: state
-            entity_id: sensor.climate_mode
-            state: warm
-          - condition: state
-            entity_id: sensor.climate_mode
-            state: hot
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 30
-            hvac_mode: cool
-          target:
-            entity_id: climate.office_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Auto
-          target:
-            entity_id: climate.office_ac
-      default:
-      - action: climate.turn_off
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Auto
         target:
           entity_id: climate.office_ac
   mode: restart
@@ -4470,7 +4408,7 @@
   - trigger: numeric_state
     entity_id: sensor.gameroom_desk_power
     id: desk_off
-    below: 10
+    below: 40
     for:
       minutes: 1
   - trigger: numeric_state
@@ -4613,106 +4551,101 @@
         - action: climate.turn_off
           target:
             entity_id: climate.gameroom_heating
-  - if:
-    - condition: state
-      entity_id: binary_sensor.presence
-      state: 'on'
-    - condition: or
+  - alias: cooling
+    choose:
+    - alias: freezing or cold
       conditions:
-      - condition: numeric_state
-        entity_id: sensor.gameroom_desk_power
-        above: 10
-      - condition: numeric_state
-        entity_id: sensor.gameroom_media_power
-        above: 20
-    then:
-    - alias: cooling active
-      choose:
-      - alias: mild
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: freezing
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: cold
+      sequence:
+      - action: climate.turn_off
+        target:
+          entity_id: climate.gameroom_ac
+    - alias: warm - desk or media active
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: warm
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'on'
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.gameroom_desk_power
+          above: 40
+        - condition: numeric_state
+          entity_id: sensor.gameroom_media_power
+          above: 20
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 27
+          hvac_mode: cool
+        target:
+          entity_id: climate.gameroom_ac
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Auto
+        target:
+          entity_id: climate.gameroom_ac
+    - alias: hot - desk or media active
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: hot
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'on'
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.gameroom_desk_power
+          above: 40
+        - condition: numeric_state
+          entity_id: sensor.gameroom_media_power
+          above: 20
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 25
+          hvac_mode: cool
+        target:
+          entity_id: climate.gameroom_ac
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Auto
+        target:
+          entity_id: climate.gameroom_ac
+    - alias: mild or warm or hot - passive
+      conditions:
+      - condition: or
         conditions:
         - condition: state
           entity_id: sensor.climate_mode
           state: mild
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 30
-            hvac_mode: cool
-          target:
-            entity_id: climate.gameroom_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Auto
-          target:
-            entity_id: climate.gameroom_ac
-      - alias: warm
-        conditions:
         - condition: state
           entity_id: sensor.climate_mode
           state: warm
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 27
-            hvac_mode: cool
-          target:
-            entity_id: climate.gameroom_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Auto
-          target:
-            entity_id: climate.gameroom_ac
-      - alias: hot
-        conditions:
         - condition: state
           entity_id: sensor.climate_mode
           state: hot
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 25
-            hvac_mode: cool
-          target:
-            entity_id: climate.gameroom_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Auto
-          target:
-            entity_id: climate.gameroom_ac
-      default:
-      - action: climate.turn_off
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: 30
+          hvac_mode: cool
         target:
           entity_id: climate.gameroom_ac
-    else:
-    - alias: cooling passive
-      choose:
-      - alias: mild or warm or hot
-        conditions:
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: sensor.climate_mode
-            state: mild
-          - condition: state
-            entity_id: sensor.climate_mode
-            state: warm
-          - condition: state
-            entity_id: sensor.climate_mode
-            state: hot
-        sequence:
-        - action: climate.set_temperature
-          data:
-            temperature: 30
-            hvac_mode: cool
-          target:
-            entity_id: climate.gameroom_ac
-        - action: climate.set_fan_mode
-          data:
-            fan_mode: Auto
-          target:
-            entity_id: climate.gameroom_ac
-      default:
-      - action: climate.turn_off
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: Auto
         target:
           entity_id: climate.gameroom_ac
   mode: restart
@@ -5943,7 +5876,7 @@
       - if:
         - condition: numeric_state
           entity_id: sensor.office_desk_power
-          above: 30
+          above: 40
         then: []
         else:
         - action: light.turn_off
@@ -5962,7 +5895,7 @@
       - if:
         - condition: numeric_state
           entity_id: sensor.office_desk_power
-          above: 30
+          above: 40
         then: []
         else:
         - action: light.turn_off

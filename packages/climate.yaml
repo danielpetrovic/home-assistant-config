@@ -165,11 +165,13 @@ template:
             {{ last }}
           {% else %}
 
-          {% set hot_enter = humidex >= 29 and hs >= 75 and max4 >= 25 and daylight_h > 13 %}
-          {% set hot_exit  = humidex <= 27 and hs <= 65 %}
+          {% set hot_enter = humidex >= 29 and hs >= 65 and max4 >= 25 and daylight_h > 13 %}
+          {% set hot_exit  = humidex <= 27 and hs <= 65 and max4 < 22 %}
 
           {#
             Thresholds (non-overlapping for stability):
+              hot_exit requires max4 < 22 (vs enter max4 >= 25) so overnight
+              cooling never drops the mode — only a genuine multi-day cooldown does.
               freezing → mild  : max4 > 14 AND min7 > 6
               freezing → cold  : max4 > 6  (and not meeting mild condition)
               cold     → mild  : max4 > 14 AND min7 > 6
