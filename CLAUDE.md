@@ -13,7 +13,7 @@ This repository contains a Home Assistant configuration for a residential smart 
 
 ## System Overview
 
-- **Home Assistant Version:** 2026.4.3
+- **Home Assistant Version:** 2026.6.4
 - **Primary Integration:** Zigbee2MQTT (Z2M)
 - **Configuration Style:** Package-based with YAML automations
 - **Network:** Trusted proxy configuration for reverse proxy access
@@ -177,7 +177,7 @@ The installation is organized across 3 floors:
 - `sensor.heating` - Count of heating zones actively heating
 - `sensor.daylight_duration` - Hours between sunrise and sunset
 - `sensor.outdoor_brightness` - Categorized outdoor brightness (dark/dim/overcast/bright/sunny) with hysteresis, based on sensor.outdoor_luminosity
-- `sensor.climate_mode` - State machine for seasonal climate mode (freezing/cold/mild/warm/hot) with hysteresis
+- `sensor.climate_mode` - State machine for seasonal climate mode (freezing/cold/mild/warm/hot) with hysteresis. Hot enter: humidex ≥ 29, heat_stress ≥ 65, max4 ≥ 25, daylight > 13h. Hot exit: humidex ≤ 27, heat_stress ≤ 65, time 09:00–21:00 (daytime-only prevents overnight resets).
 
 ### System Sensors
 
@@ -312,12 +312,16 @@ Implemented via inline `time` triggers + `time` conditions + `homeassistant.star
 | Location | Active cooling | Passive (ceiling guard) | Sleep setpoint |
 |----------|---------------|------------------------|----------------|
 | Bathroom/Gym | — (no AC) | — | — |
-| Office | desk_power > 10W (any time, any day) | 30°C when desk ≤ 10W | — |
-| Gameroom | desk_power > 10W OR media_power > 20W (any time, any day) | 30°C otherwise | — |
-| Bedroom | 22:00–01:00, 06:00–08:00 (presence required) | 30°C outside window | 27°C (warm/hot) during 01:00–06:00 |
-| Living Room | media_power > 20W + presence (any time) | 30°C when media off | — |
+| Office | desk_power > 40W (any time, any day) | warm→30°C, hot→29°C when desk ≤ 40W | — |
+| Gameroom | desk_power > 40W OR media_power > 20W (any time, any day) | warm→30°C, hot→29°C otherwise | — |
+| Bedroom | 22:00–01:00, 06:00–08:00 (presence required) | warm→30°C, hot→29°C outside window | 26°C (warm/hot) during 01:00–06:00 |
+| Living Room | media_power > 20W + presence (any time) | warm→30°C, hot→29°C when media off | — |
 
-**Setpoints (active):** mild→30°C, warm→27°C (LR)/25°C (Bed), hot→25°C (LR)/24°C (Bed); freezing/cold→AC off
+**Setpoints (active):** warm→26°C (all), hot→25°C (all except Bed→24°C); freezing/cold→AC off
+
+**Desk/media power thresholds:** Office & Gameroom desk: 40W on / 40W off (1 min debounce). Gameroom & Living Room media: 20W. Standby baseline spikes to 36W so threshold must exceed 40W.
+
+**`sensor.climate_mode` hot thresholds:** enter: humidex ≥ 29 AND heat_stress ≥ 65 AND max4 ≥ 25 AND daylight > 13h; exit: humidex ≤ 27 AND heat_stress ≤ 65 AND daytime (09:00–21:00 only — prevents overnight resets during heat waves).
 
 ## Alarm System
 

@@ -3606,13 +3606,13 @@
     id: climate_mode
     trigger: state
   - trigger: time
-    at: '06:00:00'
+    at: 06:00:00
   - trigger: time
     at: '10:00:00'
   - trigger: time
     at: '16:00:00'
   - trigger: time
-    at: '00:00:00'
+    at: 00:00:00
   - trigger: numeric_state
     entity_id: sensor.living_room_media_power
     id: media_on
@@ -3629,14 +3629,16 @@
     event: start
   conditions: []
   actions:
-  - if:
+  - alias: night guard
+    if:
     - condition: trigger
       id: climate_mode
     - condition: time
       before: 09:00:00
     then:
     - stop: Night guard active
-  - if:
+  - alias: heating
+    if:
     - condition: state
       entity_id: binary_sensor.presence
       state: 'on'
@@ -3654,7 +3656,7 @@
         - condition: or
           conditions:
           - condition: time
-            after: '06:00:00'
+            after: 06:00:00
             before: '10:00:00'
           - condition: time
             after: '16:00:00'
@@ -3665,7 +3667,7 @@
           - sat
           - sun
         - condition: time
-          after: '06:00:00'
+          after: 06:00:00
     then:
     - alias: heating active
       choose:
@@ -3804,13 +3806,8 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 27
+          temperature: 26
           hvac_mode: cool
-        target:
-          entity_id: climate.living_room_ac
-      - action: climate.set_fan_mode
-        data:
-          fan_mode: Auto
         target:
           entity_id: climate.living_room_ac
     - alias: hot - media active
@@ -3831,12 +3828,7 @@
           hvac_mode: cool
         target:
           entity_id: climate.living_room_ac
-      - action: climate.set_fan_mode
-        data:
-          fan_mode: Auto
-        target:
-          entity_id: climate.living_room_ac
-    - alias: mild or warm or hot - passive
+    - alias: mild or warm - passive
       conditions:
       - condition: or
         conditions:
@@ -3846,9 +3838,6 @@
         - condition: state
           entity_id: sensor.climate_mode
           state: warm
-        - condition: state
-          entity_id: sensor.climate_mode
-          state: hot
       sequence:
       - action: climate.set_temperature
         data:
@@ -3856,9 +3845,16 @@
           hvac_mode: cool
         target:
           entity_id: climate.living_room_ac
-      - action: climate.set_fan_mode
+    - alias: hot - passive
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: hot
+      sequence:
+      - action: climate.set_temperature
         data:
-          fan_mode: Auto
+          temperature: 29
+          hvac_mode: cool
         target:
           entity_id: climate.living_room_ac
   mode: restart
@@ -3873,11 +3869,11 @@
     id: climate_mode
     trigger: state
   - trigger: time
-    at: '01:00:00'
+    at: 01:00:00
   - trigger: time
-    at: '06:00:00'
+    at: 06:00:00
   - trigger: time
-    at: '08:00:00'
+    at: 08:00:00
   - trigger: time
     at: '10:00:00'
   - trigger: time
@@ -3888,21 +3884,23 @@
     event: start
   conditions: []
   actions:
-  - if:
+  - alias: night guard
+    if:
     - condition: trigger
       id: climate_mode
     - condition: time
       before: 09:00:00
     then:
     - stop: Night guard active
-  - if:
+  - alias: heating
+    if:
     - condition: state
       entity_id: binary_sensor.presence
       state: 'on'
     - condition: or
       conditions:
       - condition: time
-        after: '06:00:00'
+        after: 06:00:00
         before: '10:00:00'
       - condition: time
         after: '20:00:00'
@@ -4043,20 +4041,15 @@
         - condition: time
           after: '22:00:00'
         - condition: time
-          before: '01:00:00'
+          before: 01:00:00
         - condition: time
-          after: '06:00:00'
-          before: '08:00:00'
+          after: 06:00:00
+          before: 08:00:00
       sequence:
       - action: climate.set_temperature
         data:
           temperature: 25
           hvac_mode: cool
-        target:
-          entity_id: climate.bedroom_ac
-      - action: climate.set_fan_mode
-        data:
-          fan_mode: Silence
         target:
           entity_id: climate.bedroom_ac
     - alias: hot - active window
@@ -4072,20 +4065,15 @@
         - condition: time
           after: '22:00:00'
         - condition: time
-          before: '01:00:00'
+          before: 01:00:00
         - condition: time
-          after: '06:00:00'
-          before: '08:00:00'
+          after: 06:00:00
+          before: 08:00:00
       sequence:
       - action: climate.set_temperature
         data:
           temperature: 24
           hvac_mode: cool
-        target:
-          entity_id: climate.bedroom_ac
-      - action: climate.set_fan_mode
-        data:
-          fan_mode: Silence
         target:
           entity_id: climate.bedroom_ac
     - alias: warm or hot - sleep
@@ -4099,21 +4087,16 @@
           entity_id: sensor.climate_mode
           state: hot
       - condition: time
-        after: '01:00:00'
-        before: '06:00:00'
+        after: 01:00:00
+        before: 06:00:00
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 27
+          temperature: 26
           hvac_mode: cool
         target:
           entity_id: climate.bedroom_ac
-      - action: climate.set_fan_mode
-        data:
-          fan_mode: Silence
-        target:
-          entity_id: climate.bedroom_ac
-    - alias: mild or warm or hot - passive
+    - alias: mild or warm - passive
       conditions:
       - condition: or
         conditions:
@@ -4123,19 +4106,23 @@
         - condition: state
           entity_id: sensor.climate_mode
           state: warm
-        - condition: state
-          entity_id: sensor.climate_mode
-          state: hot
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 30
           hvac_mode: cool
+          temperature: 30
         target:
           entity_id: climate.bedroom_ac
-      - action: climate.set_fan_mode
+    - alias: hot - passive
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: hot
+      sequence:
+      - action: climate.set_temperature
         data:
-          fan_mode: Silence
+          hvac_mode: cool
+          temperature: 29
         target:
           entity_id: climate.bedroom_ac
   mode: restart
@@ -4150,7 +4137,7 @@
     id: climate_mode
     trigger: state
   - trigger: time
-    at: '06:00:00'
+    at: 06:00:00
   - trigger: time
     at: '18:00:00'
   - trigger: numeric_state
@@ -4169,19 +4156,21 @@
     event: start
   conditions: []
   actions:
-  - if:
+  - alias: night guard
+    if:
     - condition: trigger
       id: climate_mode
     - condition: time
       before: 09:00:00
     then:
     - stop: Night guard active
-  - if:
+  - alias: heating
+    if:
     - condition: state
       entity_id: binary_sensor.presence
       state: 'on'
     - condition: time
-      after: '06:00:00'
+      after: 06:00:00
       before: '18:00:00'
       weekday:
       - mon
@@ -4327,13 +4316,8 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 27
+          temperature: 26
           hvac_mode: cool
-        target:
-          entity_id: climate.office_ac
-      - action: climate.set_fan_mode
-        data:
-          fan_mode: Auto
         target:
           entity_id: climate.office_ac
     - alias: hot - desk active
@@ -4354,12 +4338,7 @@
           hvac_mode: cool
         target:
           entity_id: climate.office_ac
-      - action: climate.set_fan_mode
-        data:
-          fan_mode: Auto
-        target:
-          entity_id: climate.office_ac
-    - alias: mild or warm or hot - passive
+    - alias: mild or warm - passive
       conditions:
       - condition: or
         conditions:
@@ -4369,9 +4348,6 @@
         - condition: state
           entity_id: sensor.climate_mode
           state: warm
-        - condition: state
-          entity_id: sensor.climate_mode
-          state: hot
       sequence:
       - action: climate.set_temperature
         data:
@@ -4379,9 +4355,16 @@
           hvac_mode: cool
         target:
           entity_id: climate.office_ac
-      - action: climate.set_fan_mode
+    - alias: hot - passive
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: hot
+      sequence:
+      - action: climate.set_temperature
         data:
-          fan_mode: Auto
+          temperature: 29
+          hvac_mode: cool
         target:
           entity_id: climate.office_ac
   mode: restart
@@ -4396,7 +4379,7 @@
     id: climate_mode
     trigger: state
   - trigger: time
-    at: '06:00:00'
+    at: 06:00:00
   - trigger: time
     at: '18:00:00'
   - trigger: numeric_state
@@ -4423,19 +4406,21 @@
     event: start
   conditions: []
   actions:
-  - if:
+  - alias: night guard
+    if:
     - condition: trigger
       id: climate_mode
     - condition: time
       before: 09:00:00
     then:
     - stop: Night guard active
-  - if:
+  - alias: heating
+    if:
     - condition: state
       entity_id: binary_sensor.presence
       state: 'on'
     - condition: time
-      after: '06:00:00'
+      after: 06:00:00
       before: '18:00:00'
       weekday:
       - mon
@@ -4586,13 +4571,8 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 27
+          temperature: 26
           hvac_mode: cool
-        target:
-          entity_id: climate.gameroom_ac
-      - action: climate.set_fan_mode
-        data:
-          fan_mode: Auto
         target:
           entity_id: climate.gameroom_ac
     - alias: hot - desk or media active
@@ -4618,12 +4598,7 @@
           hvac_mode: cool
         target:
           entity_id: climate.gameroom_ac
-      - action: climate.set_fan_mode
-        data:
-          fan_mode: Auto
-        target:
-          entity_id: climate.gameroom_ac
-    - alias: mild or warm or hot - passive
+    - alias: mild or warm - passive
       conditions:
       - condition: or
         conditions:
@@ -4633,9 +4608,6 @@
         - condition: state
           entity_id: sensor.climate_mode
           state: warm
-        - condition: state
-          entity_id: sensor.climate_mode
-          state: hot
       sequence:
       - action: climate.set_temperature
         data:
@@ -4643,9 +4615,16 @@
           hvac_mode: cool
         target:
           entity_id: climate.gameroom_ac
-      - action: climate.set_fan_mode
+    - alias: hot - passive
+      conditions:
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: hot
+      sequence:
+      - action: climate.set_temperature
         data:
-          fan_mode: Auto
+          temperature: 29
+          hvac_mode: cool
         target:
           entity_id: climate.gameroom_ac
   mode: restart
@@ -4660,19 +4639,20 @@
     id: climate_mode
     trigger: state
   - trigger: time
-    at: '06:00:00'
+    at: 06:00:00
   - trigger: time
     at: '10:00:00'
   - trigger: homeassistant
     event: start
   conditions: []
   actions:
-  - if:
+  - alias: heating
+    if:
     - condition: state
       entity_id: binary_sensor.presence
       state: 'on'
     - condition: time
-      after: '06:00:00'
+      after: 06:00:00
       before: '10:00:00'
     then:
     - alias: heating active
@@ -4794,19 +4774,20 @@
     id: climate_mode
     trigger: state
   - trigger: time
-    at: '06:00:00'
+    at: 06:00:00
   - trigger: time
     at: '10:00:00'
   - trigger: homeassistant
     event: start
   conditions: []
   actions:
-  - if:
+  - alias: heating
+    if:
     - condition: state
       entity_id: binary_sensor.presence
       state: 'on'
     - condition: time
-      after: '06:00:00'
+      after: 06:00:00
       before: '10:00:00'
     then:
     - alias: heating active
@@ -6515,7 +6496,7 @@
       addon: a0d7b954_vscode
   mode: single
 - id: '1781989329439'
-  alias: Vacuum Robots
+  alias: Robot Vacuums
   description: ''
   triggers:
   - trigger: time
@@ -6551,12 +6532,12 @@
             data:
               option: Vacuum-Only
             target:
-              entity_id: select.dining_table_bart_clean_mode
+              device_id: d8519caad7a09f85aae51a68a31f6a7a
           - action: vacuum.start
             metadata: {}
             data: {}
             target:
-              entity_id: vacuum.dining_table_bart
+              device_id: d8519caad7a09f85aae51a68a31f6a7a
         - conditions:
           - condition: time
             weekday:
@@ -6567,13 +6548,13 @@
           - action: select.select_option
             metadata: {}
             target:
-              entity_id: select.dining_table_bart_clean_mode
+              device_id: d8519caad7a09f85aae51a68a31f6a7a
             data:
               option: Vacuum & Mop
           - action: vacuum.start
             metadata: {}
             target:
-              entity_id: vacuum.dining_table_bart
+              device_id: d8519caad7a09f85aae51a68a31f6a7a
             data: {}
     - conditions:
       - condition: trigger
@@ -6594,13 +6575,13 @@
           - action: select.select_option
             metadata: {}
             target:
-              entity_id: select.dining_table_bart_clean_mode
+              device_id: d8519caad7a09f85aae51a68a31f6a7a
             data:
               option: Vacuum-Only
           - action: vacuum.start
             metadata: {}
             target:
-              entity_id: vacuum.dining_table_bart
+              device_id: d8519caad7a09f85aae51a68a31f6a7a
             data: {}
         - conditions:
           - condition: time
@@ -6612,13 +6593,13 @@
           - action: select.select_option
             metadata: {}
             target:
-              entity_id: select.dining_table_bart_clean_mode
+              device_id: d8519caad7a09f85aae51a68a31f6a7a
             data:
               option: Vacuum & Mop
           - action: vacuum.start
             metadata: {}
             target:
-              entity_id: vacuum.dining_table_bart
+              device_id: d8519caad7a09f85aae51a68a31f6a7a
             data: {}
     - conditions:
       - condition: trigger
@@ -6636,15 +6617,14 @@
           - action: select.select_option
             metadata: {}
             target:
-              entity_id:
-              - select.gym_bert_clean_mode
+              device_id: 9b987af2242972d3a0c74613c303ced6
             data:
               option: Vacuum-Only
           - action: vacuum.start
             metadata: {}
             data: {}
             target:
-              entity_id: vacuum.gym_bert
+              device_id: 9b987af2242972d3a0c74613c303ced6
         - conditions:
           - condition: time
             weekday:
@@ -6657,10 +6637,65 @@
             data:
               option: Vacuum & Mop
             target:
-              entity_id: select.gym_bert_clean_mode
+              device_id: 9b987af2242972d3a0c74613c303ced6
           - action: vacuum.start
             metadata: {}
             data: {}
             target:
-              entity_id: vacuum.gym_bert
+              device_id: 9b987af2242972d3a0c74613c303ced6
+  mode: single
+- id: '1782809861139'
+  alias: Deni Laptop
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.deni_laptop_microphoneactive
+    from:
+    - 'off'
+    to:
+    - 'on'
+    alias: mic on
+    id: mic on
+  - trigger: state
+    entity_id:
+    - binary_sensor.deni_laptop_microphoneactive
+    from:
+    - 'on'
+    to:
+    - 'off'
+    alias: mic off
+    id: mic off
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.deni_laptop_display_display_count
+    above: 1
+  - condition: state
+    entity_id: media_player.office
+    state:
+    - playing
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - mic on
+      sequence:
+      - action: media_player.volume_set
+        metadata: {}
+        target:
+          entity_id: media_player.office
+        data:
+          volume_level: 0.15
+    - conditions:
+      - condition: trigger
+        id:
+        - mic off
+      sequence:
+      - action: media_player.volume_set
+        metadata: {}
+        target:
+          entity_id: media_player.office
+        data:
+          volume_level: 0.35
   mode: single

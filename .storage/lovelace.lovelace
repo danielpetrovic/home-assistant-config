@@ -3020,22 +3020,6 @@
               "show_name": false,
               "show_state": true,
               "show_icon": true,
-              "entity": "sensor.roof_terrace_sensor_heat_stress",
-              "color": "blue"
-            },
-            {
-              "type": "entity",
-              "show_name": false,
-              "show_state": true,
-              "show_icon": true,
-              "entity": "sensor.roof_terrace_sensor_humidex",
-              "color": "blue"
-            },
-            {
-              "type": "entity",
-              "show_name": false,
-              "show_state": true,
-              "show_icon": true,
               "entity": "sensor.climate_mode",
               "show_entity_picture": false
             },
