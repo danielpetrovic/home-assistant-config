@@ -2734,6 +2734,22 @@
                     },
                     {
                       "type": "tile",
+                      "entity": "sensor.living_room_temperature",
+                      "color": "red",
+                      "show_entity_picture": false,
+                      "hide_state": false,
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "trend-graph",
+                          "hours_to_show": 24,
+                          "detail": true
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
                       "entity": "climate.living_room_ac",
                       "state_content": [
                         "current_temperature",
@@ -2810,6 +2826,54 @@
                     },
                     {
                       "type": "tile",
+                      "entity": "sensor.bathroom_temperature",
+                      "color": "red",
+                      "show_entity_picture": false,
+                      "hide_state": false,
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "trend-graph",
+                          "hours_to_show": 24,
+                          "detail": true
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "climate.bathroom_heating",
+                      "state_content": [
+                        "current_temperature",
+                        "hvac_action",
+                        "temperature"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "climate-hvac-modes"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.bedroom_temperature",
+                      "color": "red",
+                      "show_entity_picture": false,
+                      "hide_state": false,
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "trend-graph",
+                          "hours_to_show": 24,
+                          "detail": true
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
                       "entity": "climate.bedroom_ac",
                       "state_content": [
                         "current_temperature",
@@ -2833,22 +2897,6 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "climate.bathroom_heating",
-                      "state_content": [
-                        "current_temperature",
-                        "hvac_action",
-                        "temperature"
-                      ],
-                      "vertical": false,
-                      "features": [
-                        {
-                          "type": "climate-hvac-modes"
-                        }
-                      ],
-                      "features_position": "inline"
-                    },
-                    {
-                      "type": "tile",
                       "entity": "climate.bedroom_heating",
                       "state_content": [
                         "current_temperature",
@@ -2865,6 +2913,22 @@
                     },
                     {
                       "type": "tile",
+                      "entity": "sensor.gym_temperature",
+                      "color": "red",
+                      "show_entity_picture": false,
+                      "hide_state": false,
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "trend-graph",
+                          "hours_to_show": 24,
+                          "detail": true
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
                       "entity": "climate.gym_heating",
                       "state_content": [
                         "current_temperature",
@@ -2875,6 +2939,22 @@
                       "features": [
                         {
                           "type": "climate-hvac-modes"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.office_temperature",
+                      "color": "red",
+                      "show_entity_picture": false,
+                      "hide_state": false,
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "trend-graph",
+                          "hours_to_show": 24,
+                          "detail": true
                         }
                       ],
                       "features_position": "inline"
@@ -2954,6 +3034,25 @@
                       "hold_action": {
                         "action": "none"
                       }
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.gameroom_temperature",
+                      "name": {
+                        "type": "entity"
+                      },
+                      "color": "red",
+                      "show_entity_picture": false,
+                      "hide_state": false,
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "trend-graph",
+                          "hours_to_show": 24,
+                          "detail": true
+                        }
+                      ],
+                      "features_position": "inline"
                     },
                     {
                       "type": "tile",

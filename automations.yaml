@@ -3616,13 +3616,13 @@
   - trigger: numeric_state
     entity_id: sensor.living_room_media_power
     id: media_on
-    above: 20
+    above: 50
     for:
       minutes: 1
   - trigger: numeric_state
     entity_id: sensor.living_room_media_power
     id: media_off
-    below: 20
+    below: 50
     for:
       minutes: 1
   - trigger: homeassistant
@@ -3792,6 +3792,15 @@
       - action: climate.turn_off
         target:
           entity_id: climate.living_room_ac
+    - alias: no presence
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'off'
+      sequence:
+      - action: climate.turn_off
+        target:
+          entity_id: climate.living_room_ac
     - alias: warm - media active
       conditions:
       - condition: state
@@ -3802,11 +3811,11 @@
         state: 'on'
       - condition: numeric_state
         entity_id: sensor.living_room_media_power
-        above: 20
+        above: 50
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 26
+          temperature: 28
           hvac_mode: cool
         target:
           entity_id: climate.living_room_ac
@@ -3820,11 +3829,11 @@
         state: 'on'
       - condition: numeric_state
         entity_id: sensor.living_room_media_power
-        above: 20
+        above: 50
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 25
+          temperature: 26
           hvac_mode: cool
         target:
           entity_id: climate.living_room_ac
@@ -3853,7 +3862,7 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 29
+          temperature: 28
           hvac_mode: cool
         target:
           entity_id: climate.living_room_ac
@@ -4028,6 +4037,15 @@
       - action: climate.turn_off
         target:
           entity_id: climate.bedroom_ac
+    - alias: no presence
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'off'
+      sequence:
+      - action: climate.turn_off
+        target:
+          entity_id: climate.bedroom_ac
     - alias: warm - active window
       conditions:
       - condition: state
@@ -4048,7 +4066,7 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 25
+          temperature: 28
           hvac_mode: cool
         target:
           entity_id: climate.bedroom_ac
@@ -4072,7 +4090,7 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 24
+          temperature: 26
           hvac_mode: cool
         target:
           entity_id: climate.bedroom_ac
@@ -4086,6 +4104,9 @@
         - condition: state
           entity_id: sensor.climate_mode
           state: hot
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'on'
       - condition: time
         after: 01:00:00
         before: 06:00:00
@@ -4122,7 +4143,7 @@
       - action: climate.set_temperature
         data:
           hvac_mode: cool
-          temperature: 29
+          temperature: 28
         target:
           entity_id: climate.bedroom_ac
   mode: restart
@@ -4302,6 +4323,15 @@
       - action: climate.turn_off
         target:
           entity_id: climate.office_ac
+    - alias: no presence
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'off'
+      sequence:
+      - action: climate.turn_off
+        target:
+          entity_id: climate.office_ac
     - alias: warm - desk active
       conditions:
       - condition: state
@@ -4316,7 +4346,7 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 26
+          temperature: 28
           hvac_mode: cool
         target:
           entity_id: climate.office_ac
@@ -4334,7 +4364,7 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 25
+          temperature: 26
           hvac_mode: cool
         target:
           entity_id: climate.office_ac
@@ -4363,7 +4393,7 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 29
+          temperature: 28
           hvac_mode: cool
         target:
           entity_id: climate.office_ac
@@ -4552,6 +4582,15 @@
       - action: climate.turn_off
         target:
           entity_id: climate.gameroom_ac
+    - alias: no presence
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'off'
+      sequence:
+      - action: climate.turn_off
+        target:
+          entity_id: climate.gameroom_ac
     - alias: warm - desk or media active
       conditions:
       - condition: state
@@ -4571,7 +4610,7 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 26
+          temperature: 28
           hvac_mode: cool
         target:
           entity_id: climate.gameroom_ac
@@ -4594,7 +4633,7 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 25
+          temperature: 26
           hvac_mode: cool
         target:
           entity_id: climate.gameroom_ac
@@ -4623,7 +4662,7 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: 29
+          temperature: 28
           hvac_mode: cool
         target:
           entity_id: climate.gameroom_ac

@@ -309,17 +309,20 @@ Implemented via inline `time` triggers + `time` conditions + `homeassistant.star
 
 ### Cooling/AC Windows
 
-| Location | Active cooling | Passive (ceiling guard) | Sleep setpoint |
-|----------|---------------|------------------------|----------------|
-| Bathroom/Gym | — (no AC) | — | — |
-| Office | desk_power > 40W (any time, any day) | warm→30°C, hot→29°C when desk ≤ 40W | — |
-| Gameroom | desk_power > 40W OR media_power > 20W (any time, any day) | warm→30°C, hot→29°C otherwise | — |
-| Bedroom | 22:00–01:00, 06:00–08:00 (presence required) | warm→30°C, hot→29°C outside window | 26°C (warm/hot) during 01:00–06:00 |
-| Living Room | media_power > 20W + presence (any time) | warm→30°C, hot→29°C when media off | — |
+All AC zones: off when freezing/cold, off when no presence.
+Daikin units cool to ~2°C below setpoint (effective temp = setpoint − 2°C).
 
-**Setpoints (active):** warm→26°C (all), hot→25°C (all except Bed→24°C); freezing/cold→AC off
+| Location | Active cooling trigger | Active setpoint | Passive setpoint | Sleep setpoint |
+|----------|----------------------|-----------------|------------------|----------------|
+| Bathroom/Gym | — (no AC) | — | — | — |
+| Office | desk_power > 40W + presence (any time) | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | — |
+| Gameroom | desk_power > 40W OR media_power > 20W + presence (any time) | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | — |
+| Bedroom | 22:00–01:00 or 06:00–08:00 + presence | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | 26°C (warm/hot, presence) during 01:00–06:00 |
+| Living Room | media_power > 50W + presence (any time) | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | — |
 
-**Desk/media power thresholds:** Office & Gameroom desk: 40W on / 40W off (1 min debounce). Gameroom & Living Room media: 20W. Standby baseline spikes to 36W so threshold must exceed 40W.
+**Effective temperatures (setpoint − 2°C):** warm active→~26°C, hot active→~24°C, warm passive→~28°C, hot passive→~26°C, sleep→~24°C
+
+**Desk/media power thresholds:** Office & Gameroom desk: 40W (standby spikes to 36W). Gameroom media: 20W. Living Room media: 50W (standby 25–31W, active 100–150W).
 
 **`sensor.climate_mode` hot thresholds:** enter: humidex ≥ 29 AND heat_stress ≥ 65 AND max4 ≥ 25 AND daylight > 13h; exit: humidex ≤ 27 AND heat_stress ≤ 65 AND daytime (09:00–21:00 only — prevents overnight resets during heat waves).
 
@@ -371,6 +374,11 @@ Implemented via inline `time` triggers + `time` conditions + `homeassistant.star
 - **All helpers in YAML:** Template sensors, statistics sensors, and input helpers are defined in package files, not through the GUI
 - **YAML-first approach:** GUI helpers have been migrated to YAML for version control and documentation
 - **Preserve unique_id:** When migrating from GUI to YAML, always keep the exact same `unique_id` to maintain historical data
+
+### Editing Automations
+- **Prefer MCP** (`ha_config_get_automation` / `ha_config_set_automation`) for targeted single-automation changes — applies immediately without reload, HA validates before saving, `automations.yaml` is updated automatically
+- **Use direct YAML file editing** only for bulk changes across multiple automations (e.g. replace_all sweeps, structural refactors) where MCP would require too many individual calls
+- Always run `ha_reload_core(target="automations")` after direct YAML file edits
 
 ### When Adding Automations
 1. Follow naming: `<location>_<function>` (e.g., `Living Room Climate`)
