@@ -171,25 +171,28 @@ Schedule-based activation via inline time triggers. Presence required in all hea
 
 All AC zones turn off when `sensor.climate_mode` is freezing or cold, and when no presence is detected.
 
-> **Daikin offset:** Daikin units cool to approximately 2°C below the set temperature (setpoint 28°C → effective ~26°C).
+> **Daikin offset:** Daikin units cool to approximately 2°C below the set temperature (e.g. setpoint 28°C → effective ~26°C).
 
 | Zone | Active cooling trigger | Active setpoint | Passive setpoint | Sleep setpoint |
 |------|----------------------|-----------------|------------------|----------------|
 | Bathroom / Gym | — (no AC) | — | — | — |
 | Office | `desk_power > 40W` + presence (any time, any day) | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | — |
 | Gameroom | `desk_power > 40W` OR `media_power > 20W` + presence (any time, any day) | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | — |
-| Bedroom | 22:00–01:00 or 06:00–08:00 + presence | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | 26°C during 01:00–06:00 (warm/hot + presence) |
+| Bedroom | 22:00–01:00 or 06:00–08:00 + presence | warm→26°C, hot→24°C | warm/mild→30°C, hot→28°C | warm→27°C, hot→25°C during 01:00–06:00 |
 | Living Room | `media_power > 50W` + presence (any time, any day) | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | — |
 
 **Effective temperatures (setpoint − 2°C Daikin offset):**
 
-| Mode | Setpoint | Effective |
-|------|----------|-----------|
-| warm active | 28°C | ~26°C |
-| hot active | 26°C | ~24°C |
-| warm/mild passive | 30°C | ~28°C |
-| hot passive | 28°C | ~26°C |
-| sleep (bedroom) | 26°C | ~24°C |
+| Mode | Zone | Setpoint | Effective |
+|------|------|----------|-----------|
+| warm active | Office / Gameroom / Living Room | 28°C | ~26°C |
+| hot active | Office / Gameroom / Living Room | 26°C | ~24°C |
+| warm active | Bedroom | 26°C | ~24°C |
+| hot active | Bedroom | 24°C | ~22°C |
+| warm sleep | Bedroom | 27°C | ~25°C |
+| hot sleep | Bedroom | 25°C | ~23°C |
+| warm/mild passive | All rooms | 30°C | ~28°C |
+| hot passive | All rooms | 28°C | ~26°C |
 
 **Power thresholds:** Office/Gameroom desk: 40W (standby spikes to 36W). Gameroom media: 20W. Living Room media: 50W (soft standby 25–31W, active viewing 100–150W).
 
