@@ -317,10 +317,10 @@ Daikin units cool to ~2°C below setpoint (effective temp = setpoint − 2°C).
 | Bathroom/Gym | — (no AC) | — | — | — |
 | Office | desk_power > 40W + presence (any time) | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | — |
 | Gameroom | desk_power > 40W OR media_power > 20W + presence (any time) | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | — |
-| Bedroom | 22:00–01:00 or 06:00–08:00 + presence | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | 26°C (warm/hot, presence) during 01:00–06:00 |
+| Bedroom | 22:00–01:00 or 06:00–08:00 + presence | warm→26°C, hot→24°C | warm/mild→30°C, hot→28°C | warm→27°C, hot→25°C during 01:00–06:00 |
 | Living Room | media_power > 50W + presence (any time) | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | — |
 
-**Effective temperatures (setpoint − 2°C):** warm active→~26°C, hot active→~24°C, warm passive→~28°C, hot passive→~26°C, sleep→~24°C
+**Effective temperatures (setpoint − 2°C):** Office/Gameroom/LR: warm active→~26°C, hot active→~24°C. Bedroom: warm active→~24°C, hot active→~22°C, warm sleep→~25°C, hot sleep→~23°C. All rooms: warm/mild passive→~28°C, hot passive→~26°C.
 
 **Desk/media power thresholds:** Office & Gameroom desk: 40W (standby spikes to 36W). Gameroom media: 20W. Living Room media: 50W (standby 25–31W, active 100–150W).
 
