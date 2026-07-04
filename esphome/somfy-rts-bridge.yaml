@@ -1,0 +1,354 @@
+# Tested and working on: LilyGO TTGO T3 LoRa32 433MHz V1.6.1 ESP32.
+# Pin numbers throughout this file (SPI/SX1276/DIO2/I2C OLED) are specific to
+# that exact board revision, check pinout before reusing on a different one.
+esphome:
+  name: somfy-rts-bridge
+  friendly_name: Somfy RTS Bridge
+  project:
+    name: "danielpetrovic.somfy_rts_bridge"
+    version: "2026.07.1"
+  # Sub-devices: each cover shows up as its own HA device (matching Overkiz's
+  # per-shade/curtain granularity) instead of all bundled under the physical
+  # board. Anything NOT assigned a device_id (OLED, Wi-Fi/IP sensor) stays on
+  # the main "Somfy RTS Bridge" device, the hub, same role as TaHoma.
+  # area names below must match existing HA areas exactly to link up instead
+  # of creating duplicates.
+  #
+  # Device names deliberately do NOT include the room name (e.g. "Curtain",
+  # not "Bedroom Curtain"). HA core 2026.6 (PR #170560, "Prefix area to
+  # entity ID") now auto-prefixes the Area name onto generated entity_ids.
+  # Repeating the room in the device name too caused doubled/tripled slugs
+  # like cover.bedroom_bedroom_curtain_bedroom_curtain. Area + generic device
+  # name combine to the same clean result (e.g. Bedroom + "Curtain" displays
+  # as "Bedroom Curtain", entity_id cover.bedroom_curtain) without the agent
+  # duplicating what the Area prefix already adds.
+  areas:
+    - id: bedroom_area
+      name: "Bedroom"
+    - id: gameroom_area
+      name: "Gameroom"
+    - id: garden_area
+      name: "Garden"
+    - id: gym_area
+      name: "Gym"
+    - id: hallway_area
+      name: "Hallway"
+    - id: kitchen_area
+      name: "Kitchen"
+    - id: living_room_area
+      name: "Living Room"
+    - id: office_area
+      name: "Office"
+    - id: roof_terrace_area
+      name: "Roof Terrace"
+  devices:
+    - id: bedroom_device
+      name: "Curtain"
+      area_id: bedroom_area
+    - id: gameroom_left_1_device
+      name: "Left 1 Shade"
+      area_id: gameroom_area
+    - id: gameroom_left_2_device
+      name: "Left 2 Shade"
+      area_id: gameroom_area
+    - id: gameroom_right_1_device
+      name: "Right 1 Shade"
+      area_id: gameroom_area
+    - id: gameroom_right_2_device
+      name: "Right 2 Shade"
+      area_id: gameroom_area
+    - id: garden_device
+      name: "Shade"
+      area_id: garden_area
+    - id: gym_device
+      name: "Curtain"
+      area_id: gym_area
+    - id: hallway_device
+      name: "Shade"
+      area_id: hallway_area
+    - id: kitchen_device
+      name: "Shade"
+      area_id: kitchen_area
+    - id: living_room_device
+      name: "Shade"
+      area_id: living_room_area
+    - id: office_left_device
+      name: "Left Shade"
+      area_id: office_area
+    - id: office_right_device
+      name: "Right Shade"
+      area_id: office_area
+    - id: roof_terrace_device
+      name: "Shade"
+      area_id: roof_terrace_area
+
+esp32:
+  board: ttgo-lora32-v1
+  framework:
+    type: esp-idf
+
+# Wi-Fi + API + OTA, fill in secrets.yaml before flashing
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+api:
+  encryption:
+    key: !secret somfy_rts_bridge_api_key
+
+ota:
+  - platform: esphome
+    password: !secret somfy_rts_bridge_ota_password
+
+logger:
+
+# Onboard SX1276 SPI wiring (LilyGO T3 LoRa32 V1.6.1, 433MHz variant)
+spi:
+  clk_pin: GPIO5
+  mosi_pin: GPIO27
+  miso_pin: GPIO19
+
+sx127x:
+  id: sx127x_id
+  cs_pin: GPIO18
+  rst_pin: GPIO23
+  frequency: 433420000 # 433.42MHz, Somfy RTS specific, NOT the 433.92MHz ISM default
+  modulation: OOK
+  pa_pin: BOOST
+  pa_power: 17
+  bitsync: false
+  packet_mode: false
+
+# DIO2 is wired to GPIO32 on this board revision, required for raw OOK bit-banging
+remote_receiver:
+  id: rx_id
+  pin:
+    number: GPIO32
+    allow_other_uses: true
+  filter: 200us
+  idle: 6000us
+
+remote_transmitter:
+  id: tx_id
+  pin:
+    number: GPIO32
+    allow_other_uses: true
+  eot_level: false
+  carrier_duty_percent: 100%
+  non_blocking: true
+  on_transmit:
+    - sx127x.set_mode_standby: sx127x_id
+    - lambda: 'id(tx_id)->digital_write(false);'
+    - sx127x.set_mode_tx: sx127x_id
+  on_complete:
+    - sx127x.set_mode_standby: sx127x_id
+    - lambda: 'id(tx_id)->digital_write(true);'
+    - sx127x.set_mode_rx: sx127x_id
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/swoboda1337/somfy-esphome
+      ref: main
+    refresh: 5min
+
+# One package instance per physical RTS cover, see somfy_rts_cover.yaml for
+# the shared logic (0%=DOWN, 50%=MY, 100%=UP, no time-based estimation).
+# remote_address must be unique per cover and is never reused once paired,
+# each is a fresh random 24-bit value.
+packages:
+  bedroom: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: bedroom
+      cover_name: "Bedroom Curtain"
+      remote_address: "0xc2dd23"
+      device_class: curtain
+  gameroom_left_1: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: gameroom_left_1
+      cover_name: "Gameroom Left 1 Shade"
+      remote_address: "0x1632f7"
+      device_class: shade
+  gameroom_left_2: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: gameroom_left_2
+      cover_name: "Gameroom Left 2 Shade"
+      remote_address: "0xa210e7"
+      device_class: shade
+  gameroom_right_1: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: gameroom_right_1
+      cover_name: "Gameroom Right 1 Shade"
+      remote_address: "0xdb7091"
+      device_class: shade
+  gameroom_right_2: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: gameroom_right_2
+      cover_name: "Gameroom Right 2 Shade"
+      remote_address: "0xb829ab"
+      device_class: shade
+  garden: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: garden
+      cover_name: "Garden Shade"
+      remote_address: "0x3a23e7"
+      device_class: shade
+  gym: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: gym
+      cover_name: "Gym Curtain"
+      remote_address: "0xdbd983"
+      device_class: curtain
+  hallway: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: hallway
+      cover_name: "Hallway Shade"
+      remote_address: "0x400b41"
+      device_class: shade
+  kitchen: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: kitchen
+      cover_name: "Kitchen Shade"
+      remote_address: "0x147853"
+      device_class: shade
+  living_room: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: living_room
+      cover_name: "Living Room Shade"
+      remote_address: "0x430281"
+      device_class: shade
+  office_left: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: office_left
+      cover_name: "Office Left Shade"
+      remote_address: "0xf7efc1"
+      device_class: shade
+  office_right: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: office_right
+      cover_name: "Office Right Shade"
+      remote_address: "0xb16420"
+      device_class: shade
+  roof_terrace: !include
+    file: somfy_rts_cover.yaml
+    vars:
+      cover_id: roof_terrace
+      cover_name: "Roof Terrace Shade"
+      remote_address: "0x0ee6f0"
+      device_class: shade
+
+# Onboard SSD1306 128x64 OLED (no reset pin on this board revision)
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address"
+      id: wifi_ip
+
+# Diagnostic-only entities on the hub device: signal quality, uptime, and a
+# remote restart, in case something needs troubleshooting without opening the
+# ESPHome dashboard.
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    entity_category: diagnostic
+    update_interval: 60s
+  - platform: uptime
+    name: "Uptime"
+    entity_category: diagnostic
+    update_interval: 60s
+
+button:
+  - platform: restart
+    name: "Restart"
+    entity_category: diagnostic
+
+font:
+  - file: "gfonts://Roboto"
+    id: my_font
+    size: 14
+
+display:
+  - platform: ssd1306_i2c
+    id: oled
+    model: "SSD1306 128x64"
+    address: 0x3C
+    pages:
+      - id: page_bedroom
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Bedroom Curtain");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(bedroom_position) * 100.0f);
+      - id: page_gameroom_left_1
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Gameroom L1");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(gameroom_left_1_position) * 100.0f);
+      - id: page_gameroom_left_2
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Gameroom L2");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(gameroom_left_2_position) * 100.0f);
+      - id: page_gameroom_right_1
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Gameroom R1");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(gameroom_right_1_position) * 100.0f);
+      - id: page_gameroom_right_2
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Gameroom R2");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(gameroom_right_2_position) * 100.0f);
+      - id: page_garden
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Garden Shade");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(garden_position) * 100.0f);
+      - id: page_gym
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Gym Curtain");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(gym_position) * 100.0f);
+      - id: page_hallway
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Hallway");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(hallway_position) * 100.0f);
+      - id: page_kitchen
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Kitchen");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(kitchen_position) * 100.0f);
+      - id: page_living_room
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Living Room");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(living_room_position) * 100.0f);
+      - id: page_office_left
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Office Left");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(office_left_position) * 100.0f);
+      - id: page_office_right
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Office Right");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(office_right_position) * 100.0f);
+      - id: page_roof_terrace
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Roof Terrace");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(roof_terrace_position) * 100.0f);
+      - id: page_status
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Somfy RTS Bridge");
+          it.printf(0, 20, id(my_font), "IP: %s", id(wifi_ip).state.c_str());
+
+# Cycle through each cover's page automatically.
+interval:
+  - interval: 3s
+    then:
+      - display.page.show_next: oled
+      - component.update: oled
