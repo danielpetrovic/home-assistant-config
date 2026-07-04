@@ -1,0 +1,86 @@
+# Reusable per-cover package for the Somfy RTS bridge.
+# Included once per physical shade/curtain from somfy-rts-bridge.yaml with a
+# unique `cover_id` (used to build entity/component IDs), `cover_name`
+# (documentation only, the actual displayed name comes from the matching
+# entry in the main file's `esphome.devices` list, see the note there about
+# why device names are generic/room-less), `remote_address` (unique 24-bit
+# Somfy remote address, never reuse across covers), and `device_class`
+# (shade or curtain).
+# `${cover_id}_device` must exist in the main file's `esphome.devices` list,
+# this is what makes each cover show up as its own HA device.
+#
+# Position is a label for one of three fixed states, no time-based estimation:
+# 0.0 = closed (DOWN), 0.5 = MY/favorite preset (MY), 1.0 = open (UP).
+substitutions:
+  cover_id: "changeme"
+  cover_name: "Change Me"
+  remote_address: "0x000000"
+  device_class: "shade"
+
+somfy:
+  - address: ${remote_address}
+    id: ${cover_id}_remote
+
+globals:
+  - id: ${cover_id}_position
+    type: float
+    restore_value: true
+    initial_value: "1.0"
+
+button:
+  - platform: template
+    # Short name, combines with the device's own name to display as e.g.
+    # "Bedroom Curtain Pair" without literally repeating the room/type.
+    name: "Pair"
+    device_id: ${cover_id}_device
+    on_press:
+      - somfy.send_command:
+          id: ${cover_id}_remote
+          command: PROG
+          repeat: 1
+
+cover:
+  - platform: template
+    id: ${cover_id}_cover
+    # Empty name marks this as the device's primary entity, its displayed
+    # name and entity_id come from the device's own name (see esphome.devices
+    # in the main file), not name+device+area all concatenated (which is what
+    # caused entity_ids like cover.bedroom_bedroom_curtain_bedroom_curtain).
+    name: ""
+    device_id: ${cover_id}_device
+    device_class: ${device_class}
+    has_position: true
+    assumed_state: true
+    lambda: |-
+      return id(${cover_id}_position);
+    open_action:
+      - somfy.send_command:
+          id: ${cover_id}_remote
+          command: UP
+          repeat: 1
+      - lambda: "id(${cover_id}_position) = 1.0f;"
+    close_action:
+      - somfy.send_command:
+          id: ${cover_id}_remote
+          command: DOWN
+          repeat: 1
+      - lambda: "id(${cover_id}_position) = 0.0f;"
+    # Somfy's MY button is dual-purpose on real remotes too: stops in place if
+    # the shade is moving, or goes to the favorite preset if it's already
+    # idle. Either way, treat the result as the labeled "50%" state.
+    stop_action:
+      - somfy.send_command:
+          id: ${cover_id}_remote
+          command: MY
+          repeat: 1
+      - lambda: "id(${cover_id}_position) = 0.5f;"
+    # Any target strictly between 0 and 1 (not exactly open/closed) maps to MY.
+    # Called directly via the component method, not the somfy.send_command
+    # YAML action, that action is broken when used inside a templated trigger
+    # (position_action's `pos` makes this Ts=float): SomfySendCommandAction's
+    # play(Ts...) no longer matches core's Action<Ts...>::play(const Ts&...),
+    # so it fails to compile here even though it works fine in open/close/stop.
+    position_action:
+      - lambda: |-
+          id(${cover_id}_remote)->send_command(somfy::SOMFY_MY, 1);
+          id(${cover_id}_position) = 0.5f;
