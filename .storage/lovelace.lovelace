@@ -8690,7 +8690,19 @@
                 },
                 {
                   "type": "tile",
-                  "entity": "cover.office_shades",
+                  "entity": "cover.office_left_shade",
+                  "color": "blue",
+                  "vertical": false,
+                  "features_position": "inline",
+                  "features": [
+                    {
+                      "type": "cover-position-favorite"
+                    }
+                  ]
+                },
+                {
+                  "type": "tile",
+                  "entity": "cover.office_right_shade",
                   "color": "blue",
                   "vertical": false,
                   "features_position": "inline",

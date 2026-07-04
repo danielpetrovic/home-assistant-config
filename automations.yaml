@@ -744,7 +744,11 @@
         data: {}
         metadata: {}
         target:
-          entity_id: cover.gameroom_shades
+          entity_id:
+          - cover.gameroom_left_1_shade
+          - cover.gameroom_left_2_shade
+          - cover.gameroom_right_1_shade
+          - cover.gameroom_right_2_shade
       - delay:
           seconds: 3
       - action: cover.open_cover
@@ -764,7 +768,11 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.gameroom_shades
+          entity_id:
+          - cover.gameroom_left_1_shade
+          - cover.gameroom_left_2_shade
+          - cover.gameroom_right_1_shade
+          - cover.gameroom_right_2_shade
       - delay:
           seconds: 3
       - action: cover.set_cover_position
@@ -791,7 +799,11 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.gameroom_shades
+          entity_id:
+          - cover.gameroom_left_1_shade
+          - cover.gameroom_left_2_shade
+          - cover.gameroom_right_1_shade
+          - cover.gameroom_right_2_shade
       - delay:
           seconds: 3
       - action: cover.set_cover_position
@@ -818,7 +830,11 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.gameroom_shades
+          entity_id:
+          - cover.gameroom_left_1_shade
+          - cover.gameroom_left_2_shade
+          - cover.gameroom_right_1_shade
+          - cover.gameroom_right_2_shade
       - delay:
           seconds: 3
       - action: cover.set_cover_position
@@ -838,7 +854,11 @@
         data: {}
         metadata: {}
         target:
-          entity_id: cover.gameroom_shades
+          entity_id:
+          - cover.gameroom_left_1_shade
+          - cover.gameroom_left_2_shade
+          - cover.gameroom_right_1_shade
+          - cover.gameroom_right_2_shade
       - delay:
           seconds: 3
       - action: cover.close_cover
@@ -1051,7 +1071,9 @@
         data: {}
         metadata: {}
         target:
-          entity_id: cover.office_shades
+          entity_id:
+          - cover.office_left_shade
+          - cover.office_right_shade
       - delay:
           seconds: 3
       - action: cover.open_cover
@@ -1069,7 +1091,9 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.office_shades
+          entity_id:
+          - cover.office_left_shade
+          - cover.office_right_shade
       - delay:
           seconds: 3
       - action: cover.set_cover_position
@@ -1088,7 +1112,9 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.office_shades
+          entity_id:
+          - cover.office_left_shade
+          - cover.office_right_shade
       - delay:
           seconds: 3
       - action: cover.set_cover_position
@@ -1107,7 +1133,9 @@
           position: 50
         metadata: {}
         target:
-          entity_id: cover.office_shades
+          entity_id:
+          - cover.office_left_shade
+          - cover.office_right_shade
       - delay:
           seconds: 3
       - action: cover.set_cover_position
@@ -1125,7 +1153,9 @@
         data: {}
         metadata: {}
         target:
-          entity_id: cover.office_shades
+          entity_id:
+          - cover.office_left_shade
+          - cover.office_right_shade
       - delay:
           seconds: 3
       - action: cover.close_cover
