@@ -1,108 +1,108 @@
-input_number:
-  roof_terrace_shade_position:
-    name: Roof Terrace Shade Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:roller-shade
-  gameroom_left_1_shade_position:
-    name: Gameroom Left 1 Shade Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:roller-shade
-  gameroom_left_2_shade_position:
-    name: Gameroom Left 2 Shade Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:roller-shade
-  gameroom_right_1_shade_position:
-    name: Gameroom Right 1 Shade Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:roller-shade
-  gameroom_right_2_shade_position:
-    name: Gameroom Right 2 Shade Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:roller-shade
-  hallway_shade_position:
-    name: Hallway Shade Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:roller-shade
-  office_left_shade_position:
-    name: Office Left Shade Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:roller-shade
-  office_right_shade_position:
-    name: Office Right Shade Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:roller-shade
-  kitchen_shade_position:
-    name: Kitchen Shade Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:roller-shade
-  gym_curtain_position:
-    name: Gym Curtain Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:curtains
-  bedroom_curtain_position:
-    name: Bedroom Curtain Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:curtains
-  garden_shade_position:
-    name: Garden Shade Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:roller-shade
-  living_room_shade_position:
-    name: Living Room Shade Position
-    min: 0
-    max: 100
-    step: 50
-    mode: slider
-    unit_of_measurement: "%"
-    icon: mdi:roller-shade
+# input_number:
+#   roof_terrace_shade_position:
+#     name: Roof Terrace Shade Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:roller-shade
+#   gameroom_left_1_shade_position:
+#     name: Gameroom Left 1 Shade Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:roller-shade
+#   gameroom_left_2_shade_position:
+#     name: Gameroom Left 2 Shade Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:roller-shade
+#   gameroom_right_1_shade_position:
+#     name: Gameroom Right 1 Shade Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:roller-shade
+#   gameroom_right_2_shade_position:
+#     name: Gameroom Right 2 Shade Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:roller-shade
+#   hallway_shade_position:
+#     name: Hallway Shade Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:roller-shade
+#   office_left_shade_position:
+#     name: Office Left Shade Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:roller-shade
+#   office_right_shade_position:
+#     name: Office Right Shade Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:roller-shade
+#   kitchen_shade_position:
+#     name: Kitchen Shade Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:roller-shade
+#   gym_curtain_position:
+#     name: Gym Curtain Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:curtains
+#   bedroom_curtain_position:
+#     name: Bedroom Curtain Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:curtains
+#   garden_shade_position:
+#     name: Garden Shade Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:roller-shade
+#   living_room_shade_position:
+#     name: Living Room Shade Position
+#     min: 0
+#     max: 100
+#     step: 50
+#     mode: slider
+#     unit_of_measurement: "%"
+#     icon: mdi:roller-shade
 
 input_select:
   roof_terrace_covers:
@@ -189,957 +189,955 @@ input_select:
       - "Exposed"
       - "Open"
     icon: mdi:window-shutter-auto
+# template:
+#   - cover:
+#       - name: "Roof Terrace Shade"
+#         unique_id: roof_terrace_shade
+#         device_class: curtain
+#         icon: mdi:roller-shade
+#         position: "{{ states('input_number.roof_terrace_shade_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.roof_terrace_shade_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.roof_terrace_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.roof_terrace_shade_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.roof_terrace_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.roof_terrace_shade_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.roof_terrace_shade_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.roof_terrace_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.roof_terrace_shade_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.roof_terrace_shade_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.roof_terrace_shade_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.roof_terrace_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.roof_terrace_shade_position
+#                     data:
+#                       value: 100
 
-template:
-  - cover:
-      - name: "Roof Terrace Shade"
-        unique_id: roof_terrace_shade
-        device_class: curtain
-        icon: mdi:roller-shade
-        position: "{{ states('input_number.roof_terrace_shade_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.roof_terrace_shade_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.roof_terrace_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.roof_terrace_shade_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.roof_terrace_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.roof_terrace_shade_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.roof_terrace_shade_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.roof_terrace_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.roof_terrace_shade_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.roof_terrace_shade_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.roof_terrace_shade_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.roof_terrace_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.roof_terrace_shade_position
-                    data:
-                      value: 100
+#       - name: "Gameroom Left 1 Shade"
+#         unique_id: gameroom_left_1_shade
+#         device_class: curtain
+#         icon: mdi:roller-shade
+#         position: "{{ states('input_number.gameroom_left_1_shade_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.gameroom_left_1_shade_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.gameroom_left_1_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.gameroom_left_1_shade_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.gameroom_left_1_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.gameroom_left_1_shade_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.gameroom_left_1_shade_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.gameroom_left_1_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gameroom_left_1_shade_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.gameroom_left_1_shade_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gameroom_left_1_shade_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.gameroom_left_1_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gameroom_left_1_shade_position
+#                     data:
+#                       value: 100
 
-      - name: "Gameroom Left 1 Shade"
-        unique_id: gameroom_left_1_shade
-        device_class: curtain
-        icon: mdi:roller-shade
-        position: "{{ states('input_number.gameroom_left_1_shade_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.gameroom_left_1_shade_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.gameroom_left_1_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.gameroom_left_1_shade_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.gameroom_left_1_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.gameroom_left_1_shade_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.gameroom_left_1_shade_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.gameroom_left_1_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gameroom_left_1_shade_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.gameroom_left_1_shade_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gameroom_left_1_shade_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.gameroom_left_1_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gameroom_left_1_shade_position
-                    data:
-                      value: 100
+#       - name: "Gameroom Left 2 Shade"
+#         unique_id: gameroom_left_2_shade
+#         device_class: curtain
+#         icon: mdi:roller-shade
+#         position: "{{ states('input_number.gameroom_left_2_shade_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.gameroom_left_2_shade_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.gameroom_left_2_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.gameroom_left_2_shade_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.gameroom_left_2_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.gameroom_left_2_shade_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.gameroom_left_2_shade_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.gameroom_left_2_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gameroom_left_2_shade_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.gameroom_left_2_shade_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gameroom_left_2_shade_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.gameroom_left_2_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gameroom_left_2_shade_position
+#                     data:
+#                       value: 100
 
-      - name: "Gameroom Left 2 Shade"
-        unique_id: gameroom_left_2_shade
-        device_class: curtain
-        icon: mdi:roller-shade
-        position: "{{ states('input_number.gameroom_left_2_shade_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.gameroom_left_2_shade_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.gameroom_left_2_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.gameroom_left_2_shade_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.gameroom_left_2_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.gameroom_left_2_shade_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.gameroom_left_2_shade_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.gameroom_left_2_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gameroom_left_2_shade_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.gameroom_left_2_shade_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gameroom_left_2_shade_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.gameroom_left_2_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gameroom_left_2_shade_position
-                    data:
-                      value: 100
+#       - name: "Gameroom Right 1 Shade"
+#         unique_id: gameroom_right_1_shade
+#         device_class: curtain
+#         icon: mdi:roller-shade
+#         position: "{{ states('input_number.gameroom_right_1_shade_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.gameroom_right_1_shade_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.gameroom_right_1_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.gameroom_right_1_shade_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.gameroom_right_1_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.gameroom_right_1_shade_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.gameroom_right_1_shade_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.gameroom_right_1_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gameroom_right_1_shade_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.gameroom_right_1_shade_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gameroom_right_1_shade_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.gameroom_right_1_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gameroom_right_1_shade_position
+#                     data:
+#                       value: 100
 
-      - name: "Gameroom Right 1 Shade"
-        unique_id: gameroom_right_1_shade
-        device_class: curtain
-        icon: mdi:roller-shade
-        position: "{{ states('input_number.gameroom_right_1_shade_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.gameroom_right_1_shade_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.gameroom_right_1_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.gameroom_right_1_shade_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.gameroom_right_1_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.gameroom_right_1_shade_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.gameroom_right_1_shade_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.gameroom_right_1_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gameroom_right_1_shade_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.gameroom_right_1_shade_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gameroom_right_1_shade_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.gameroom_right_1_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gameroom_right_1_shade_position
-                    data:
-                      value: 100
+#       - name: "Gameroom Right 2 Shade"
+#         unique_id: gameroom_right_2_shade
+#         device_class: curtain
+#         icon: mdi:roller-shade
+#         position: "{{ states('input_number.gameroom_right_2_shade_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.gameroom_right_2_shade_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.gameroom_right_2_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.gameroom_right_2_shade_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.gameroom_right_2_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.gameroom_right_2_shade_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.gameroom_right_2_shade_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.gameroom_right_2_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gameroom_right_2_shade_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.gameroom_right_2_shade_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gameroom_right_2_shade_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.gameroom_right_2_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gameroom_right_2_shade_position
+#                     data:
+#                       value: 100
 
-      - name: "Gameroom Right 2 Shade"
-        unique_id: gameroom_right_2_shade
-        device_class: curtain
-        icon: mdi:roller-shade
-        position: "{{ states('input_number.gameroom_right_2_shade_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.gameroom_right_2_shade_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.gameroom_right_2_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.gameroom_right_2_shade_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.gameroom_right_2_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.gameroom_right_2_shade_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.gameroom_right_2_shade_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.gameroom_right_2_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gameroom_right_2_shade_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.gameroom_right_2_shade_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gameroom_right_2_shade_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.gameroom_right_2_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gameroom_right_2_shade_position
-                    data:
-                      value: 100
+#       - name: "Hallway Shade"
+#         unique_id: hallway_shade
+#         device_class: curtain
+#         icon: mdi:roller-shade
+#         position: "{{ states('input_number.hallway_shade_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.hallway_shade_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.hallway_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.hallway_shade_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.hallway_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.hallway_shade_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.hallway_shade_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.hallway_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.hallway_shade_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.hallway_shade_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.hallway_shade_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.hallway_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.hallway_shade_position
+#                     data:
+#                       value: 100
 
-      - name: "Hallway Shade"
-        unique_id: hallway_shade
-        device_class: curtain
-        icon: mdi:roller-shade
-        position: "{{ states('input_number.hallway_shade_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.hallway_shade_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.hallway_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.hallway_shade_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.hallway_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.hallway_shade_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.hallway_shade_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.hallway_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.hallway_shade_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.hallway_shade_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.hallway_shade_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.hallway_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.hallway_shade_position
-                    data:
-                      value: 100
+#       - name: "Office Left Shade"
+#         unique_id: office_left_shade
+#         device_class: curtain
+#         icon: mdi:roller-shade
+#         position: "{{ states('input_number.office_left_shade_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.office_left_shade_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.office_left_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.office_left_shade_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.office_left_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.office_left_shade_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.office_left_shade_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.office_left_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.office_left_shade_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.office_left_shade_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.office_left_shade_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.office_left_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.office_left_shade_position
+#                     data:
+#                       value: 100
 
-      - name: "Office Left Shade"
-        unique_id: office_left_shade
-        device_class: curtain
-        icon: mdi:roller-shade
-        position: "{{ states('input_number.office_left_shade_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.office_left_shade_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.office_left_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.office_left_shade_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.office_left_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.office_left_shade_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.office_left_shade_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.office_left_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.office_left_shade_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.office_left_shade_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.office_left_shade_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.office_left_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.office_left_shade_position
-                    data:
-                      value: 100
+#       - name: "Office Right Shade"
+#         unique_id: office_right_shade
+#         device_class: curtain
+#         icon: mdi:roller-shade
+#         position: "{{ states('input_number.office_right_shade_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.office_right_shade_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.office_right_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.office_right_shade_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.office_right_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.office_right_shade_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.office_right_shade_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.office_right_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.office_right_shade_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.office_right_shade_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.office_right_shade_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.office_right_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.office_right_shade_position
+#                     data:
+#                       value: 100
 
-      - name: "Office Right Shade"
-        unique_id: office_right_shade
-        device_class: curtain
-        icon: mdi:roller-shade
-        position: "{{ states('input_number.office_right_shade_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.office_right_shade_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.office_right_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.office_right_shade_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.office_right_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.office_right_shade_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.office_right_shade_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.office_right_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.office_right_shade_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.office_right_shade_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.office_right_shade_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.office_right_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.office_right_shade_position
-                    data:
-                      value: 100
+#       - name: "Kitchen Shade"
+#         unique_id: kitchen_shade
+#         device_class: curtain
+#         icon: mdi:roller-shade
+#         position: "{{ states('input_number.kitchen_shade_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.kitchen_shade_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.kitchen_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.kitchen_shade_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.kitchen_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.kitchen_shade_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.kitchen_shade_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.kitchen_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.kitchen_shade_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.kitchen_shade_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.kitchen_shade_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.kitchen_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.kitchen_shade_position
+#                     data:
+#                       value: 100
 
-      - name: "Kitchen Shade"
-        unique_id: kitchen_shade
-        device_class: curtain
-        icon: mdi:roller-shade
-        position: "{{ states('input_number.kitchen_shade_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.kitchen_shade_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.kitchen_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.kitchen_shade_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.kitchen_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.kitchen_shade_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.kitchen_shade_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.kitchen_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.kitchen_shade_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.kitchen_shade_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.kitchen_shade_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.kitchen_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.kitchen_shade_position
-                    data:
-                      value: 100
+#       - name: "Gym Curtain"
+#         unique_id: gym_curtain
+#         device_class: curtain
+#         position: "{{ states('input_number.gym_curtain_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.gym_curtain_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.gym_curtain_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.gym_curtain_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.gym_curtain_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.gym_curtain_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.gym_curtain_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.gym_curtain_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gym_curtain_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.gym_curtain_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gym_curtain_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.gym_curtain_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.gym_curtain_position
+#                     data:
+#                       value: 100
 
-      - name: "Gym Curtain"
-        unique_id: gym_curtain
-        device_class: curtain
-        position: "{{ states('input_number.gym_curtain_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.gym_curtain_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.gym_curtain_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.gym_curtain_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.gym_curtain_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.gym_curtain_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.gym_curtain_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.gym_curtain_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gym_curtain_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.gym_curtain_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gym_curtain_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.gym_curtain_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.gym_curtain_position
-                    data:
-                      value: 100
+#       - name: "Bedroom Curtain"
+#         unique_id: bedroom_curtain
+#         device_class: curtain
+#         position: "{{ states('input_number.bedroom_curtain_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.bedroom_curtain_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.bedroom_curtain_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.bedroom_curtain_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.bedroom_curtain_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.bedroom_curtain_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.bedroom_curtain_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.bedroom_curtain_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.bedroom_curtain_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.bedroom_curtain_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.bedroom_curtain_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.bedroom_curtain_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.bedroom_curtain_position
+#                     data:
+#                       value: 100
 
-      - name: "Bedroom Curtain"
-        unique_id: bedroom_curtain
-        device_class: curtain
-        position: "{{ states('input_number.bedroom_curtain_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.bedroom_curtain_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.bedroom_curtain_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.bedroom_curtain_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.bedroom_curtain_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.bedroom_curtain_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.bedroom_curtain_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.bedroom_curtain_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.bedroom_curtain_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.bedroom_curtain_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.bedroom_curtain_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.bedroom_curtain_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.bedroom_curtain_position
-                    data:
-                      value: 100
+#       - name: "Garden Shade"
+#         unique_id: garden_shade
+#         device_class: curtain
+#         icon: mdi:roller-shade
+#         position: "{{ states('input_number.garden_shade_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.garden_shade_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.garden_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.garden_shade_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.garden_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.garden_shade_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.garden_shade_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.garden_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.garden_shade_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.garden_shade_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.garden_shade_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.garden_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.garden_shade_position
+#                     data:
+#                       value: 100
 
-      - name: "Garden Shade"
-        unique_id: garden_shade
-        device_class: curtain
-        icon: mdi:roller-shade
-        position: "{{ states('input_number.garden_shade_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.garden_shade_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.garden_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.garden_shade_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.garden_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.garden_shade_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.garden_shade_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.garden_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.garden_shade_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.garden_shade_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.garden_shade_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.garden_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.garden_shade_position
-                    data:
-                      value: 100
+#       - name: "Living Room Shade"
+#         unique_id: living_room_shade
+#         device_class: curtain
+#         icon: mdi:roller-shade
+#         position: "{{ states('input_number.living_room_shade_position') | int }}"
+#         availability: "{{ true }}"
+#         state: >
+#           {% set pos = states('input_number.living_room_shade_position') | int %}
+#           {% if pos == 0 %}closed
+#           {% elif pos == 100 %}open
+#           {% else %}open{% endif %}
+#         open_cover:
+#           - action: cover.open_cover
+#             target:
+#               entity_id: cover.living_room_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.living_room_shade_position
+#             data:
+#               value: 100
+#         close_cover:
+#           - action: cover.close_cover
+#             target:
+#               entity_id: cover.living_room_shade_rts
+#           - action: input_number.set_value
+#             target:
+#               entity_id: input_number.living_room_shade_position
+#             data:
+#               value: 0
+#         stop_cover:
+#           - action: cover.stop_cover
+#             target:
+#               entity_id: cover.living_room_shade_rts
+#         set_cover_position:
+#           - choose:
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position < 25 }}"
+#                 sequence:
+#                   - action: cover.close_cover
+#                     target:
+#                       entity_id: cover.living_room_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.living_room_shade_position
+#                     data:
+#                       value: 0
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position >= 25 and position <= 74 }}"
+#                 sequence:
+#                   - action: button.press
+#                     target:
+#                       entity_id: button.living_room_shade_my_position
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.living_room_shade_position
+#                     data:
+#                       value: 50
+#               - conditions:
+#                   - condition: template
+#                     value_template: "{{ position > 74 }}"
+#                 sequence:
+#                   - action: cover.open_cover
+#                     target:
+#                       entity_id: cover.living_room_shade_rts
+#                   - action: input_number.set_value
+#                     target:
+#                       entity_id: input_number.living_room_shade_position
+#                     data:
+#                       value: 100
 
-      - name: "Living Room Shade"
-        unique_id: living_room_shade
-        device_class: curtain
-        icon: mdi:roller-shade
-        position: "{{ states('input_number.living_room_shade_position') | int }}"
-        availability: "{{ true }}"
-        state: >
-          {% set pos = states('input_number.living_room_shade_position') | int %}
-          {% if pos == 0 %}closed
-          {% elif pos == 100 %}open
-          {% else %}open{% endif %}
-        open_cover:
-          - action: cover.open_cover
-            target:
-              entity_id: cover.living_room_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.living_room_shade_position
-            data:
-              value: 100
-        close_cover:
-          - action: cover.close_cover
-            target:
-              entity_id: cover.living_room_shade_rts
-          - action: input_number.set_value
-            target:
-              entity_id: input_number.living_room_shade_position
-            data:
-              value: 0
-        stop_cover:
-          - action: cover.stop_cover
-            target:
-              entity_id: cover.living_room_shade_rts
-        set_cover_position:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position < 25 }}"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: cover.living_room_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.living_room_shade_position
-                    data:
-                      value: 0
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position >= 25 and position <= 74 }}"
-                sequence:
-                  - action: button.press
-                    target:
-                      entity_id: button.living_room_shade_my_position
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.living_room_shade_position
-                    data:
-                      value: 50
-              - conditions:
-                  - condition: template
-                    value_template: "{{ position > 74 }}"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: cover.living_room_shade_rts
-                  - action: input_number.set_value
-                    target:
-                      entity_id: input_number.living_room_shade_position
-                    data:
-                      value: 100
+# cover:
+#   - platform: group
+#     name: "Office Shades"
+#     unique_id: office_shades
+#     entities:
+#       - cover.office_left_shade
+#       - cover.office_right_shade
 
-
-cover:
-  - platform: group
-    name: "Office Shades"
-    unique_id: office_shades
-    entities:
-      - cover.office_left_shade
-      - cover.office_right_shade
-
-  - platform: group
-    name: "Gameroom Shades"
-    unique_id: gameroom_shades
-    entities:
-      - cover.gameroom_left_1_shade
-      - cover.gameroom_left_2_shade
-      - cover.gameroom_right_1_shade
-      - cover.gameroom_right_2_shade
+#   - platform: group
+#     name: "Gameroom Shades"
+#     unique_id: gameroom_shades
+#     entities:
+#       - cover.gameroom_left_1_shade
+#       - cover.gameroom_left_2_shade
+#       - cover.gameroom_right_1_shade
+#       - cover.gameroom_right_2_shade
