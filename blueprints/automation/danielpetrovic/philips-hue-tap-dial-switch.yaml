@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Philips Hue Tap Dial Switch (Z2M / ZHA)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) ![Version](https://img.shields.io/badge/Version-2026.06.2-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) ![Version](https://img.shields.io/badge/Version-2026.07.1-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of a Philips Hue Tap Dial Switch through Zigbee2MQTT or ZHA integration, supporting custom actions, light automation, and media player control.
 
@@ -36,19 +36,22 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.07.1: Fix auto-adjust error when only one of brightness/color temp is enabled**
+          - Fixed: "expected float for brightness_pct" error occurring when Auto-Adjust Brightness is off but Auto-Adjust Color Temperature is on (or vice versa). Replaced `omit` in typed numeric data fields with explicit `choose` branches per button: one call for both fields, one for brightness only, one for color temp only.
+
         - **2026.06.2: Fix adaptive auto-adjust only working for Button 1**
           - Fixed: Auto-Adjust now correctly applies to all buttons when multiple adaptive helpers update simultaneously (e.g. lights_bright + lights_dimmed schedulers firing at the same time). Previously, mode:single caused only the first trigger to execute, silently dropping the others. All buttons are now processed in a single automation run, eliminating the race condition.
 
         - **2026.06.1: Dial color temperature control and double press light mode**
-          - Added: "Color Temperature" option in Rotate Mode — dial can now adjust color temp instead of (or alongside) brightness
-          - Added: Color Temp Speed input per button (1–10 slider) — mirrors Dimming Speed, controls how fast color temperature changes
-          - Added: Rotate Mode Helper input per button — optional input_text entity that overrides the static Rotate Mode at runtime, enabling toggling between brightness and color temp
+          - Added: "Color Temperature" option in Rotate Mode, allowing the dial to adjust color temp instead of (or alongside) brightness
+          - Added: Color Temp Speed input per button (1–10 slider), mirroring Dimming Speed to control how fast color temperature changes
+          - Added: Rotate Mode Helper input per button (optional input_text entity that overrides the static Rotate Mode at runtime, enabling toggling between brightness and color temp)
           - Added: "Toggle Rotate Mode" action option in short release, long release, and double press light mode selectors
-          - Added: Double Press Mode light selector per button — turn_on/turn_off/toggle/toggle_rotate_mode (double press previously had no built-in light mode)
-          - Added: Separate "Auto-Adjust Brightness" and "Auto-Adjust Color Temperature" toggles per button — allows dial color temperature control to coexist with adaptive/schedule brightness auto-adjust
-          - Added: Button Helpers Configuration setup guide — explains how to create the required Last Pressed helper and optional Rotate Mode helper, with a YAML example for `buttons.yaml`
-          - Improved: "Dim" option in Rotate Mode renamed to "Brightness" (value `dim` → `brightness`; stored `dim` values are silently ignored — re-save automation to restore rotation if needed)
-          - Breaking: "Auto-Adjust on Value Change" replaced by separate `_brightness` and `_color_temp` toggles — re-enable the relevant toggle(s) if previously active
+          - Added: Double Press Mode light selector per button (turn_on/turn_off/toggle/toggle_rotate_mode; double press previously had no built-in light mode)
+          - Added: Separate "Auto-Adjust Brightness" and "Auto-Adjust Color Temperature" toggles per button, allowing dial color temperature control to coexist with adaptive/schedule brightness auto-adjust
+          - Added: Button Helpers Configuration setup guide, explaining how to create the required Last Pressed helper and optional Rotate Mode helper, with a YAML example for `buttons.yaml`
+          - Improved: "Dim" option in Rotate Mode renamed to "Brightness" (value `dim` → `brightness`; stored `dim` values are silently ignored, re-save automation to restore rotation if needed)
+          - Breaking: "Auto-Adjust on Value Change" replaced by separate `_brightness` and `_color_temp` toggles, re-enable the relevant toggle(s) if previously active
 
         - **2026.04.1: Fix template warning in Z2M double-press detection**
           - Fixed: Added `| default('')` to `value_json.action` in the two `wait_for_trigger` blocks used for double-press detection
@@ -127,7 +130,7 @@ blueprint:
 
         ### Rotate Mode Helper (Optional)
         Stores the current dial mode (`brightness` or `color_temp`). When configured, it overrides
-        the static Rotate Mode selector — so the same dial can switch between controlling brightness
+        the static Rotate Mode selector, so the same dial can switch between controlling brightness
         and color temperature at runtime.
 
         ### YAML Example
@@ -165,7 +168,7 @@ blueprint:
 
         ### Rotate Mode Selector vs Helper
         - **No helper configured**: dial always uses the static Rotate Mode selector
-        - **Helper configured**: helper value takes over — toggle it from any button, script, or dashboard
+        - **Helper configured**: helper value takes over, toggle it from any button, script, or dashboard
       collapsed: true
       icon: mdi:tune-variant
       input: {}
@@ -3431,13 +3434,32 @@ actions:
                     - if:
                         - "{{ is_state(repeat.item, 'on') }}"
                       then:
-                        - action: light.turn_on
-                          target:
-                            entity_id: "{{ repeat.item }}"
-                          data:
-                            brightness_pct: "{{ button_1_brightness_pct if button_1_light_auto_adjust_brightness else omit }}"
-                            color_temp_kelvin: "{{ button_1_color_temp_kelvin if button_1_light_auto_adjust_color_temp else omit }}"
-                            transition: "{{ button_1_light_auto_adjust_transition }}"
+                        - choose:
+                            - conditions: "{{ button_1_light_auto_adjust_brightness and button_1_light_auto_adjust_color_temp }}"
+                              sequence:
+                                - action: light.turn_on
+                                  target:
+                                    entity_id: "{{ repeat.item }}"
+                                  data:
+                                    brightness_pct: "{{ button_1_brightness_pct }}"
+                                    color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                    transition: "{{ button_1_light_auto_adjust_transition }}"
+                            - conditions: "{{ button_1_light_auto_adjust_brightness }}"
+                              sequence:
+                                - action: light.turn_on
+                                  target:
+                                    entity_id: "{{ repeat.item }}"
+                                  data:
+                                    brightness_pct: "{{ button_1_brightness_pct }}"
+                                    transition: "{{ button_1_light_auto_adjust_transition }}"
+                            - conditions: "{{ button_1_light_auto_adjust_color_temp }}"
+                              sequence:
+                                - action: light.turn_on
+                                  target:
+                                    entity_id: "{{ repeat.item }}"
+                                  data:
+                                    color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                    transition: "{{ button_1_light_auto_adjust_transition }}"
           - if:
               - "{{ button_2_has_light }}"
               - "{{ button_2_light_auto_adjust_brightness or button_2_light_auto_adjust_color_temp }}"
@@ -3449,13 +3471,32 @@ actions:
                     - if:
                         - "{{ is_state(repeat.item, 'on') }}"
                       then:
-                        - action: light.turn_on
-                          target:
-                            entity_id: "{{ repeat.item }}"
-                          data:
-                            brightness_pct: "{{ button_2_brightness_pct if button_2_light_auto_adjust_brightness else omit }}"
-                            color_temp_kelvin: "{{ button_2_color_temp_kelvin if button_2_light_auto_adjust_color_temp else omit }}"
-                            transition: "{{ button_2_light_auto_adjust_transition }}"
+                        - choose:
+                            - conditions: "{{ button_2_light_auto_adjust_brightness and button_2_light_auto_adjust_color_temp }}"
+                              sequence:
+                                - action: light.turn_on
+                                  target:
+                                    entity_id: "{{ repeat.item }}"
+                                  data:
+                                    brightness_pct: "{{ button_2_brightness_pct }}"
+                                    color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                    transition: "{{ button_2_light_auto_adjust_transition }}"
+                            - conditions: "{{ button_2_light_auto_adjust_brightness }}"
+                              sequence:
+                                - action: light.turn_on
+                                  target:
+                                    entity_id: "{{ repeat.item }}"
+                                  data:
+                                    brightness_pct: "{{ button_2_brightness_pct }}"
+                                    transition: "{{ button_2_light_auto_adjust_transition }}"
+                            - conditions: "{{ button_2_light_auto_adjust_color_temp }}"
+                              sequence:
+                                - action: light.turn_on
+                                  target:
+                                    entity_id: "{{ repeat.item }}"
+                                  data:
+                                    color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                    transition: "{{ button_2_light_auto_adjust_transition }}"
           - if:
               - "{{ button_3_has_light }}"
               - "{{ button_3_light_auto_adjust_brightness or button_3_light_auto_adjust_color_temp }}"
@@ -3467,13 +3508,32 @@ actions:
                     - if:
                         - "{{ is_state(repeat.item, 'on') }}"
                       then:
-                        - action: light.turn_on
-                          target:
-                            entity_id: "{{ repeat.item }}"
-                          data:
-                            brightness_pct: "{{ button_3_brightness_pct if button_3_light_auto_adjust_brightness else omit }}"
-                            color_temp_kelvin: "{{ button_3_color_temp_kelvin if button_3_light_auto_adjust_color_temp else omit }}"
-                            transition: "{{ button_3_light_auto_adjust_transition }}"
+                        - choose:
+                            - conditions: "{{ button_3_light_auto_adjust_brightness and button_3_light_auto_adjust_color_temp }}"
+                              sequence:
+                                - action: light.turn_on
+                                  target:
+                                    entity_id: "{{ repeat.item }}"
+                                  data:
+                                    brightness_pct: "{{ button_3_brightness_pct }}"
+                                    color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                    transition: "{{ button_3_light_auto_adjust_transition }}"
+                            - conditions: "{{ button_3_light_auto_adjust_brightness }}"
+                              sequence:
+                                - action: light.turn_on
+                                  target:
+                                    entity_id: "{{ repeat.item }}"
+                                  data:
+                                    brightness_pct: "{{ button_3_brightness_pct }}"
+                                    transition: "{{ button_3_light_auto_adjust_transition }}"
+                            - conditions: "{{ button_3_light_auto_adjust_color_temp }}"
+                              sequence:
+                                - action: light.turn_on
+                                  target:
+                                    entity_id: "{{ repeat.item }}"
+                                  data:
+                                    color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                    transition: "{{ button_3_light_auto_adjust_transition }}"
           - if:
               - "{{ button_4_has_light }}"
               - "{{ button_4_light_auto_adjust_brightness or button_4_light_auto_adjust_color_temp }}"
@@ -3485,13 +3545,32 @@ actions:
                     - if:
                         - "{{ is_state(repeat.item, 'on') }}"
                       then:
-                        - action: light.turn_on
-                          target:
-                            entity_id: "{{ repeat.item }}"
-                          data:
-                            brightness_pct: "{{ button_4_brightness_pct if button_4_light_auto_adjust_brightness else omit }}"
-                            color_temp_kelvin: "{{ button_4_color_temp_kelvin if button_4_light_auto_adjust_color_temp else omit }}"
-                            transition: "{{ button_4_light_auto_adjust_transition }}"
+                        - choose:
+                            - conditions: "{{ button_4_light_auto_adjust_brightness and button_4_light_auto_adjust_color_temp }}"
+                              sequence:
+                                - action: light.turn_on
+                                  target:
+                                    entity_id: "{{ repeat.item }}"
+                                  data:
+                                    brightness_pct: "{{ button_4_brightness_pct }}"
+                                    color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                    transition: "{{ button_4_light_auto_adjust_transition }}"
+                            - conditions: "{{ button_4_light_auto_adjust_brightness }}"
+                              sequence:
+                                - action: light.turn_on
+                                  target:
+                                    entity_id: "{{ repeat.item }}"
+                                  data:
+                                    brightness_pct: "{{ button_4_brightness_pct }}"
+                                    transition: "{{ button_4_light_auto_adjust_transition }}"
+                            - conditions: "{{ button_4_light_auto_adjust_color_temp }}"
+                              sequence:
+                                - action: light.turn_on
+                                  target:
+                                    entity_id: "{{ repeat.item }}"
+                                  data:
+                                    color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                    transition: "{{ button_4_light_auto_adjust_transition }}"
           - stop: Auto-adjust completed
       # ========== BUTTON 1 ==========
       - conditions: "{{ command == 'button_1_press' }}"
