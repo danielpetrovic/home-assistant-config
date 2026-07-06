@@ -4,18 +4,29 @@
 # (documentation only, the actual displayed name comes from the matching
 # entry in the main file's `esphome.devices` list, see the note there about
 # why device names are generic/room-less), `remote_address` (unique 24-bit
-# Somfy remote address, never reuse across covers), and `device_class`
-# (shade or curtain).
+# Somfy remote address, never reuse across covers), `device_class` (shade or
+# curtain), and optionally `travel_time_open`/`travel_time_close` (seconds,
+# just the initial default for the Travel Time Open/Close number entities -
+# only used in "Timed" mode, see below).
 # `${cover_id}_device` must exist in the main file's `esphome.devices` list,
 # this is what makes each cover show up as its own HA device.
 #
-# Position is a label for one of three fixed states, no time-based estimation:
-# 0.0 = closed (DOWN), 0.5 = MY/favorite preset (MY), 1.0 = open (UP).
+# Two selectable modes (see the Mode select entity):
+# - "My" (default) - matches the original behavior exactly: 3 fixed states,
+#   no time-based estimation, no drift. 0.0 = closed (DOWN), 0.5 = MY/
+#   favorite preset (MY), 1.0 = open (UP).
+# - "Timed" - local travel-time-based position estimate (like the IO
+#   bridge's own "1W Timed" mode), for anyone who wants smoother/continuous
+#   position instead of the 3 fixed states. Pure estimate: RTS is one-way,
+#   the motor never reports real position back, so this can drift on
+#   repeated partial moves the same way IO's Timed mode can.
 substitutions:
   cover_id: "changeme"
   cover_name: "Change Me"
   remote_address: "0x000000"
   device_class: "shade"
+  travel_time_open: "25"
+  travel_time_close: "25"
 
 somfy:
   - address: ${remote_address}
@@ -26,6 +37,24 @@ globals:
     type: float
     restore_value: true
     initial_value: "1.0"
+  # Only meaningful in "Timed" mode - see the interval: below for how these
+  # drive the position estimate while moving.
+  - id: ${cover_id}_move_direction
+    type: int
+    restore_value: false
+    initial_value: "0" # 0 = idle, 1 = opening, -1 = closing
+  - id: ${cover_id}_move_start_ms
+    type: uint32_t
+    restore_value: false
+    initial_value: "0"
+  - id: ${cover_id}_move_start_position
+    type: float
+    restore_value: false
+    initial_value: "1.0"
+  - id: ${cover_id}_target_position
+    type: float
+    restore_value: false
+    initial_value: "-1.0" # -1 = no target (Open/Close to a full extreme)
 
 button:
   - platform: template
@@ -38,6 +67,44 @@ button:
           id: ${cover_id}_remote
           command: PROG
           repeat: 1
+
+select:
+  - platform: template
+    id: ${cover_id}_mode
+    name: "Mode"
+    device_id: ${cover_id}_device
+    optimistic: true
+    restore_value: true
+    initial_option: "My"
+    options:
+      - "Timed"
+      - "My"
+
+number:
+  - platform: template
+    id: ${cover_id}_travel_time_open
+    name: "Travel Time Open"
+    device_id: ${cover_id}_device
+    entity_category: config
+    unit_of_measurement: s
+    min_value: 1
+    max_value: 300
+    step: 1
+    optimistic: true
+    restore_value: true
+    initial_value: ${travel_time_open}
+  - platform: template
+    id: ${cover_id}_travel_time_close
+    name: "Travel Time Close"
+    device_id: ${cover_id}_device
+    entity_category: config
+    unit_of_measurement: s
+    min_value: 1
+    max_value: 300
+    step: 1
+    optimistic: true
+    restore_value: true
+    initial_value: ${travel_time_close}
 
 cover:
   - platform: template
@@ -54,33 +121,121 @@ cover:
     lambda: |-
       return id(${cover_id}_position);
     open_action:
+      - lambda: |-
+          if (id(${cover_id}_mode).state == "Timed") {
+            id(${cover_id}_move_start_position) = id(${cover_id}_position);
+            id(${cover_id}_move_start_ms) = millis();
+            id(${cover_id}_move_direction) = 1;
+            id(${cover_id}_target_position) = -1.0f;
+          } else {
+            id(${cover_id}_position) = 1.0f;
+          }
       - somfy.send_command:
           id: ${cover_id}_remote
           command: UP
           repeat: 1
-      - lambda: "id(${cover_id}_position) = 1.0f;"
     close_action:
+      - lambda: |-
+          if (id(${cover_id}_mode).state == "Timed") {
+            id(${cover_id}_move_start_position) = id(${cover_id}_position);
+            id(${cover_id}_move_start_ms) = millis();
+            id(${cover_id}_move_direction) = -1;
+            id(${cover_id}_target_position) = -1.0f;
+          } else {
+            id(${cover_id}_position) = 0.0f;
+          }
       - somfy.send_command:
           id: ${cover_id}_remote
           command: DOWN
           repeat: 1
-      - lambda: "id(${cover_id}_position) = 0.0f;"
     # Somfy's MY button is dual-purpose on real remotes too: stops in place if
     # the shade is moving, or goes to the favorite preset if it's already
-    # idle. Either way, treat the result as the labeled "50%" state.
+    # idle - sent unconditionally either way, matching real remote behavior.
     stop_action:
+      - lambda: |-
+          if (id(${cover_id}_mode).state == "Timed") {
+            // Only touch the estimate if actually moving - matches the IO
+            // bridge's own Mode::TIMED Stop handling (freeze at the current
+            // estimate, don't force a fixed label like "My" mode does).
+            if (id(${cover_id}_move_direction) != 0) {
+              float elapsed_s = (millis() - id(${cover_id}_move_start_ms)) / 1000.0f;
+              float travel_s = id(${cover_id}_move_direction) > 0 ? id(${cover_id}_travel_time_open).state : id(${cover_id}_travel_time_close).state;
+              if (travel_s > 0.0f) {
+                float delta = elapsed_s / travel_s;
+                float pos = id(${cover_id}_move_start_position) + (id(${cover_id}_move_direction) > 0 ? delta : -delta);
+                if (pos < 0.0f) pos = 0.0f;
+                if (pos > 1.0f) pos = 1.0f;
+                id(${cover_id}_position) = pos;
+              }
+              id(${cover_id}_move_direction) = 0;
+              id(${cover_id}_target_position) = -1.0f;
+            }
+          } else {
+            id(${cover_id}_position) = 0.5f;
+          }
       - somfy.send_command:
           id: ${cover_id}_remote
           command: MY
           repeat: 1
-      - lambda: "id(${cover_id}_position) = 0.5f;"
-    # Any target strictly between 0 and 1 (not exactly open/closed) maps to MY.
-    # Called directly via the component method, not the somfy.send_command
-    # YAML action, that action is broken when used inside a templated trigger
+    # "My" mode: any target strictly between 0 and 1 maps to MY, called
+    # directly via the component method, not the somfy.send_command YAML
+    # action, that action is broken when used inside a templated trigger
     # (position_action's `pos` makes this Ts=float): SomfySendCommandAction's
     # play(Ts...) no longer matches core's Action<Ts...>::play(const Ts&...),
     # so it fails to compile here even though it works fine in open/close/stop.
+    # "Timed" mode: moves toward the requested position like Open/Close,
+    # the interval: below auto-stops (sends MY) once the estimate reaches it.
     position_action:
       - lambda: |-
-          id(${cover_id}_remote)->send_command(somfy::SOMFY_MY, 1);
-          id(${cover_id}_position) = 0.5f;
+          if (id(${cover_id}_mode).state == "Timed") {
+            float current = id(${cover_id}_position);
+            float diff = pos > current ? pos - current : current - pos;
+            if (diff < 0.01f) return; // already there, no-op
+            id(${cover_id}_move_start_position) = current;
+            id(${cover_id}_move_start_ms) = millis();
+            id(${cover_id}_target_position) = pos;
+            int dir = (pos > current) ? 1 : -1;
+            id(${cover_id}_move_direction) = dir;
+            id(${cover_id}_remote)->send_command(dir > 0 ? somfy::SOMFY_UP : somfy::SOMFY_DOWN, 1);
+          } else {
+            id(${cover_id}_remote)->send_command(somfy::SOMFY_MY, 1);
+            id(${cover_id}_position) = 0.5f;
+          }
+
+# Ticks the "Timed" mode position estimate while moving, and auto-stops
+# (sends MY) once it reaches a requested intermediate target - RTS has no
+# position feedback, so this is the only way to reach an arbitrary %.
+# A full Open/Close (no target_position set) doesn't need an auto-stop: the
+# motor halts itself at the physical limit, this just stops our own tracking
+# once the estimate reaches 0/1 too. Updating the position global here is
+# picked up automatically by the cover's own loop() (TemplateCover re-reads
+# its lambda every tick and publishes on change) - no explicit publish_state
+# needed.
+interval:
+  - interval: 200ms
+    then:
+      - lambda: |-
+          if (id(${cover_id}_move_direction) == 0) return;
+          float elapsed_s = (millis() - id(${cover_id}_move_start_ms)) / 1000.0f;
+          float travel_s = id(${cover_id}_move_direction) > 0 ? id(${cover_id}_travel_time_open).state : id(${cover_id}_travel_time_close).state;
+          if (travel_s <= 0.0f) return;
+          float delta = elapsed_s / travel_s;
+          float pos = id(${cover_id}_move_start_position) + (id(${cover_id}_move_direction) > 0 ? delta : -delta);
+          if (pos < 0.0f) pos = 0.0f;
+          if (pos > 1.0f) pos = 1.0f;
+          id(${cover_id}_position) = pos;
+
+          float target = id(${cover_id}_target_position);
+          bool reached_target = target >= 0.0f &&
+              ((id(${cover_id}_move_direction) > 0 && pos >= target) ||
+               (id(${cover_id}_move_direction) < 0 && pos <= target));
+          bool reached_limit = pos <= 0.0f || pos >= 1.0f;
+
+          if (reached_target) {
+            id(${cover_id}_remote)->send_command(somfy::SOMFY_MY, 1);
+            id(${cover_id}_move_direction) = 0;
+            id(${cover_id}_target_position) = -1.0f;
+          } else if (reached_limit) {
+            id(${cover_id}_move_direction) = 0;
+            id(${cover_id}_target_position) = -1.0f;
+          }
