@@ -260,6 +260,19 @@ text_sensor:
       name: "IP Address"
       id: wifi_ip
 
+# Bluetooth proxy: forwards BLE advertisements (and, since active: true is
+# the default, allows HA to open active GATT connections through this board
+# too) to Home Assistant. No RF conflict with the SX1276 sub-GHz radio above
+# (different chip, different frequency entirely), but it DOES share the
+# ESP32's own 2.4GHz radio with Wi-Fi via time-multiplexed coexistence -
+# tried here first (not on the IO bridge) since this board's radio path is
+# ESPHome's own RMT-backed remote_transmitter/receiver, not the IO bridge's
+# hand-rolled ISR+Ticker state machine, so it's much less sensitive to any
+# extra scheduling jitter BLE scanning introduces.
+esp32_ble_tracker:
+
+bluetooth_proxy:
+
 # Diagnostic-only entities on the hub device: signal quality, uptime, and a
 # remote restart, in case something needs troubleshooting without opening the
 # ESPHome dashboard.
