@@ -330,80 +330,72 @@ display:
         lambda: |-
           it.printf(0, 0, id(my_font), "Bedroom Curtain");
           it.printf(0, 20, id(my_font), "%.0f%%", id(bedroom_position) * 100.0f);
+          ${bt_status_line}
       - id: page_gameroom_left_1
         lambda: |-
           it.printf(0, 0, id(my_font), "Gameroom L1");
           it.printf(0, 20, id(my_font), "%.0f%%", id(gameroom_left_1_position) * 100.0f);
+          ${bt_status_line}
       - id: page_gameroom_left_2
         lambda: |-
           it.printf(0, 0, id(my_font), "Gameroom L2");
           it.printf(0, 20, id(my_font), "%.0f%%", id(gameroom_left_2_position) * 100.0f);
+          ${bt_status_line}
       - id: page_gameroom_right_1
         lambda: |-
           it.printf(0, 0, id(my_font), "Gameroom R1");
           it.printf(0, 20, id(my_font), "%.0f%%", id(gameroom_right_1_position) * 100.0f);
+          ${bt_status_line}
       - id: page_gameroom_right_2
         lambda: |-
           it.printf(0, 0, id(my_font), "Gameroom R2");
           it.printf(0, 20, id(my_font), "%.0f%%", id(gameroom_right_2_position) * 100.0f);
+          ${bt_status_line}
       - id: page_garden
         lambda: |-
           it.printf(0, 0, id(my_font), "Garden Shade");
           it.printf(0, 20, id(my_font), "%.0f%%", id(garden_position) * 100.0f);
+          ${bt_status_line}
       - id: page_gym
         lambda: |-
           it.printf(0, 0, id(my_font), "Gym Curtain");
           it.printf(0, 20, id(my_font), "%.0f%%", id(gym_position) * 100.0f);
+          ${bt_status_line}
       - id: page_hallway
         lambda: |-
           it.printf(0, 0, id(my_font), "Hallway");
           it.printf(0, 20, id(my_font), "%.0f%%", id(hallway_position) * 100.0f);
+          ${bt_status_line}
       - id: page_kitchen
         lambda: |-
           it.printf(0, 0, id(my_font), "Kitchen");
           it.printf(0, 20, id(my_font), "%.0f%%", id(kitchen_position) * 100.0f);
+          ${bt_status_line}
       - id: page_living_room
         lambda: |-
           it.printf(0, 0, id(my_font), "Living Room");
           it.printf(0, 20, id(my_font), "%.0f%%", id(living_room_position) * 100.0f);
+          ${bt_status_line}
       - id: page_office_left
         lambda: |-
           it.printf(0, 0, id(my_font), "Office Left");
           it.printf(0, 20, id(my_font), "%.0f%%", id(office_left_position) * 100.0f);
+          ${bt_status_line}
       - id: page_office_right
         lambda: |-
           it.printf(0, 0, id(my_font), "Office Right");
           it.printf(0, 20, id(my_font), "%.0f%%", id(office_right_position) * 100.0f);
+          ${bt_status_line}
       - id: page_roof_terrace
         lambda: |-
           it.printf(0, 0, id(my_font), "Roof Terrace");
           it.printf(0, 20, id(my_font), "%.0f%%", id(roof_terrace_position) * 100.0f);
+          ${bt_status_line}
       - id: page_status
         lambda: |-
           it.printf(0, 0, id(my_font), "Somfy RTS Bridge");
           it.printf(0, 20, id(my_font), "IP: %s", id(wifi_ip).state.c_str());
-          // BLE scanner state (Idle/Starting/Running/Stopping/Failed, real
-          // esp32_ble_tracker enum) plus whether HA currently has this
-          // device claimed as its active proxy (BluetoothProxy::
-          // get_api_connection() - null until HA's Bluetooth integration
-          // actually picks this device as a proxy, even if scanning locally
-          // is already running).
-          auto bt_state = esphome::esp32_ble_tracker::global_esp32_ble_tracker->get_scanner_state();
-          const char *bt_str;
-          if (bt_state == esphome::esp32_ble_tracker::ScannerState::FAILED) {
-            bt_str = "Failed";
-          } else if (id(ble_proxy)->get_api_connection() != nullptr) {
-            bt_str = "Proxying";
-          } else {
-            switch (bt_state) {
-              case esphome::esp32_ble_tracker::ScannerState::IDLE: bt_str = "Idle"; break;
-              case esphome::esp32_ble_tracker::ScannerState::STARTING: bt_str = "Starting"; break;
-              case esphome::esp32_ble_tracker::ScannerState::RUNNING: bt_str = "Running"; break;
-              case esphome::esp32_ble_tracker::ScannerState::STOPPING: bt_str = "Stopping"; break;
-              default: bt_str = "?"; break;
-            }
-          }
-          it.printf(0, 40, id(my_font), "BT: %s", bt_str);
+          ${bt_status_line}
 
 # Cycle through each cover's page automatically.
 interval:
