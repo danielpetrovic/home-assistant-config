@@ -43,43 +43,43 @@ esphome:
       name: "Roof Terrace"
   devices:
     - id: bedroom_device
-      name: "Curtain"
+      name: "Bedroom Curtain"
       area_id: bedroom_area
     - id: gameroom_left_1_device
-      name: "Left 1 Shade"
+      name: "Gameroom Left 1 Shade"
       area_id: gameroom_area
     - id: gameroom_left_2_device
-      name: "Left 2 Shade"
+      name: "Gameroom Left 2 Shade"
       area_id: gameroom_area
     - id: gameroom_right_1_device
-      name: "Right 1 Shade"
+      name: "Gameroom Right 1 Shade"
       area_id: gameroom_area
     - id: gameroom_right_2_device
-      name: "Right 2 Shade"
+      name: "Gameroom Right 2 Shade"
       area_id: gameroom_area
     - id: garden_device
-      name: "Shade"
+      name: "Garden Shade"
       area_id: garden_area
     - id: gym_device
-      name: "Curtain"
+      name: "Gym Curtain"
       area_id: gym_area
     - id: hallway_device
-      name: "Shade"
+      name: "Hallway Shade"
       area_id: hallway_area
     - id: kitchen_device
-      name: "Shade"
+      name: "Kitchen Shade"
       area_id: kitchen_area
     - id: living_room_device
-      name: "Shade"
+      name: "Living Room Shade"
       area_id: living_room_area
     - id: office_left_device
-      name: "Left Shade"
+      name: "Office Left Shade"
       area_id: office_area
     - id: office_right_device
-      name: "Right Shade"
+      name: "Office Right Shade"
       area_id: office_area
     - id: roof_terrace_device
-      name: "Shade"
+      name: "Roof Terrace Shade"
       area_id: roof_terrace_area
 
 esp32:
