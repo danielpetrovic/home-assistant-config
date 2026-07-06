@@ -272,6 +272,7 @@ text_sensor:
 esp32_ble_tracker:
 
 bluetooth_proxy:
+  id: ble_proxy
 
 # Diagnostic-only entities on the hub device: signal quality, uptime, and a
 # remote restart, in case something needs troubleshooting without opening the
