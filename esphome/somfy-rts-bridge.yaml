@@ -94,11 +94,11 @@ wifi:
 
 api:
   encryption:
-    key: !secret somfy_rts_bridge_api_key
+    key: !secret rts_bridge_api_key
 
 ota:
   - platform: esphome
-    password: !secret somfy_rts_bridge_ota_password
+    password: !secret rts_bridge_ota_password
 
 logger:
 
