@@ -1,10 +1,10 @@
 # Reusable per-cover package for the Somfy RTS bridge.
 # Included once per physical shade/curtain from somfy-rts-bridge.yaml with a
 # unique `cover_id` (used to build entity/component IDs), `cover_name`
-# (documentation only, the actual displayed name comes from the matching
-# entry in the main file's `esphome.devices` list, see the note there about
-# why device names are generic/room-less), `remote_address` (unique 24-bit
-# Somfy remote address, never reuse across covers), `device_class` (shade or
+# (documentation only - keep it identical to the matching entry's `name:` in
+# the main file's `esphome.devices` list, see the note there about why
+# device names include the room), `remote_address` (unique 24-bit Somfy
+# remote address, never reuse across covers), `device_class` (shade or
 # curtain), and optionally `travel_time_open`/`travel_time_close` (seconds,
 # just the initial default for the Travel Time Open/Close number entities -
 # only used in "Timed" mode, see below).
