@@ -202,6 +202,8 @@ cover:
             id(${cover_id}_target_position) = pos;
             int dir = (pos > current) ? 1 : -1;
             id(${cover_id}_move_direction) = dir;
+            id(${cover_id}_cover)->current_operation = dir > 0 ? cover::COVER_OPERATION_OPENING : cover::COVER_OPERATION_CLOSING;
+            id(${cover_id}_cover)->publish_state();
             id(${cover_id}_remote)->send_command(dir > 0 ? somfy::SOMFY_UP : somfy::SOMFY_DOWN, 1);
           } else {
             id(${cover_id}_remote)->send_command(somfy::SOMFY_MY, 1);
