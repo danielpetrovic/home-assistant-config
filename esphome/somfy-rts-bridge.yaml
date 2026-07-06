@@ -152,97 +152,97 @@ external_components:
       ref: main
     refresh: 5min
 
-# One package instance per physical RTS cover, see somfy_rts_cover.yaml for
+# One package instance per physical RTS cover, see somfy-rts-cover.yaml for
 # the shared logic (0%=DOWN, 50%=MY, 100%=UP, no time-based estimation).
 # remote_address must be unique per cover and is never reused once paired,
 # each is a fresh random 24-bit value.
 packages:
   bedroom: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: bedroom
       cover_name: "Bedroom Curtain"
       remote_address: "0xc2dd23"
       device_class: curtain
   gameroom_left_1: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: gameroom_left_1
       cover_name: "Gameroom Left 1 Shade"
       remote_address: "0x1632f7"
       device_class: shade
   gameroom_left_2: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: gameroom_left_2
       cover_name: "Gameroom Left 2 Shade"
       remote_address: "0xa210e7"
       device_class: shade
   gameroom_right_1: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: gameroom_right_1
       cover_name: "Gameroom Right 1 Shade"
       remote_address: "0xdb7091"
       device_class: shade
   gameroom_right_2: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: gameroom_right_2
       cover_name: "Gameroom Right 2 Shade"
       remote_address: "0xb829ab"
       device_class: shade
   garden: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: garden
       cover_name: "Garden Shade"
       remote_address: "0x3a23e7"
       device_class: shade
   gym: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: gym
       cover_name: "Gym Curtain"
       remote_address: "0xdbd983"
       device_class: curtain
   hallway: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: hallway
       cover_name: "Hallway Shade"
       remote_address: "0x400b41"
       device_class: shade
   kitchen: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: kitchen
       cover_name: "Kitchen Shade"
       remote_address: "0x147853"
       device_class: shade
   living_room: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: living_room
       cover_name: "Living Room Shade"
       remote_address: "0x430281"
       device_class: shade
   office_left: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: office_left
       cover_name: "Office Left Shade"
       remote_address: "0xf7efc1"
       device_class: shade
   office_right: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: office_right
       cover_name: "Office Right Shade"
       remote_address: "0xb16420"
       device_class: shade
   roof_terrace: !include
-    file: somfy_rts_cover.yaml
+    file: somfy-rts-cover.yaml
     vars:
       cover_id: roof_terrace
       cover_name: "Roof Terrace Shade"
