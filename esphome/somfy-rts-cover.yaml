@@ -127,6 +127,8 @@ cover:
             id(${cover_id}_move_start_ms) = millis();
             id(${cover_id}_move_direction) = 1;
             id(${cover_id}_target_position) = -1.0f;
+            id(${cover_id}_cover)->current_operation = cover::COVER_OPERATION_OPENING;
+            id(${cover_id}_cover)->publish_state();
           } else {
             id(${cover_id}_position) = 1.0f;
           }
@@ -141,6 +143,8 @@ cover:
             id(${cover_id}_move_start_ms) = millis();
             id(${cover_id}_move_direction) = -1;
             id(${cover_id}_target_position) = -1.0f;
+            id(${cover_id}_cover)->current_operation = cover::COVER_OPERATION_CLOSING;
+            id(${cover_id}_cover)->publish_state();
           } else {
             id(${cover_id}_position) = 0.0f;
           }
