@@ -5,7 +5,7 @@ esphome:
   name: somfy-rts-bridge
   friendly_name: Somfy RTS Bridge
   project:
-    name: "danielpetrovic.somfy_rts_bridge"
+    name: "danielpetrovic.Somfy RTS Bridge"
     version: "2026.07.2"
   # Sub-devices: each cover shows up as its own HA device (matching Overkiz's
   # per-shade/curtain granularity) instead of all bundled under the physical
