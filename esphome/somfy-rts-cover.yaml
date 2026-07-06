@@ -122,7 +122,7 @@ cover:
       return id(${cover_id}_position);
     open_action:
       - lambda: |-
-          if (id(${cover_id}_mode).state == "Timed") {
+          if (std::string(id(${cover_id}_mode).current_option()) == "Timed") {
             id(${cover_id}_move_start_position) = id(${cover_id}_position);
             id(${cover_id}_move_start_ms) = millis();
             id(${cover_id}_move_direction) = 1;
@@ -138,7 +138,7 @@ cover:
           repeat: 1
     close_action:
       - lambda: |-
-          if (id(${cover_id}_mode).state == "Timed") {
+          if (std::string(id(${cover_id}_mode).current_option()) == "Timed") {
             id(${cover_id}_move_start_position) = id(${cover_id}_position);
             id(${cover_id}_move_start_ms) = millis();
             id(${cover_id}_move_direction) = -1;
@@ -157,7 +157,7 @@ cover:
     # idle - sent unconditionally either way, matching real remote behavior.
     stop_action:
       - lambda: |-
-          if (id(${cover_id}_mode).state == "Timed") {
+          if (std::string(id(${cover_id}_mode).current_option()) == "Timed") {
             // Only touch the estimate if actually moving - matches the IO
             // bridge's own Mode::TIMED Stop handling (freeze at the current
             // estimate, don't force a fixed label like "My" mode does).
@@ -193,7 +193,7 @@ cover:
     # the interval: below auto-stops (sends MY) once the estimate reaches it.
     position_action:
       - lambda: |-
-          if (id(${cover_id}_mode).state == "Timed") {
+          if (std::string(id(${cover_id}_mode).current_option()) == "Timed") {
             float current = id(${cover_id}_position);
             float diff = pos > current ? pos - current : current - pos;
             if (diff < 0.01f) return; // already there, no-op
