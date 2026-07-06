@@ -1,0 +1,314 @@
+/*
+   Copyright (c) 2024. CRIDP https://github.com/cridp
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+           http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+#include "iohc_remote1w.h"
+#include "iohcCryptoHelpers.h"
+#include "esphome/core/log.h"
+#include <esp_system.h>
+#include <cstring>
+
+namespace IOHC {
+
+    static const char *const TAG = "iohc.remote1w";
+
+    // ESP32 NVS namespace names are capped at 15 chars. Rather than require
+    // every cover's YAML id to fit that, hash it down to a short, fixed,
+    // deterministic namespace - collision risk is negligible for the handful
+    // of covers a single bridge will ever manage.
+    static std::string nvs_namespace_for(const std::string &pref_namespace) {
+        size_t h = std::hash<std::string>{}(pref_namespace);
+        char buf[11];
+        snprintf(buf, sizeof(buf), "io%08x", static_cast<unsigned>(h));
+        return std::string(buf);
+    }
+
+    void IOHCRemote1W::begin(iohcRadio *radio, const std::string &pref_namespace, const std::string &fixed_node_hex,
+                              const std::string &fixed_key_hex) {
+        radio_ = radio;
+        pref_namespace_ = nvs_namespace_for(pref_namespace);
+        has_fixed_identity_ = !fixed_node_hex.empty() && !fixed_key_hex.empty();
+        if (has_fixed_identity_) {
+            hexStringToBytes(fixed_node_hex, node_);
+            hexStringToBytes(fixed_key_hex, key_);
+        }
+        load_or_generate_identity();
+    }
+
+    void IOHCRemote1W::load_or_generate_identity() {
+        prefs_.begin(pref_namespace_.c_str(), false);
+
+        if (has_fixed_identity_) {
+            // node_/key_ already set directly from YAML/secrets.yaml in
+            // begin() - only sequence/paired still need to persist. If this
+            // is a replacement board, sequence resets to 1: the motor may
+            // reject one stale-looking command before accepting the new
+            // counter, but node/key (what actually determines bonding)
+            // are unchanged, so no re-pairing is needed.
+            sequence_ = prefs_.getUShort("seq", 1);
+            paired_ = prefs_.getBool("paired", false);
+            ESP_LOGCONFIG(TAG, "Using fixed identity %02X%02X%02X from YAML (seq=%u, paired=%s)", node_[0], node_[1],
+                          node_[2], sequence_, paired_ ? "yes" : "no");
+            return;
+        }
+
+        if (prefs_.isKey("node") && prefs_.getBytesLength("node") == sizeof(node_) &&
+            prefs_.isKey("key") && prefs_.getBytesLength("key") == sizeof(key_)) {
+            prefs_.getBytes("node", node_, sizeof(node_));
+            prefs_.getBytes("key", key_, sizeof(key_));
+            sequence_ = prefs_.getUShort("seq", 1);
+            paired_ = prefs_.getBool("paired", false);
+            ESP_LOGCONFIG(TAG, "Loaded bonded identity %02X%02X%02X (seq=%u, paired=%s)", node_[0], node_[1],
+                          node_[2], sequence_, paired_ ? "yes" : "no");
+            return;
+        }
+
+        // First boot for this cover: generate a fresh virtual remote identity,
+        // same approach as upstream's addRemote() (random node address, random
+        // key). Node uniqueness against other bonded remotes isn't checked
+        // here since each cover has its own NVS namespace, not a shared list.
+        for (uint8_t &b : node_) b = esp_random() & 0xff;
+        for (uint8_t &b : key_) b = esp_random() & 0xff;
+        sequence_ = 1;
+        paired_ = false;
+
+        prefs_.putBytes("node", node_, sizeof(node_));
+        prefs_.putBytes("key", key_, sizeof(key_));
+        prefs_.putUShort("seq", sequence_);
+        prefs_.putBool("paired", paired_);
+        ESP_LOGCONFIG(TAG, "Generated new virtual remote identity %02X%02X%02X", node_[0], node_[1], node_[2]);
+    }
+
+    void IOHCRemote1W::bump_and_persist_sequence() {
+        sequence_ += 1;
+        prefs_.putUShort("seq", sequence_);
+    }
+
+    // Ported near-verbatim from iohcRemote1W::forgePacket().
+    void IOHCRemote1W::forge_packet(iohcPacket *packet) {
+        IOHC::relStamp = esp_timer_get_time();
+
+        packet->payload.packet.header.CtrlByte1.asStruct.MsgLen = sizeof(_header) - 1;
+        packet->payload.packet.header.CtrlByte1.asStruct.Protocol = 1;
+        packet->payload.packet.header.CtrlByte1.asStruct.StartFrame = 1;
+        packet->payload.packet.header.CtrlByte1.asStruct.EndFrame = 1;
+        packet->payload.packet.header.CtrlByte2.asByte = 0;
+        packet->payload.packet.header.CtrlByte2.asStruct.LPM = 1;
+
+        // Broadcast Target (by device type/group, not a specific unicast
+        // device address - see the type_ comment in the header).
+        uint16_t bcast = (static_cast<uint16_t>(type_) << 6) + 0b111111;
+        packet->payload.packet.header.target[0] = 0x00;
+        packet->payload.packet.header.target[1] = bcast >> 8;
+        packet->payload.packet.header.target[2] = bcast & 0x00ff;
+
+        for (size_t i = 0; i < sizeof(address); i++) packet->payload.packet.header.source[i] = node_[i];
+
+        packet->frequency = CHANNEL2;
+        packet->repeatTime = 40; // 40ms
+        packet->repeat = 4;
+        packet->lock = false;
+    }
+
+    void IOHCRemote1W::cmd(RemoteButton button, int percent) {
+        position_tracker_.update();
+
+        switch (button) {
+            case RemoteButton::Pair:
+            case RemoteButton::Remove: {
+                // 0x2e / 0x39: NOT an HMAC-signed frame - the vendored
+                // iohcPacket.h's _p0x2e struct (data+sequence[2]+hmac[6], 9
+                // bytes) contradicts Velocet/iown-homecontrol's independent
+                // protocol reference (commands.md, built from real captured
+                // traffic), which documents both 0x2e ("Unknown", TaHoma/
+                // Sauter heater observed) and 0x39 ("Remove 1W Controller")
+                // as a bare 2-byte frame: cmd + one data byte (0x00
+                // observed), no sequence, no HMAC. A real motor receiving 7
+                // extra bytes it doesn't expect would very plausibly just
+                // ignore the frame - matches the observed real-world symptom
+                // (Unpair had no effect, motor kept responding to Open/
+                // Close/Stop from the "removed" identity). Sequence is not
+                // bumped here since this frame doesn't carry one.
+                auto *packet = new iohcPacket;
+                forge_packet(packet);
+                packet->payload.packet.header.CtrlByte1.asStruct.MsgLen += 1;
+                packet->payload.packet.header.cmd = (button == RemoteButton::Pair) ? 0x2e : 0x39;
+
+                packet->payload.packet.msg.p0x2e.data = 0x00;
+
+                packet->buffer_length = packet->payload.packet.header.CtrlByte1.asStruct.MsgLen + 1;
+
+                std::vector<iohcPacket *> packets2send{packet};
+                radio_->send(packets2send);
+
+                paired_ = (button == RemoteButton::Pair);
+                prefs_.putBool("paired", paired_);
+                ESP_LOGI(TAG, "%s sent to %02X%02X%02X", button == RemoteButton::Pair ? "Pair" : "Remove", node_[0],
+                         node_[1], node_[2]);
+                break;
+            }
+
+            case RemoteButton::Add: {
+                // 0x30: transmits our AES-encrypted key to the motor. Only
+                // accepted while the motor is in its own physical
+                // pairing/listen window.
+                auto *packet = new iohcPacket;
+                forge_packet(packet);
+                packet->payload.packet.header.CtrlByte1.asStruct.MsgLen += sizeof(_p0x30);
+                packet->payload.packet.header.cmd = 0x30;
+
+                uint8_t enc_key[16];
+                memcpy(enc_key, key_, 16);
+                iohcCrypto::encrypt_1W_key(node_, enc_key);
+                memcpy(packet->payload.packet.msg.p0x30.enc_key, enc_key, 16);
+
+                packet->payload.packet.msg.p0x30.man_id = manufacturer_;
+                packet->payload.packet.msg.p0x30.data = 0x01;
+                packet->payload.packet.msg.p0x30.sequence[0] = sequence_ >> 8;
+                packet->payload.packet.msg.p0x30.sequence[1] = sequence_ & 0x00ff;
+                bump_and_persist_sequence();
+
+                packet->buffer_length = packet->payload.packet.header.CtrlByte1.asStruct.MsgLen + 1;
+
+                std::vector<iohcPacket *> packets2send{packet};
+                radio_->send(packets2send);
+
+                paired_ = true;
+                prefs_.putBool("paired", paired_);
+                ESP_LOGI(TAG, "Add sent to %02X%02X%02X", node_[0], node_[1], node_[2]);
+                break;
+            }
+
+            case RemoteButton::Open:
+            case RemoteButton::Close:
+            case RemoteButton::Stop:
+            case RemoteButton::Position: {
+                // 0x00: Open/Close/Stop/Position all share this cmd byte -
+                // the button identity is encoded in the "main" payload byte,
+                // confirmed empirically against a real Situo remote: Open
+                // main=0x00, Close main=0xc8, Stop main=0xd2.
+                auto *packet = new iohcPacket;
+                forge_packet(packet);
+                packet->payload.packet.header.cmd = 0x00;
+                packet->payload.packet.msg.p0x00_14.origin = 0x01; // 0x01 = User
+                setAcei(packet->payload.packet.msg.p0x00_14.acei, 0x43);
+
+                // Companion cmd=0x20 frame fp1 value: real captures show the
+                // Situo remote always follows the primary frame with a
+                // second cmd=0x20 confirmation frame, identical except fp1 -
+                // 0x00 for Open/Close, 0x02 for Stop/My. Both frames come
+                // from a real device, so this is empirical, not guessed. Set
+                // to -1 for commands we have no captured companion sample
+                // for (Position), meaning no companion frame gets sent.
+                int companion_fp1 = -1;
+
+                switch (button) {
+                    case RemoteButton::Open:
+                        packet->payload.packet.msg.p0x00_14.main[0] = 0x00;
+                        packet->payload.packet.msg.p0x00_14.main[1] = 0x00;
+                        position_tracker_.startOpening();
+                        companion_fp1 = 0x00;
+                        break;
+                    case RemoteButton::Close:
+                        packet->payload.packet.msg.p0x00_14.main[0] = 0xc8;
+                        packet->payload.packet.msg.p0x00_14.main[1] = 0x00;
+                        position_tracker_.startClosing();
+                        companion_fp1 = 0x00;
+                        break;
+                    case RemoteButton::Stop:
+                        packet->payload.packet.msg.p0x00_14.main[0] = 0xd2;
+                        packet->payload.packet.msg.p0x00_14.main[1] = 0x00;
+                        position_tracker_.stop();
+                        companion_fp1 = 0x02;
+                        break;
+                    case RemoteButton::Position: {
+                        int p = percent < 0 ? 0 : (percent > 100 ? 100 : percent);
+                        // Upstream's own formula is (100-p)*2, but a real test
+                        // against this hardware (75% requested -> TaHoma showed
+                        // the motor at 51%, matching the raw un-doubled byte 50
+                        // far better than the *2 formula's own 25) suggests this
+                        // motor firmware takes main[0] as a direct percentage,
+                        // not a doubled one. Needs confirming with another test.
+                        uint8_t val = static_cast<uint8_t>(100 - p);
+                        packet->payload.packet.msg.p0x00_14.main[0] = val;
+                        packet->payload.packet.msg.p0x00_14.main[1] = 0x00;
+                        float current = position_tracker_.getPosition();
+                        if (p > current + 0.5f)
+                            position_tracker_.startOpening();
+                        else if (p < current - 0.5f)
+                            position_tracker_.startClosing();
+                        else
+                            position_tracker_.stop();
+                        break;
+                    }
+                    default:
+                        break;
+                }
+
+                packet->payload.packet.header.CtrlByte1.asStruct.MsgLen += sizeof(_p0x00_14);
+                packet->payload.packet.msg.p0x00_14.sequence[0] = sequence_ >> 8;
+                packet->payload.packet.msg.p0x00_14.sequence[1] = sequence_ & 0x00ff;
+                bump_and_persist_sequence();
+
+                uint8_t hmac[16];
+                std::vector<uint8_t> frame(&packet->payload.packet.header.cmd, &packet->payload.packet.header.cmd + 7);
+                iohcCrypto::create_1W_hmac(hmac, packet->payload.packet.msg.p0x00_14.sequence, key_, frame);
+                for (uint8_t i = 0; i < 6; i++) packet->payload.packet.msg.p0x00_14.hmac[i] = hmac[i];
+
+                packet->buffer_length = packet->payload.packet.header.CtrlByte1.asStruct.MsgLen + 1;
+
+                std::vector<iohcPacket *> packets2send{packet};
+
+                if (companion_fp1 >= 0) {
+                    // cmd=0x20 confirmation frame the real remote always
+                    // sends right after the primary one - see companion_fp1
+                    // comment above for what's empirical vs assumed here.
+                    auto *companion = new iohcPacket;
+                    forge_packet(companion);
+                    companion->payload.packet.header.cmd = 0x20;
+                    companion->payload.packet.header.CtrlByte1.asStruct.MsgLen += sizeof(_p0x20_16);
+
+                    companion->payload.packet.msg.p0x20_16.origin = 0x02;
+                    setAcei(companion->payload.packet.msg.p0x20_16.acei, 0xff);
+                    companion->payload.packet.msg.p0x20_16.main[0] = 0x01;
+                    companion->payload.packet.msg.p0x20_16.main[1] = 0x43;
+                    companion->payload.packet.msg.p0x20_16.fp1 = static_cast<uint8_t>(companion_fp1);
+                    companion->payload.packet.msg.p0x20_16.fp2 = 0x0c;
+                    companion->payload.packet.msg.p0x20_16.data[0] = 0x00;
+                    companion->payload.packet.msg.p0x20_16.data[1] = 0x00;
+                    companion->payload.packet.msg.p0x20_16.sequence[0] = sequence_ >> 8;
+                    companion->payload.packet.msg.p0x20_16.sequence[1] = sequence_ & 0x00ff;
+                    bump_and_persist_sequence();
+
+                    uint8_t companion_hmac[16];
+                    std::vector<uint8_t> companion_frame(&companion->payload.packet.header.cmd,
+                                                          &companion->payload.packet.header.cmd + 9);
+                    iohcCrypto::create_1W_hmac(companion_hmac, companion->payload.packet.msg.p0x20_16.sequence, key_,
+                                                companion_frame);
+                    for (uint8_t i = 0; i < 6; i++) companion->payload.packet.msg.p0x20_16.hmac[i] = companion_hmac[i];
+
+                    companion->buffer_length = companion->payload.packet.header.CtrlByte1.asStruct.MsgLen + 1;
+                    packets2send.push_back(companion);
+                }
+
+                radio_->send(packets2send);
+
+                ESP_LOGI(TAG, "Command sent to %02X%02X%02X, position now %.0f%%", node_[0], node_[1], node_[2],
+                         position_tracker_.getPosition());
+                break;
+            }
+        }
+    }
+}
