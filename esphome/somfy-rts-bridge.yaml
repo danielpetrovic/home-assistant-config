@@ -297,6 +297,29 @@ font:
     id: my_font
     size: 14
 
+# Shared 3rd OLED line (y=40, unused by every cover page below) - substituted
+# verbatim into each page's lambda so the BLE status snippet is defined once
+# instead of duplicated 13 times. See the bluetooth_proxy: comment above for
+# what "Proxying" vs the raw scanner states mean.
+substitutions:
+  bt_status_line: |-
+    auto bt_state = esphome::esp32_ble_tracker::global_esp32_ble_tracker->get_scanner_state();
+    const char *bt_str;
+    if (bt_state == esphome::esp32_ble_tracker::ScannerState::FAILED) {
+      bt_str = "Failed";
+    } else if (id(ble_proxy)->get_api_connection() != nullptr) {
+      bt_str = "Proxying";
+    } else {
+      switch (bt_state) {
+        case esphome::esp32_ble_tracker::ScannerState::IDLE: bt_str = "Idle"; break;
+        case esphome::esp32_ble_tracker::ScannerState::STARTING: bt_str = "Starting"; break;
+        case esphome::esp32_ble_tracker::ScannerState::RUNNING: bt_str = "Running"; break;
+        case esphome::esp32_ble_tracker::ScannerState::STOPPING: bt_str = "Stopping"; break;
+        default: bt_str = "?"; break;
+      }
+    }
+    it.printf(0, 40, id(my_font), "BT: %s", bt_str);
+
 display:
   - platform: ssd1306_i2c
     id: oled
