@@ -14,14 +14,16 @@ esphome:
   # area names below must match existing HA areas exactly to link up instead
   # of creating duplicates.
   #
-  # Device names deliberately do NOT include the room name (e.g. "Curtain",
-  # not "Bedroom Curtain"). HA core 2026.6 (PR #170560, "Prefix area to
-  # entity ID") now auto-prefixes the Area name onto generated entity_ids.
-  # Repeating the room in the device name too caused doubled/tripled slugs
-  # like cover.bedroom_bedroom_curtain_bedroom_curtain. Area + generic device
-  # name combine to the same clean result (e.g. Bedroom + "Curtain" displays
-  # as "Bedroom Curtain", entity_id cover.bedroom_curtain) without the agent
-  # duplicating what the Area prefix already adds.
+  # Device names DO include the room name (e.g. "Bedroom Curtain", not just
+  # "Curtain"). Previously left generic, relying on HA core 2026.6's
+  # auto-prefix-Area-onto-entity_id feature (PR #170560) to combine Area +
+  # generic device name into the full display text - but that auto-prefixing
+  # turned out unreliable in practice (confirmed independently: the existing
+  # Overkiz integration's own entities show the same doubled-name symptom
+  # this was meant to avoid), so relying on it wasn't actually buying
+  # anything. Any resulting entity_id redundancy (e.g.
+  # cover.bedroom_bedroom_curtain) is cosmetic only - this is an HA-side
+  # slug-generation quirk, not something fixable from here.
   areas:
     - id: bedroom_area
       name: "Bedroom"
