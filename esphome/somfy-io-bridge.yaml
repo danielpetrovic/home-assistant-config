@@ -1,0 +1,131 @@
+# Phase 0/1: prove real io-homecontrol reception. No TX, no AES/pairing, no
+# channel hopping yet.
+#
+# This bridge is a thin ESPHome wrapper around a vendored port of the actual
+# working https://github.com/rspaargaren/iohomecontrol firmware (Apache-2.0),
+# not a from-scratch reimplementation - see components/iohc/ and its
+# __init__.py for why (two earlier from-scratch attempts each had subtle,
+# self-inflicted register/timing bugs that this real code doesn't have).
+#
+# Requires the `arduino` framework (not esp-idf, used by the sibling RTS
+# bridge): the vendored code uses Arduino's SPI.h/attachInterrupt/digitalWrite
+# directly. Pins are fixed in components/iohc/board-config.h, not exposed
+# here - see that file for exactly why (upstream's own generic "LILYGO" pin
+# block lists the wrong reset pin for this exact board revision).
+esphome:
+  name: somfy-io-bridge
+  friendly_name: Somfy IO Bridge
+  project:
+    name: "danielpetrovic.Somfy IO Bridge"
+    version: "2026.07.1"
+  # The vendored radio stack talks to the SX1276 directly via Arduino's SPI
+  # library, and the Phase 2 pairing/command layer persists bonded remote
+  # identities via Arduino's Preferences (NVS) library. Neither gets picked
+  # up automatically by PlatformIO's library dependency finder from a local
+  # external_component's #include - declared explicitly here (maps to
+  # cg.add_library(name, None) in ESPHome core).
+  libraries:
+    - SPI
+    - Preferences
+  # Sub-devices: each cover shows up as its own HA device, same pattern as
+  # the sibling RTS bridge (matches Overkiz's per-shade/curtain granularity).
+  # Anything NOT assigned a device_id (OLED, Wi-Fi/IP sensor) stays on the
+  # main "Somfy IO Bridge" device, the hub. Device names are generic/type-
+  # based ("Shutter"), not room-based - see the RTS bridge's comment on why
+  # (HA auto-prefixes the Area name onto the device name already).
+  # area names below must match existing HA areas exactly to link up instead
+  # of creating duplicates.
+  areas:
+    - id: garden_area
+      name: "Garden"
+    - id: office_area
+      name: "Office"
+  devices:
+    - id: garden_shutter_io_device
+      name: "Shutter"
+      area_id: garden_area
+    - id: office_shutter_io_device
+      name: "Shutter"
+      area_id: office_area
+
+esp32:
+  board: ttgo-lora32-v1
+  framework:
+    type: arduino
+
+# Wi-Fi + API + OTA, fill in secrets.yaml before flashing
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+api:
+  encryption:
+    key: !secret io_bridge_api_key
+
+ota:
+  - platform: esphome
+    password: !secret io_bridge_ota_password
+
+logger:
+
+external_components:
+  - source:
+      type: local
+      path: components
+
+iohc:
+  id: iohc_hub
+
+# One package instance per physical IO cover, see somfy-io-cover.yaml for
+# what each instance creates (cover + Pair/Unpair buttons + Mode select) and
+# what each substitution var means. `${cover_id}_device` must exist in the
+# devices list above, this is what makes each cover show up as its own HA
+# device. Adding a cover this way does not transmit anything by itself -
+# IOHCCover::setup() only loads/generates a virtual remote identity via
+# Preferences, it doesn't touch the radio. Only pressing a cover's own
+# "Pair" button (once the motor is physically in its pairing window - hold
+# PROG on the existing working remote until it jogs), or calling
+# open/close/stop/set-position on the cover, actually transmits.
+#
+# broadcast_type defaults to 0 ("All") - unconfirmed against these specific
+# motors, see iohc_remote1w.h. If Add doesn't take, the next thing to try is
+# broadcast_type: 6, the other group observed in this remote's own traffic.
+packages:
+  garden_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: garden_shutter_io
+      cover_name: "Garden Shutter"
+      node: !secret io_garden_shutter_node
+      key: !secret io_garden_shutter_key
+  office_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: office_shutter_io
+      cover_name: "Office Shutter"
+
+# Onboard SSD1306 128x64 OLED (same pins/model as the RTS bridge)
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address"
+      id: wifi_ip
+
+font:
+  - file: "gfonts://Roboto"
+    id: my_font
+    size: 14
+
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    address: 0x3C
+    lambda: |-
+      it.printf(0, 0, id(my_font), "Somfy IO Bridge");
+      it.printf(0, 20, id(my_font), "Pkts: %u  RSSI: %.0f", id(iohc_hub)->get_packets_received(),
+                id(iohc_hub)->get_last_rssi());
+      it.printf(0, 40, id(my_font), "IP: %s", id(wifi_ip).state.c_str());
