@@ -243,7 +243,11 @@ interval:
             id(${cover_id}_remote)->send_command(somfy::SOMFY_MY, 1);
             id(${cover_id}_move_direction) = 0;
             id(${cover_id}_target_position) = -1.0f;
+            id(${cover_id}_cover)->current_operation = cover::COVER_OPERATION_IDLE;
+            id(${cover_id}_cover)->publish_state();
           } else if (reached_limit) {
             id(${cover_id}_move_direction) = 0;
             id(${cover_id}_target_position) = -1.0f;
+            id(${cover_id}_cover)->current_operation = cover::COVER_OPERATION_IDLE;
+            id(${cover_id}_cover)->publish_state();
           }
