@@ -359,6 +359,28 @@ display:
         lambda: |-
           it.printf(0, 0, id(my_font), "Somfy RTS Bridge");
           it.printf(0, 20, id(my_font), "IP: %s", id(wifi_ip).state.c_str());
+          // BLE scanner state (Idle/Starting/Running/Stopping/Failed, real
+          // esp32_ble_tracker enum) plus whether HA currently has this
+          // device claimed as its active proxy (BluetoothProxy::
+          // get_api_connection() - null until HA's Bluetooth integration
+          // actually picks this device as a proxy, even if scanning locally
+          // is already running).
+          auto bt_state = esphome::esp32_ble_tracker::global_esp32_ble_tracker->get_scanner_state();
+          const char *bt_str;
+          if (bt_state == esphome::esp32_ble_tracker::ScannerState::FAILED) {
+            bt_str = "Failed";
+          } else if (id(ble_proxy)->get_api_connection() != nullptr) {
+            bt_str = "Proxying";
+          } else {
+            switch (bt_state) {
+              case esphome::esp32_ble_tracker::ScannerState::IDLE: bt_str = "Idle"; break;
+              case esphome::esp32_ble_tracker::ScannerState::STARTING: bt_str = "Starting"; break;
+              case esphome::esp32_ble_tracker::ScannerState::RUNNING: bt_str = "Running"; break;
+              case esphome::esp32_ble_tracker::ScannerState::STOPPING: bt_str = "Stopping"; break;
+              default: bt_str = "?"; break;
+            }
+          }
+          it.printf(0, 40, id(my_font), "BT: %s", bt_str);
 
 # Cycle through each cover's page automatically.
 interval:
