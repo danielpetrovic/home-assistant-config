@@ -119,6 +119,18 @@ cover::CoverTraits IOHCCover::get_traits() {
   return traits;
 }
 
+void IOHCCover::press_my() {
+  remote_.cmd(IOHC::RemoteButton::Vent);
+  if (mode_ == Mode::MY) {
+    this->position = 0.5f;
+    cover_prefs_.putFloat("position", 0.5f);
+  } else {
+    target_position_ = -1.0f;
+  }
+  this->current_operation = cover::COVER_OPERATION_IDLE;
+  this->publish_state();
+}
+
 void IOHCCover::control(const cover::CoverCall &call) {
   if (mode_ == Mode::TWO_WAY) {
     ESP_LOGW(TAG, "2W mode selected but not implemented yet - command ignored");
@@ -145,9 +157,14 @@ void IOHCCover::control(const cover::CoverCall &call) {
   int percent = static_cast<int>(lroundf(target * 100.0f));
 
   if (mode_ == Mode::MY) {
-    // Matches the RTS bridge's own model exactly: 3 discrete states, any
-    // intermediate request maps to the physical MY/Stop button - no
-    // time-based estimation, no drift.
+    // 3 discrete states, any intermediate request maps to the "My"/favorite
+    // position. Unlike RTS (where My and Stop are genuinely the same
+    // physical button), IO's real "My" is a distinct command (Vent,
+    // main=0xd8) from Stop (main=0xd2) - confirmed via a live capture of a
+    // real TaHoma "My" press. Stop only does something while the motor is
+    // actively moving, which is why this previously did nothing when the
+    // cover was already idle. The dedicated Stop button above (call.get_stop())
+    // still sends real Stop, for interrupting an in-progress move.
     if (percent >= 100) {
       remote_.cmd(IOHC::RemoteButton::Open);
       this->position = 1.0f;
@@ -155,7 +172,7 @@ void IOHCCover::control(const cover::CoverCall &call) {
       remote_.cmd(IOHC::RemoteButton::Close);
       this->position = 0.0f;
     } else {
-      remote_.cmd(IOHC::RemoteButton::Stop);
+      remote_.cmd(IOHC::RemoteButton::Vent);
       this->position = 0.5f;
     }
     cover_prefs_.putFloat("position", this->position);

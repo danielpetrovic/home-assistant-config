@@ -1,5 +1,6 @@
-# Phase 0/1: prove real io-homecontrol reception. No TX, no AES/pairing, no
-# channel hopping yet.
+# Somfy IO (io-homecontrol) bridge. 1W (one-way) commands only: pairing,
+# Open/Close/Stop/My/Position/Identify - see README.md for full status. 2W
+# (two-way, real position feedback, channel hopping) not implemented yet.
 #
 # This bridge is a thin ESPHome wrapper around a vendored port of the actual
 # working https://github.com/rspaargaren/iohomecontrol firmware (Apache-2.0),
@@ -17,7 +18,7 @@ esphome:
   friendly_name: Somfy IO Bridge
   project:
     name: "danielpetrovic.Somfy IO Bridge"
-    version: "2026.07.1"
+    version: "2026.07.2"
   # The vendored radio stack talks to the SX1276 directly via Arduino's SPI
   # library, and the Phase 2 pairing/command layer persists bonded remote
   # identities via Arduino's Preferences (NVS) library. Neither gets picked
@@ -30,23 +31,79 @@ esphome:
   # Sub-devices: each cover shows up as its own HA device, same pattern as
   # the sibling RTS bridge (matches Overkiz's per-shade/curtain granularity).
   # Anything NOT assigned a device_id (OLED, Wi-Fi/IP sensor) stays on the
-  # main "Somfy IO Bridge" device, the hub. Device names are generic/type-
-  # based ("Shutter"), not room-based - see the RTS bridge's comment on why
-  # (HA auto-prefixes the Area name onto the device name already).
+  # main "Somfy IO Bridge" device, the hub.
+  # Device names DO include the room name (e.g. "Garden Shutter", not just
+  # "Shutter") - see the RTS bridge's equivalent comment: HA's own
+  # Area-to-entity_id auto-prefix feature turned out unreliable in practice,
+  # so relying on it wasn't actually buying anything. Any resulting
+  # entity_id redundancy (e.g. cover.garden_garden_shutter) is cosmetic
+  # only - an HA-side slug-generation quirk, not something fixable from here.
   # area names below must match existing HA areas exactly to link up instead
   # of creating duplicates.
   areas:
+    - id: bedroom_area
+      name: "Bedroom"
+    - id: gameroom_area
+      name: "Gameroom"
     - id: garden_area
       name: "Garden"
+    - id: gym_area
+      name: "Gym"
+    - id: hallway_area
+      name: "Hallway"
+    - id: kitchen_area
+      name: "Kitchen"
+    - id: living_room_area
+      name: "Living Room"
     - id: office_area
       name: "Office"
+    - id: roof_terrace_area
+      name: "Roof Terrace"
+    - id: shed_area
+      name: "Shed"
   devices:
+    - id: bedroom_left_shutter_io_device
+      name: "Bedroom Left Shutter"
+      area_id: bedroom_area
+    - id: bedroom_middle_shutter_io_device
+      name: "Bedroom Middle Shutter"
+      area_id: bedroom_area
+    - id: bedroom_right_shutter_io_device
+      name: "Bedroom Right Shutter"
+      area_id: bedroom_area
+    - id: gameroom_left_shutter_io_device
+      name: "Gameroom Left Shutter"
+      area_id: gameroom_area
+    - id: gameroom_right_shutter_io_device
+      name: "Gameroom Right Shutter"
+      area_id: gameroom_area
     - id: garden_shutter_io_device
-      name: "Shutter"
+      name: "Garden Shutter"
       area_id: garden_area
+    - id: gym_shutter_io_device
+      name: "Gym Shutter"
+      area_id: gym_area
+    - id: hallway_shutter_io_device
+      name: "Hallway Shutter"
+      area_id: hallway_area
+    - id: kitchen_shutter_io_device
+      name: "Kitchen Shutter"
+      area_id: kitchen_area
+    - id: living_room_shutter_io_device
+      name: "Living Room Shutter"
+      area_id: living_room_area
     - id: office_shutter_io_device
-      name: "Shutter"
+      name: "Office Shutter"
       area_id: office_area
+    - id: roof_terrace_shutter_io_device
+      name: "Roof Terrace Shutter"
+      area_id: roof_terrace_area
+    - id: shed_alleyway_shutter_io_device
+      name: "Shed Alleyway Shutter"
+      area_id: shed_area
+    - id: shed_garden_shutter_io_device
+      name: "Shed Garden Shutter"
+      area_id: shed_area
 
 esp32:
   board: ttgo-lora32-v1
@@ -77,20 +134,55 @@ iohc:
   id: iohc_hub
 
 # One package instance per physical IO cover, see somfy-io-cover.yaml for
-# what each instance creates (cover + Pair/Unpair buttons + Mode select) and
+# what each instance creates (cover + Program button + Mode select) and
 # what each substitution var means. `${cover_id}_device` must exist in the
 # devices list above, this is what makes each cover show up as its own HA
 # device. Adding a cover this way does not transmit anything by itself -
 # IOHCCover::setup() only loads/generates a virtual remote identity via
 # Preferences, it doesn't touch the radio. Only pressing a cover's own
-# "Pair" button (once the motor is physically in its pairing window - hold
-# PROG on the existing working remote until it jogs), or calling
+# "Program" button (once the motor is physically in its pairing window -
+# hold PROG on the existing working remote until it jogs), or calling
 # open/close/stop/set-position on the cover, actually transmits.
 #
-# broadcast_type defaults to 0 ("All") - unconfirmed against these specific
-# motors, see iohc_remote1w.h. If Add doesn't take, the next thing to try is
-# broadcast_type: 6, the other group observed in this remote's own traffic.
+# broadcast_type defaults to 0 ("All") - confirmed working against real
+# shutter motors, see iohc_remote1w.h and sDevicesType in iohc_utils.h for
+# the full group list if it ever needs changing.
 packages:
+  bedroom_left_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: bedroom_left_shutter_io
+      cover_name: "Bedroom Left Shutter"
+      node: !secret io_bedroom_left_shutter_node
+      key: !secret io_bedroom_left_shutter_key
+  bedroom_middle_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: bedroom_middle_shutter_io
+      cover_name: "Bedroom Middle Shutter"
+      node: !secret io_bedroom_middle_shutter_node
+      key: !secret io_bedroom_middle_shutter_key
+  bedroom_right_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: bedroom_right_shutter_io
+      cover_name: "Bedroom Right Shutter"
+      node: !secret io_bedroom_right_shutter_node
+      key: !secret io_bedroom_right_shutter_key
+  gameroom_left_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: gameroom_left_shutter_io
+      cover_name: "Gameroom Left Shutter"
+      node: !secret io_gameroom_left_shutter_node
+      key: !secret io_gameroom_left_shutter_key
+  gameroom_right_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: gameroom_right_shutter_io
+      cover_name: "Gameroom Right Shutter"
+      node: !secret io_gameroom_right_shutter_node
+      key: !secret io_gameroom_right_shutter_key
   garden_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -98,34 +190,197 @@ packages:
       cover_name: "Garden Shutter"
       node: !secret io_garden_shutter_node
       key: !secret io_garden_shutter_key
+  gym_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: gym_shutter_io
+      cover_name: "Gym Shutter"
+      node: !secret io_gym_shutter_node
+      key: !secret io_gym_shutter_key
+  hallway_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: hallway_shutter_io
+      cover_name: "Hallway Shutter"
+      node: !secret io_hallway_shutter_node
+      key: !secret io_hallway_shutter_key
+  kitchen_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: kitchen_shutter_io
+      cover_name: "Kitchen Shutter"
+      node: !secret io_kitchen_shutter_node
+      key: !secret io_kitchen_shutter_key
+  living_room_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: living_room_shutter_io
+      cover_name: "Living Room Shutter"
+      node: !secret io_living_room_shutter_node
+      key: !secret io_living_room_shutter_key
   office_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
       cover_id: office_shutter_io
       cover_name: "Office Shutter"
+      node: !secret io_office_shutter_node
+      key: !secret io_office_shutter_key
+  roof_terrace_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: roof_terrace_shutter_io
+      cover_name: "Roof Terrace Shutter"
+      node: !secret io_roof_terrace_shutter_node
+      key: !secret io_roof_terrace_shutter_key
+  shed_alleyway_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: shed_alleyway_shutter_io
+      cover_name: "Shed Alleyway Shutter"
+      node: !secret io_shed_alleyway_shutter_node
+      key: !secret io_shed_alleyway_shutter_key
+  shed_garden_shutter_io: !include
+    file: somfy-io-cover.yaml
+    vars:
+      cover_id: shed_garden_shutter_io
+      cover_name: "Shed Garden Shutter"
+      node: !secret io_shed_garden_shutter_node
+      key: !secret io_shed_garden_shutter_key
 
 # Onboard SSD1306 128x64 OLED (same pins/model as the RTS bridge)
 i2c:
   sda: GPIO21
   scl: GPIO22
 
+# Exposes free heap/block/fragmentation, loop time, and reset reason -
+# only loop_time and reset_reason are actually used below (see their own
+# comments for why); the others are skipped as not currently useful.
+debug:
+
 text_sensor:
   - platform: wifi_info
     ip_address:
       name: "IP Address"
       id: wifi_ip
+  # Why the board last rebooted (power-on, crash, watchdog, brownout, or a
+  # deliberate restart - which shows as "Reboot request from <component>",
+  # e.g. our own Restart button, OTA, or an API-initiated reboot) - worth
+  # having given these boards can end up somewhere hard to physically check
+  # on (e.g. wall-mounted, outdoor-adjacent). Named to match the "Restart"
+  # button below (YAML key stays reset_reason - that's ESPHome's own name
+  # for this option, not user-facing).
+  - platform: debug
+    reset_reason:
+      name: "Restart Reason"
+
+# Same diagnostic entities as the RTS bridge, plus one IO-specific one
+# (debug: loop_time) that isn't on RTS.
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    entity_category: diagnostic
+    update_interval: 60s
+  - platform: uptime
+    name: "Uptime"
+    entity_category: diagnostic
+    update_interval: 60s
+  # How long the last main loop iteration took - worth tracking here
+  # specifically because we've directly observed real slow-loop warnings
+  # during heavy radio traffic in this project ("logger took a long time
+  # for an operation"), so this turns that into an ongoing HA-visible
+  # health metric instead of only showing up live in serial logs.
+  - platform: debug
+    loop_time:
+      name: "Loop Time"
+
+button:
+  - platform: restart
+    name: "Restart"
+    entity_category: diagnostic
 
 font:
   - file: "gfonts://Roboto"
     id: my_font
     size: 14
 
+# Per-cover pages show position only, not RSSI - see the comment on the
+# page_status page below for why a per-motor RSSI isn't possible over 1W.
 display:
   - platform: ssd1306_i2c
+    id: oled
     model: "SSD1306 128x64"
     address: 0x3C
-    lambda: |-
-      it.printf(0, 0, id(my_font), "Somfy IO Bridge");
-      it.printf(0, 20, id(my_font), "Pkts: %u  RSSI: %.0f", id(iohc_hub)->get_packets_received(),
-                id(iohc_hub)->get_last_rssi());
-      it.printf(0, 40, id(my_font), "IP: %s", id(wifi_ip).state.c_str());
+    pages:
+      - id: page_bedroom_left
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Bedroom Left");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(bedroom_left_shutter_io)->position * 100.0f);
+      - id: page_bedroom_middle
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Bedroom Middle");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(bedroom_middle_shutter_io)->position * 100.0f);
+      - id: page_bedroom_right
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Bedroom Right");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(bedroom_right_shutter_io)->position * 100.0f);
+      - id: page_gameroom_left
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Gameroom Left");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(gameroom_left_shutter_io)->position * 100.0f);
+      - id: page_gameroom_right
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Gameroom Right");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(gameroom_right_shutter_io)->position * 100.0f);
+      - id: page_garden
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Garden");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(garden_shutter_io)->position * 100.0f);
+      - id: page_gym
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Gym");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(gym_shutter_io)->position * 100.0f);
+      - id: page_hallway
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Hallway");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(hallway_shutter_io)->position * 100.0f);
+      - id: page_kitchen
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Kitchen");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(kitchen_shutter_io)->position * 100.0f);
+      - id: page_living_room
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Living Room");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(living_room_shutter_io)->position * 100.0f);
+      - id: page_office
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Office");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(office_shutter_io)->position * 100.0f);
+      - id: page_roof_terrace
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Roof Terrace");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(roof_terrace_shutter_io)->position * 100.0f);
+      - id: page_shed_alleyway
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Shed Alleyway");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(shed_alleyway_shutter_io)->position * 100.0f);
+      - id: page_shed_garden
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Shed Garden");
+          it.printf(0, 20, id(my_font), "%.0f%%", id(shed_garden_shutter_io)->position * 100.0f);
+      - id: page_status
+        lambda: |-
+          it.printf(0, 0, id(my_font), "Somfy IO Bridge");
+          // Hub-level RSSI only (last received packet, any source) - not
+          // attributable to a specific motor. 1W motors never transmit
+          // anything back to us (that's the whole "1W" in the name), so
+          // there's no packet FROM a given motor to measure RSSI of. Real
+          // per-motor RSSI would need 2W's own acknowledgment traffic,
+          // which isn't implemented (see README's Scope and status).
+          it.printf(0, 20, id(my_font), "Pkts: %u  RSSI: %.0f", id(iohc_hub)->get_packets_received(),
+                    id(iohc_hub)->get_last_rssi());
+          it.printf(0, 40, id(my_font), "IP: %s", id(wifi_ip).state.c_str());
+
+interval:
+  - interval: 3s
+    then:
+      - display.page.show_next: oled

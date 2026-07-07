@@ -1,9 +1,9 @@
 # Reusable per-cover package for the Somfy IO bridge.
 # Included once per physical cover from somfy-io-bridge.yaml with a unique
 # `cover_id` (used to build entity/component IDs), `cover_name`
-# (documentation only, the actual displayed name comes from the matching
-# entry in the main file's `esphome.devices` list, see the note there about
-# why device names are generic/room-less), `device_class` (see README's
+# (documentation only - keep it identical to the matching entry's `name:` in
+# the main file's `esphome.devices` list, see the note there about why
+# device names include the room), `device_class` (see README's
 # "Cover device classes" table), `node`/`key` (fixed bonded identity from
 # secrets.yaml - leave both as empty strings to auto-generate and persist
 # on-device instead, see README's "Board-independent identity" section), and
@@ -42,20 +42,62 @@ cover:
     travel_time_close: ${travel_time_close}
 
 button:
+  # Single button, matching the physical remote's own labeling (PROG) and
+  # RTS's identical single-button design. NOT a motor-side toggle (checked
+  # directly against upstream's own reference: Add/cmd=0x30 and Remove/
+  # cmd=0x39 are two structurally distinct commands, neither is a toggle) -
+  # instead, this dispatches to Add or Remove based on our own persisted
+  # paired_ flag, exactly like a real remote decides locally which one to
+  # send. No separate Unpair exists for the same reason RTS never had one.
+  # Requires the motor to be in its programming window first (hold PROG on
+  # an existing paired remote until it jogs), same as any other pairing
+  # operation.
   - platform: iohc
-    id: ${cover_id}_pair
+    id: ${cover_id}_prog
     # Short name, combines with the device's own name to display as e.g.
-    # "Garden Shutter Pair" without literally repeating the room/type.
-    name: "Pair"
+    # "Garden Shutter Program" without literally repeating the room/type.
+    # Spelled out (not "Prog") for a user unfamiliar with Somfy's own
+    # abbreviation on the physical remote - internal naming (id, RemoteButton
+    # enum, type: prog) stays as "Prog", only the HA-facing name changed.
+    name: "Program"
     device_id: ${cover_id}_device
     cover_id: ${cover_id}
-    type: add
+    type: prog
+  # Direct My button - sends Vent (main=0xd8), the real My/favorite-position
+  # command (confirmed via a live TaHoma capture), and updates the cover's
+  # own displayed position/state the same way the position-slider path does.
+  # Exists as its own button (not just reachable via the position slider)
+  # since HA's slider only reliably reaches a clean middle value on some UIs.
   - platform: iohc
-    id: ${cover_id}_unpair
-    name: "Unpair"
+    id: ${cover_id}_my
+    name: "My"
     device_id: ${cover_id}_device
     cover_id: ${cover_id}
-    type: remove
+    type: my
+  # Identify/locate (cmd 0x1E) - no physical remote has this, only known
+  # from a real captured TaHoma frame and modeled as a best-guess signed 1W
+  # frame (see iohc_remote1w.cpp), confirmed working against real hardware.
+  # Split into 3 buttons matching Overkiz's own 3 distinct actions exactly:
+  # Identify is the one-shot "blink to locate" version most automations
+  # would use; Start/Stop Identify are for a manual continuous blink.
+  - platform: iohc
+    id: ${cover_id}_identify
+    name: "Identify"
+    device_id: ${cover_id}_device
+    cover_id: ${cover_id}
+    type: identify
+  - platform: iohc
+    id: ${cover_id}_start_identify
+    name: "Start Identify"
+    device_id: ${cover_id}_device
+    cover_id: ${cover_id}
+    type: start_identify
+  - platform: iohc
+    id: ${cover_id}_stop_identify
+    name: "Stop Identify"
+    device_id: ${cover_id}_device
+    cover_id: ${cover_id}
+    type: stop_identify
 
 select:
   - platform: iohc

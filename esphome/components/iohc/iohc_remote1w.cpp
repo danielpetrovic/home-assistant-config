@@ -126,27 +126,44 @@ namespace IOHC {
         position_tracker_.update();
 
         switch (button) {
+            case RemoteButton::Prog:
+                // Not a motor-side toggle (see the enum comment) - we decide
+                // locally which real command to send, exactly like a real
+                // remote would, from our own persisted paired_ flag.
+                ESP_LOGI(TAG, "Prog pressed while paired_=%s -> sending %s", paired_ ? "true" : "false",
+                         paired_ ? "Remove" : "Add");
+                cmd(paired_ ? RemoteButton::Remove : RemoteButton::Add, percent);
+                return;
+
             case RemoteButton::Pair:
             case RemoteButton::Remove: {
-                // 0x2e / 0x39: NOT an HMAC-signed frame - the vendored
-                // iohcPacket.h's _p0x2e struct (data+sequence[2]+hmac[6], 9
-                // bytes) contradicts Velocet/iown-homecontrol's independent
-                // protocol reference (commands.md, built from real captured
-                // traffic), which documents both 0x2e ("Unknown", TaHoma/
-                // Sauter heater observed) and 0x39 ("Remove 1W Controller")
-                // as a bare 2-byte frame: cmd + one data byte (0x00
-                // observed), no sequence, no HMAC. A real motor receiving 7
-                // extra bytes it doesn't expect would very plausibly just
-                // ignore the frame - matches the observed real-world symptom
-                // (Unpair had no effect, motor kept responding to Open/
-                // Close/Stop from the "removed" identity). Sequence is not
-                // bumped here since this frame doesn't carry one.
+                // 0x2e (Pair) / 0x39 (Remove): HMAC-signed confirmation frame
+                // (data + sequence[2] + hmac[6], 9 bytes), same payload shape
+                // for both - only the cmd byte differs. Confirmed byte-for-
+                // byte against upstream rspaargaren/iohomecontrol's own
+                // iohcRemote1W::cmd() (src/iohcRemote1W.cpp, RemoteButton::
+                // Remove case) - a prior session incorrectly "fixed" this to
+                // a bare 2-byte frame based on a different, less authoritative
+                // protocol reference (Velocet/iown-homecontrol's commands.md),
+                // which was wrong: that doc documents box/network-side
+                // observations of cmd 0x2e/0x39, not what a 1W virtual remote
+                // actually needs to send. Reverted back to match upstream
+                // exactly - see also COMMANDS.md in the upstream repo, which
+                // lists "remove" as a real, distinct, working command.
                 auto *packet = new iohcPacket;
                 forge_packet(packet);
-                packet->payload.packet.header.CtrlByte1.asStruct.MsgLen += 1;
+                packet->payload.packet.header.CtrlByte1.asStruct.MsgLen += sizeof(_p0x2e);
                 packet->payload.packet.header.cmd = (button == RemoteButton::Pair) ? 0x2e : 0x39;
 
                 packet->payload.packet.msg.p0x2e.data = 0x00;
+                packet->payload.packet.msg.p0x2e.sequence[0] = sequence_ >> 8;
+                packet->payload.packet.msg.p0x2e.sequence[1] = sequence_ & 0x00ff;
+                bump_and_persist_sequence();
+
+                uint8_t hmac[16];
+                std::vector<uint8_t> frame(&packet->payload.packet.header.cmd, &packet->payload.packet.header.cmd + 2);
+                iohcCrypto::create_1W_hmac(hmac, packet->payload.packet.msg.p0x2e.sequence, key_, frame);
+                for (uint8_t i = 0; i < 6; i++) packet->payload.packet.msg.p0x2e.hmac[i] = hmac[i];
 
                 packet->buffer_length = packet->payload.packet.header.CtrlByte1.asStruct.MsgLen + 1;
 
@@ -157,6 +174,61 @@ namespace IOHC {
                 prefs_.putBool("paired", paired_);
                 ESP_LOGI(TAG, "%s sent to %02X%02X%02X", button == RemoteButton::Pair ? "Pair" : "Remove", node_[0],
                          node_[1], node_[2]);
+                break;
+            }
+
+            case RemoteButton::Identify:
+            case RemoteButton::StartIdentify:
+            case RemoteButton::StopIdentify: {
+                // 0x1E: identify/locate. Not documented in any 1W reference
+                // (no physical remote has this button) - only known from a
+                // real captured 2W TaHoma frame, which uses a bare 2-byte
+                // payload with no HMAC (2W leans on its own live
+                // challenge/response round trip for security instead). Since
+                // a 1W remote has no round trip to lean on, this is modeled
+                // as a self-signed frame (data[2]+sequence[2]+hmac[6]),
+                // following the same pattern as Pair/Remove (0x2e/0x39) -
+                // our own best-guess 1W-broadcast equivalent. Confirmed
+                // working against real hardware. Payload bytes match the
+                // real TaHoma capture exactly for all 3 variants.
+                auto *packet = new iohcPacket;
+                forge_packet(packet);
+                packet->payload.packet.header.CtrlByte1.asStruct.MsgLen += sizeof(_p0x1e);
+                packet->payload.packet.header.cmd = 0x1e;
+
+                switch (button) {
+                    case RemoteButton::Identify:
+                        packet->payload.packet.msg.p0x1e.data[0] = 0x01;
+                        packet->payload.packet.msg.p0x1e.data[1] = 0xff;
+                        break;
+                    case RemoteButton::StartIdentify:
+                        packet->payload.packet.msg.p0x1e.data[0] = 0x01;
+                        packet->payload.packet.msg.p0x1e.data[1] = 0x02;
+                        break;
+                    default: // StopIdentify
+                        packet->payload.packet.msg.p0x1e.data[0] = 0x00;
+                        packet->payload.packet.msg.p0x1e.data[1] = 0x00;
+                        break;
+                }
+
+                packet->payload.packet.msg.p0x1e.sequence[0] = sequence_ >> 8;
+                packet->payload.packet.msg.p0x1e.sequence[1] = sequence_ & 0x00ff;
+                bump_and_persist_sequence();
+
+                uint8_t hmac[16];
+                std::vector<uint8_t> frame(&packet->payload.packet.header.cmd, &packet->payload.packet.header.cmd + 3);
+                iohcCrypto::create_1W_hmac(hmac, packet->payload.packet.msg.p0x1e.sequence, key_, frame);
+                for (uint8_t i = 0; i < 6; i++) packet->payload.packet.msg.p0x1e.hmac[i] = hmac[i];
+
+                packet->buffer_length = packet->payload.packet.header.CtrlByte1.asStruct.MsgLen + 1;
+
+                std::vector<iohcPacket *> packets2send{packet};
+                radio_->send(packets2send);
+
+                const char *name = button == RemoteButton::Identify     ? "Identify"
+                                    : button == RemoteButton::StartIdentify ? "Start Identify"
+                                                                             : "Stop Identify";
+                ESP_LOGI(TAG, "%s sent to %02X%02X%02X", name, node_[0], node_[1], node_[2]);
                 break;
             }
 
@@ -194,11 +266,18 @@ namespace IOHC {
             case RemoteButton::Open:
             case RemoteButton::Close:
             case RemoteButton::Stop:
-            case RemoteButton::Position: {
-                // 0x00: Open/Close/Stop/Position all share this cmd byte -
+            case RemoteButton::Position:
+            case RemoteButton::Vent: {
+                // 0x00: Open/Close/Stop/Position/Vent all share this cmd byte -
                 // the button identity is encoded in the "main" payload byte,
                 // confirmed empirically against a real Situo remote: Open
-                // main=0x00, Close main=0xc8, Stop main=0xd2.
+                // main=0x00, Close main=0xc8, Stop main=0xd2. Vent (main=0xd8)
+                // is what real TaHoma actually sends for "My" - confirmed via
+                // a live capture of a real TaHoma "My" press, and matches
+                // upstream's own RemoteButton::Vent case exactly. Stop
+                // (0xd2) only has an effect while the motor is actively
+                // moving; it is not the same command as "go to my/favorite
+                // position from idle".
                 auto *packet = new iohcPacket;
                 forge_packet(packet);
                 packet->payload.packet.header.cmd = 0x00;
@@ -232,6 +311,24 @@ namespace IOHC {
                         packet->payload.packet.msg.p0x00_14.main[1] = 0x00;
                         position_tracker_.stop();
                         companion_fp1 = 0x02;
+                        break;
+                    case RemoteButton::Vent:
+                        packet->payload.packet.msg.p0x00_14.main[0] = 0xd8;
+                        // main[1]=0x00, NOT 0x03. Upstream's own Vent case
+                        // uses 0x03 - copied that verbatim without
+                        // cross-checking it, which was wrong: the real
+                        // captured TaHoma "My" frame (DATA 01 e7 d8 00 00 00
+                        // -> org=01 acei=e7 main[0]=d8 main[1]=00 fp1=00
+                        // fp2=00) has main[1]=0x00. Confirmed against two
+                        // independent captures (the isolated stop-vs-my A/B
+                        // test and the earlier single My capture) - both show
+                        // main[1]=0x00, never 0x03.
+                        packet->payload.packet.msg.p0x00_14.main[1] = 0x00;
+                        position_tracker_.stop();
+                        // No real captured companion-frame sample for Vent
+                        // (unlike Open/Close/Stop) - leaving companion_fp1 at
+                        // -1 (no companion sent) until/unless a real capture
+                        // says otherwise.
                         break;
                     case RemoteButton::Position: {
                         int p = percent < 0 ? 0 : (percent > 100 ? 100 : percent);

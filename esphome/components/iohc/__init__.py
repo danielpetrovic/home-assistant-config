@@ -1,4 +1,4 @@
-"""Somfy io-homecontrol (IO) radio component.
+"""Somfy IO (io-homecontrol) radio component.
 
 Thin ESPHome wrapper around a vendored port of
 https://github.com/rspaargaren/iohomecontrol (Apache-2.0), itself building on

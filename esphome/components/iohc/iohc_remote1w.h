@@ -49,17 +49,39 @@ namespace IOHC {
         Close,
         Stop,
         Position,
+        // "My"/favorite position while idle - NOT the same as Stop. Confirmed
+        // via a real TaHoma "My" capture: TaHoma sends main=0xd8 (this is
+        // upstream's own RemoteButton::Vent case, main[1]=0x03), never
+        // main=0xd2 (Stop). Stop only has an effect while actually moving -
+        // sending it while idle is a no-op on the motor side, which is why
+        // "My" previously did nothing when the cover was already stationary.
+        Vent,
+        // 0x1E: identify/locate. No physical remote has this button - only
+        // seen via a real captured TaHoma/2W frame. Overkiz exposes it as 3
+        // separate high-level actions (identify/startIdentify/stopIdentify),
+        // confirmed via pyoverkiz's own command enum - matched 1:1 here.
+        Identify,
+        StartIdentify,
+        StopIdentify,
+        // The single "Prog" button's actual entry point. Add (0x30) and
+        // Remove (0x39) are NOT a motor-side toggle - checked directly
+        // against upstream's own reference: they're two structurally
+        // distinct commands, each unconditionally doing what its name says
+        // (Add never removes, Remove never adds). A real physical remote
+        // decides locally, from its own remembered pairing status, which one
+        // to actually send when its PROG button is pressed - it has no way
+        // to query the motor's live state. Prog reproduces that: it reads
+        // our own persisted paired_ flag and dispatches to Add or Remove
+        // accordingly, same as a real remote would.
+        Prog,
     };
 
     // One virtual remote identity, bonded 1:1 with one physical motor.
     // Broadcast "type" is the device-class group the motor listens on (see
     // sDevicesType in iohc_utils.h) - default 0 ("All") matches upstream's
-    // own addRemote() default. NOT yet confirmed against real hardware which
-    // type value your specific motors expect for Add/Pair - our own passive
-    // capture of your Situo remote showed two different broadcast groups (0
-    // and 6) across its channels, so this is deliberately YAML-configurable
-    // rather than hardcoded, and should be treated as unverified until an
-    // actual Add exchange succeeds against a real motor.
+    // own addRemote() default, confirmed working for Add/Remove against
+    // real shutter motors. Deliberately YAML-configurable (not hardcoded)
+    // in case a different device type ever needs a different group.
     class IOHCRemote1W {
     public:
         // pref_namespace must be unique per cover (e.g. the cover's object_id)

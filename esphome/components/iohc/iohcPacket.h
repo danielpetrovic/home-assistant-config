@@ -175,6 +175,19 @@ namespace IOHC {
         uint8_t sequence[2];
     };
 
+    // 0x1E: Identify/locate. No 1W reference documents this (no physical
+    // remote has an Identify button) - a real captured 2W TaHoma frame uses
+    // a bare 2-byte payload with no HMAC (security instead comes from the
+    // live challenge/response round trip 2W does separately). This struct is
+    // our own best-guess 1W-broadcast equivalent, self-signed the same way
+    // as _p0x2e (Pair/Remove), since a 1W remote has no round trip to lean
+    // on - unconfirmed against real hardware.
+    struct _p0x1e {
+        uint8_t data[2];
+        uint8_t sequence[2];
+        uint8_t hmac[6];
+    };
+
     union _msg {
         _p0x01_13 p0x01_13;
         _p0x00_14 p0x00_14;
@@ -187,6 +200,7 @@ namespace IOHC {
         _p0x2e p0x2e;
         _p0x30 p0x30;
         _p0x2e p0x39; // same format of 2e
+        _p0x1e p0x1e;
     };
 
     struct _packet {

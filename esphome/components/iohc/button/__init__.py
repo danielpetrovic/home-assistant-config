@@ -1,10 +1,10 @@
-"""Somfy io-homecontrol pairing button.
+"""Somfy IO (io-homecontrol) command button.
 
-Triggers Add/Pair/Remove against one specific cover's bonded virtual remote
-identity (IOHC::IOHCRemote1W) - see iohc_remote1w.h for what each of these
-actually transmits. This is deliberately a separate button entity rather than
-an automatic action: Add/Remove write bonding state to the real motor and
-should only ever fire when the user means it to.
+Triggers Add/Pair/Remove/My/Identify against one specific cover's bonded
+virtual remote identity (IOHC::IOHCRemote1W) - see iohc_remote1w.h for what
+each of these actually transmits. This is deliberately a separate button
+entity rather than an automatic action: Add/Remove write bonding state to
+the real motor and should only ever fire when the user means it to.
 """
 
 import esphome.codegen as cg
@@ -29,9 +29,14 @@ remote_button_ns = cg.global_ns.namespace("IOHC")
 RemoteButton = remote_button_ns.enum("RemoteButton", is_class=True)
 
 TYPES = {
+    "prog": RemoteButton.Prog,
     "add": RemoteButton.Add,
     "pair": RemoteButton.Pair,
     "remove": RemoteButton.Remove,
+    "my": RemoteButton.Vent,
+    "identify": RemoteButton.Identify,
+    "start_identify": RemoteButton.StartIdentify,
+    "stop_identify": RemoteButton.StopIdentify,
 }
 
 CONFIG_SCHEMA = button.button_schema(IOHCPairButton).extend(

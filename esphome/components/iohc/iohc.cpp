@@ -31,7 +31,7 @@ bool IOHCComponent::on_receive(IOHC::iohcPacket *packet) {
 }
 
 void IOHCComponent::dump_config() {
-  ESP_LOGCONFIG(TAG, "IOHC (Somfy io-homecontrol) radio:");
+  ESP_LOGCONFIG(TAG, "IOHC (Somfy IO / io-homecontrol) radio:");
   ESP_LOGCONFIG(TAG, "  Phase 0/1: vendored radio stack, single fixed channel (868.95MHz), RX only");
 }
 

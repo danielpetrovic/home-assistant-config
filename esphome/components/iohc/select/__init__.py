@@ -1,4 +1,4 @@
-"""Somfy io-homecontrol per-cover mode select.
+"""Somfy IO (io-homecontrol) per-cover mode select.
 
 Switches one cover between 1W Timed (local travel-time position estimate),
 1W My (RTS-bridge-style 3-state discrete position, no time tracking), and 2W

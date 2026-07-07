@@ -1,4 +1,4 @@
-"""Somfy io-homecontrol per-cover travel time number.
+"""Somfy IO (io-homecontrol) per-cover travel time number.
 
 Runtime-adjustable Travel Time Open/Close, only meaningful in the cover's
 "1W Timed" mode (see IOHCCover::Mode) - the YAML travel_time_open/

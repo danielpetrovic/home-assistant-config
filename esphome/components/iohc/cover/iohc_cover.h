@@ -62,6 +62,14 @@ class IOHCCover : public cover::Cover, public Component {
   Mode get_mode() const { return mode_; }
   void set_mode(Mode mode);
 
+  // Dedicated My button entry point (as opposed to Prog/Identify, which only
+  // need to fire the radio command). My also has to update the cover's own
+  // displayed position/state, same as the position-slider path in control()
+  // does - otherwise the motor moves but Home Assistant keeps showing the
+  // stale position. Mirrors the get_stop() branch in control() exactly,
+  // just sending Vent instead of Stop.
+  void press_my();
+
  protected:
   void control(const cover::CoverCall &call) override;
 

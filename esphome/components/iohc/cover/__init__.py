@@ -1,4 +1,4 @@
-"""Somfy io-homecontrol cover platform.
+"""Somfy IO (io-homecontrol) cover platform.
 
 One IOHCCover = one bonded virtual remote identity (IOHC::IOHCRemote1W),
 talking to one physical motor over the 1W-style command layer ported in
