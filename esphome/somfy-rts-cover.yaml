@@ -59,13 +59,27 @@ globals:
 button:
   - platform: template
     # Short name, combines with the device's own name to display as e.g.
-    # "Bedroom Curtain Pair" without literally repeating the room/type.
-    name: "Pair"
+    # "Bedroom Curtain Program" without literally repeating the room/type.
+    # Named to match IO's own Program button, both send the same underlying
+    # PROG signal a physical remote's PROG button sends.
+    name: "Program"
     device_id: ${cover_id}_device
     on_press:
       - somfy.send_command:
           id: ${cover_id}_remote
           command: PROG
+          repeat: 1
+  # Direct My button, matching IO's own dedicated My button (and Overkiz's
+  # own "My position" button for RTS covers) - previously only reachable
+  # via the position slider (drag to 50%) or implicitly via Stop, per the
+  # Modes section below. Same MY command either way.
+  - platform: template
+    name: "My"
+    device_id: ${cover_id}_device
+    on_press:
+      - somfy.send_command:
+          id: ${cover_id}_remote
+          command: MY
           repeat: 1
 
 select:

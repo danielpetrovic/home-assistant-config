@@ -6,7 +6,7 @@ esphome:
   friendly_name: Somfy RTS Bridge
   project:
     name: "danielpetrovic.Somfy RTS Bridge"
-    version: "2026.07.2"
+    version: "2026.07.3"
   # Sub-devices: each cover shows up as its own HA device (matching Overkiz's
   # per-shade/curtain granularity) instead of all bundled under the physical
   # board. Anything NOT assigned a device_id (OLED, Wi-Fi/IP sensor) stays on
@@ -256,11 +256,24 @@ i2c:
   sda: GPIO21
   scl: GPIO22
 
+# Exposes free heap/block/fragmentation, loop time, and reset reason -
+# only loop_time and reset_reason are actually used below (see their own
+# comments for why); the others are skipped as not currently useful.
+debug:
+
 text_sensor:
   - platform: wifi_info
     ip_address:
       name: "IP Address"
       id: wifi_ip
+  # Why the board last rebooted (power-on, crash, watchdog, brownout, or a
+  # deliberate restart - which shows as "Reboot request from <component>",
+  # e.g. our own Restart button, OTA, or an API-initiated reboot). Named to
+  # match the "Restart" button below (YAML key stays reset_reason - that's
+  # ESPHome's own name for this option, not user-facing).
+  - platform: debug
+    reset_reason:
+      name: "Restart Reason"
 
 # Bluetooth proxy: forwards BLE advertisements (and, since active: true is
 # the default, allows HA to open active GATT connections through this board
@@ -276,9 +289,9 @@ esp32_ble_tracker:
 bluetooth_proxy:
   id: ble_proxy
 
-# Diagnostic-only entities on the hub device: signal quality, uptime, and a
-# remote restart, in case something needs troubleshooting without opening the
-# ESPHome dashboard.
+# Diagnostic-only entities on the hub device: signal quality, uptime, loop
+# time, and a remote restart, in case something needs troubleshooting
+# without opening the ESPHome dashboard.
 sensor:
   - platform: wifi_signal
     name: "WiFi Signal"
@@ -288,6 +301,13 @@ sensor:
     name: "Uptime"
     entity_category: diagnostic
     update_interval: 60s
+  # How long the last main loop iteration took - normally near-zero;
+  # a persistent, HA-visible way to notice a component stalling (e.g. BLE
+  # scanning jitter, a radio timing hiccup) without needing to catch it
+  # live on a USB serial connection.
+  - platform: debug
+    loop_time:
+      name: "Loop Time"
 
 button:
   - platform: restart
