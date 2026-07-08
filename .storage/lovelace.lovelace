@@ -6871,6 +6871,103 @@
                   "cards": [
                     {
                       "type": "tile",
+                      "entity": "light.living_room_cabinet_light",
+                      "icon": "",
+                      "state_content": [
+                        "brightness",
+                        "last_changed"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "light-brightness"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "square": true,
+                      "type": "grid",
+                      "columns": 5,
+                      "cards": [
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.living_room_cabinet_light",
+                          "icon": "mdi:lightbulb-off-outline",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_000",
+                            "data": {
+                              "target_light": "light.living_room_cabinet_light"
+                            }
+                          },
+                          "icon_height": "50px"
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.living_room_cabinet_light",
+                          "icon": "mdi:lightbulb-on-10",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_025",
+                            "data": {
+                              "target_light": "light.living_room_cabinet_light"
+                            }
+                          }
+                        },
+                        {
+                          "show_name": false,
+                          "show_icon": true,
+                          "type": "button",
+                          "entity": "light.living_room_cabinet_light",
+                          "icon": "mdi:lightbulb-on-40",
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_050",
+                            "data": {
+                              "target_light": "light.living_room_cabinet_light"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "entity": "light.living_room_cabinet_light",
+                          "icon": "mdi:lightbulb-on",
+                          "show_name": false,
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_100",
+                            "data": {
+                              "target_light": "light.living_room_cabinet_light"
+                            }
+                          }
+                        },
+                        {
+                          "type": "button",
+                          "entity": "light.living_room_cabinet_light",
+                          "icon": "mdi:lightbulb-auto",
+                          "show_name": false,
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "script.lights_preset_adaptive",
+                            "data": {
+                              "target_light": "light.living_room_cabinet_light"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "tile",
                       "entity": "light.living_room_tv_light",
                       "icon": "",
                       "state_content": [

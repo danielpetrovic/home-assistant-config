@@ -3123,13 +3123,15 @@
         data:
           volume_level: 0.01
       - action: light.turn_on
+        data:
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
+          transition: 30
         metadata: {}
         target:
           entity_id: light.living_room_tv_light
-        data:
-          transition: 30
-          color_temp_kelvin: 3000
-          brightness_pct: 25
     - alias: TV title available
       conditions:
       - condition: trigger
@@ -3147,13 +3149,15 @@
         data:
           volume_level: 0.01
       - action: light.turn_on
+        data:
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
+          transition: 30
         metadata: {}
         target:
           entity_id: light.living_room_tv_light
-        data:
-          transition: 30
-          color_temp_kelvin: 3000
-          brightness_pct: 25
     - alias: OSMC
       conditions:
       - condition: trigger
@@ -3168,13 +3172,15 @@
         data:
           volume_level: 0.01
       - action: light.turn_on
+        data:
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
+          transition: 30
         metadata: {}
         target:
           entity_id: light.living_room_tv_light
-        data:
-          transition: 30
-          color_temp_kelvin: 3000
-          brightness_pct: 25
     - alias: OSMC not playing
       conditions:
       - condition: trigger
@@ -3212,13 +3218,15 @@
         data:
           volume_level: 0.01
       - action: light.turn_on
+        data:
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
+          transition: 30
         metadata: {}
         target:
           entity_id: light.living_room_tv_light
-        data:
-          transition: 30
-          color_temp_kelvin: 3000
-          brightness_pct: 25
     - alias: Not playing
       conditions:
       - condition: state
@@ -5661,13 +5669,16 @@
   triggers:
   - at: 00:01:00
     id: 00:00
-    platform: time
+    trigger: time
   - at: 01:01:00
     id: 01:00
-    platform: time
-  - platform: state
-    entity_id: sensor.outdoor_brightness
+    trigger: time
+  - trigger: time
+    at: 09:00:00
+    id: 09:00
+  - entity_id: sensor.outdoor_brightness
     id: brightness
+    trigger: state
   conditions: []
   actions:
   - alias: Time
@@ -5718,6 +5729,21 @@
           - shed
         data:
           transition: 60
+    - alias: 09:00
+      conditions:
+      - condition: trigger
+        id:
+        - 09:00
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
+        metadata: {}
+        target:
+          entity_id: light.living_room_cabinet_light
   - alias: Luminosity
     choose:
     - alias: dark or dim
@@ -6391,7 +6417,6 @@
         - light.roof_terrace_light
         - light.garden
         - light.front_door_light
-        - light.dining_table_above_light
       auto_adjust_enabled: true
       workday_sensor: binary_sensor.workday_sensor
       auto_adjust_brightness: true
@@ -6410,6 +6435,14 @@
       night_brightness: 10
       auto_adjust_enabled: false
       workday_sensor: binary_sensor.workday_sensor
+      target_lights:
+        entity_id:
+        - light.alex_tv_light
+        - light.deni_tv_light
+        - light.living_room_tv_light
+        - light.living_room_cabinet_light
+      auto_adjust_brightness: true
+      auto_adjust_color_temp: true
 - id: '1769193997494'
   alias: Car
   description: ''
@@ -6511,11 +6544,13 @@
         state: playing
       sequence:
       - action: light.turn_on
-        metadata: {}
         data:
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
           transition: 30
-          color_temp_kelvin: 3000
-          brightness_pct: 50
+        metadata: {}
         target:
           entity_id: light.alex_tv_light
     - alias: Not playing
@@ -6542,11 +6577,13 @@
         state: playing
       sequence:
       - action: light.turn_on
-        metadata: {}
         data:
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
           transition: 30
-          color_temp_kelvin: 3000
-          brightness_pct: 50
+        metadata: {}
         target:
           entity_id: light.deni_tv_light
     - alias: Not playing
