@@ -83,12 +83,25 @@ Drives the board's onboard SX1276 radio directly in raw OOK mode. No extra hardw
 6. **Pair each cover to its motor** (see below).
 7. **Test**: Open/Close/Stop from the cover's card in Home Assistant.
 
-### Pairing a cover to its motor
+### Pairing (and unpairing) a cover to its motor
 
-Each virtual remote has to be added to its motor the normal Somfy way:
-1. Put the motor into programming mode via an **already-paired** remote (hold its PROG button until the motor jogs).
-2. Within a couple of seconds, press the new cover's `<Cover Name> Program` button in Home Assistant.
-3. The motor jogs again, confirming the new remote is paired, in addition to (not instead of) any existing remote (e.g. TaHoma).
+Single `Program` button. RTS has only one PROG command (`SOMFY_PROG`, no separate "remove" value exists in the protocol at all) - per Somfy's own official instructions for adding/removing a remote, the motor decides add vs. remove based on the **order** two PROG presses arrive in, not on any command distinction. **Getting the order backwards removes the wrong control** - this is Somfy's documented procedure, not something this bridge invented or can paper over.
+
+**To add** (pair a new cover to a motor that already has at least one working control):
+1. If the already-paired remote you're using to open programming mode has multiple channels (e.g. a Telis 16), select the correct channel on it first.
+2. Press and hold that remote's PROG button until the motor jogs. The motor then stays in programming mode for about **2 minutes**.
+3. Within that window, press the new cover's `<Cover Name> Program` button in Home Assistant. The motor jogs again, confirming the new remote is now paired, in addition to (not instead of) any existing remote.
+
+**To remove** (e.g. decommissioning a cover) - the two presses must happen in this exact order:
+1. **First**, press and hold PROG on the control you want to **keep** (a physical remote or TaHoma - not the one being removed; select the correct channel first if it's multi-channel). Hold until the motor jogs.
+2. **Then**, within the same programming window, press the `<Cover Name> Program` button in Home Assistant for the cover you want to **remove**. The motor jogs again, confirming removal.
+
+Reversing this order removes the keeper instead of the target - always press the control you're keeping first.
+
+> [!WARNING]
+> Per Somfy's own instructions: a control can only be removed if **another** control is available to open the motor's programming window first. If our board's Program button is the *only* paired control for a motor and you remove it, you lose the ability to open that motor's programming window at all - you'd need the motor manufacturer's own hard-reset procedure to recover, not something this bridge can help with. Always keep at least one other working control paired before removing this board's identity.
+
+RTS has no acknowledgment channel at all. There's no way to confirm a Program press actually took beyond watching the motor jog; if it doesn't respond as expected, it likely wasn't in its programming window at the right moment, just try again.
 
 ### Modes
 
@@ -100,6 +113,12 @@ Each cover has a `select:` entity to switch between:
   - Stop always sends `MY` too, matching how a real Somfy remote's MY button behaves (stops in place if moving, jumps to the preset if idle).
 - **`Timed`** - local travel-time-based position estimate (`Travel Time Open`/`Travel Time Close` number entities, per-cover, default 25s each, adjustable live from Home Assistant - no reflash needed). Approximate; can drift on repeated partial moves since RTS is one-way and the motor never reports real position back. Requesting an intermediate position sends `UP`/`DOWN` and auto-stops (`MY`) once the estimate reaches the target.
 
+### Retrying weak-signal commands
+
+Each cover has a **`Retry Weak Signal Commands`** switch (off by default, per cover) for shutters with marginal RTS reception - RTS is one-way with no acknowledgment, so a command can silently get dropped with no way to detect it happened. When enabled, an Open or Close command automatically resends itself once, `retry_delay` (default 3s) later - unless another command (Stop, My, a repeat Open/Close, or a partial-position move) was issued in the meantime, in which case the pending retry is cancelled instead of firing. Entirely on-device (an ESPHome `script:`, `mode: restart` handles the cancel-on-any-other-command behavior); enabling the switch just arms it, no Home Assistant automation involved. When it does fire, it logs clearly (`tag: retry`, `INFO` level, e.g. `"Hallway Shade: resending Close (retry, no other command in 3s)"`) so it's unambiguous in the logs rather than something you have to infer from timing.
+
+Opt-in rather than a blanket default since it doubles a cover's RF traffic on every Open/Close - only worth enabling for shutters that actually show the problem (motor doesn't respond to every command).
+
 ### How it works
 
 - `sx127x` (ESPHome core) puts the SX1276 into raw OOK mode at 433.42MHz (Somfy's exact carrier, not the 433.92MHz ISM default).
@@ -109,8 +128,8 @@ Each cover has a `select:` entity to switch between:
 
 ### Files
 
-- `somfy-rts-bridge.yaml`: the device config (radio setup, Wi-Fi/API/OTA, the OLED display, `bluetooth_proxy`, diagnostic entities (WiFi Signal, Uptime, Loop Time, Restart Reason, Restart - same as the IO bridge), and one `packages:` entry per physical cover).
-- `somfy-rts-cover.yaml`: reusable package template (virtual remote, Program button, My button, Mode select, Travel Time Open/Close numbers, and the cover logic above), instantiated per cover via substitution variables (`cover_id`, `cover_name`, `remote_address`, `device_class`, `travel_time_open`, `travel_time_close`).
+- `somfy-rts-bridge.yaml`: the device config (radio setup, Wi-Fi/API/OTA, the OLED display, `bluetooth_proxy`, diagnostic entities (WiFi Signal, Uptime, Loop Time, Restart Reason, Restart), config entities (Debug Logging, Display, Display Brightness, Display Page Interval), and one `packages:` entry per physical cover).
+- `somfy-rts-cover.yaml`: reusable package template (virtual remote, Program button, My button, Mode select, Travel Time Open/Close numbers, Retry Weak Signal Commands switch, and the cover logic above), instantiated per cover via substitution variables (`cover_id`, `cover_name`, `remote_address`, `device_class`, `travel_time_open`, `travel_time_close`, `retry_delay` - see [Retrying weak-signal commands](#retrying-weak-signal-commands)).
 
 ### Board-specific notes
 
@@ -132,8 +151,8 @@ Drives the board's onboard SX1276 radio directly at the register level (no ESPHo
    io_bridge_api_key: "base64-encoded-32-byte-key"
    io_bridge_ota_password: "some-password"
    ```
-3. **Generate a fixed identity for the new cover** *before* adding it - see [Board-independent identity](#board-independent-identity-surviving-a-board-replacement) below for the command and why this matters. Give every new cover one from the start rather than the random default: switching an already-paired cover from random to fixed later needs an unpair/re-pair cycle, which is easy to just avoid entirely.
-4. **Add a cover entry** for each physical cover under `packages:` in `somfy-io-bridge.yaml`, including the `node`/`key` from step 3:
+3. **(Optional) Generate a fixed identity for the new cover.** Not required - leave `node`/`key` as empty strings (the default) and the board generates a random identity itself on first boot, which works completely fine. The only reason to do this step is so that identity **survives a board replacement**: with the default random identity, a replacement board generates a *different* one and every motor needs re-pairing; with a fixed identity from `secrets.yaml`, a replacement board flashed with the same config reproduces the exact same identity, no re-pairing needed. Worth doing *before* pairing a new cover if you want this, since switching an already-paired cover from random to fixed later needs an unpair/re-pair cycle anyway - see [Board-independent identity](#board-independent-identity-surviving-a-board-replacement) below for the command.
+4. **Add a cover entry** for each physical cover under `packages:` in `somfy-io-bridge.yaml`, including the `node`/`key` from step 3 if you generated them (otherwise leave both as empty strings):
    ```yaml
    packages:
      my_new_cover_io: !include
@@ -144,23 +163,23 @@ Drives the board's onboard SX1276 radio directly at the register level (no ESPHo
          node: !secret io_my_new_cover_io_node
          key: !secret io_my_new_cover_io_key
    ```
-   This creates the cover plus its "Program" button (pairs and unpairs, like the physical remote's own PROG button), a "My" button, three Identify buttons (see [Identify](#identify)), and "Mode" select. See `somfy-io-cover.yaml` for the full set of optional vars (`device_class`, defaults to `shutter` - see [Cover device classes](#cover-device-classes); `broadcast_type`, `travel_time_open`/`travel_time_close` - rarely need overriding). `node`/`key` can be left as empty strings instead, in which case a random identity is auto-generated and stored on the board's own flash on first boot - not recommended, see step 3.
+   This creates the cover plus its "Program" button (pairs and unpairs, like the physical remote's own PROG button), a "My" button, three Identify buttons (see [Identify](#identify)), and "Mode" select. See `somfy-io-cover.yaml` for the full set of optional vars (`device_class`, defaults to `shutter` - see [Cover device classes](#cover-device-classes); `broadcast_type` - rarely needs overriding). `node`/`key` can be left as empty strings instead, in which case a random identity is auto-generated and stored on the board's own flash on first boot - not recommended, see step 3.
 5. **Flash** `somfy-io-bridge.yaml` via the ESPHome dashboard (USB for the first flash, OTA afterward).
 6. **Pair each cover to its motor** (see below).
-7. **Test**: Open/Close/Stop from the cover's card in Home Assistant. Leave the mode `select` on its default (`1W My`) unless you specifically want the time-based estimate - see [Modes](#modes).
+7. **Test**: Open/Close/Stop from the cover's card in Home Assistant. The mode `select` defaults to `Position`, which supports real percentage targets - see [Modes](#modes).
 
 ### Pairing (and unpairing) a cover to its motor
 
-Same physical procedure as RTS, and a single button either way - matching the physical remote's own PROG button (spelled out as "Program" in Home Assistant, since "PROG" is Somfy's own abbreviation and not obvious to someone unfamiliar with their remotes), which also both pairs and unpairs depending on whether it's already bonded. This matches Somfy's own official instructions for adding/removing a control exactly (see their support articles "How do I add another control?" and "How do I delete the control of a motorized window covering?"): there is no separate hardware-level "unpair" command, only the same PROG signal sent while the motor is listening.
-
-Importantly, this is **not** the motor toggling a shared signal - checked directly against upstream's own reference implementation (`rspaargaren/iohomecontrol`): `Add` (cmd `0x30`) and `Remove` (cmd `0x39`) are two structurally distinct commands, each unconditionally doing what its name says, with no toggle behavior anywhere in the protocol or upstream's own code. A real physical remote has no way to query the motor's live bonding state either - it just remembers its own last known status locally, and sends `Add` or `Remove` accordingly when PROG is pressed. Our Program button reproduces exactly that: it reads our own persisted pairing status (was the last successful Add/Remove for this cover an add or a remove?) and sends the appropriate command.
+Single `Program` button. `Add` (cmd `0x30`) and `Remove` (cmd `0x39`) are two structurally distinct commands - checked directly against upstream's own reference implementation (`rspaargaren/iohomecontrol`) - and our Program button picks between them by reading our own persisted pairing record (was the last successful Add/Remove for this cover an add or a remove?) and sending the matching command.
 
 **To add** (pair a new cover to a motor that already has at least one working control):
-1. Put the motor into programming mode via an **already-paired, still-working** remote (hold its PROG button until the motor jogs - can take a few seconds, don't give up too early).
-2. Within a couple of seconds, press the new cover's `<Cover Name> Program` button in Home Assistant (transmits `Add`, cmd `0x30` - the actual key-exchange command; despite the label, this is *not* the same as `RemoteButton::Pair`/cmd `0x2e`, which only applies once a key is already shared).
-3. The motor jogs again, confirming the change - the new virtual remote is now bonded, in addition to (not instead of) any existing remote (e.g. TaHoma, or a physical Situo).
+1. If the already-paired remote you're using to open programming mode has multiple channels, select the correct channel on it first.
+2. Press and hold that remote's PROG button until the motor jogs (can take a few seconds, don't give up too early).
+3. Within that window, press the new cover's `<Cover Name> Program` button in Home Assistant (transmits `Add`, cmd `0x30` - the actual key-exchange command; despite the label, this is *not* the same as `RemoteButton::Pair`/cmd `0x2e`, which only applies once a key is already shared). The motor jogs again, confirming the change - the new virtual remote is now bonded, in addition to (not instead of) any existing remote (e.g. TaHoma, or a physical Situo).
 
-**To remove** (e.g. before migrating to a fixed node/key, or decommissioning a cover): the procedure is identical, not a separate step - put the motor into programming mode via **any other still-working control** (does not have to be our board), then press the `<Cover Name> Program` button again. Since our own record shows this cover as already bonded, it sends `Remove` instead of `Add`.
+**To remove** (e.g. before migrating to a fixed node/key, or decommissioning a cover) - the two presses in this order:
+1. **First**, press and hold PROG on the control you want to **keep** (a physical remote or TaHoma - not the cover being removed; select the correct channel first if it's multi-channel). Hold until the motor jogs.
+2. **Then**, within the same programming window, press the `<Cover Name> Program` button in Home Assistant for the cover you want to **remove** (transmits `Remove`, cmd `0x39`, per our own persisted record).
 
 > [!WARNING]
 > Per Somfy's own instructions: a control can only be removed if **another** control is available to open the motor's programming window first. If our board's Program button is the *only* paired control for a motor and you remove it, you lose the ability to open that motor's programming window at all (nothing left to press PROG on) - you'd need the motor manufacturer's own hard-reset procedure to recover, not something this bridge can help with. Always keep at least one other working control (TaHoma, a physical Situo/Telis, etc.) paired before removing this board's identity.
@@ -177,11 +196,13 @@ No physical Somfy remote has an Identify button, so there was no confirmed 1W fr
 
 By default, each cover generates a **random** virtual remote identity (a 3-byte node address + 16-byte AES key) on first boot, stored only in that specific board's flash (NVS). If the board ever dies, a replacement would generate a *different* random identity, requiring every motor to be re-paired.
 
-Do this **before** pairing a new cover, not after - switching an already-paired cover from random to fixed needs an unpair/re-pair cycle (see step 3 in Setup above). Generate a fixed identity for the cover:
+Do this **before** pairing a new cover, not after - switching an already-paired cover from random to fixed needs an unpair/re-pair cycle (see step 3 in Setup above). Generate a fixed identity for the cover - this is a one-off, offline step that just produces two random hex strings, it does **not** run on Home Assistant, the ESPHome dashboard, or the board itself. Run it in a terminal on **any** computer that has Python 3 (your own PC/Mac/Linux machine, or Home Assistant's "Terminal & SSH"/"Studio Code Server" add-on if you have either installed):
 ```shell
 python3 -c "import secrets; print('node:', secrets.token_hex(3)); print('key:', secrets.token_hex(16))"
 ```
-add the printed values to `secrets.yaml`, named after the cover:
+No Python available? Any source of secure random hex works just as well, e.g. `openssl rand -hex 3` / `openssl rand -hex 16` (Mac/Linux Terminal, or Git Bash on Windows).
+
+Then add the printed values to `secrets.yaml`, named after the cover:
 ```yaml
 io_<cover_id>_node: "<the printed node>"
 io_<cover_id>_key: "<the printed key>"
@@ -196,9 +217,27 @@ A replacement board flashed with the same config reproduces the exact same ident
 ### Modes
 
 Each cover has a `select:` entity to switch between:
-- **`1W Timed`** - local travel-time-based position estimate (`Travel Time Open`/`Travel Time Close` number entities, per-cover, default 25s each, adjustable live from Home Assistant - persists across reboots, no reflash needed). Approximate; can drift on repeated partial moves since the motor doesn't report real position back.
-- **`1W My`** (default) - three discrete states (0% closed / 50% "My" / 100% open), no time tracking, no drift. Any position request strictly between 0 and 100 sends `Vent` (`main=0xd8`), the real My/favorite-position command - confirmed via a live capture of a real TaHoma "My" press. Unlike RTS, My and Stop are **not** the same command for IO: the dedicated Stop action still sends `Stop` (`main=0xd2`), which (also confirmed via live capture) only has an effect while the motor is actively moving.
-- **`2W`** - placeholder for real motor-reported position. Not implemented; selecting it just logs a warning and ignores commands.
+- **`Position`** (default) - the only mode that sends arbitrary percentage targets to the motor. The motor itself executes these accurately (confirmed via passive 2W read-back across multiple physical devices/percentages); the displayed position while a move is in progress is a fixed 25s travel-time animation, purely cosmetic (not user-configurable - there's nothing to tune since it never affects where the motor actually ends up, only how long the UI shows "still moving").
+- **`Open / My / Close`** - three discrete states (0% closed / 50% "My" / 100% open), no time tracking, no arbitrary percentages - any position request strictly between 0 and 100 collapses to `Vent` (`main=0xd8`), the real My/favorite-position command, confirmed via a live capture of a real TaHoma "My" press. My and Stop are **not** the same command: the dedicated Stop action still sends `Stop` (`main=0xd2`), which (also confirmed via live capture) only has an effect while the motor is actively moving.
+- **`Two-Way (Soon)`** - placeholder for real motor-reported position. Not implemented; selecting it just logs a warning and ignores commands.
+
+### Real position feedback (passive 2W decode)
+
+Independent of the Mode above, a cover with `motor_address` set (see `somfy-io-cover.yaml`) gets a standalone **Target Closure** sensor populated from the real motor whenever an *existing* 2W-bonded controller (TaHoma, Connexoon, or any other io-homecontrol box) talks to it - even though this bridge never initiated that exchange.
+
+**This only updates the Target Closure sensor - it deliberately never touches the cover entity's own position/state.** An earlier version of this feature also overwrote the cover's own position, which sounded right (real data should beat a guess) but backfired: passively decoded frames aren't reliably validated yet (see the integrity caveat below), and a bad decode was confirmed corrupting the actual cover entity used for real control. The sensor is an explicit best-effort side-channel for monitoring/automations; the cover's own displayed position only ever comes from commands this bridge itself sent and tracked.
+
+**How it works:** io-homecontrol's 2W protocol runs a real AES challenge/response handshake for authentication, but the command/status *data* inside those frames is plaintext, not encrypted - confirmed by decoding it without ever knowing the key TaHoma and the motor share. Whenever TaHoma sends a movement command (`CMD 0x00`) and the motor answers once it's physically settled (`CMD 0x04`, after the challenge/response completes), this bridge - already listening continuously on the same channel for its own purposes - decodes the real position directly: bytes 2-3 of the `CMD 0x04` answer carry the same Main Parameter value the movement command itself used, on a `0x0000`-`0xC800` = `0-100%` scale (closure %, 0=open/100=closed - the same convention as HA's Overkiz "Target closure" sensor, so the two are directly comparable). Confirmed byte-for-byte against two different physical motors across every value from 0-100%.
+
+**What this requires:**
+- `motor_address` set to the shutter's **real** Somfy address (6 hex chars) - completely different from `node`/`key`, which are this bridge's own locally-generated 1W identity. Look it up via an existing 2W controller's device registry - e.g. Home Assistant's Overkiz integration: find the cover's `unique_id` (`io://<gateway-id>/<decimal-id>`), convert the decimal id to hex. That's `motor_address`.
+- **A real, already-2W-bonded controller (TaHoma, Connexoon, or similar) actively using the shutter.** This bridge only *overhears* that traffic - it never initiates a query of its own, and can't: sending an unbonded 2W query to a motor with no prior bonding was tested directly and got zero response (no challenge, no answer, nothing at all). 1W pairing does not grant any standing on a motor's completely separate 2W trust system.
+- **If you only ever control your shutters over 1W** (a physical remote, or this bridge alone, with no TaHoma/Connexoon/similar box ever bonded to them), **this feature will not produce anything.** Whether real position is obtainable at all in a pure-1W-only setup is genuinely unconfirmed - it's never been tested, since testing this bridge has always had a TaHoma alongside it. If that's your setup and you try this, please report back what you see (or don't see) so this note can be corrected either way.
+- Freshness depends entirely on how often the box you already have polls or moves the shutter - not continuous, not on this bridge's own schedule. In testing, the interval after a move started around 4-5s and backed off to roughly 20s at rest; the steady-state interval for a shutter that's never touched at all hasn't been fully characterized yet.
+
+**Known limitation - no verified frame integrity check.** A garbled/corrupted reception was directly observed producing a wrong Target Closure value (decoded position contradicted the real, independently-confirmed Overkiz state at the time) - no CRC or other integrity check has been located anywhere in the RX pipeline before a frame's bytes are trusted. A basic sanity check (reject an all-zero source address) was added, but this is a partial mitigation, not a real fix - a garbled frame that happens to still carry a real registered motor's address would not be caught. Treat this sensor as best-effort, not a guaranteed-correct source of truth, until this is properly investigated.
+
+**What this is not:** this bridge still cannot query position on its own, still cannot control shutters over 2W, and has no 2W bonding of its own with any motor. That would be a separate, much larger effort (the real AES challenge/response + key-transfer bonding ceremony, then this bridge doing its own periodic polling, independent of TaHoma).
 
 ### Broadcast type caveat
 
@@ -211,23 +250,24 @@ Each cover has a `select:` entity to switch between:
 - Pairing and unpairing via a single `Program` button, dispatching to `Add` (cmd `0x30`) or `Remove` (cmd `0x39`) based on our own persisted pairing status - matches how real Somfy remotes and Somfy's own official add/remove instructions actually work, see [Pairing](#pairing-and-unpairing-a-cover-to-its-motor) above.
 - Open / Close / Stop / My / absolute Position (0-100%) commands, confirmed working against real hardware. My and Stop are distinct commands (`Vent`/`main=0xd8` vs `Stop`/`main=0xd2`), confirmed via live captures of real TaHoma traffic.
 - Identify / Start Identify / Stop Identify (`cmd=0x1E`) - best-guess frames, confirmed working against real hardware, see [Identify](#identify) above.
-- Per-cover selectable mode (`1W Timed` / `1W My` / `2W` placeholder).
+- Per-cover selectable mode (`Position` / `Open / My / Close` / `Two-Way (Soon)` placeholder).
+- **Real position feedback, passively decoded from an existing 2W controller's own traffic** (TaHoma, Connexoon, etc.) - confirmed byte-for-byte accurate against real hardware, see [Real position feedback](#real-position-feedback-passive-2w-decode) above for how it works and what it requires (notably: an existing 2W-bonded box, this bridge cannot do this alone).
 
 All of the above confirmed working against real motors, including pairing/unpairing multiple physical shutters end-to-end.
 
 **Not yet implemented:**
-- **2W (two-way, real position feedback).** `CMD 4` status frames from real 2W motors are passively logged but not decrypted - that requires the actual AES challenge/response layer, a substantially larger undertaking than the 1W command layer here (upstream's own project describes 2W as unstable even in their hands).
+- **This bridge's own 2W bonding and control.** It can passively decode another controller's already-bonded 2W traffic (see above), but cannot bond with a motor over 2W itself, cannot query position on its own schedule, and cannot control a shutter over 2W at all - confirmed directly: an unbonded 2W query to a motor gets zero response. That would need the real AES challenge/response + key-transfer bonding ceremony, a substantially larger undertaking than the 1W command layer here (upstream's own project describes 2W as unstable even in their hands), and is the only path to real position feedback for an installation with no TaHoma/Connexoon/similar box at all.
 
 ### Files
 
-- `somfy-io-bridge.yaml`: the device config (radio setup, Wi-Fi/API/OTA, OLED display, diagnostic entities (WiFi Signal, Uptime, Loop Time, Restart Reason, Restart - same as the RTS bridge), and one `packages:` entry per physical cover).
-- `somfy-io-cover.yaml`: reusable package template (cover + Program button + My button + Identify/Start/Stop Identify buttons + Mode select + Travel Time Open/Close numbers), instantiated per cover via substitution variables (`cover_id`, `cover_name`, `device_class`, `node`, `key`, `broadcast_type`, `travel_time_open`, `travel_time_close`).
+- `somfy-io-bridge.yaml`: the device config (radio setup, Wi-Fi/API/OTA, OLED display, diagnostic entities (WiFi Signal, Uptime, Loop Time, Restart Reason, Restart), config entities (Debug Logging, Display, Display Brightness, Display Page Interval), and one `packages:` entry per physical cover).
+- `somfy-io-cover.yaml`: reusable package template (cover + Program button + My button + Identify/Start/Stop Identify buttons + Mode select + Target Closure sensor), instantiated per cover via substitution variables (`cover_id`, `cover_name`, `device_class`, `node`, `key`, `broadcast_type`, `motor_address` - see [Real position feedback](#real-position-feedback-passive-2w-decode)).
 - `components/iohc/`: the local `external_component`.
-  - Flat directory (no subdirectories except `cover/`, `button/`, `select/` - the only structure ESPHome's local-component loader actually supports) - see the comment in `iohc.h` for why.
+  - Flat directory (no subdirectories except `cover/`, `button/`, `select/`, `sensor/` - the only structure ESPHome's local-component loader actually supports) - see the comment in `iohc.h` for why.
   - `iohcRadio.*`, `iohcPacket.*`, `SX1276Helpers.*`, `sx1276Regs-Fsk.h`, `TickerUsESP32.*`, `Delegate.h`: vendored radio/protocol layer, near-verbatim from upstream.
   - `iohc_remote1w.*`: the command/pairing layer (Add/Remove/Open/Close/Stop/Vent/Position/Identify), rewritten around ESPHome's `Preferences`-backed persistence instead of upstream's JSON-file + MQTT model.
-  - `iohc_blind_position.*`: the optional local travel-time position estimator (`1W Timed` mode only).
-  - `cover/`, `button/`, `select/`: the ESPHome platform integration.
+  - `iohc_blind_position.*`: the local travel-time position estimator, fixed 25s open/close, used only for the cosmetic "still moving" animation in `Position` mode (see [Modes](#modes)).
+  - `cover/`, `button/`, `select/`, `sensor/`: the ESPHome platform integration - `sensor/` is the standalone Target Closure sensor (see [Real position feedback](#real-position-feedback-passive-2w-decode)).
 
 ### Attribution
 
@@ -235,7 +275,7 @@ Built on [`rspaargaren/iohomecontrol`](https://github.com/rspaargaren/iohomecont
 
 ### Board-specific notes
 
-Tested and working on the LilyGO TTGO T3 LoRa32 **868MHz** V1.6.1 specifically. Requires the `arduino` framework (not `esp-idf`, used by the RTS bridge) since the vendored radio code uses Arduino's `SPI`/`Preferences` libraries directly - both are declared under `esphome: libraries:` in `somfy-io-bridge.yaml` since PlatformIO's dependency finder doesn't pick them up automatically from a local `external_component`.
+Tested and working on the LilyGO TTGO T3 LoRa32 **868MHz** V1.6.1 specifically. Requires the `arduino` framework (not `esp-idf`) since the vendored radio code uses Arduino's `SPI`/`Preferences` libraries directly - both are declared under `esphome: libraries:` in `somfy-io-bridge.yaml` since PlatformIO's dependency finder doesn't pick them up automatically from a local `external_component`.
 
 ---
 
