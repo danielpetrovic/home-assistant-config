@@ -16,10 +16,12 @@
 #   no time-based estimation, no drift. 0.0 = closed (DOWN), 0.5 = MY/
 #   favorite preset (MY), 1.0 = open (UP).
 # - "Timed" - local travel-time-based position estimate (like the IO
-#   bridge's own "1W Timed" mode), for anyone who wants smoother/continuous
+#   bridge's own "Position" mode), for anyone who wants smoother/continuous
 #   position instead of the 3 fixed states. Pure estimate: RTS is one-way,
 #   the motor never reports real position back, so this can drift on
-#   repeated partial moves the same way IO's Timed mode can.
+#   repeated partial moves the same way IO's local estimate can - the
+#   difference is IO's real motor still lands exactly on target regardless
+#   (confirmed via passive 2W read-back), RTS has no way to confirm that.
 substitutions:
   cover_id: "changeme"
   cover_name: "Change Me"
@@ -27,6 +29,7 @@ substitutions:
   device_class: "shade"
   travel_time_open: "25"
   travel_time_close: "25"
+  retry_delay: "3s"
 
 somfy:
   - address: ${remote_address}
@@ -56,6 +59,30 @@ globals:
     restore_value: false
     initial_value: "-1.0" # -1 = no target (Open/Close to a full extreme)
 
+# Optional per-cover redundant-send for shutters with weak/marginal RTS
+# reception (RTS is one-way, no ack - a command can silently get dropped).
+# mode: restart means re-arming (a fresh Open/Close) or stopping (My/Stop,
+# any other command) both cancel whatever retry was previously pending.
+script:
+  - id: ${cover_id}_retry_open
+    mode: restart
+    then:
+      - delay: ${retry_delay}
+      - logger.log:
+          tag: "retry"
+          level: INFO
+          format: "${cover_name}: resending Open (retry, no other command in ${retry_delay})"
+      - lambda: id(${cover_id}_remote)->send_command(somfy::SOMFY_UP, 1);
+  - id: ${cover_id}_retry_close
+    mode: restart
+    then:
+      - delay: ${retry_delay}
+      - logger.log:
+          tag: "retry"
+          level: INFO
+          format: "${cover_name}: resending Close (retry, no other command in ${retry_delay})"
+      - lambda: id(${cover_id}_remote)->send_command(somfy::SOMFY_DOWN, 1);
+
 button:
   - platform: template
     # Short name, combines with the device's own name to display as e.g.
@@ -81,6 +108,18 @@ button:
           id: ${cover_id}_remote
           command: MY
           repeat: 1
+      - script.stop: ${cover_id}_retry_open
+      - script.stop: ${cover_id}_retry_close
+
+switch:
+  - platform: template
+    name: "Retry Weak Signal Commands"
+    id: ${cover_id}_retry_switch
+    device_id: ${cover_id}_device
+    icon: mdi:repeat
+    entity_category: config
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
 
 select:
   - platform: template
@@ -146,6 +185,8 @@ cover:
           } else {
             id(${cover_id}_position) = 1.0f;
           }
+          id(${cover_id}_retry_close).stop();
+          if (id(${cover_id}_retry_switch).state) id(${cover_id}_retry_open).execute();
       - somfy.send_command:
           id: ${cover_id}_remote
           command: UP
@@ -162,6 +203,8 @@ cover:
           } else {
             id(${cover_id}_position) = 0.0f;
           }
+          id(${cover_id}_retry_open).stop();
+          if (id(${cover_id}_retry_switch).state) id(${cover_id}_retry_close).execute();
       - somfy.send_command:
           id: ${cover_id}_remote
           command: DOWN
@@ -193,6 +236,8 @@ cover:
           } else {
             id(${cover_id}_position) = 0.5f;
           }
+          id(${cover_id}_retry_open).stop();
+          id(${cover_id}_retry_close).stop();
       - somfy.send_command:
           id: ${cover_id}_remote
           command: MY
@@ -223,6 +268,8 @@ cover:
             id(${cover_id}_remote)->send_command(somfy::SOMFY_MY, 1);
             id(${cover_id}_position) = 0.5f;
           }
+          id(${cover_id}_retry_open).stop();
+          id(${cover_id}_retry_close).stop();
 
 # Ticks the "Timed" mode position estimate while moving, and auto-stops
 # (sends MY) once it reaches a requested intermediate target - RTS has no
