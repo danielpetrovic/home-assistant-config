@@ -139,17 +139,12 @@ namespace IOHC {
             case RemoteButton::Remove: {
                 // 0x2e (Pair) / 0x39 (Remove): HMAC-signed confirmation frame
                 // (data + sequence[2] + hmac[6], 9 bytes), same payload shape
-                // for both - only the cmd byte differs. Confirmed byte-for-
-                // byte against upstream rspaargaren/iohomecontrol's own
-                // iohcRemote1W::cmd() (src/iohcRemote1W.cpp, RemoteButton::
-                // Remove case) - a prior session incorrectly "fixed" this to
-                // a bare 2-byte frame based on a different, less authoritative
-                // protocol reference (Velocet/iown-homecontrol's commands.md),
-                // which was wrong: that doc documents box/network-side
-                // observations of cmd 0x2e/0x39, not what a 1W virtual remote
-                // actually needs to send. Reverted back to match upstream
-                // exactly - see also COMMANDS.md in the upstream repo, which
-                // lists "remove" as a real, distinct, working command.
+                // for both - only the cmd byte differs. Matches upstream
+                // rspaargaren/iohomecontrol's own iohcRemote1W::cmd()
+                // (src/iohcRemote1W.cpp, RemoteButton::Remove case). Velocet/
+                // iown-homecontrol's commands.md documents a bare 2-byte
+                // frame for 0x2e/0x39, but that's box/network-side traffic,
+                // not what a 1W virtual remote sends.
                 auto *packet = new iohcPacket;
                 forge_packet(packet);
                 packet->payload.packet.header.CtrlByte1.asStruct.MsgLen += sizeof(_p0x2e);
@@ -314,15 +309,10 @@ namespace IOHC {
                         break;
                     case RemoteButton::Vent:
                         packet->payload.packet.msg.p0x00_14.main[0] = 0xd8;
-                        // main[1]=0x00, NOT 0x03. Upstream's own Vent case
-                        // uses 0x03 - copied that verbatim without
-                        // cross-checking it, which was wrong: the real
-                        // captured TaHoma "My" frame (DATA 01 e7 d8 00 00 00
-                        // -> org=01 acei=e7 main[0]=d8 main[1]=00 fp1=00
-                        // fp2=00) has main[1]=0x00. Confirmed against two
-                        // independent captures (the isolated stop-vs-my A/B
-                        // test and the earlier single My capture) - both show
-                        // main[1]=0x00, never 0x03.
+                        // main[1]=0x00, NOT upstream's 0x03: a real captured
+                        // TaHoma "My" frame (DATA 01 e7 d8 00 00 00) has
+                        // main[1]=0x00, confirmed across two independent
+                        // captures.
                         packet->payload.packet.msg.p0x00_14.main[1] = 0x00;
                         position_tracker_.stop();
                         // No real captured companion-frame sample for Vent
@@ -332,13 +322,12 @@ namespace IOHC {
                         break;
                     case RemoteButton::Position: {
                         int p = percent < 0 ? 0 : (percent > 100 ? 100 : percent);
-                        // Upstream's own formula is (100-p)*2, but a real test
-                        // against this hardware (75% requested -> TaHoma showed
-                        // the motor at 51%, matching the raw un-doubled byte 50
-                        // far better than the *2 formula's own 25) suggests this
-                        // motor firmware takes main[0] as a direct percentage,
-                        // not a doubled one. Needs confirming with another test.
-                        uint8_t val = static_cast<uint8_t>(100 - p);
+                        // Matches upstream's (100-p)*2 formula: the motor
+                        // reads main[0] on the same raw/2=percent scale its
+                        // own status reports use. Self-consistent with the
+                        // dedicated Open/Close commands above at the
+                        // extremes: (100-100)*2=0, (100-0)*2=200=0xC8.
+                        uint8_t val = static_cast<uint8_t>((100 - p) * 2);
                         packet->payload.packet.msg.p0x00_14.main[0] = val;
                         packet->payload.packet.msg.p0x00_14.main[1] = 0x00;
                         float current = position_tracker_.getPosition();

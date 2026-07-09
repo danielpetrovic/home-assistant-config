@@ -18,8 +18,14 @@
 #include <esp_timer.h>
 #include <Arduino.h>
 #include <algorithm>
+#include <cmath>
+#include "esphome/core/log.h"
 
 namespace IOHC {
+    // Shares the "iohc.cover" tag with iohc_cover.cpp - BlindPosition is only
+    // ever owned/driven by a cover entity, never called from ISR context.
+    static const char *const TAG = "iohc.cover";
+
     BlindPosition::BlindPosition(uint32_t travelTimeOpenSec, uint32_t travelTimeCloseSec)
             : state(State::Idle), travelTimeOpen(travelTimeOpenSec), travelTimeClose(travelTimeCloseSec),
               lastUpdateUs(0), position(0.0f) {}
@@ -34,21 +40,21 @@ namespace IOHC {
 
     void BlindPosition::startOpening() {
         update();
-        Serial.printf("[BlindPosition] start opening (pos=%.1f%%)\n", position);
+        ESP_LOGV(TAG, "start opening (pos=%.1f%%)", position);
         state = State::Opening;
         lastUpdateUs = esp_timer_get_time();
     }
 
     void BlindPosition::startClosing() {
         update();
-        Serial.printf("[BlindPosition] start closing (pos=%.1f%%)\n", position);
+        ESP_LOGV(TAG, "start closing (pos=%.1f%%)", position);
         state = State::Closing;
         lastUpdateUs = esp_timer_get_time();
     }
 
     void BlindPosition::stop() {
         update();
-        Serial.printf("[BlindPosition] stop (pos=%.1f%%)\n", position);
+        ESP_LOGV(TAG, "stop (pos=%.1f%%)", position);
         state = State::Idle;
     }
 
@@ -82,7 +88,11 @@ namespace IOHC {
     position = std::clamp(position, 0.0f, 100.0f);
 
     lastUpdateUs = now;
-    Serial.printf("[BlindPosition] update (state=%d pos=%.1f%%)\n", static_cast<int>(state), position);
+    // Only log on a whole-percent change to avoid per-tick spam.
+    if (std::abs(position - lastLoggedPosition) >= 1.0f) {
+        lastLoggedPosition = position;
+        ESP_LOGV(TAG, "update (state=%d pos=%.0f%%)", static_cast<int>(state), position);
+    }
 }
 
     float BlindPosition::getPosition() const { return position; }

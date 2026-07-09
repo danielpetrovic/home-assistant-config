@@ -21,7 +21,8 @@
 // open/close values. Real motors commonly move at different speeds in each
 // direction (gravity helps closing, doesn't help opening), and 230V/high-power
 // motor types move faster than battery ones - a single shared value can't
-// represent that. Both are user-configurable per cover in YAML.
+// represent that. Not user-configurable (see IOHCCover::TRAVEL_TIME_OPEN/
+// CLOSE) - this estimate is purely cosmetic, so a fixed value is enough.
 
 #ifndef IOHC_BLIND_POSITION_H
 #define IOHC_BLIND_POSITION_H
@@ -54,6 +55,7 @@ namespace IOHC {
         uint32_t travelTimeClose; // seconds
         uint64_t lastUpdateUs;
         float position; // 0..100
+        float lastLoggedPosition{-1.0f}; // last value logged; -1 = never logged
     };
 }
 

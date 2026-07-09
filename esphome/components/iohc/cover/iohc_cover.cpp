@@ -1,5 +1,7 @@
 #include "iohc_cover.h"
 #include "esphome/core/log.h"
+#include "../iohcCryptoHelpers.h"
+#include <algorithm>
 #include <cmath>
 #include <functional>
 
@@ -27,25 +29,44 @@ void IOHCCover::setup() {
 
   cover_prefs_namespace_ = cover_nvs_namespace_for(this->nvs_key_);
   cover_prefs_.begin(cover_prefs_namespace_.c_str(), false);
-  mode_ = static_cast<Mode>(cover_prefs_.getUChar("mode", static_cast<uint8_t>(Mode::MY)));
+  mode_ = static_cast<Mode>(cover_prefs_.getUChar("mode", static_cast<uint8_t>(Mode::POSITION)));
 
-  // Travel times: the YAML-configured value (already loaded into
-  // travel_time_open_/close_ via set_travel_time_open()/close() at codegen
-  // time) is only the initial default - a value persisted by the Travel
-  // Time Open/Close number entities wins if present, so a runtime change
-  // from HA survives a reboot without needing a reflash.
-  travel_time_open_ = cover_prefs_.getUInt("tt_open", travel_time_open_);
-  travel_time_close_ = cover_prefs_.getUInt("tt_close", travel_time_close_);
-  remote_.set_travel_time_open(travel_time_open_);
-  remote_.set_travel_time_close(travel_time_close_);
+  remote_.set_travel_time_open(TRAVEL_TIME_OPEN);
+  remote_.set_travel_time_close(TRAVEL_TIME_CLOSE);
 
-  if (mode_ == Mode::TIMED) {
-    this->position = remote_.position_tracker().getPosition() / 100.0f;
-  } else {
-    // MY / TWO_WAY: discrete, persisted position - defaults to open (1.0)
-    // when nothing is known yet, matching the RTS bridge's own default.
-    this->position = cover_prefs_.getFloat("position", 1.0f);
+  // Restore last known position (defaults to open if never set).
+  this->position = cover_prefs_.getFloat("position", 1.0f);
+  if (mode_ == Mode::POSITION) {
+    remote_.position_tracker().setPosition(this->position * 100.0f);
   }
+
+  if (has_motor_address_) {
+    parent_->register_cover_for_position_updates(motor_address_, this);
+  }
+
+  if (target_closure_sensor_ != nullptr && cover_prefs_.isKey("target_closure")) {
+    target_closure_sensor_->publish_state(cover_prefs_.getFloat("target_closure", 0.0f));
+  }
+}
+
+void IOHCCover::set_motor_address(const std::string &motor_address_hex) {
+  if (motor_address_hex.empty())
+    return;
+  hexStringToBytes(motor_address_hex, motor_address_);
+  has_motor_address_ = true;
+}
+
+void IOHCCover::update_real_position(float closure_percent) {
+  // Only touches the standalone sensor, never this->position/
+  // current_operation/the tracker - passively decoded frames aren't
+  // validated (no CRC in the RX pipeline), so a bad decode must not be able
+  // to corrupt the entity actually used for control.
+  closure_percent = std::clamp(closure_percent, 0.0f, 100.0f);
+  ESP_LOGI(TAG, "Target Closure sensor updated from passive 2W decode: %.0f%%", closure_percent);
+  if (target_closure_sensor_ != nullptr) {
+    target_closure_sensor_->publish_state(closure_percent);
+  }
+  cover_prefs_.putFloat("target_closure", closure_percent);
 }
 
 void IOHCCover::set_mode(Mode mode) {
@@ -53,20 +74,8 @@ void IOHCCover::set_mode(Mode mode) {
   cover_prefs_.putUChar("mode", static_cast<uint8_t>(mode));
 }
 
-void IOHCCover::set_travel_time_open_and_persist(uint32_t seconds) {
-  travel_time_open_ = seconds;
-  remote_.set_travel_time_open(seconds);
-  cover_prefs_.putUInt("tt_open", seconds);
-}
-
-void IOHCCover::set_travel_time_close_and_persist(uint32_t seconds) {
-  travel_time_close_ = seconds;
-  remote_.set_travel_time_close(seconds);
-  cover_prefs_.putUInt("tt_close", seconds);
-}
-
 void IOHCCover::loop() {
-  if (mode_ != Mode::TIMED)
+  if (mode_ != Mode::POSITION)
     return; // MY/TWO_WAY don't tick a time-based position estimate
 
   auto &tracker = remote_.position_tracker();
@@ -87,7 +96,11 @@ void IOHCCover::loop() {
     }
   }
 
-  float pos = tracker.getPosition() / 100.0f;
+  // Round to the nearest whole percent - the real motor's own resolution
+  // (confirmed via passive 2W decode) is always a whole percent, so a
+  // finer-grained local estimate is just noise (extra publish_state()/log
+  // spam) with no real precision behind it.
+  float pos = std::round(tracker.getPosition()) / 100.0f;
   bool position_changed = std::fabs(pos - this->position) > 0.001f;
   bool now_idle = !tracker.isMoving() && this->current_operation != cover::COVER_OPERATION_IDLE;
 
@@ -103,9 +116,9 @@ void IOHCCover::loop() {
 void IOHCCover::dump_config() {
   LOG_COVER("", "Somfy IOHC Cover", this);
   ESP_LOGCONFIG(TAG, "  Paired: %s", remote_.is_paired() ? "yes" : "no");
-  const char *mode_name = mode_ == Mode::TIMED ? "1W Timed" : mode_ == Mode::MY ? "1W My" : "2W";
+  const char *mode_name = mode_ == Mode::POSITION ? "Position" : mode_ == Mode::MY ? "Open / My / Close" : "Two-Way (Soon)";
   ESP_LOGCONFIG(TAG, "  Mode: %s", mode_name);
-  ESP_LOGCONFIG(TAG, "  Travel time open/close: %us / %us", travel_time_open_, travel_time_close_);
+  ESP_LOGCONFIG(TAG, "  Travel time open/close: %us / %us (fixed)", TRAVEL_TIME_OPEN, TRAVEL_TIME_CLOSE);
 }
 
 cover::CoverTraits IOHCCover::get_traits() {
@@ -133,7 +146,7 @@ void IOHCCover::press_my() {
 
 void IOHCCover::control(const cover::CoverCall &call) {
   if (mode_ == Mode::TWO_WAY) {
-    ESP_LOGW(TAG, "2W mode selected but not implemented yet - command ignored");
+    ESP_LOGW(TAG, "Two-Way mode selected but not implemented yet - command ignored");
     return;
   }
 
@@ -144,6 +157,7 @@ void IOHCCover::control(const cover::CoverCall &call) {
       cover_prefs_.putFloat("position", 0.5f);
     } else {
       target_position_ = -1.0f;
+      cover_prefs_.putFloat("position", remote_.position_tracker().getPosition() / 100.0f);
     }
     this->current_operation = cover::COVER_OPERATION_IDLE;
     this->publish_state();
@@ -181,7 +195,7 @@ void IOHCCover::control(const cover::CoverCall &call) {
     return;
   }
 
-  // Mode::TIMED
+  // Mode::POSITION
   if (percent >= 100) {
     remote_.cmd(IOHC::RemoteButton::Open);
     target_position_ = 100.0f;
@@ -197,6 +211,7 @@ void IOHCCover::control(const cover::CoverCall &call) {
     this->current_operation =
         (percent > current) ? cover::COVER_OPERATION_OPENING : cover::COVER_OPERATION_CLOSING;
   }
+  cover_prefs_.putFloat("position", target_position_ / 100.0f);
   this->publish_state();
 }
 

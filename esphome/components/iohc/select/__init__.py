@@ -1,9 +1,16 @@
 """Somfy IO (io-homecontrol) per-cover mode select.
 
-Switches one cover between 1W Timed (local travel-time position estimate),
-1W My (RTS-bridge-style 3-state discrete position, no time tracking), and 2W
-(real motor-reported position - not implemented yet, selecting it just logs
-a warning). See IOHCCover::Mode in cover/iohc_cover.h.
+Switches one cover between Position (1W, default - the only mode that sends
+arbitrary percentage targets to the motor; the displayed position while
+moving is a cosmetic local travel-time estimate only, see IOHCCover::Mode),
+Open / My / Close (1W, RTS-bridge-style 3-state discrete position, no time
+tracking, no arbitrary percentages), and Two-Way (Soon) (real motor-reported
+position - not implemented yet, selecting it just logs a warning and ignores
+all commands). See IOHCCover::Mode in cover/iohc_cover.h.
+
+Options list order must stay index-aligned with the Mode enum
+(POSITION=0, MY=1, TWO_WAY=2) - IOHCModeSelect::control() casts the selected
+index directly to Mode.
 """
 
 import esphome.codegen as cg
@@ -20,7 +27,7 @@ CONF_COVER_ID = "cover_id"
 
 IOHCModeSelect = iohc_ns.class_("IOHCModeSelect", select.Select, cg.Component)
 
-MODE_OPTIONS = ["1W Timed", "1W My", "2W"]
+MODE_OPTIONS = ["Position", "Open / My / Close", "Two-Way (Soon)"]
 
 CONFIG_SCHEMA = select.select_schema(IOHCModeSelect).extend(
     {

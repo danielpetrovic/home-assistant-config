@@ -18,6 +18,9 @@
 
 #include "SX1276Helpers.h"
 #include "iohc_board_config.h"
+#include "esp_log.h"
+
+static const char *const TAG = "iohc.radio";
 
 #if defined(RADIO_SX127X)
 #include <map>
@@ -67,7 +70,7 @@ namespace Radio {
  * the availability of the radio, configures SPI settings, and puts the radio chip in standby mode.
  */
     void initHardware() {
-        printf("\nSPI Init");
+        ESP_LOGV(TAG, "SPI Init");
 
         //gpio_pullup_en((gpio_num_t) RADIO_MISO);
 
@@ -110,13 +113,13 @@ namespace Radio {
 
         pinMode(SCAN_LED, OUTPUT);
         digitalWrite(SCAN_LED, 1);
-        printf("\nRadio Chip is ready\n");
+        ESP_LOGV(TAG, "Radio Chip is ready");
     }
 
 void setPreambleLength(uint16_t preambleLen) {
     writeByte(REG_PREAMBLEMSB, (preambleLen >> 8) & 0xFF);
     writeByte(REG_PREAMBLELSB, preambleLen & 0xFF);
-    ets_printf("Radio: Preamble length set to %u symbols\n", preambleLen);
+    ESP_LOGV(TAG, "Preamble length set to %u symbols", preambleLen);
 }
 
 /**

@@ -6,8 +6,15 @@ iohc_remote1w.h/.cpp - see that file for why 1W (not the harder 2W
 challenge/response) is the right target for direct control, and iohc.h for
 why this whole component is a flat/subdirectory-per-platform layout.
 
-Position feedback is a local estimate (BlindPosition, travel-time based),
-not real motor feedback - hence is_assumed_state(true) in get_traits().
+Position feedback is normally a local estimate (BlindPosition, travel-time
+based), not real motor feedback - hence is_assumed_state(true) in
+get_traits() regardless of whether motor_address is set. If motor_address IS
+set (the shutter's real Somfy address, NOT the node/key identity below - see
+README's "Real position feedback" section), this cover ALSO gets passively
+updated with the motor's own real reported position whenever an already-
+2W-bonded controller (e.g. TaHoma/Connexoon) is overheard talking to it -
+see IOHCComponent::on_receive() in iohc.cpp. Requires such a controller to
+already exist and be active; this bridge cannot query position on its own.
 """
 
 import re
@@ -23,12 +30,11 @@ CODEOWNERS = ["@danielpetrovic"]
 DEPENDENCIES = ["iohc"]
 
 CONF_IOHC_ID = "iohc_id"
-CONF_TRAVEL_TIME_OPEN = "travel_time_open"
-CONF_TRAVEL_TIME_CLOSE = "travel_time_close"
 CONF_BROADCAST_TYPE = "broadcast_type"
 CONF_MANUFACTURER = "manufacturer"
 CONF_NODE = "node"
 CONF_KEY = "key"
+CONF_MOTOR_ADDRESS = "motor_address"
 
 IOHCCover = iohc_ns.class_("IOHCCover", cover.Cover, cg.Component)
 
@@ -50,13 +56,6 @@ def validate_hex_string(length):
 CONFIG_SCHEMA = cover.cover_schema(IOHCCover, device_class="shutter").extend(
     {
         cv.GenerateID(CONF_IOHC_ID): cv.use_id(IOHCComponent),
-        # Only used by Mode::TIMED (see IOHCCover::Mode) - split into open/
-        # close since real motors commonly move at different speeds each
-        # direction (gravity helps closing, doesn't help opening), and
-        # 230V/high-power motor types move faster than battery ones.
-        # Sensible default: 25s, a typical roller shutter full-travel time.
-        cv.Optional(CONF_TRAVEL_TIME_OPEN, default="25s"): cv.positive_time_period_seconds,
-        cv.Optional(CONF_TRAVEL_TIME_CLOSE, default="25s"): cv.positive_time_period_seconds,
         # Broadcast group the motor listens on (see sDevicesType in
         # iohc_utils.h) - default 0 ("All") matches upstream's own default,
         # but NOT yet confirmed against real hardware for this install. See
@@ -71,7 +70,14 @@ CONFIG_SCHEMA = cover.cover_schema(IOHCCover, device_class="shutter").extend(
         # behavior. node = 6 hex chars (3 bytes), key = 32 hex chars (16
         # bytes, AES-128).
         cv.Optional(CONF_NODE, default=""): validate_hex_string(6),
-        cv.Optional(CONF_KEY, default=""): validate_hex_string(32),
+        cv.Optional(CONF_KEY, default=""): cv.sensitive(validate_hex_string(32)),
+        # The shutter's REAL Somfy address (6 hex chars) - completely
+        # different from node/key above (this bridge's own locally-generated
+        # 1W virtual remote identity). Look this up via an existing 2W
+        # controller (e.g. TaHoma's Overkiz unique_id - see README). Optional:
+        # leave unset if you don't have one, or don't want passive position
+        # sync for this cover.
+        cv.Optional(CONF_MOTOR_ADDRESS, default=""): validate_hex_string(6),
     }
 ).extend(cv.COMPONENT_SCHEMA)
 
@@ -89,11 +95,11 @@ async def to_code(config):
 
     parent = await cg.get_variable(config[CONF_IOHC_ID])
     cg.add(var.set_parent(parent))
-    cg.add(var.set_travel_time_open(config[CONF_TRAVEL_TIME_OPEN].total_seconds))
-    cg.add(var.set_travel_time_close(config[CONF_TRAVEL_TIME_CLOSE].total_seconds))
     cg.add(var.set_type(config[CONF_BROADCAST_TYPE]))
     cg.add(var.set_manufacturer(config[CONF_MANUFACTURER]))
     if config[CONF_NODE]:
         cg.add(var.set_fixed_node(config[CONF_NODE]))
     if config[CONF_KEY]:
         cg.add(var.set_fixed_key(config[CONF_KEY]))
+    if config[CONF_MOTOR_ADDRESS]:
+        cg.add(var.set_motor_address(config[CONF_MOTOR_ADDRESS]))

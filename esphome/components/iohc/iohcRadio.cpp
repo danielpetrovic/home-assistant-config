@@ -26,6 +26,8 @@
 #define SHORT_PREAMBLE_MS 40
 
 namespace IOHC {
+    static const char *const TAG = "iohc.radio";
+
     iohcRadio *iohcRadio::_iohcRadio = nullptr;
     volatile unsigned long iohcRadio::_g_payload_millis = 0L;
     uint8_t iohcRadio::_flags[2] = {0, 0};
@@ -73,8 +75,6 @@ namespace IOHC {
         bool preamble = digitalRead(RADIO_PREAMBLE_DETECTED);
         bool payload = digitalRead(RADIO_PACKET_AVAIL);
         iohcRadio::txComplete = true;
-        ets_printf("TX: TX-RX DONE detected, flag set\n");
-
 
         if (payload) {
             // When in TX state DIO0 is mapped to PacketSent, otherwise it
@@ -125,6 +125,14 @@ namespace IOHC {
         //        printf("Starting TickTimer Handler...\n");
         //        TickTimer.attach_us(SM_GRANULARITY_US/*SM_GRANULARITY_MS*/, tickerCounter, this);
 #if defined(RADIO_SX127X)
+        // attachInterrupt() alone doesn't put these pins through Arduino's
+        // own pinMode() GPIO bookkeeping - later digitalRead() calls on them
+        // (the ISR-missed fallback poll in service(), and the preamble/
+        // payload checks elsewhere) then trigger a harmless but constant
+        // "IO 26/32 is not set as GPIO" warning from esp32-hal-gpio.c every
+        // time. Explicit pinMode() here silences it.
+        pinMode(RADIO_DIO0_PIN, INPUT);
+        pinMode(RADIO_DIO2_PIN, INPUT);
         //        attachInterrupt(RADIO_PACKET_AVAIL, i_payload, CHANGE); //
         //        attachInterrupt(RADIO_PREAMBLE_DETECTED, i_preamble, CHANGE); //
         attachInterrupt(RADIO_DIO0_PIN, handle_interrupt_fromisr, RISING); //CHANGE); //
@@ -313,7 +321,7 @@ void iohcRadio::queueSend(std::vector<iohcPacket *> &iohcTx) {
         return;
     }
     sendQueue.push(std::move(iohcTx));
-    ets_printf("TX: Queued send batch. Queue depth=%d\n", static_cast<int>(sendQueue.size()));
+    ESP_LOGV(TAG, "TX: Queued send batch. Queue depth=%d", static_cast<int>(sendQueue.size()));
 }
 
 void iohcRadio::startQueuedSend() {
@@ -325,14 +333,14 @@ void iohcRadio::startQueuedSend() {
     sendQueue.pop();
     txCounter = 0;
     txComplete = false;
-    ets_printf("TX: Preparing %d packet(s)\n", packets2send.size());
+    ESP_LOGV(TAG, "TX: Preparing %d packet(s)", packets2send.size());
     setRadioState(RadioState::TX);
 
     auto packet = packets2send[txCounter];
 
     // 🟢 Set long preamble for first packet
     Radio::setPreambleLength(LONG_PREAMBLE_MS);
-    ets_printf("TX: Using LONG preamble (%d ms)\n", LONG_PREAMBLE_MS);
+    ESP_LOGV(TAG, "TX: Using LONG preamble (%d ms)", LONG_PREAMBLE_MS);
 
     // Send first packet immediately
     Radio::setStandby();
@@ -343,7 +351,7 @@ void iohcRadio::startQueuedSend() {
     //packet->decode(true); //false);
     //IOHC::lastSendCmd = packet->payload.packet.header.cmd;
 
-    ets_printf("TX: Sent first packet (%d repeats) at %llu us\n", packet->repeat, esp_timer_get_time());
+    ESP_LOGV(TAG, "TX: Sent first packet (%d repeats) at %llu us", packet->repeat, esp_timer_get_time());
 
     // Start ticker for repeats (short preamble)
     Sender.attach_ms(packet->repeatTime, &iohcRadio::onTxTicker, (void*)this);
@@ -368,24 +376,24 @@ void iohcRadio::onTxTicker(void *arg) {
     // 🩵 Fallback: Check IRQFLAGS2 (0x3F) for PacketSent in FSK mode
     uint8_t irqFlags2 = Radio::readByte(0x3F); // REG_IRQFLAGS2
     if (irqFlags2 & 0x08) { // Bit 3 == PacketSent (TXDONE in FSK)
-        ets_printf("FSK: Detected PacketSent (TXDONE) via register (ISR missed?)\n");
+        ESP_LOGV(TAG, "FSK: Detected PacketSent (TXDONE) via register (ISR missed?)");
         Radio::writeByte(0x3F, 0x08); // Clear PacketSent bit
         iohcRadio::txComplete = true;
     }
 
     // ⏳ Wait for TXDONE
     if (!radio->txComplete) {
-        ets_printf("TX: Waiting for TXDONE... (state=%s)\n", radioStateToString(radio->radioState));
+        ESP_LOGV(TAG, "TX: Waiting for TXDONE... (state=%s)", radioStateToString(radio->radioState));
         return;
     }
 
     // ✅ TXDONE received
-    ESP_LOGD("RADIO", "TXDONE flag set, ready to send repeat or next packet.\n");
+    ESP_LOGV(TAG, "TXDONE flag set, ready to send repeat or next packet.");
 
     // 🔁 Repeat logic
     if (packet->repeat > 0) {
         packet->repeat--;
-        ets_printf("TX: Repeating current packet (%d repeats left)\n", packet->repeat);
+        ESP_LOGV(TAG, "TX: Repeating current packet (%d repeats left)", packet->repeat);
     } else {
         // inform callback we finished sending this packet, this transfers ownership of the packet to the callback queue
         radio->sent(packet);
@@ -395,7 +403,7 @@ void iohcRadio::onTxTicker(void *arg) {
 
         // 🛑 Check if all packets are sent
         if (radio->txCounter == radio->packets2send.size()) {
-            ets_printf("TX: All packets sent. Stopping Ticker.\n");
+            ESP_LOGV(TAG, "TX: All packets sent. Stopping Ticker.");
             radio->Sender.detach();
             radio->packets2send.clear();
             Radio::setRx();
@@ -405,7 +413,7 @@ void iohcRadio::onTxTicker(void *arg) {
         }
 
         packet = radio->packets2send[radio->txCounter];
-        ets_printf("TX: Moving to next packet %d/%d (repeat=%d)\n",
+        ESP_LOGV(TAG, "TX: Moving to next packet %d/%d (repeat=%d)",
                     radio->txCounter + 1,
                     radio->packets2send.size(),
                     packet->repeat);
@@ -426,7 +434,7 @@ void iohcRadio::onTxTicker(void *arg) {
     //packet->decode(true); //false);
     //IOHC::lastSendCmd = packet->payload.packet.header.cmd;
 
-    ets_printf("TX: Sent packet %d/%d at %llu us\n",
+    ESP_LOGV(TAG, "TX: Sent packet %d/%d at %llu us",
                radio->txCounter + 1,
                radio->packets2send.size(),
                esp_timer_get_time());
@@ -522,13 +530,10 @@ bool queueCallback(IohcPacketDelegate* callback, iohcPacket* packet) {
 
         // Bounds check added - upstream's own loop has none, and dataAvail()
         // staying true past a real frame's length (RF noise, false sync
-        // trigger) would otherwise overflow this fixed MAX_FRAME_LEN buffer.
-        // Confirmed this actually happens: an earlier session logged a
-        // garbled "DATA(247)" frame, only possible if buffer_length (a
-        // uint8_t) wrapped past 255 having overflowed well beyond the real
-        // 32-byte buffer - a heap corruption bug (iohc is heap-allocated),
-        // exactly the kind that causes a delayed, unpredictable hang rather
-        // than an immediate crash.
+        // trigger) would otherwise overflow this fixed MAX_FRAME_LEN buffer
+        // (iohc is heap-allocated, so this is heap corruption, not just a
+        // garbled frame - a delayed, unpredictable hang rather than an
+        // immediate crash).
         while (Radio::dataAvail() && iohc->buffer_length < MAX_FRAME_LEN) {
             iohc->payload.buffer[iohc->buffer_length++] = Radio::readByte(REG_FIFO);
         }
@@ -642,9 +647,12 @@ bool queueCallback(IohcPacketDelegate* callback, iohcPacket* packet) {
 
 
     void IRAM_ATTR iohcRadio::setRadioState(RadioState newState) {
+        // Called from real ISR context (handle_interrupt_fromisr) as well as
+        // task context, so no logging call here - ESP_LOGx isn't ISR-safe,
+        // and ets_printf on every single state transition (including from
+        // the ISR, on every received frame) was pure spam with no gating.
+        // State transitions are already visible via the TX:/FSK: traces
+        // elsewhere (iohc.radio tag, gated behind Debug Logging).
         radioState = newState;
-        // Optional debug:
-        //printf("State changed to: %d\n", static_cast<int>(newState));
-        ets_printf("State: %s\n", radioStateToString(newState));
     }
 }

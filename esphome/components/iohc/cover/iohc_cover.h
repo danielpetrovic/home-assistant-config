@@ -2,6 +2,7 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/cover/cover.h"
+#include "esphome/components/sensor/sensor.h"
 #include "../iohc.h"
 #include "../iohc_remote1w.h"
 #include <Preferences.h>
@@ -11,17 +12,20 @@ namespace iohc {
 
 class IOHCCover : public cover::Cover, public Component {
  public:
-  // TIMED: local BlindPosition travel-time estimate (approximate, can drift
-  //   on repeated partial moves - fixed to at least stop at the requested
-  //   target instead of always running to 0/100, but still a guess).
+  // POSITION (default): sends real percentage targets to the motor over 1W,
+  //   which reliably lands exactly where commanded. The displayed position
+  //   between send and arrival is a local BlindPosition travel-time
+  //   estimate - purely cosmetic (animates "still moving" in HA), clamped to
+  //   land exactly on the commanded target regardless of timing drift.
   // MY: matches the RTS bridge's own default model exactly - 3 discrete
   //   states (0.0 closed / 0.5 MY-or-stopped / 1.0 open), no time tracking.
   //   Any position request strictly between 0 and 1 maps to the physical
-  //   MY/Stop button (cmd main=0xd2), same button either way.
+  //   MY/Stop button (cmd main=0xd2), same button either way. The only mode
+  //   that does NOT send arbitrary percentage targets.
   // TWO_WAY: real motor-reported position via the 2W challenge/response
   //   layer - not implemented yet, selecting it just logs a warning and
   //   ignores commands.
-  enum class Mode : uint8_t { TIMED = 0, MY = 1, TWO_WAY = 2 };
+  enum class Mode : uint8_t { POSITION = 0, MY = 1, TWO_WAY = 2 };
 
   void setup() override;
   void loop() override;
@@ -31,16 +35,6 @@ class IOHCCover : public cover::Cover, public Component {
   cover::CoverTraits get_traits() override;
 
   void set_parent(IOHCComponent *parent) { parent_ = parent; }
-  // Initial/YAML-configured value only - setup() overrides these with a
-  // persisted value if the Travel Time Open/Close number entities have ever
-  // been changed from HA. Use set_travel_time_open_and_persist()/
-  // set_travel_time_close_and_persist() for runtime changes.
-  void set_travel_time_open(uint32_t seconds) { travel_time_open_ = seconds; }
-  void set_travel_time_close(uint32_t seconds) { travel_time_close_ = seconds; }
-  uint32_t get_travel_time_open() const { return travel_time_open_; }
-  uint32_t get_travel_time_close() const { return travel_time_close_; }
-  void set_travel_time_open_and_persist(uint32_t seconds);
-  void set_travel_time_close_and_persist(uint32_t seconds);
   void set_type(uint8_t type) { type_ = type; }
   void set_manufacturer(uint8_t manufacturer) { manufacturer_ = manufacturer; }
   // Optional (6/32 hex chars). If both set, the bonded identity comes from
@@ -70,20 +64,48 @@ class IOHCCover : public cover::Cover, public Component {
   // just sending Vent instead of Stop.
   void press_my();
 
+  // Real motor address (6 hex chars) - as assigned by Somfy, NOT this
+  // bridge's own 1W virtual remote identity (node/key above, which is a
+  // separate, locally-generated address). Optional: without it, this cover
+  // just never receives passive position updates - see README's "Real
+  // position feedback" section for how to look this up (Overkiz's own
+  // unique_id, if you have TaHoma/Connexoon) and the hard requirement that
+  // an existing 2W-bonded controller (TaHoma or similar) must already exist
+  // and be polling for this to produce anything at all.
+  void set_motor_address(const std::string &motor_address_hex);
+  // Called by IOHCComponent::on_receive() when a real, motor-reported
+  // closure value (0=open/100=closed, per core:ClosureState) is decoded
+  // from passively overheard 2W traffic - see iohc.cpp. Only updates the
+  // standalone Target Closure sensor, never this cover's own position/
+  // current_operation/mode: passively decoded frames aren't validated (no
+  // CRC in the RX pipeline), so a garbled reception could otherwise corrupt
+  // the entity actually used for control.
+  void update_real_position(float closure_percent);
+  // Optional standalone sensor (see sensor/__init__.py) - published in the
+  // same closure % convention as update_real_position()'s own parameter, so
+  // it matches HA's Overkiz "Target closure" sensor exactly rather than this
+  // cover's own position attribute (which uses HA's inverted 0=closed/1=open
+  // cover convention). Never published to until real data actually arrives.
+  void set_target_closure_sensor(sensor::Sensor *s) { target_closure_sensor_ = s; }
+
  protected:
   void control(const cover::CoverCall &call) override;
 
   IOHCComponent *parent_{};
   IOHC::IOHCRemote1W remote_;
-  uint32_t travel_time_open_{25};
-  uint32_t travel_time_close_{25};
+  // Fixed, not user-configurable - purely cosmetic (see Mode::POSITION).
+  static constexpr uint32_t TRAVEL_TIME_OPEN = 25;
+  static constexpr uint32_t TRAVEL_TIME_CLOSE = 25;
   uint8_t type_{0};
   uint8_t manufacturer_{2};
   std::string fixed_node_hex_;
   std::string fixed_key_hex_;
   std::string nvs_key_;
+  IOHC::address motor_address_{};
+  bool has_motor_address_{false};
+  sensor::Sensor *target_closure_sensor_{nullptr};
 
-  Mode mode_{Mode::MY};
+  Mode mode_{Mode::POSITION};
   // Explicitly global-scoped: inside esphome::iohc, unqualified "Preferences"
   // resolves to esphome's OWN esphome::Preferences (aka esp32::ESP32Preferences,
   // pulled in transitively via esphome/core/preferences.h through cover.h) -
@@ -102,7 +124,7 @@ class IOHCCover : public cover::Cover, public Component {
   // would run all the way to 0/100 regardless of what was actually
   // requested, even though the real motor stops correctly on its own.
   // -1 means "no target set" (Stop was called, or nothing requested yet).
-  // Only meaningful in Mode::TIMED.
+  // Only meaningful in Mode::POSITION.
   float target_position_{-1.0f};
 };
 
