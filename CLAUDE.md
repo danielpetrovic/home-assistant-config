@@ -4,6 +4,7 @@
 @.claude/git-workflow.md
 @.claude/zigbee-converters.md
 @.claude/zigbee-devices.md
+@.claude/io-2w-protocol.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
