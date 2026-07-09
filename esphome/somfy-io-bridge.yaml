@@ -1,6 +1,9 @@
-# Somfy IO (io-homecontrol) bridge. 1W (one-way) commands only: pairing,
-# Open/Close/Stop/My/Position/Identify - see README.md for full status. 2W
-# (two-way, real position feedback, channel hopping) not implemented yet.
+# Somfy IO (io-homecontrol) bridge. Commands (pairing, Open/Close/Stop/My/
+# Position/Identify) are 1W (one-way) only - see README.md for full status.
+# 2W (two-way): this bridge can passively decode real position from another
+# already-bonded controller's traffic (e.g. TaHoma) if `motor_address` is
+# set - see README's "Real position feedback" section. This bridge's own 2W
+# bonding/control (channel hopping, on-demand querying) is not implemented.
 #
 # This bridge is a thin ESPHome wrapper around a vendored port of the actual
 # working https://github.com/rspaargaren/iohomecontrol firmware (Apache-2.0),
@@ -18,7 +21,7 @@ esphome:
   friendly_name: Somfy IO Bridge
   project:
     name: "danielpetrovic.Somfy IO Bridge"
-    version: "2026.07.2"
+    version: "2026.07.3"
   # The vendored radio stack talks to the SX1276 directly via Arduino's SPI
   # library, and the Phase 2 pairing/command layer persists bonded remote
   # identities via Arduino's Preferences (NVS) library. Neither gets picked
@@ -104,6 +107,18 @@ esphome:
     - id: shed_garden_shutter_io_device
       name: "Shed Garden Shutter"
       area_id: shed_area
+  # Applies the persisted Display Brightness/Page Interval globals (see
+  # globals: below) to the real hardware - the YAML defaults on display:/
+  # interval: only apply on a fresh flash, they don't get re-read after
+  # boot, so without this a reboot would revert to those defaults instead
+  # of the last value set from HA.
+  on_boot:
+    priority: 600
+    then:
+      - lambda: |-
+          id(oled)->set_contrast(id(display_brightness));
+          id(page_cycle_interval)->set_update_interval((uint32_t)(id(display_page_interval) * 1000));
+          id(page_cycle_interval)->start_poller();
 
 esp32:
   board: ttgo-lora32-v1
@@ -123,7 +138,13 @@ ota:
   - platform: esphome
     password: !secret io_bridge_ota_password
 
+# level is the compile-time ceiling (VERY_VERBOSE keeps full protocol-decode
+# detail available); initial_level is what actually prints after boot, kept
+# quiet so normal operation doesn't flood the log with every motor's traffic.
+# The Debug Logging switch below raises/lowers the runtime level on demand.
 logger:
+  level: VERY_VERBOSE
+  initial_level: INFO
 
 external_components:
   - source:
@@ -155,6 +176,7 @@ packages:
       cover_name: "Bedroom Left Shutter"
       node: !secret io_bedroom_left_shutter_node
       key: !secret io_bedroom_left_shutter_key
+      motor_address: !secret io_bedroom_left_shutter_motor_address
   bedroom_middle_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -162,6 +184,7 @@ packages:
       cover_name: "Bedroom Middle Shutter"
       node: !secret io_bedroom_middle_shutter_node
       key: !secret io_bedroom_middle_shutter_key
+      motor_address: !secret io_bedroom_middle_shutter_motor_address
   bedroom_right_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -169,6 +192,7 @@ packages:
       cover_name: "Bedroom Right Shutter"
       node: !secret io_bedroom_right_shutter_node
       key: !secret io_bedroom_right_shutter_key
+      motor_address: !secret io_bedroom_right_shutter_motor_address
   gameroom_left_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -176,6 +200,7 @@ packages:
       cover_name: "Gameroom Left Shutter"
       node: !secret io_gameroom_left_shutter_node
       key: !secret io_gameroom_left_shutter_key
+      motor_address: !secret io_gameroom_left_shutter_motor_address
   gameroom_right_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -183,6 +208,7 @@ packages:
       cover_name: "Gameroom Right Shutter"
       node: !secret io_gameroom_right_shutter_node
       key: !secret io_gameroom_right_shutter_key
+      motor_address: !secret io_gameroom_right_shutter_motor_address
   garden_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -190,6 +216,7 @@ packages:
       cover_name: "Garden Shutter"
       node: !secret io_garden_shutter_node
       key: !secret io_garden_shutter_key
+      motor_address: !secret io_garden_shutter_motor_address
   gym_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -197,6 +224,7 @@ packages:
       cover_name: "Gym Shutter"
       node: !secret io_gym_shutter_node
       key: !secret io_gym_shutter_key
+      motor_address: !secret io_gym_shutter_motor_address
   hallway_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -204,6 +232,7 @@ packages:
       cover_name: "Hallway Shutter"
       node: !secret io_hallway_shutter_node
       key: !secret io_hallway_shutter_key
+      motor_address: !secret io_hallway_shutter_motor_address
   kitchen_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -211,6 +240,7 @@ packages:
       cover_name: "Kitchen Shutter"
       node: !secret io_kitchen_shutter_node
       key: !secret io_kitchen_shutter_key
+      motor_address: !secret io_kitchen_shutter_motor_address
   living_room_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -218,6 +248,7 @@ packages:
       cover_name: "Living Room Shutter"
       node: !secret io_living_room_shutter_node
       key: !secret io_living_room_shutter_key
+      motor_address: !secret io_living_room_shutter_motor_address
   office_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -225,6 +256,7 @@ packages:
       cover_name: "Office Shutter"
       node: !secret io_office_shutter_node
       key: !secret io_office_shutter_key
+      motor_address: !secret io_office_shutter_motor_address
   roof_terrace_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -232,6 +264,7 @@ packages:
       cover_name: "Roof Terrace Shutter"
       node: !secret io_roof_terrace_shutter_node
       key: !secret io_roof_terrace_shutter_key
+      motor_address: !secret io_roof_terrace_shutter_motor_address
   shed_alleyway_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -239,6 +272,7 @@ packages:
       cover_name: "Shed Alleyway Shutter"
       node: !secret io_shed_alleyway_shutter_node
       key: !secret io_shed_alleyway_shutter_key
+      motor_address: !secret io_shed_alleyway_shutter_motor_address
   shed_garden_shutter_io: !include
     file: somfy-io-cover.yaml
     vars:
@@ -246,6 +280,7 @@ packages:
       cover_name: "Shed Garden Shutter"
       node: !secret io_shed_garden_shutter_node
       key: !secret io_shed_garden_shutter_key
+      motor_address: !secret io_shed_garden_shutter_motor_address
 
 # Onboard SSD1306 128x64 OLED (same pins/model as the RTS bridge)
 i2c:
@@ -298,6 +333,108 @@ button:
     name: "Restart"
     entity_category: diagnostic
 
+# Toggles full protocol decode logging on/off without a reflash. Scoped to
+# this component's own log tags only - a global level bump would also
+# unmute unrelated components' own verbose logging (e.g. the OLED's I2C
+# driver spamming every byte of every glyph write).
+switch:
+  - platform: template
+    name: "Debug Logging"
+    icon: mdi:bug
+    entity_category: config
+    optimistic: true
+    restore_mode: ALWAYS_OFF
+    turn_on_action:
+      - logger.set_level: {level: VERY_VERBOSE, tag: iohc}
+      - logger.set_level: {level: VERY_VERBOSE, tag: iohc.remote1w}
+      - logger.set_level: {level: VERY_VERBOSE, tag: iohc.upstream}
+      - logger.set_level: {level: VERY_VERBOSE, tag: iohc.button}
+      - logger.set_level: {level: VERY_VERBOSE, tag: iohc.mode_select}
+      - logger.set_level: {level: VERY_VERBOSE, tag: iohc.cover}
+      - logger.set_level: {level: VERY_VERBOSE, tag: iohc.radio}
+      - logger.set_level: {level: VERY_VERBOSE, tag: iohc.packet}
+      - logger.set_level: {level: VERY_VERBOSE, tag: iohc.crypto}
+    turn_off_action:
+      - logger.set_level: {level: INFO, tag: iohc}
+      - logger.set_level: {level: INFO, tag: iohc.remote1w}
+      - logger.set_level: {level: INFO, tag: iohc.upstream}
+      - logger.set_level: {level: INFO, tag: iohc.button}
+      - logger.set_level: {level: INFO, tag: iohc.mode_select}
+      - logger.set_level: {level: INFO, tag: iohc.cover}
+      - logger.set_level: {level: INFO, tag: iohc.radio}
+      - logger.set_level: {level: INFO, tag: iohc.packet}
+      - logger.set_level: {level: INFO, tag: iohc.crypto}
+  # Blanks the OLED without cutting power - useful for a wall-mounted unit at
+  # night, and reduces long-term burn-in. Reflects real hardware state
+  # (is_on()), not just an assumed toggle.
+  - platform: template
+    name: "Display"
+    icon: mdi:monitor
+    entity_category: config
+    lambda: return id(oled)->is_on();
+    turn_on_action:
+      - lambda: id(oled)->turn_on();
+    turn_off_action:
+      - lambda: id(oled)->turn_off();
+
+# Display Brightness actually drives the SSD1306's contrast register (0x81) -
+# there's no separate backlight to dim on this panel, contrast is what
+# changes perceived brightness. Display Page Interval reads/writes the
+# page_cycle_interval component above via PollingComponent's own
+# get/set_update_interval() - but set_update_interval() alone only updates
+# the stored value, it does NOT rearm the already-scheduled timer (that's
+# set once in PollingComponent::call_setup() and never re-read), so
+# start_poller() is also called to actually reschedule with the new value.
+#
+# Both numbers use lambda: (not optimistic:) for real hardware read-back,
+# which means TemplateNumber::control() does NOT publish the new value to HA
+# immediately - it only republishes on the next scheduled poll, so without
+# the explicit update() call below HA's displayed value would lag up to
+# update_interval (60s) behind whatever was just set.
+globals:
+  - id: display_brightness
+    type: float
+    restore_value: true
+    initial_value: "0.1"
+  - id: display_page_interval
+    type: float
+    restore_value: true
+    initial_value: "2.0"
+
+number:
+  - platform: template
+    id: display_brightness_number
+    name: "Display Brightness"
+    icon: mdi:brightness-6
+    entity_category: config
+    min_value: 0.1
+    max_value: 1.0
+    step: 0.05
+    update_interval: 60s
+    lambda: return id(oled)->get_contrast();
+    set_action:
+      - lambda: |-
+          id(oled)->set_contrast(x);
+          id(display_brightness) = x;
+          id(display_brightness_number)->update();
+  - platform: template
+    id: display_page_interval_number
+    name: "Display Page Interval"
+    icon: mdi:timer-outline
+    entity_category: config
+    unit_of_measurement: s
+    min_value: 1
+    max_value: 30
+    step: 1
+    update_interval: 60s
+    lambda: return id(page_cycle_interval)->get_update_interval() / 1000.0f;
+    set_action:
+      - lambda: |-
+          id(page_cycle_interval)->set_update_interval((uint32_t)(x * 1000));
+          id(page_cycle_interval)->start_poller();
+          id(display_page_interval) = x;
+          id(display_page_interval_number)->update();
+
 font:
   - file: "gfonts://Roboto"
     id: my_font
@@ -310,6 +447,9 @@ display:
     id: oled
     model: "SSD1306 128x64"
     address: 0x3C
+    # Low by default (adjustable via the Display Brightness number) - plenty
+    # readable up close, and reduces long-term OLED burn-in risk.
+    contrast: 0.1
     pages:
       - id: page_bedroom_left
         lambda: |-
@@ -381,6 +521,7 @@ display:
           it.printf(0, 40, id(my_font), "IP: %s", id(wifi_ip).state.c_str());
 
 interval:
-  - interval: 3s
+  - id: page_cycle_interval
+    interval: 2s
     then:
       - display.page.show_next: oled

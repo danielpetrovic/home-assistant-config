@@ -7,10 +7,11 @@
 # "Cover device classes" table), `node`/`key` (fixed bonded identity from
 # secrets.yaml - leave both as empty strings to auto-generate and persist
 # on-device instead, see README's "Board-independent identity" section), and
-# optionally `broadcast_type` (see README's "Broadcast type caveat") and
-# `travel_time_open`/`travel_time_close` (only used in "1W Timed" mode - just
-# the initial default, also runtime-adjustable from HA via the Travel Time
-# Open/Close number entities below, which persist across reboots).
+# optionally `broadcast_type` (see README's "Broadcast type caveat"), and
+# `motor_address` (the shutter's REAL Somfy address, completely different
+# from node/key - see README's "Real position feedback" section for how to
+# look it up and what it enables; leave empty to skip passive position sync
+# for this cover).
 # `${cover_id}_device` must exist in the main file's `esphome.devices` list,
 # this is what makes each cover show up as its own HA device.
 substitutions:
@@ -20,8 +21,7 @@ substitutions:
   node: ""
   key: ""
   broadcast_type: "0"
-  travel_time_open: "25s"
-  travel_time_close: "25s"
+  motor_address: ""
 
 cover:
   - platform: iohc
@@ -38,8 +38,7 @@ cover:
     node: ${node}
     key: ${key}
     broadcast_type: ${broadcast_type}
-    travel_time_open: ${travel_time_open}
-    travel_time_close: ${travel_time_close}
+    motor_address: ${motor_address}
 
 button:
   # Single button, matching the physical remote's own labeling (PROG) and
@@ -106,16 +105,15 @@ select:
     device_id: ${cover_id}_device
     cover_id: ${cover_id}
 
-number:
+sensor:
+  # Standalone real-position sensor, matching Overkiz's own "Target closure"
+  # convention exactly (0=open, 100=closed - see README's "Real position
+  # feedback" section). Only ever publishes once real 2W traffic for this
+  # cover's motor_address has actually been overheard - stays unavailable
+  # otherwise (e.g. if motor_address wasn't set, or no compatible 2W
+  # controller like TaHoma exists on this installation).
   - platform: iohc
-    id: ${cover_id}_travel_time_open
-    name: "Travel Time Open"
+    id: ${cover_id}_target_closure
+    name: "Target Closure"
     device_id: ${cover_id}_device
     cover_id: ${cover_id}
-    type: open
-  - platform: iohc
-    id: ${cover_id}_travel_time_close
-    name: "Travel Time Close"
-    device_id: ${cover_id}_device
-    cover_id: ${cover_id}
-    type: close
