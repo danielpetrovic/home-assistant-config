@@ -232,6 +232,38 @@ else _dir[0] = ' ';
         }
         // 2W fields
         else {
+            // Human-readable command name for the bonding-family commands,
+            // purely for log readability during Phase 3a's capture work -
+            // see iohcPacket.h's "2W bonding-family structs" comment block
+            // for the unverified-hypothesis caveat that applies to all of
+            // these until confirmed against a real motor.
+            const char *cmd2w_name = nullptr;
+            switch (this->payload.packet.header.cmd) {
+                case 0x28: cmd2w_name = "DISCOVER"; break;
+                case 0x29: cmd2w_name = "DISCOVER_ANSWER"; break;
+                case 0x2A: cmd2w_name = "DISCOVER_REMOTE"; break;
+                case 0x2B: cmd2w_name = "DISCOVER_REMOTE_ANSWER"; break;
+                case 0x2C: cmd2w_name = "DISCOVER_ACTUATOR"; break;
+                case 0x2D: cmd2w_name = "DISCOVER_ACTUATOR_ACK"; break;
+                case 0x31: cmd2w_name = "ASK_CHALLENGE"; break;
+                case 0x32: cmd2w_name = "KEY_TRANSFERT"; break;
+                case 0x33: cmd2w_name = "KEY_TRANSFERT_ACK"; break;
+                case 0x36: cmd2w_name = "ADDRESS_REQUEST"; break;
+                case 0x38: cmd2w_name = "LAUNCH_KEY_TRANSFERT"; break;
+                case 0x3C: cmd2w_name = "CHALLENGE_REQUEST"; break;
+                case 0x3D: cmd2w_name = "CHALLENGE_ANSWER"; break;
+                case 0x03: cmd2w_name = "PRIVATE_COMMAND"; break;
+                case 0x04: cmd2w_name = "PRIVATE_COMMAND_ANSWER"; break;
+                case 0x19: cmd2w_name = "PRIVATE_UNKNOWN_0x19"; break;
+                case 0x2E: cmd2w_name = "DEVICE_CONFIRM"; break;
+                case 0x2F: cmd2w_name = "DEVICE_CONFIRM_ACK"; break;
+                case 0x50: cmd2w_name = "GET_NAME"; break;
+                case 0x51: cmd2w_name = "NAME_ANSWER"; break;
+                case 0xFE: cmd2w_name = "STATUS"; break;
+                default: break;
+            }
+            if (cmd2w_name != nullptr) appendf(" [%s]", cmd2w_name);
+
             if (dataLen != 0) {
                 std::string msg_data = bitrow_to_hex_string(this->payload.buffer + 9, dataLen);
                 appendf(" %s", msg_data.c_str());
@@ -246,6 +278,76 @@ else _dir[0] = ' ';
                 }
                 /*Private Atlantic/Sauter/Thermor*/
                 if (this->payload.packet.header.cmd == 0x20) {}
+
+                // 2W bonding-family field breakdown - struct-based only
+                // where dataLen matches the hypothesized fixed size from
+                // iohcPacket.h; otherwise the raw hex dump above is all
+                // that's printed; deliberately not a `default:` fallback,
+                // since a length mismatch is itself useful capture signal
+                // (confirms or refutes the hypothesized struct sizes).
+                switch (this->payload.packet.header.cmd) {
+                    case 0x29:
+                        if (dataLen == 9)
+                            appendf(" Gateway %s Manuf %X Info %X",
+                                   bitrow_to_hex_string(this->payload.packet.msg.p0x29_ack.gateway, 3).c_str(),
+                                   this->payload.packet.msg.p0x29_ack.manufacturer,
+                                   this->payload.packet.msg.p0x29_ack.info);
+                        break;
+                    case 0x38:
+                        if (dataLen == 6)
+                            appendf(" Challenge %s", bitrow_to_hex_string(this->payload.packet.msg.p0x38.challenge, 6).c_str());
+                        break;
+                    case 0x32:
+                        if (dataLen == 16)
+                            appendf(" EncKey %s", bitrow_to_hex_string(this->payload.packet.msg.p0x32.encrypted_key, 16).c_str());
+                        break;
+                    case 0x3C:
+                        if (dataLen == 6)
+                            appendf(" Challenge %s", bitrow_to_hex_string(this->payload.packet.msg.p0x3c.challenge, 6).c_str());
+                        break;
+                    case 0x3D:
+                        if (dataLen == 6)
+                            appendf(" Response %s", bitrow_to_hex_string(this->payload.packet.msg.p0x3d.response, 6).c_str());
+                        // dataLen==16 case (bonding-time key echo) intentionally
+                        // left as raw hex only - see iohcPacket.h struct comment.
+                        break;
+                    case 0x03:
+                        if (dataLen == 3)
+                            appendf(" Query %s", bitrow_to_hex_string(this->payload.packet.msg.p0x03.data, 3).c_str());
+                        break;
+                    case 0x04:
+                        if (dataLen == 14) {
+                            auto main = static_cast<unsigned>((this->payload.packet.msg.p0x04_14.main[0] << 8) | this->payload.packet.msg.p0x04_14.main[1]);
+                            appendf(" Status %X Unk1 %X Main %4X (=%.0f%% closed) Commander %s",
+                                   this->payload.packet.msg.p0x04_14.status,
+                                   this->payload.packet.msg.p0x04_14.unknown1,
+                                   main, main / 512.0f,
+                                   bitrow_to_hex_string(this->payload.packet.msg.p0x04_14.commanding_controller, 3).c_str());
+                        }
+                        break;
+                    case 0x2A:
+                        if (dataLen == 12)
+                            appendf(" Data %s", bitrow_to_hex_string(this->payload.packet.msg.p0x2a.data, 12).c_str());
+                        break;
+                    case 0x2E:
+                        if (dataLen == 1)
+                            appendf(" Data %X", this->payload.packet.msg.p0x2e_2w.data);
+                        break;
+                    case 0x2F:
+                        if (dataLen == 1)
+                            appendf(" Data %X", this->payload.packet.msg.p0x2f.data);
+                        break;
+                    case 0x19:
+                        if (dataLen == 1)
+                            appendf(" Data %X", this->payload.packet.msg.p0x19.data);
+                        break;
+                    case 0x51:
+                        if (dataLen == 16)
+                            appendf(" Name \"%.16s\"", this->payload.packet.msg.p0x51.name);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 

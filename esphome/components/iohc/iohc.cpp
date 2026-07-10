@@ -14,6 +14,13 @@ void IOHCComponent::setup() {
   ESP_LOGCONFIG(TAG, "Starting IOHC radio (vendored rspaargaren/iohomecontrol stack)...");
   IOHC::IohcPacketDelegate rx_cb(&IOHCComponent::on_receive, this);
   IOHC::iohcRadio::getInstance()->start(1, scan_freqs, 0, rx_cb, nullptr);
+  controller2w_.begin(IOHC::iohcRadio::getInstance());
+}
+
+void IOHCComponent::loop() {
+  // Bonding-attempt timeouts and per-command timeouts only - see
+  // iohc_controller2w.cpp's loop(). Nothing here touches the radio directly.
+  controller2w_.loop();
 }
 
 void IOHCComponent::register_cover_for_position_updates(const IOHC::address &motor_address, IOHCCover *cover) {
@@ -34,6 +41,13 @@ bool IOHCComponent::on_receive(IOHC::iohcPacket *packet) {
 
   ESP_LOGI(TAG, "Frame #%u received, length=%u, rssi=%.1f dBm", this->packets_received_, packet->buffer_length,
            packet->rssi);
+
+  // This bridge's own 2W bonding (Phase 3) - only ever consumes a frame
+  // while a bonding attempt is armed AND the frame's source matches that
+  // attempt's specific target motor (see IOHCController2W::handle_frame()),
+  // so this is a cheap no-op in the common case and never interferes with
+  // the passive-decode path below, which stays completely unmodified.
+  controller2w_.handle_frame(packet);
 
   // Passive 2W position sync - see register_cover_for_position_updates()'s
   // comment and README's "Real position feedback" section. Only 2W (Protocol

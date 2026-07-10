@@ -188,6 +188,148 @@ namespace IOHC {
         uint8_t hmac[6];
     };
 
+    // --- 2W bonding-family structs (Phase 3a) ---
+    // Decode-only for now (debug logging ahead of a real capture) - no
+    // bonding logic uses these yet. Layouts below are hypotheses derived
+    // from reading github.com/rspaargaren/iohomecontrol's live src/main.cpp
+    // (an exploratory reference, not a clean spec - see
+    // /root/.claude/plans/i-bought-a-lilygo-clever-planet.md's Phase 3
+    // section), NOT yet confirmed against a real motor capture on this
+    // hardware. Treat every field here the same way as _p0x1e above: don't
+    // trust it for anything beyond logging until Phase 3a's capture
+    // confirms or corrects it.
+
+    // 0x28 DISCOVER, 0x2C DISCOVER_ACTUATOR, 0x2D DISCOVER_ACTUATOR_ACK,
+    // 0x31 ASK_CHALLENGE, 0x33 KEY_TRANSFERT_ACK: all 0-byte payloads per
+    // upstream - no struct needed, the `dataLen != 0` guard in decode()
+    // already skips field access for these; the `[cmd2w_name]` label alone
+    // is enough to identify them in the log.
+
+    // 0x29 DISCOVER_ANSWER: box's reply to 0x28. Shape inferred from a
+    // single hardcoded example in upstream's main.cpp
+    // ({0xff,0xc0,gw0,gw1,gw2,manufacturer,info,0x00,0x00}) - not
+    // independently confirmed, same "best-guess" status as _p0x1e.
+    struct _p0x29_ack {
+        uint8_t cap1; // observed 0xff
+        uint8_t cap2; // observed 0xc0
+        address gateway;
+        uint8_t manufacturer; // 0x0b OverKiz / 0x0c Atlantic in upstream's example
+        uint8_t info;
+        uint8_t reserved[2]; // observed 0x00 0x00
+    };
+
+    // 0x38 LAUNCH_KEY_TRANSFERT: motor sends a 6-byte challenge here that
+    // the box must fold into the KEY_TRANSFERT (0x32) response.
+    struct _p0x38 {
+        uint8_t challenge[6];
+    };
+
+    // 0x32 KEY_TRANSFERT: box -> motor, 16-byte AES-ECB(transfert_key, IV)
+    // XOR transfert_key, per upstream's RECEIVED_LAUNCH_KEY_TRANSFERT_0x38
+    // handler.
+    struct _p0x32 {
+        uint8_t encrypted_key[16];
+    };
+
+    // 0x3C CHALLENGE_REQUEST / 0x3D CHALLENGE_ANSWER: both carry a 6-byte
+    // challenge/response value in the exchanges captured so far (per
+    // io-2w-protocol.md Finding 5-7) - upstream's own 0x3D can also be
+    // 16 bytes in the bonding-specific case (echoing KEY_TRANSFERT instead
+    // of a plain challenge answer), so treat dataLen as authoritative over
+    // this struct's fixed size until confirmed.
+    struct _p0x3c {
+        uint8_t challenge[6];
+    };
+    struct _p0x3d {
+        uint8_t response[6];
+    };
+
+    // 0x03: box -> motor query, 3-byte payload {0x03, 0x00, 0x00} per
+    // docs/commands.md as quoted in io-2w-protocol.md - not yet captured
+    // directly by this component.
+    struct _p0x03 {
+        uint8_t data[3];
+    };
+
+    // 0x04 Private Command Answer: fields confirmed against a real, clean
+    // capture (addendum to Finding 6, io-2w-protocol.md - our own bridge
+    // moved a cover over 1W, TaHoma reactively re-verified over 2W ~1s
+    // later) as well as the earlier Finding 6/7/9 captures. Layout: status byte, one
+    // not-yet-understood byte, the Main/position echo (raw/2 = closure %,
+    // matches the CMD 0x00 movement command's own Main parameter, confirmed
+    // exactly against the "Target Closure sensor updated... 20%" log line),
+    // 4 further unmapped bytes, then a 3-byte address that echoes back
+    // whichever controller most recently commanded the motor - confirmed
+    // NOT always TaHoma's own box address: in Finding 13's capture this
+    // held our own bridge's 1W identity, since our bridge was the one that
+    // actually sent the move. Earlier findings assumed "box address echo"
+    // because those captures only ever involved TaHoma-initiated moves,
+    // where the two addresses happen to coincide. `iohc.cpp`'s existing
+    // passive-decode path reads buffer[11]/[12] directly (= this struct's
+    // `main[0]`/`main[1]`) rather than using this struct - kept that way
+    // deliberately for now, see Phase 3a notes before consolidating.
+    struct _p0x04_14 {
+        uint8_t status;
+        uint8_t unknown1;
+        uint8_t main[2]; // position echo, raw/2 = closure %
+        uint8_t unmapped1[4];
+        address commanding_controller; // last controller to command a move - NOT necessarily TaHoma's own address
+        uint8_t unmapped2[3];
+    };
+
+    // --- Confirmed by Finding 14 (real, complete TaHoma delete+re-add
+    // capture, io-2w-protocol.md) - these are genuinely observed, not
+    // hypotheses derived from upstream's exploratory code. ---
+
+    // 0x2A DISCOVER_REMOTE: box broadcasts this (to a broadcast-style
+    // target, e.g. "003B") searching for a remote-type device. 12-byte
+    // payload, purpose of the bytes not understood - captured only as a
+    // repeated, unanswered broadcast (4 retries over ~5s, no 0x2B
+    // DISCOVER_REMOTE_ANSWER seen in response) so the answer's shape and
+    // whether the request is crypto-wrapped are both still unknown.
+    struct _p0x2a {
+        uint8_t data[12];
+    };
+
+    // 0x2E / 0x2F in a **2W context**: distinct from 1W's own 0x2E
+    // (Pair/learning marker, see _p0x2e above) - this is a crypto-verified
+    // device-confirmation ping used by the box to roll-call its known
+    // devices. Box sends 0x2E DATA=0x02, device answers 0x3C challenge,
+    // box answers 0x3D, device confirms with 0x2F DATA=0x02. Observed
+    // across 11 different devices in one roll-call, same 1-byte payload
+    // (0x02) every time - purpose of that specific value unconfirmed
+    // (could be a fixed marker, or a type code that happens to be constant
+    // across this install's devices).
+    struct _p0x2e_2w {
+        uint8_t data;
+    };
+    struct _p0x2f {
+        uint8_t data;
+    };
+
+    // 0x19: brand new command, not present in iohcDevice.h's commandId
+    // enum at all. 1-byte payload (0x03 observed), wrapped in the same
+    // 0x3C/0x3D challenge/response, answered via 0xFE STATUS (0x05 =
+    // success) rather than its own dedicated answer code. Seen only
+    // immediately after a device was newly added to TaHoma's roster
+    // (right after its first 0x2E/0x2F roll-call confirmation) - purpose
+    // still unclear beyond "part of registering/activating a
+    // newly-(re)discovered device." Name unknown, flagged as
+    // PRIVATE_UNKNOWN_0x19 pending a better name.
+    struct _p0x19 {
+        uint8_t data;
+    };
+
+    // 0x51 GET_NAME answer (2W context): 16-byte plain ASCII device name,
+    // e.g. "Living Room Shut" (truncated at 16 bytes - presumably "Living
+    // Room Shutter"). Matches the command byte already used by the
+    // existing 1W GET_NAME implementation in iohc_remote1w.cpp, but the 2W
+    // version requires the 0x3C/0x3D challenge/response round trip first
+    // (the existing 1W GET_NAME is unauthenticated).
+    struct _p0x51 {
+        char name[16];
+    };
+
     union _msg {
         _p0x01_13 p0x01_13;
         _p0x00_14 p0x00_14;
@@ -201,6 +343,18 @@ namespace IOHC {
         _p0x30 p0x30;
         _p0x2e p0x39; // same format of 2e
         _p0x1e p0x1e;
+        _p0x29_ack p0x29_ack;
+        _p0x38 p0x38;
+        _p0x32 p0x32;
+        _p0x3c p0x3c;
+        _p0x3d p0x3d;
+        _p0x03 p0x03;
+        _p0x04_14 p0x04_14;
+        _p0x2a p0x2a;
+        _p0x2e_2w p0x2e_2w;
+        _p0x2f p0x2f;
+        _p0x19 p0x19;
+        _p0x51 p0x51;
     };
 
     struct _packet {

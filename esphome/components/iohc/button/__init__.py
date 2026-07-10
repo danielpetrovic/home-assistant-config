@@ -37,6 +37,9 @@ TYPES = {
     "identify": RemoteButton.Identify,
     "start_identify": RemoteButton.StartIdentify,
     "stop_identify": RemoteButton.StopIdentify,
+    # This bridge's own 2W bonding (Phase 3, arms IOHC::IOHCController2W) -
+    # NOT a 1W wire command, see the RemoteButton::Prog2W enum comment.
+    "prog2w": RemoteButton.Prog2W,
 }
 
 CONFIG_SCHEMA = button.button_schema(IOHCPairButton).extend(

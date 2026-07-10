@@ -14,6 +14,7 @@
 
 #include "esphome/core/component.h"
 #include "iohcRadio.h"
+#include "iohc_controller2w.h"
 #include <unordered_map>
 
 namespace esphome {
@@ -24,6 +25,7 @@ class IOHCCover;
 class IOHCComponent : public Component {
  public:
   void setup() override;
+  void loop() override;
   void dump_config() override;
   float get_setup_priority() const override { return setup_priority::HARDWARE; }
 
@@ -39,7 +41,15 @@ class IOHCComponent : public Component {
   // IOHCCover::setup() when motor_address is configured.
   void register_cover_for_position_updates(const IOHC::address &motor_address, IOHCCover *cover);
 
+  // This bridge's own 2W bonding/control (Phase 3) - one shared instance for
+  // the whole bridge, see iohc_controller2w.h. Distinct from the passive
+  // decode above (which just reads another already-bonded controller's
+  // traffic) - this is the bridge actively bonding with and commanding a
+  // motor itself.
+  IOHC::IOHCController2W &controller2w() { return controller2w_; }
+
  protected:
+  IOHC::IOHCController2W controller2w_;
   uint32_t packets_received_{0};
   float last_rssi_{0};
 

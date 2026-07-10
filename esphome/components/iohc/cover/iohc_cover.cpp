@@ -144,6 +144,16 @@ void IOHCCover::press_my() {
   this->publish_state();
 }
 
+void IOHCCover::press_prog2w() {
+  if (!has_motor_address_) {
+    ESP_LOGW(TAG, "Program (2W) pressed but this cover has no motor_address configured - see README's Real "
+                  "position feedback section for how to look it up. Refusing to arm (will not listen for just "
+                  "any DISCOVER broadcast).");
+    return;
+  }
+  parent_->controller2w().arm_bonding(motor_address_, this);
+}
+
 void IOHCCover::control(const cover::CoverCall &call) {
   if (mode_ == Mode::TWO_WAY) {
     ESP_LOGW(TAG, "Two-Way mode selected but not implemented yet - command ignored");

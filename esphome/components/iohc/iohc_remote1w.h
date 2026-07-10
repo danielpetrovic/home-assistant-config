@@ -74,6 +74,14 @@ namespace IOHC {
         // our own persisted paired_ flag and dispatches to Add or Remove
         // accordingly, same as a real remote would.
         Prog,
+        // "Program (2W)" button's entry point (Phase 3) - NOT a 1W wire
+        // command at all (there is no such frame), reuses this enum purely
+        // as the existing button-type-selection mechanism, same way Vent
+        // already triggers extra cover-state logic beyond a raw command.
+        // Named to match Prog above (same 1:1 relationship as "Program (2W)"
+        // is to "Program") rather than introducing new vocabulary at this
+        // layer - see IOHCCover::press_prog2w() / IOHC::IOHCController2W::arm_bonding().
+        Prog2W,
     };
 
     // One virtual remote identity, bonded 1:1 with one physical motor.

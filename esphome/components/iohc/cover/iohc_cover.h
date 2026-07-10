@@ -64,6 +64,14 @@ class IOHCCover : public cover::Cover, public Component {
   // just sending Vent instead of Stop.
   void press_my();
 
+  // "Program (2W)" button entry point (Phase 3) - arms this bridge's shared
+  // IOHC::IOHCController2W to bond with this cover's own motor_address.
+  // Requires motor_address to be set (see set_motor_address()) - fails fast
+  // with a log warning otherwise, never falls back to "listen for any
+  // motor's DISCOVER broadcast" (see the plan file's "scoping DISCOVER
+  // matches" rationale - a real security consideration, not just tidiness).
+  void press_prog2w();
+
   // Real motor address (6 hex chars) - as assigned by Somfy, NOT this
   // bridge's own 1W virtual remote identity (node/key above, which is a
   // separate, locally-generated address). Optional: without it, this cover

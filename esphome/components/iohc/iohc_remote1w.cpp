@@ -250,11 +250,78 @@ namespace IOHC {
                 packet->buffer_length = packet->payload.packet.header.CtrlByte1.asStruct.MsgLen + 1;
 
                 std::vector<iohcPacket *> packets2send{packet};
+
+                // EXPERIMENTAL, added 2026-07-10 to fix a real symptom: a
+                // bare Add got the motor to jog (partial ack) but left it
+                // still ignoring every subsequent movement command from us -
+                // see io-2w-protocol.md. A real captured Situo Add ceremony
+                // always follows Add with a burst of cmd=0x20 "private
+                // write" frames (main=0x0c00 once, then main[0]=0x05 with
+                // main[1] stepping 02,03,...,08, then a final 0xff sentinel)
+                // and a closing cmd=0x2e Pair confirmation - we only ever
+                // sent the bare Add. The _p0x20_13 struct shape is confirmed
+                // against the real capture (the sequence field increments
+                // exactly as expected across the burst), but the *meaning*
+                // of main[0]/main[1] is not independently confirmed, only
+                // mirrored from that one real capture - not proven on real
+                // hardware until tested.
+                auto send_private_write = [&](uint8_t m0, uint8_t m1) {
+                    auto *pw = new iohcPacket;
+                    forge_packet(pw);
+                    pw->payload.packet.header.cmd = 0x20;
+                    pw->payload.packet.header.CtrlByte1.asStruct.MsgLen += sizeof(_p0x20_13);
+
+                    pw->payload.packet.msg.p0x20_13.origin = 0x02;
+                    setAcei(pw->payload.packet.msg.p0x20_13.acei, 0x03);
+                    pw->payload.packet.msg.p0x20_13.main[0] = m0;
+                    pw->payload.packet.msg.p0x20_13.main[1] = m1;
+                    pw->payload.packet.msg.p0x20_13.fp1 = 0x00;
+                    pw->payload.packet.msg.p0x20_13.sequence[0] = sequence_ >> 8;
+                    pw->payload.packet.msg.p0x20_13.sequence[1] = sequence_ & 0x00ff;
+                    bump_and_persist_sequence();
+
+                    uint8_t pw_hmac[16];
+                    std::vector<uint8_t> pw_frame(&pw->payload.packet.header.cmd,
+                                                   &pw->payload.packet.header.cmd + 6);
+                    iohcCrypto::create_1W_hmac(pw_hmac, pw->payload.packet.msg.p0x20_13.sequence, key_, pw_frame);
+                    for (uint8_t i = 0; i < 6; i++) pw->payload.packet.msg.p0x20_13.hmac[i] = pw_hmac[i];
+
+                    pw->buffer_length = pw->payload.packet.header.CtrlByte1.asStruct.MsgLen + 1;
+                    packets2send.push_back(pw);
+                };
+
+                send_private_write(0x0c, 0x00);
+                for (uint8_t step : {0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0xff}) {
+                    send_private_write(0x05, step);
+                }
+
+                // Closing Pair (0x2e) confirmation - same frame shape as
+                // RemoteButton::Pair above, sent here directly since it's
+                // Add's own follow-through, not a separate user action.
+                auto *pair = new iohcPacket;
+                forge_packet(pair);
+                pair->payload.packet.header.CtrlByte1.asStruct.MsgLen += sizeof(_p0x2e);
+                pair->payload.packet.header.cmd = 0x2e;
+                pair->payload.packet.msg.p0x2e.data = 0x00;
+                pair->payload.packet.msg.p0x2e.sequence[0] = sequence_ >> 8;
+                pair->payload.packet.msg.p0x2e.sequence[1] = sequence_ & 0x00ff;
+                bump_and_persist_sequence();
+
+                uint8_t pair_hmac[16];
+                std::vector<uint8_t> pair_frame(&pair->payload.packet.header.cmd,
+                                                 &pair->payload.packet.header.cmd + 2);
+                iohcCrypto::create_1W_hmac(pair_hmac, pair->payload.packet.msg.p0x2e.sequence, key_, pair_frame);
+                for (uint8_t i = 0; i < 6; i++) pair->payload.packet.msg.p0x2e.hmac[i] = pair_hmac[i];
+
+                pair->buffer_length = pair->payload.packet.header.CtrlByte1.asStruct.MsgLen + 1;
+                packets2send.push_back(pair);
+
                 radio_->send(packets2send);
 
                 paired_ = true;
                 prefs_.putBool("paired", paired_);
-                ESP_LOGI(TAG, "Add sent to %02X%02X%02X", node_[0], node_[1], node_[2]);
+                ESP_LOGI(TAG, "Add sent to %02X%02X%02X (full ceremony: Add + private-write + Pair, experimental)",
+                         node_[0], node_[1], node_[2]);
                 break;
             }
 

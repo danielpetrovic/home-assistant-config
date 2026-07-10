@@ -201,4 +201,59 @@ namespace iohcCrypto {
             mbedtls_aes_free( &aes );
         #endif
     }
+
+/*
+    2W bonding/control crypto (Phase 3b) - see the header comment for the
+    UNVERIFIED caveat that applies to both functions below. ESP32/mbedtls
+    only: this project targets ESP32 exclusively (LilyGO T3 LoRa32), and
+    unlike the 1W functions above (ported near-verbatim from upstream,
+    which does support ESP8266), upstream's own 2W crypto never used
+    mbedtls on any platform - it's built on a bespoke AES implementation
+    this project deliberately did not vendor (see io_2w_protocol.md /
+    the plan file's Phase 3 section for why: reusing the already-proven
+    mbedtls path here avoids a second AES implementation entirely). So
+    there is no existing ESP8266 2W precedent to mirror.
+*/
+#if defined(ESP32)
+/*
+    Builds the 16-byte KEY_TRANSFERT (0x32) payload sent in response to a
+    motor's LAUNCH_KEY_TRANSFERT (0x38) 6-byte challenge.
+*/
+    void build_key_transfert_response(const uint8_t *motor_challenge, uint8_t *out_response16) {
+        uint8_t btransfer[16];
+        hexStringToBytes(transfer_key, btransfer);
+
+        std::vector<uint8_t> frame_data = {0x31}; // SEND_ASK_CHALLENGE_0x31
+        std::vector<uint8_t> iv = constructInitialValue(frame_data, motor_challenge, nullptr);
+
+        uint8_t encrypted[16];
+        mbedtls_aes_setkey_enc(&aes, btransfer, 128);
+        mbedtls_aes_crypt_ecb(&aes, MBEDTLS_AES_ENCRYPT, iv.data(), encrypted);
+
+        for (int i = 0; i < 16; i++)
+            out_response16[i] = encrypted[i] ^ btransfer[i];
+    }
+
+/*
+    Builds a 6-byte CHALLENGE_ANSWER (0x3D) payload authenticating whichever
+    command was last sent, in response to a device's CHALLENGE_REQUEST
+    (0x3C) 6-byte challenge.
+*/
+    void build_challenge_answer(uint8_t last_sent_cmd, const std::vector<uint8_t>& last_sent_data, const uint8_t *challenge, uint8_t *out_answer6) {
+        uint8_t btransfer[16];
+        hexStringToBytes(transfer_key, btransfer);
+
+        std::vector<uint8_t> frame_data;
+        frame_data.push_back(last_sent_cmd);
+        frame_data.insert(frame_data.end(), last_sent_data.begin(), last_sent_data.end());
+        std::vector<uint8_t> iv = constructInitialValue(frame_data, challenge, nullptr);
+
+        uint8_t encrypted[16];
+        mbedtls_aes_setkey_enc(&aes, btransfer, 128);
+        mbedtls_aes_crypt_ecb(&aes, MBEDTLS_AES_ENCRYPT, iv.data(), encrypted);
+
+        for (int i = 0; i < 6; i++)
+            out_answer6[i] = encrypted[i];
+    }
+#endif
 }

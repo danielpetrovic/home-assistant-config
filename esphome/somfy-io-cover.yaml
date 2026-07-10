@@ -54,14 +54,32 @@ button:
   - platform: iohc
     id: ${cover_id}_prog
     # Short name, combines with the device's own name to display as e.g.
-    # "Garden Shutter Program" without literally repeating the room/type.
-    # Spelled out (not "Prog") for a user unfamiliar with Somfy's own
-    # abbreviation on the physical remote - internal naming (id, RemoteButton
-    # enum, type: prog) stays as "Prog", only the HA-facing name changed.
-    name: "Program"
+    # "Garden Shutter Program (1W)" without literally repeating the
+    # room/type. Spelled out (not "Prog") for a user unfamiliar with Somfy's
+    # own abbreviation on the physical remote - internal naming (id,
+    # RemoteButton enum, type: prog) stays as "Prog", only the HA-facing
+    # name changed. "(1W)" suffix added once a real "(2W)" counterpart
+    # existed below - no functional change, this button's behavior is
+    # unchanged.
+    name: "Program (1W)"
     device_id: ${cover_id}_device
     cover_id: ${cover_id}
     type: prog
+  # This bridge's own 2W bonding (Phase 3, see iohc_controller2w.h) - a
+  # genuinely different action from Program (1W) above, not an alternate
+  # way to do the same thing: bonds this bridge's shared 2W *controller*
+  # identity (the TaHoma-like box role) with this cover's motor, separate
+  # from the 1W *remote* identity Program (1W) manages. Experimental - the
+  # actual bonding sequence has never been observed on a real motor as of
+  # this writing (see io-2w-protocol.md Finding 14); expect this to need
+  # real-hardware debugging the first time it's tried. Requires
+  # motor_address to be set (see below) - refuses to arm otherwise.
+  - platform: iohc
+    id: ${cover_id}_prog2w
+    name: "Program (2W)"
+    device_id: ${cover_id}_device
+    cover_id: ${cover_id}
+    type: prog2w
   # Direct My button - sends Vent (main=0xd8), the real My/favorite-position
   # command (confirmed via a live TaHoma capture), and updates the cover's
   # own displayed position/state the same way the position-slider path does.
