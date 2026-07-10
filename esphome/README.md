@@ -43,6 +43,14 @@ The examples below use this installation's actual types (RTS: `curtain`/`shade`,
 
 ---
 
+## Before you start
+
+Both bridges are **ESPHome** projects, driven from Home Assistant's own **ESPHome app** (called an "add-on" before Home Assistant 2026.2 renamed these to "apps" - you'll still see the older name in older screenshots/guides), not a separate program you install on your PC. ESPHome itself is maintained by Nabu Casa, the same company behind Home Assistant, which is why it integrates this smoothly (auto-discovery, native API, OTA updates from within Home Assistant).
+
+Install it in Home Assistant first: Settings → Apps → search "ESPHome" → Install → Start (turning on "Show in sidebar" is convenient). This app is what compiles the `.yaml` files described in each bridge's own Setup section below into firmware and flashes it onto the board - no PlatformIO, Arduino IDE, or separate `esphome` command-line install needed on your own computer.
+
+---
+
 ## Somfy RTS Bridge
 
 Drives the board's onboard SX1276 radio directly in raw OOK mode. No extra hardware required.
@@ -50,14 +58,27 @@ Drives the board's onboard SX1276 radio directly in raw OOK mode. No extra hardw
 ### Setup
 
 1. **Hardware**: LilyGO TTGO T3 LoRa32 **433MHz** V1.6.1 - nothing else needed, the onboard radio and its pin wiring (DIO2→GPIO32) are already correct for this exact board revision.
-2. **Secrets**: add to `secrets.yaml` (create it from the template below if it doesn't exist yet):
+2. **Place this bridge's files** - `somfy-rts-bridge.yaml` and `somfy-rts-cover.yaml` - under `/config/esphome/` on your Home Assistant instance (that's where this repository's own `esphome/` folder maps to). Any app that lets you browse/edit files under `/config` works for this - Studio Code Server, File Editor, or a Samba/SSH share to your PC are all fine.
+3. **Secrets**: add `wifi_ssid`, `wifi_password`, `rts_bridge_api_key`, and `rts_bridge_ota_password` to `secrets.yaml` under `/config/esphome/` (shared by both bridges - if you've already set up the IO bridge, just add the two `rts_bridge_*` lines to the existing file). Two ways to get the values:
+
+   #### Normal flow (recommended)
+
+   Entirely inside the ESPHome app, no terminal needed:
+   - Open the ESPHome app → the "⋮" (three-dot) menu, top right → **Secrets**. Edits `secrets.yaml` directly inside the app, creating it if it doesn't exist yet.
+   - For `rts_bridge_api_key` (a base64-encoded 32-byte value): ESPHome's own site has a generator built into its docs, entirely client-side (nothing sent anywhere) - open [esphome.io/components/api](https://esphome.io/components/api/#configuration-variables), find the encryption key generator, and use its **Copy** button.
+   - For `rts_bridge_ota_password`: no format requirement, just needs to exist - any password works, typed directly into the Secrets editor. For a random one instead of hand-picked, click **Regenerate** then **Copy** on that same generator page a second time.
+
+   #### Advanced flow
+
+   A terminal instead - useful if you'd rather script it. Home Assistant's own "Terminal & SSH" or "Studio Code Server" app always has `openssl` available regardless of your own computer's OS (on Windows, `openssl` usually isn't available unless you have Git for Windows - use its "Git Bash"). No terminal at all? Your browser's own Developer Tools (`F12` → Console) works too: `Array.from(crypto.getRandomValues(new Uint8Array(32)), b => b.toString(16).padStart(2, '0')).join('')` prints hex, which works fine as the base64 field's value too - it's raw random bytes either way.
+
    ```yaml
    wifi_ssid: "your_wifi_name"
    wifi_password: "your_wifi_password"
-   rts_bridge_api_key: "base64-encoded-32-byte-key"   # generate via `esphome secrets` or any base64(32 random bytes)
-   rts_bridge_ota_password: "some-password"
+   rts_bridge_api_key: "base64-encoded-32-byte-key"      # openssl rand -base64 32
+   rts_bridge_ota_password: "some-password"              # openssl rand -hex 16
    ```
-3. **Add an area + device entry** for each physical cover under `esphome:` in `somfy-rts-bridge.yaml` - this is what makes the cover show up as its own HA device (matching Overkiz's per-shade/curtain granularity) instead of bunched onto the hub:
+4. **Add an area + device entry** for each physical cover under `esphome:` in `somfy-rts-bridge.yaml` - this is what makes the cover show up as its own HA device (matching Overkiz's per-shade/curtain granularity) instead of bunched onto the hub:
    ```yaml
    esphome:
      areas:
@@ -68,7 +89,7 @@ Drives the board's onboard SX1276 radio directly in raw OOK mode. No extra hardw
          name: "My Room Curtain" # include the room name here - HA's own Area-prefix-to-entity_id feature isn't reliable enough to depend on for display naming
          area_id: my_room_area
    ```
-4. **Add a cover entry** for each physical cover under `packages:` in `somfy-rts-bridge.yaml` (`cover_id` + `_device` must match the device `id` above):
+5. **Add a cover entry** for each physical cover under `packages:` in `somfy-rts-bridge.yaml` (`cover_id` + `_device` must match the device `id` above):
    ```yaml
    packages:
      my_new_cover: !include
@@ -79,9 +100,12 @@ Drives the board's onboard SX1276 radio directly in raw OOK mode. No extra hardw
          remote_address: "0x<fresh random 24-bit hex, never reused across covers>"
          device_class: curtain # or shade, awning, blind, window, etc. - see "Cover device classes" above
    ```
-5. **Flash** `somfy-rts-bridge.yaml` via the ESPHome dashboard (USB for the first flash, OTA afterward).
-6. **Pair each cover to its motor** (see below).
-7. **Test**: Open/Close/Stop from the cover's card in Home Assistant.
+6. **Flash** `somfy-rts-bridge.yaml` via the ESPHome app - open the app, find this file's card, and click **Install**:
+   - **First flash**: choose "Plug into this computer", connect the board via USB, and pick the serial port when your browser prompts for it (only works from a browser tab open on the machine physically connected to the board).
+   - **Every flash after that** (updates): choose "Wirelessly" instead - no USB needed, once the board is already on your Wi-Fi.
+   - After a successful first flash, the board announces itself to Home Assistant automatically - go to Settings → Devices & Services, an "ESPHome" discovery card should appear; click **Configure** and enter the `rts_bridge_api_key` value from `secrets.yaml` the one time it's needed.
+7. **Pair each cover to its motor** (see below).
+8. **Test**: Open/Close/Stop from the cover's card in Home Assistant.
 
 ### Pairing (and unpairing) a cover to its motor
 
@@ -99,7 +123,7 @@ Single `Program` button. RTS has only one PROG command (`SOMFY_PROG`, no separat
 Reversing this order removes the keeper instead of the target - always press the control you're keeping first.
 
 > [!WARNING]
-> Per Somfy's own instructions: a control can only be removed if **another** control is available to open the motor's programming window first. If our board's Program button is the *only* paired control for a motor and you remove it, you lose the ability to open that motor's programming window at all - you'd need the motor manufacturer's own hard-reset procedure to recover, not something this bridge can help with. Always keep at least one other working control paired before removing this board's identity.
+> Per Somfy's own instructions: a control can only be removed if **another** control is available to open the motor's programming window first. If this board's Program button is the *only* paired control for a motor and you remove it, you lose the ability to open that motor's programming window at all - you'd need the motor manufacturer's own hard-reset procedure to recover, not something this bridge can help with. Always keep at least one other working control paired before removing this board's identity.
 
 RTS has no acknowledgment channel at all. There's no way to confirm a Program press actually took beyond watching the motor jog; if it doesn't respond as expected, it likely wasn't in its programming window at the right moment, just try again.
 
@@ -144,15 +168,29 @@ Drives the board's onboard SX1276 radio directly at the register level (no ESPHo
 ### Setup
 
 1. **Hardware**: LilyGO TTGO T3 LoRa32 **868MHz** V1.6.1 - nothing else needed. Pin mapping (confirmed against the official schematic) lives in `components/iohc/iohc_board_config.h`.
-2. **Secrets**: add to `secrets.yaml`:
+2. **Place this bridge's files** - `somfy-io-bridge.yaml`, `somfy-io-cover.yaml`, and `components/iohc/` - under `/config/esphome/` on your Home Assistant instance (that's where this repository's own `esphome/` folder maps to). Any app that lets you browse/edit files under `/config` works for this - Studio Code Server, File Editor, or a Samba/SSH share to your PC are all fine.
+3. **Secrets**: add `wifi_ssid`, `wifi_password`, `io_bridge_api_key`, and `io_bridge_ota_password` to `secrets.yaml` under `/config/esphome/` (shared by both bridges - if you've already set up the RTS bridge, just add the two `io_bridge_*` lines to the existing file; each bridge needs its own separate key/password, don't reuse the RTS bridge's). Two ways to get the values:
+
+   #### Normal flow (recommended)
+
+   Entirely inside the ESPHome app, no terminal needed:
+   - Open the ESPHome app → the "⋮" (three-dot) menu, top right → **Secrets**. Edits `secrets.yaml` directly inside the app, creating it if it doesn't exist yet.
+   - For `io_bridge_api_key` (a base64-encoded 32-byte value): ESPHome's own site has a generator built into its docs, entirely client-side (nothing sent anywhere) - open [esphome.io/components/api](https://esphome.io/components/api/#configuration-variables), find the encryption key generator, and use its **Copy** button.
+   - For `io_bridge_ota_password`: no format requirement, just needs to exist - any password works, typed directly into the Secrets editor. For a random one instead of hand-picked, click **Regenerate** then **Copy** on that same generator page a second time.
+   - This flow **doesn't** cover the optional fixed `node`/`key` device identity in step 4 below - that's not an ESPHome-recognized value, so it has no dedicated generator page; it always needs the Advanced flow.
+
+   #### Advanced flow
+
+   A terminal instead - useful if you'd rather script it, or need step 4's optional `node`/`key` values. Home Assistant's own "Terminal & SSH" or "Studio Code Server" app always has both `openssl` and Python 3 available regardless of your own computer's OS (on Windows, neither is usually available unless you have Git for Windows - use its "Git Bash"). No terminal at all? Your browser's own Developer Tools (`F12` → Console) works too: `Array.from(crypto.getRandomValues(new Uint8Array(32)), b => b.toString(16).padStart(2, '0')).join('')` prints hex, which works fine as the base64 field's value too - it's raw random bytes either way.
+
    ```yaml
    wifi_ssid: "your_wifi_name"
    wifi_password: "your_wifi_password"
-   io_bridge_api_key: "base64-encoded-32-byte-key"
-   io_bridge_ota_password: "some-password"
+   io_bridge_api_key: "base64-encoded-32-byte-key"     # openssl rand -base64 32
+   io_bridge_ota_password: "some-password"             # openssl rand -hex 16
    ```
-3. **(Optional) Generate a fixed identity for the new cover.** Not required - leave `node`/`key` as empty strings (the default) and the board generates a random identity itself on first boot, which works completely fine. The only reason to do this step is so that identity **survives a board replacement**: with the default random identity, a replacement board generates a *different* one and every motor needs re-pairing; with a fixed identity from `secrets.yaml`, a replacement board flashed with the same config reproduces the exact same identity, no re-pairing needed. Worth doing *before* pairing a new cover if you want this, since switching an already-paired cover from random to fixed later needs an unpair/re-pair cycle anyway - see [Board-independent identity](#board-independent-identity-surviving-a-board-replacement) below for the command.
-4. **Add a cover entry** for each physical cover under `packages:` in `somfy-io-bridge.yaml`, including the `node`/`key` from step 3 if you generated them (otherwise leave both as empty strings):
+4. **(Optional) Generate a fixed identity for the new cover** - via the Advanced flow above (see step 3), since this value has no ESPHome-provided generator. Not required - leave `node`/`key` as empty strings (the default) and the board generates a random identity itself on first boot, which works completely fine. The only reason to do this step is so that identity **survives a board replacement**: with the default random identity, a replacement board generates a *different* one and every motor needs re-pairing; with a fixed identity from `secrets.yaml`, a replacement board flashed with the same config reproduces the exact same identity, no re-pairing needed. Worth doing *before* pairing a new cover if you want this, since switching an already-paired cover from random to fixed later needs an unpair/re-pair cycle anyway - see [Board-independent identity](#board-independent-identity-surviving-a-board-replacement) below for the command.
+5. **Add a cover entry** for each physical cover under `packages:` in `somfy-io-bridge.yaml`, including the `node`/`key` from step 4 if you generated them (otherwise leave both as empty strings):
    ```yaml
    packages:
      my_new_cover_io: !include
@@ -163,14 +201,17 @@ Drives the board's onboard SX1276 radio directly at the register level (no ESPHo
          node: !secret io_my_new_cover_io_node
          key: !secret io_my_new_cover_io_key
    ```
-   This creates the cover plus its "Program" button (pairs and unpairs, like the physical remote's own PROG button), a "My" button, three Identify buttons (see [Identify](#identify)), and "Mode" select. See `somfy-io-cover.yaml` for the full set of optional vars (`device_class`, defaults to `shutter` - see [Cover device classes](#cover-device-classes); `broadcast_type` - rarely needs overriding). `node`/`key` can be left as empty strings instead, in which case a random identity is auto-generated and stored on the board's own flash on first boot - not recommended, see step 3.
-5. **Flash** `somfy-io-bridge.yaml` via the ESPHome dashboard (USB for the first flash, OTA afterward).
-6. **Pair each cover to its motor** (see below).
-7. **Test**: Open/Close/Stop from the cover's card in Home Assistant. The mode `select` defaults to `Position`, which supports real percentage targets - see [Modes](#modes).
+   This creates the cover plus its "Program" button (pairs and unpairs, like the physical remote's own PROG button), a "My" button, three Identify buttons (see [Identify](#identify)), and "Mode" select. See `somfy-io-cover.yaml` for the full set of optional vars (`device_class`, defaults to `shutter` - see [Cover device classes](#cover-device-classes); `broadcast_type` - rarely needs overriding). `node`/`key` can be left as empty strings instead, in which case a random identity is auto-generated and stored on the board's own flash on first boot - not recommended, see step 4.
+6. **Flash** `somfy-io-bridge.yaml` via the ESPHome app - open the app, find this file's card, and click **Install**:
+   - **First flash**: choose "Plug into this computer", connect the board via USB, and pick the serial port when your browser prompts for it (only works from a browser tab open on the machine physically connected to the board).
+   - **Every flash after that** (updates): choose "Wirelessly" instead - no USB needed, once the board is already on your Wi-Fi.
+   - After a successful first flash, the board announces itself to Home Assistant automatically - go to Settings → Devices & Services, an "ESPHome" discovery card should appear; click **Configure** and enter the `io_bridge_api_key` value from `secrets.yaml` the one time it's needed.
+7. **Pair each cover to its motor** (see below).
+8. **Test**: Open/Close/Stop from the cover's card in Home Assistant. The mode `select` defaults to `Position`, which supports real percentage targets - see [Modes](#modes).
 
 ### Pairing (and unpairing) a cover to its motor
 
-Single `Program` button. `Add` (cmd `0x30`) and `Remove` (cmd `0x39`) are two structurally distinct commands - checked directly against upstream's own reference implementation (`rspaargaren/iohomecontrol`) - and our Program button picks between them by reading our own persisted pairing record (was the last successful Add/Remove for this cover an add or a remove?) and sending the matching command.
+Single `Program` button. `Add` (cmd `0x30`) and `Remove` (cmd `0x39`) are two structurally distinct commands - checked directly against upstream's own reference implementation (`rspaargaren/iohomecontrol`) - and the Program button picks between them by reading this bridge's own persisted pairing record (was the last successful Add/Remove for this cover an add or a remove?) and sending the matching command.
 
 **To add** (pair a new cover to a motor that already has at least one working control):
 1. If the already-paired remote you're using to open programming mode has multiple channels, select the correct channel on it first.
@@ -179,28 +220,28 @@ Single `Program` button. `Add` (cmd `0x30`) and `Remove` (cmd `0x39`) are two st
 
 **To remove** (e.g. before migrating to a fixed node/key, or decommissioning a cover) - the two presses in this order:
 1. **First**, press and hold PROG on the control you want to **keep** (a physical remote or TaHoma - not the cover being removed; select the correct channel first if it's multi-channel). Hold until the motor jogs.
-2. **Then**, within the same programming window, press the `<Cover Name> Program` button in Home Assistant for the cover you want to **remove** (transmits `Remove`, cmd `0x39`, per our own persisted record).
+2. **Then**, within the same programming window, press the `<Cover Name> Program` button in Home Assistant for the cover you want to **remove** (transmits `Remove`, cmd `0x39`, per this bridge's own persisted record).
 
 > [!WARNING]
-> Per Somfy's own instructions: a control can only be removed if **another** control is available to open the motor's programming window first. If our board's Program button is the *only* paired control for a motor and you remove it, you lose the ability to open that motor's programming window at all (nothing left to press PROG on) - you'd need the motor manufacturer's own hard-reset procedure to recover, not something this bridge can help with. Always keep at least one other working control (TaHoma, a physical Situo/Telis, etc.) paired before removing this board's identity.
+> Per Somfy's own instructions: a control can only be removed if **another** control is available to open the motor's programming window first. If this board's Program button is the *only* paired control for a motor and you remove it, you lose the ability to open that motor's programming window at all (nothing left to press PROG on) - you'd need the motor manufacturer's own hard-reset procedure to recover, not something this bridge can help with. Always keep at least one other working control (TaHoma, a physical Situo/Telis, etc.) paired before removing this board's identity.
 
-There's no acknowledgment in this protocol, so our record of whether a cover is currently bonded is an assumption, not a verified fact - if an Add/Remove is sent while the motor wasn't actually in its programming window, our record and the motor's real state fall out of sync (the frame goes nowhere, but we still update our own record as if it worked). Confirming the motor stops responding (after a removal) or starts responding (after an add) is the only way to verify a press actually took; if it doesn't match what you expected, the Program button may need pressing twice to get back in sync.
+There's no acknowledgment in this protocol, so this bridge's record of whether a cover is currently bonded is an assumption, not a verified fact - if an Add/Remove is sent while the motor wasn't actually in its programming window, that record and the motor's real state fall out of sync (the frame goes nowhere, but the record still updates as if it worked). Confirming the motor stops responding (after a removal) or starts responding (after an add) is the only way to verify a press actually took; if it doesn't match what you expected, the Program button may need pressing twice to get back in sync.
 
 ### Identify
 
 Three extra buttons per cover - `<Cover Name> Identify`, `Start Identify`, `Stop Identify` - jog the motor without changing its position, useful for visually confirming which physical motor a Home Assistant entity actually maps to. `Identify` is a one-shot jog (matches TaHoma's own "locate device" action); `Start`/`Stop Identify` are for a manual continuous blink. Confirmed working against real hardware.
 
-No physical Somfy remote has an Identify button, so there was no confirmed 1W frame format to copy going in - what's implemented is a best-guess signed 1W frame built by matching the command byte (`cmd=0x1E`) and payload bytes seen in a real captured 2W TaHoma-to-motor exchange, wrapped in the same self-signed `data+sequence+hmac` structure our own Pair/Remove frames use (since a 1W broadcast has no live challenge/response round trip to lean on the way 2W does). That guess turned out correct - it works over 1W despite Identify itself only being documented/observed as a 2W (TaHoma) feature.
+No physical Somfy remote has an Identify button, so there was no confirmed 1W frame format to copy going in - what's implemented is a best-guess signed 1W frame built by matching the command byte (`cmd=0x1E`) and payload bytes seen in a real captured 2W TaHoma-to-motor exchange, wrapped in the same self-signed `data+sequence+hmac` structure this bridge's own Pair/Remove frames use (since a 1W broadcast has no live challenge/response round trip to lean on the way 2W does). That guess turned out correct - it works over 1W despite Identify itself only being documented/observed as a 2W (TaHoma) feature.
 
 ### Board-independent identity (surviving a board replacement)
 
 By default, each cover generates a **random** virtual remote identity (a 3-byte node address + 16-byte AES key) on first boot, stored only in that specific board's flash (NVS). If the board ever dies, a replacement would generate a *different* random identity, requiring every motor to be re-paired.
 
-Do this **before** pairing a new cover, not after - switching an already-paired cover from random to fixed needs an unpair/re-pair cycle (see step 3 in Setup above). Generate a fixed identity for the cover - this is a one-off, offline step that just produces two random hex strings, it does **not** run on Home Assistant, the ESPHome dashboard, or the board itself. Run it in a terminal on **any** computer that has Python 3 (your own PC/Mac/Linux machine, or Home Assistant's "Terminal & SSH"/"Studio Code Server" add-on if you have either installed):
+Do this **before** pairing a new cover, not after - switching an already-paired cover from random to fixed needs an unpair/re-pair cycle (see step 3 in Setup above). Generate a fixed identity for the cover - this is a one-off, offline step that just produces two random hex strings, it does **not** run on Home Assistant, the ESPHome app, or the board itself. Run it via the Advanced flow from step 3 in Setup above (Home Assistant's Terminal & SSH/Studio Code Server, your own computer's terminal, or the browser console fallback):
 ```shell
 python3 -c "import secrets; print('node:', secrets.token_hex(3)); print('key:', secrets.token_hex(16))"
 ```
-No Python available? Any source of secure random hex works just as well, e.g. `openssl rand -hex 3` / `openssl rand -hex 16` (Mac/Linux Terminal, or Git Bash on Windows).
+No Python available where you're running this? Two separate `openssl` calls work just as well: `openssl rand -hex 3` (node) and `openssl rand -hex 16` (key).
 
 Then add the printed values to `secrets.yaml`, named after the cover:
 ```yaml
@@ -247,7 +288,7 @@ Independent of the Mode above, a cover with `motor_address` set (see `somfy-io-c
 
 **Implemented (1W, one-way commands):**
 - Real-time passive reception/decode of IO traffic (RSSI per source address, logged).
-- Pairing and unpairing via a single `Program` button, dispatching to `Add` (cmd `0x30`) or `Remove` (cmd `0x39`) based on our own persisted pairing status - matches how real Somfy remotes and Somfy's own official add/remove instructions actually work, see [Pairing](#pairing-and-unpairing-a-cover-to-its-motor) above.
+- Pairing and unpairing via a single `Program` button, dispatching to `Add` (cmd `0x30`) or `Remove` (cmd `0x39`) based on this bridge's own persisted pairing status - matches how real Somfy remotes and Somfy's own official add/remove instructions actually work, see [Pairing](#pairing-and-unpairing-a-cover-to-its-motor) above.
 - Open / Close / Stop / My / absolute Position (0-100%) commands, confirmed working against real hardware. My and Stop are distinct commands (`Vent`/`main=0xd8` vs `Stop`/`main=0xd2`), confirmed via live captures of real TaHoma traffic.
 - Identify / Start Identify / Stop Identify (`cmd=0x1E`) - best-guess frames, confirmed working against real hardware, see [Identify](#identify) above.
 - Per-cover selectable mode (`Position` / `Open / My / Close` / `Two-Way (Soon)` placeholder).
@@ -269,10 +310,6 @@ All of the above confirmed working against real motors, including pairing/unpair
   - `iohc_blind_position.*`: the local travel-time position estimator, fixed 25s open/close, used only for the cosmetic "still moving" animation in `Position` mode (see [Modes](#modes)).
   - `cover/`, `button/`, `select/`, `sensor/`: the ESPHome platform integration - `sensor/` is the standalone Target Closure sensor (see [Real position feedback](#real-position-feedback-passive-2w-decode)).
 
-### Attribution
-
-Built on [`rspaargaren/iohomecontrol`](https://github.com/rspaargaren/iohomecontrol) (Apache-2.0), itself building on [`Velocet/iown-homecontrol`](https://github.com/Velocet/iown-homecontrol) (protocol documentation and reverse-engineering) and [`cridp/iown-homecontrol-esp32sx1276`](https://github.com/cridp/iown-homecontrol-esp32sx1276) (SX1276 register handling). The vendored/ported files live in `components/iohc/` with their original copyright headers intact; see the comment at the top of each file for what was ported near-verbatim versus rewritten for ESPHome.
-
 ### Board-specific notes
 
 Tested and working on the LilyGO TTGO T3 LoRa32 **868MHz** V1.6.1 specifically. Requires the `arduino` framework (not `esp-idf`) since the vendored radio code uses Arduino's `SPI`/`Preferences` libraries directly - both are declared under `esphome: libraries:` in `somfy-io-bridge.yaml` since PlatformIO's dependency finder doesn't pick them up automatically from a local `external_component`.
@@ -282,3 +319,34 @@ Tested and working on the LilyGO TTGO T3 LoRa32 **868MHz** V1.6.1 specifically. 
 ## OLED display
 
 Both bridges' onboard SSD1306 cycles through a page per physical cover (name + current position) plus a shared status page (device IP, and RTS: Bluetooth proxy state; IO: packet count/RSSI), switching automatically every 3 seconds. IO's RSSI is hub-level only (last received packet, any source) - not attributable to a specific motor, since 1W motors never transmit anything back to measure RSSI of; real per-motor RSSI would need 2W's own acknowledgment traffic, which isn't implemented.
+
+---
+
+## Credits & Attribution
+
+Neither bridge is a from-scratch reimplementation - both are built on other people's protocol reverse-engineering and radio-level work, adapted into ESPHome components.
+
+### Somfy RTS Bridge
+
+- [`swoboda1337/somfy-esphome`](https://github.com/swoboda1337/somfy-esphome) (external component) implements the actual Somfy RTS protocol (rolling codes, frame encoding) on top of ESPHome's own core `sx127x`/`remote_transmitter`/`remote_receiver` components.
+- That component is itself ported from [`Legion2/Somfy_Remote_Lib`](https://github.com/Legion2/Somfy_Remote_Lib).
+
+### Somfy IO Bridge
+
+- Built on [`rspaargaren/iohomecontrol`](https://github.com/rspaargaren/iohomecontrol) (Apache-2.0) - a standalone Arduino/PlatformIO firmware for the same SX1276 radio chip, with real working pairing, 1W/2W commands, and AES/CRC handling.
+- That project itself builds on [`Velocet/iown-homecontrol`](https://github.com/Velocet/iown-homecontrol) (protocol documentation and reverse-engineering, largely reconstructed from decompiled TaHoma/Cozytouch firmware) and [`cridp/iown-homecontrol-esp32sx1276`](https://github.com/cridp/iown-homecontrol-esp32sx1276) (SX1276 register handling for this exact radio chip).
+- The vendored/ported files live in `components/iohc/` with their original copyright headers intact - see the comment at the top of each file for what was ported near-verbatim versus rewritten for ESPHome (also summarized under [Files](#files-1) above).
+
+### How this repository's IO bridge differs from rspaargaren/iohomecontrol directly
+
+If you've come across [rspaargaren/iohomecontrol](https://github.com/rspaargaren/iohomecontrol) separately and are wondering whether it's just a different way to install the same thing: it isn't. The two are genuinely different projects to install and run day-to-day, even though one is built on the other's protocol work:
+
+| | rspaargaren/iohomecontrol | This repository's IO bridge |
+|---|---|---|
+| What it is | Standalone Arduino/PlatformIO firmware | ESPHome `external_component` |
+| How you install/flash it | Compile and flash yourself (Arduino IDE or PlatformIO) | Flash via Home Assistant's own ESPHome app - see [Before you start](#before-you-start) |
+| How it talks to Home Assistant | MQTT (with MQTT discovery) | ESPHome's native API (auto-discovered, encrypted, no MQTT broker needed) |
+| Radio/protocol layer | Original implementation | Ported near-verbatim from this project |
+| Scope | Broader - both 1W and 2W, OLED, web server, its own pairing UI | 1W only so far - see [Scope and status](#scope-and-status) |
+
+Only the protocol/radio-level pieces were ported (packet framing, CRC/AES handling, position estimation); the MQTT layer, web server, and Arduino `main.cpp` structure were not - this repository's bridge runs entirely inside ESPHome's own component/lifecycle model instead.
