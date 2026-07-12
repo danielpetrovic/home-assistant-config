@@ -40,6 +40,10 @@ TYPES = {
     # This bridge's own 2W bonding (Phase 3, arms IOHC::IOHCController2W) -
     # NOT a 1W wire command, see the RemoteButton::Prog2W enum comment.
     "prog2w": RemoteButton.Prog2W,
+    # Opt-in diagnostic: sends GET_NAME (0x50) to an already-bonded motor,
+    # logs whatever name comes back. NOT part of bonding itself, see
+    # RemoteButton::GetName2W's enum comment.
+    "get_name2w": RemoteButton.GetName2W,
 }
 
 CONFIG_SCHEMA = button.button_schema(IOHCPairButton).extend(

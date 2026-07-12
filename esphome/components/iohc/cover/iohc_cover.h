@@ -72,6 +72,11 @@ class IOHCCover : public cover::Cover, public Component {
   // matches" rationale - a real security consideration, not just tidiness).
   void press_prog2w();
 
+  // "Get Name (2W)" button entry point - opt-in diagnostic, not part of
+  // bonding itself. Requires this motor to already be bonded (Program (2W)
+  // first) - see IOHC::IOHCController2W::send_get_name()'s own comment.
+  void press_get_name2w();
+
   // Real motor address (6 hex chars) - as assigned by Somfy, NOT this
   // bridge's own 1W virtual remote identity (node/key above, which is a
   // separate, locally-generated address). Optional: without it, this cover
@@ -89,12 +94,33 @@ class IOHCCover : public cover::Cover, public Component {
   // CRC in the RX pipeline), so a garbled reception could otherwise corrupt
   // the entity actually used for control.
   void update_real_position(float closure_percent);
+  // Phase 3d counterpart to update_real_position() above - called only from
+  // IOHCController2W's own send_command() completion (iohc_controller2w.cpp),
+  // never from the generic passive-decode path. Unlike the passive version,
+  // this IS allowed to update the cover's real position/current_operation:
+  // the frame it comes from is actively solicited by our own authenticated
+  // command and verified via the live 0x3C/0x3D challenge/response, not an
+  // unvalidated overheard frame - see Finding 10's "never let an unvalidated
+  // side-channel corrupt the primary entity" rule, which this deliberately
+  // does not fall under.
+  void update_real_position_authoritative(float closure_percent);
   // Optional standalone sensor (see sensor/__init__.py) - published in the
   // same closure % convention as update_real_position()'s own parameter, so
   // it matches HA's Overkiz "Target closure" sensor exactly rather than this
   // cover's own position attribute (which uses HA's inverted 0=closed/1=open
   // cover convention). Never published to until real data actually arrives.
   void set_target_closure_sensor(sensor::Sensor *s) { target_closure_sensor_ = s; }
+  // Called by IOHCComponent::on_receive() for EVERY frame (any command, 1W
+  // or 2W) whose source address matches this cover's motor_address - unlike
+  // update_real_position(), this is not decoded frame content, just this
+  // board's own radio's RSSI measurement for that reception, so there's
+  // nothing to validate/corrupt: a misattributed frame (wrong address
+  // decoded) would at worst show a plausible-but-wrong signal number, not a
+  // wrong cover state. This is OUR bridge's own view of the motor's signal
+  // (distinct from Overkiz's "RSSI Level" sensor, which reflects TaHoma's
+  // own radio - see the "Real position feedback" section in the README).
+  void update_last_rssi(float rssi_dbm);
+  void set_last_rssi_sensor(sensor::Sensor *s) { last_rssi_sensor_ = s; }
 
  protected:
   void control(const cover::CoverCall &call) override;
@@ -112,6 +138,7 @@ class IOHCCover : public cover::Cover, public Component {
   IOHC::address motor_address_{};
   bool has_motor_address_{false};
   sensor::Sensor *target_closure_sensor_{nullptr};
+  sensor::Sensor *last_rssi_sensor_{nullptr};
 
   Mode mode_{Mode::POSITION};
   // Explicitly global-scoped: inside esphome::iohc, unqualified "Preferences"

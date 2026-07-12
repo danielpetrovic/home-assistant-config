@@ -103,6 +103,21 @@ namespace IOHC {
         uint8_t hmac[6];
     };
 
+    // 2W CMD 0x00 (Activate/Execute) - box -> motor, no HMAC (2W leans on the
+    // live 0x3C/0x3D challenge/response for authentication instead, unlike
+    // 1W's self-signed frames). 6 bytes total, confirmed against many real
+    // captures (io-2w-protocol.md Findings 5-9): org=0x01 (User), acei=0xE7,
+    // main = 0x0000 (Open) / 0xC800 (Close) / 0xD200 (Stop) / (100-p)*2 for
+    // Position, matching the exact same formula already used for 1W. The
+    // trailing 2 bytes are always 0x00 in every real capture - purpose
+    // unknown, mirrored as-is rather than assumed to be meaningful.
+    struct _p0x00_2w {
+        uint8_t origin;
+        AceiUnion acei;
+        uint8_t main[2];
+        uint8_t reserved[2];
+    };
+
     struct _p0x00_14 {
         uint8_t origin;
         AceiUnion acei;
@@ -188,40 +203,47 @@ namespace IOHC {
         uint8_t hmac[6];
     };
 
-    // --- 2W bonding-family structs (Phase 3a) ---
-    // Decode-only for now (debug logging ahead of a real capture) - no
-    // bonding logic uses these yet. Layouts below are hypotheses derived
-    // from reading github.com/rspaargaren/iohomecontrol's live src/main.cpp
-    // (an exploratory reference, not a clean spec - see
-    // /root/.claude/plans/i-bought-a-lilygo-clever-planet.md's Phase 3
-    // section), NOT yet confirmed against a real motor capture on this
-    // hardware. Treat every field here the same way as _p0x1e above: don't
-    // trust it for anything beyond logging until Phase 3a's capture
-    // confirms or corrects it.
+    // --- 2W bonding-family structs (corrected per Finding 20) ---
+    // The confirmed real sequence (controller-initiated, per
+    // github.com/laberning/home_io_control - a mature, independently-tested
+    // ESPHome IO-Homecontrol component with confirmed real 2W pairing on
+    // the same SX1276 chip family, see io-2w-protocol.md Finding 20) is:
+    //   Controller -> 0x28 DISCOVER (broadcast, 0-byte)
+    //   Device     -> 0x29 DISCOVER_RESP (device metadata, see _p0x29_resp)
+    //   Controller -> 0x31 KEY_INIT (0-byte)
+    //   Device     -> 0x3C CHALLENGE_REQ (6-byte, see _p0x3c below)
+    //   Controller -> 0x32 KEY_TRANSFER (16-byte, see _p0x32 below)
+    //   Device     -> 0x33 KEY_CONFIRM (0-byte)
+    //   Controller -> 0x6F SET_CONFIG1 (best-effort, see _p0x6f below)
+    // 0x28, 0x31, 0x33: all 0-byte payloads - no struct needed, the
+    // `dataLen != 0` guard in decode() already skips field access for
+    // these; the `[cmd2w_name]` label alone is enough to identify them in
+    // the log. This supersedes the earlier (wrong-direction) hypothesis
+    // that the MOTOR sends 0x28 spontaneously and the box replies with
+    // 0x29/0x2C/etc - see io-2w-protocol.md Finding 20 for the full
+    // correction and why every prior attempt based on that assumption
+    // (Findings 12/15/17) found nothing.
 
-    // 0x28 DISCOVER, 0x2C DISCOVER_ACTUATOR, 0x2D DISCOVER_ACTUATOR_ACK,
-    // 0x31 ASK_CHALLENGE, 0x33 KEY_TRANSFERT_ACK: all 0-byte payloads per
-    // upstream - no struct needed, the `dataLen != 0` guard in decode()
-    // already skips field access for these; the `[cmd2w_name]` label alone
-    // is enough to identify them in the log.
-
-    // 0x29 DISCOVER_ANSWER: box's reply to 0x28. Shape inferred from a
-    // single hardcoded example in upstream's main.cpp
-    // ({0xff,0xc0,gw0,gw1,gw2,manufacturer,info,0x00,0x00}) - not
-    // independently confirmed, same "best-guess" status as _p0x1e.
-    struct _p0x29_ack {
-        uint8_t cap1; // observed 0xff
-        uint8_t cap2; // observed 0xc0
-        address gateway;
-        uint8_t manufacturer; // 0x0b OverKiz / 0x0c Atlantic in upstream's example
-        uint8_t info;
-        uint8_t reserved[2]; // observed 0x00 0x00
+    // 0x29 DISCOVER_RESP: device's reply to our 0x28, up to 9 bytes of
+    // metadata. We already know which motor we're bonding with from this
+    // cover's configured motor_address (unlike a from-scratch discovery
+    // controller that has to learn the address from this frame alone), so
+    // only the source address (parsed from the frame header, not this
+    // struct) is load-bearing for us - the fields below are logged for
+    // diagnostics only, not currently acted on.
+    struct _p0x29_resp {
+        uint8_t type_subtype[2];  // packed device type/subtype
+        address backbone;         // backbone address
+        uint8_t manufacturer;     // 1=Velux 2=Somfy 3=Honeywell ... 11=Overkiz, see proto_constants.h manufacturer table
+        uint8_t flags;            // "Multi Information Byte": turnaround class, power-save mode, etc.
+        uint8_t timestamp[2];
     };
 
-    // 0x38 LAUNCH_KEY_TRANSFERT: motor sends a 6-byte challenge here that
-    // the box must fold into the KEY_TRANSFERT (0x32) response.
-    struct _p0x38 {
-        uint8_t challenge[6];
+    // 0x6F SET_CONFIG1: best-effort, sent once after bonding completes to
+    // ask the device to auto-broadcast status updates to us. Fixed payload
+    // confirmed from home_io_control's own working controller captures.
+    struct _p0x6f {
+        uint8_t data[5];  // {0xE0, 0x10, 0x0A, 0x08, 0x00}
     };
 
     // 0x32 KEY_TRANSFERT: box -> motor, 16-byte AES-ECB(transfert_key, IV)
@@ -330,6 +352,17 @@ namespace IOHC {
         char name[16];
     };
 
+    // 0x52 SET_NAME (2W context): box -> device, 16-byte plain ASCII name
+    // (same shape/byte layout as the 0x51 answer above, kept as its own
+    // struct per this file's one-struct-per-command-byte convention).
+    // Confirmed real bytes: TaHoma sending "Living Room Shut" (truncated at
+    // 16 bytes) right after a successful first-time bond (Finding 27). No
+    // confirmed challenge/response wrapper around it in that capture -
+    // treated as best-effort/fire-and-forget, same as 0x6F SET_CONFIG1.
+    struct _p0x52 {
+        char name[16];
+    };
+
     union _msg {
         _p0x01_13 p0x01_13;
         _p0x00_14 p0x00_14;
@@ -343,8 +376,8 @@ namespace IOHC {
         _p0x30 p0x30;
         _p0x2e p0x39; // same format of 2e
         _p0x1e p0x1e;
-        _p0x29_ack p0x29_ack;
-        _p0x38 p0x38;
+        _p0x29_resp p0x29_resp;
+        _p0x6f p0x6f;
         _p0x32 p0x32;
         _p0x3c p0x3c;
         _p0x3d p0x3d;
@@ -355,6 +388,8 @@ namespace IOHC {
         _p0x2f p0x2f;
         _p0x19 p0x19;
         _p0x51 p0x51;
+        _p0x52 p0x52;
+        _p0x00_2w p0x00_2w;
     };
 
     struct _packet {

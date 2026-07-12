@@ -350,6 +350,10 @@ void setPreambleLength(uint16_t preambleLen) {
         writeWord(REG_IRQFLAGS1, flags);
     }
 
+    float readRssi() {
+        return static_cast<float>(readByte(REG_RSSIVALUE)) / -2.0f;
+    }
+
     bool IRAM_ATTR preambleDetected() {
         return readByte(REG_IRQFLAGS1) & RF_IRQFLAGS1_PREAMBLEDETECT;
     }

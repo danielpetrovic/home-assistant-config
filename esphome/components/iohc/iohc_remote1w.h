@@ -82,6 +82,11 @@ namespace IOHC {
         // is to "Program") rather than introducing new vocabulary at this
         // layer - see IOHCCover::press_prog2w() / IOHC::IOHCController2W::arm_bonding().
         Prog2W,
+        // "Get Name (2W)" button's entry point - also not a 1W wire command,
+        // reuses this enum the same way Prog2W does. Opt-in diagnostic, see
+        // IOHC::IOHCController2W::send_get_name()'s own comment for why
+        // this is separate from bonding itself.
+        GetName2W,
     };
 
     // One virtual remote identity, bonded 1:1 with one physical motor.

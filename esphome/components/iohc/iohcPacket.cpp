@@ -240,18 +240,19 @@ else _dir[0] = ' ';
             const char *cmd2w_name = nullptr;
             switch (this->payload.packet.header.cmd) {
                 case 0x28: cmd2w_name = "DISCOVER"; break;
-                case 0x29: cmd2w_name = "DISCOVER_ANSWER"; break;
+                case 0x29: cmd2w_name = "DISCOVER_RESP"; break;
                 case 0x2A: cmd2w_name = "DISCOVER_REMOTE"; break;
                 case 0x2B: cmd2w_name = "DISCOVER_REMOTE_ANSWER"; break;
                 case 0x2C: cmd2w_name = "DISCOVER_ACTUATOR"; break;
                 case 0x2D: cmd2w_name = "DISCOVER_ACTUATOR_ACK"; break;
-                case 0x31: cmd2w_name = "ASK_CHALLENGE"; break;
-                case 0x32: cmd2w_name = "KEY_TRANSFERT"; break;
-                case 0x33: cmd2w_name = "KEY_TRANSFERT_ACK"; break;
+                case 0x31: cmd2w_name = "KEY_INIT"; break;
+                case 0x32: cmd2w_name = "KEY_TRANSFER"; break;
+                case 0x33: cmd2w_name = "KEY_CONFIRM"; break;
                 case 0x36: cmd2w_name = "ADDRESS_REQUEST"; break;
-                case 0x38: cmd2w_name = "LAUNCH_KEY_TRANSFERT"; break;
+                case 0x38: cmd2w_name = "LAUNCH_KEY_TRANSFER"; break;
                 case 0x3C: cmd2w_name = "CHALLENGE_REQUEST"; break;
                 case 0x3D: cmd2w_name = "CHALLENGE_ANSWER"; break;
+                case 0x6F: cmd2w_name = "SET_CONFIG1"; break;
                 case 0x03: cmd2w_name = "PRIVATE_COMMAND"; break;
                 case 0x04: cmd2w_name = "PRIVATE_COMMAND_ANSWER"; break;
                 case 0x19: cmd2w_name = "PRIVATE_UNKNOWN_0x19"; break;
@@ -287,15 +288,20 @@ else _dir[0] = ' ';
                 // (confirms or refutes the hypothesized struct sizes).
                 switch (this->payload.packet.header.cmd) {
                     case 0x29:
-                        if (dataLen == 9)
-                            appendf(" Gateway %s Manuf %X Info %X",
-                                   bitrow_to_hex_string(this->payload.packet.msg.p0x29_ack.gateway, 3).c_str(),
-                                   this->payload.packet.msg.p0x29_ack.manufacturer,
-                                   this->payload.packet.msg.p0x29_ack.info);
+                        // Device's real discovery response (Finding 20) - up to 9
+                        // bytes of metadata, see iohcPacket.h's _p0x29_resp comment.
+                        // Only the address (parsed from the frame header, not this
+                        // struct) is load-bearing for our bonding FSM; this is
+                        // diagnostic logging only.
+                        if (dataLen >= 7)
+                            appendf(" Backbone %s Manuf %X Flags %X",
+                                   bitrow_to_hex_string(this->payload.packet.msg.p0x29_resp.backbone, 3).c_str(),
+                                   this->payload.packet.msg.p0x29_resp.manufacturer,
+                                   this->payload.packet.msg.p0x29_resp.flags);
                         break;
-                    case 0x38:
-                        if (dataLen == 6)
-                            appendf(" Challenge %s", bitrow_to_hex_string(this->payload.packet.msg.p0x38.challenge, 6).c_str());
+                    case 0x6F:
+                        if (dataLen == 5)
+                            appendf(" Config %s", bitrow_to_hex_string(this->payload.packet.msg.p0x6f.data, 5).c_str());
                         break;
                     case 0x32:
                         if (dataLen == 16)

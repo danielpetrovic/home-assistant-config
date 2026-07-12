@@ -62,9 +62,13 @@
 #define CHANNEL3 869850000  // 2W
 
 #define FREQS2SCAN {CHANNEL2, CHANNEL1, CHANNEL3}
-// Single fixed channel for Phase 0/1 - hopping (MAX_FREQS=3) is Phase 4, and
-// upstream's own default is also 1 (hopping disabled) per their own
-// iohc_board_config.h.
+// iohcRadio's own ISR-driven auto-hop (tickerCounter()/num_freqs) stays
+// permanently disabled - it's a genuine hardware interrupt and can preempt
+// mid-instruction, which would race against the retune()-then-send()
+// sequence every TX call site relies on. 3-channel RX coverage (Finding 31)
+// instead comes from esphome::iohc::IOHCComponent::maybe_hop_(), a
+// cooperative (non-interrupt) hop checked every loop() tick - see that
+// function's own comment for why this is the safe way to do it.
 #define MAX_FREQS 1
 
 #define SCAN_LED BOARD_LED_PIN

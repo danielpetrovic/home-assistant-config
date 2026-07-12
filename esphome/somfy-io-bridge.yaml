@@ -153,6 +153,13 @@ external_components:
 
 iohc:
   id: iohc_hub
+  # Fixed 2W controller identity (see __init__.py's own comment) - pinned
+  # 2026-07-12, board-independent from here on. Survives a LilyGO
+  # replacement without losing any already-2W-bonded motor's relationship
+  # with this bridge (none exist yet as of this date, so nothing was lost
+  # by fixing it now).
+  controller_address: !secret io_bridge_2w_controller_address
+  system_key: !secret io_bridge_2w_system_key
 
 # One package instance per physical IO cover, see somfy-io-cover.yaml for
 # what each instance creates (cover + Program button + Mode select) and
@@ -297,6 +304,7 @@ text_sensor:
     ip_address:
       name: "IP Address"
       id: wifi_ip
+      entity_category: diagnostic
   # Why the board last rebooted (power-on, crash, watchdog, brownout, or a
   # deliberate restart - which shows as "Reboot request from <component>",
   # e.g. our own Restart button, OTA, or an API-initiated reboot) - worth
@@ -307,11 +315,13 @@ text_sensor:
   - platform: debug
     reset_reason:
       name: "Restart Reason"
+      entity_category: diagnostic
 
 # Same diagnostic entities as the RTS bridge, plus one IO-specific one
 # (debug: loop_time) that isn't on RTS.
 sensor:
   - platform: wifi_signal
+    id: wifi_signal_sensor
     name: "WiFi Signal"
     entity_category: diagnostic
     update_interval: 60s
@@ -327,11 +337,17 @@ sensor:
   - platform: debug
     loop_time:
       name: "Loop Time"
+      entity_category: diagnostic
 
 button:
   - platform: restart
     name: "Restart"
     entity_category: diagnostic
+  # Passive 2W key-sniffing (Findings 27/28) no longer has its own button -
+  # it's auto-armed/disarmed by the Debug Logging switch below instead (see
+  # that switch's turn_on_action/turn_off_action), bridge-wide rather than
+  # tied to any one cover, so it's ready whenever a real pairing/bonding
+  # attempt might happen without a separate manual step.
 
 # Toggles full protocol decode logging on/off without a reflash. Scoped to
 # this component's own log tags only - a global level bump would also
@@ -341,10 +357,18 @@ switch:
   - platform: template
     name: "Debug Logging"
     icon: mdi:bug
-    entity_category: config
     optimistic: true
     restore_mode: ALWAYS_OFF
     turn_on_action:
+      # Explicit, always-visible confirmation - ESPHome's own default
+      # switch-toggle log line is normally DEBUG level, which `initial_level:
+      # INFO` above (added in the same commit as this switch) silently
+      # suppresses unless a tag is individually bumped - this bypasses that
+      # by logging at INFO on the default/unfiltered tag before touching any
+      # iohc.* tag levels below.
+      - logger.log:
+          format: "Debug Logging turned ON"
+          level: INFO
       - logger.set_level: {level: VERY_VERBOSE, tag: iohc}
       - logger.set_level: {level: VERY_VERBOSE, tag: iohc.remote1w}
       - logger.set_level: {level: VERY_VERBOSE, tag: iohc.upstream}
@@ -354,7 +378,11 @@ switch:
       - logger.set_level: {level: VERY_VERBOSE, tag: iohc.radio}
       - logger.set_level: {level: VERY_VERBOSE, tag: iohc.packet}
       - logger.set_level: {level: VERY_VERBOSE, tag: iohc.crypto}
+      - logger.set_level: {level: VERY_VERBOSE, tag: iohc.controller2w}
     turn_off_action:
+      - logger.log:
+          format: "Debug Logging turned OFF"
+          level: INFO
       - logger.set_level: {level: INFO, tag: iohc}
       - logger.set_level: {level: INFO, tag: iohc.remote1w}
       - logger.set_level: {level: INFO, tag: iohc.upstream}
@@ -364,6 +392,31 @@ switch:
       - logger.set_level: {level: INFO, tag: iohc.radio}
       - logger.set_level: {level: INFO, tag: iohc.packet}
       - logger.set_level: {level: INFO, tag: iohc.crypto}
+      - logger.set_level: {level: INFO, tag: iohc.controller2w}
+  # Opportunistic background 3-channel RX hop (Finding 31/32) - deliberately
+  # its own switch, separate from Debug Logging: this is about giving the
+  # radio a shot at catching a rare bonding-key exchange on CH1/CH3, not
+  # about log verbosity, and running it unattended for a long stretch
+  # shouldn't require also paying for continuous VERY_VERBOSE logging
+  # overhead. Costs real 1W/ordinary-2W reception reliability while on (see
+  # iohc.h's set_manual_hop_wanted() comment) - CH2-only (fully reliable)
+  # otherwise. Safe to combine with Debug Logging or an active
+  # Program (2W) bonding attempt, which requests the hop independently.
+  - platform: template
+    name: "Channel Hop (2W)"
+    icon: mdi:swap-horizontal
+    optimistic: true
+    restore_mode: ALWAYS_OFF
+    turn_on_action:
+      - logger.log:
+          format: "Channel Hop (2W) turned ON - RX now sweeping CH1/CH2/CH3"
+          level: WARN
+      - lambda: id(iohc_hub).set_manual_hop_wanted(true);
+    turn_off_action:
+      - logger.log:
+          format: "Channel Hop (2W) turned OFF - RX back to CH2 only"
+          level: WARN
+      - lambda: id(iohc_hub).set_manual_hop_wanted(false);
   # Blanks the OLED without cutting power - useful for a wall-mounted unit at
   # night, and reduces long-term burn-in. Reflects real hardware state
   # (is_on()), not just an assumed toggle.
@@ -374,8 +427,14 @@ switch:
     lambda: return id(oled)->is_on();
     turn_on_action:
       - lambda: id(oled)->turn_on();
+      - logger.log:
+          format: "Display turned ON"
+          level: INFO
     turn_off_action:
       - lambda: id(oled)->turn_off();
+      - logger.log:
+          format: "Display turned OFF"
+          level: INFO
 
 # Display Brightness actually drives the SSD1306's contrast register (0x81) -
 # there's no separate backlight to dim on this panel, contrast is what
@@ -417,6 +476,7 @@ number:
           id(oled)->set_contrast(x);
           id(display_brightness) = x;
           id(display_brightness_number)->update();
+          ESP_LOGI("main", "Display Brightness set to %.2f", x);
   - platform: template
     id: display_page_interval_number
     name: "Display Page Interval"
@@ -434,14 +494,23 @@ number:
           id(page_cycle_interval)->start_poller();
           id(display_page_interval) = x;
           id(display_page_interval_number)->update();
+          ESP_LOGI("main", "Display Page Interval set to %.0fs", x);
 
 font:
   - file: "gfonts://Roboto"
     id: my_font
     size: 14
 
-# Per-cover pages show position only, not RSSI - see the comment on the
-# page_status page below for why a per-motor RSSI isn't possible over 1W.
+# Per-cover pages: name on line 1; line 2 has this bridge's own local/HA
+# position on the left and the real motor-reported position (from the
+# Target Closure sensor, converted from closure% to the same open%
+# convention as the left side) on the right; line 3 has this bridge's own
+# last-heard RSSI for that motor. The right-side real position and the RSSI
+# line both only ever show a value once real 2W traffic for that cover's
+# motor_address has actually been overheard (see README's "Real position
+# feedback" and "Last RSSI sensor" sections) - has_state() guards each one
+# and falls back to "--" otherwise, e.g. for a cover with no motor_address
+# configured at all, which never registers for either sensor.
 display:
   - platform: ssd1306_i2c
     id: oled
@@ -455,69 +524,213 @@ display:
         lambda: |-
           it.printf(0, 0, id(my_font), "Bedroom Left");
           it.printf(0, 20, id(my_font), "%.0f%%", id(bedroom_left_shutter_io)->position * 100.0f);
+          if (id(bedroom_left_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(bedroom_left_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(bedroom_left_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(bedroom_left_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_bedroom_middle
         lambda: |-
           it.printf(0, 0, id(my_font), "Bedroom Middle");
           it.printf(0, 20, id(my_font), "%.0f%%", id(bedroom_middle_shutter_io)->position * 100.0f);
+          if (id(bedroom_middle_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(bedroom_middle_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(bedroom_middle_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(bedroom_middle_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_bedroom_right
         lambda: |-
           it.printf(0, 0, id(my_font), "Bedroom Right");
           it.printf(0, 20, id(my_font), "%.0f%%", id(bedroom_right_shutter_io)->position * 100.0f);
+          if (id(bedroom_right_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(bedroom_right_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(bedroom_right_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(bedroom_right_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_gameroom_left
         lambda: |-
           it.printf(0, 0, id(my_font), "Gameroom Left");
           it.printf(0, 20, id(my_font), "%.0f%%", id(gameroom_left_shutter_io)->position * 100.0f);
+          if (id(gameroom_left_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(gameroom_left_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(gameroom_left_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(gameroom_left_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_gameroom_right
         lambda: |-
           it.printf(0, 0, id(my_font), "Gameroom Right");
           it.printf(0, 20, id(my_font), "%.0f%%", id(gameroom_right_shutter_io)->position * 100.0f);
+          if (id(gameroom_right_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(gameroom_right_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(gameroom_right_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(gameroom_right_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_garden
         lambda: |-
           it.printf(0, 0, id(my_font), "Garden");
           it.printf(0, 20, id(my_font), "%.0f%%", id(garden_shutter_io)->position * 100.0f);
+          if (id(garden_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(garden_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(garden_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(garden_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_gym
         lambda: |-
           it.printf(0, 0, id(my_font), "Gym");
           it.printf(0, 20, id(my_font), "%.0f%%", id(gym_shutter_io)->position * 100.0f);
+          if (id(gym_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(gym_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(gym_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(gym_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_hallway
         lambda: |-
           it.printf(0, 0, id(my_font), "Hallway");
           it.printf(0, 20, id(my_font), "%.0f%%", id(hallway_shutter_io)->position * 100.0f);
+          if (id(hallway_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(hallway_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(hallway_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(hallway_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_kitchen
         lambda: |-
           it.printf(0, 0, id(my_font), "Kitchen");
           it.printf(0, 20, id(my_font), "%.0f%%", id(kitchen_shutter_io)->position * 100.0f);
+          if (id(kitchen_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(kitchen_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(kitchen_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(kitchen_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_living_room
         lambda: |-
           it.printf(0, 0, id(my_font), "Living Room");
           it.printf(0, 20, id(my_font), "%.0f%%", id(living_room_shutter_io)->position * 100.0f);
+          if (id(living_room_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(living_room_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(living_room_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(living_room_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_office
         lambda: |-
           it.printf(0, 0, id(my_font), "Office");
           it.printf(0, 20, id(my_font), "%.0f%%", id(office_shutter_io)->position * 100.0f);
+          if (id(office_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(office_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(office_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(office_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_roof_terrace
         lambda: |-
           it.printf(0, 0, id(my_font), "Roof Terrace");
           it.printf(0, 20, id(my_font), "%.0f%%", id(roof_terrace_shutter_io)->position * 100.0f);
+          if (id(roof_terrace_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(roof_terrace_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(roof_terrace_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(roof_terrace_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_shed_alleyway
         lambda: |-
           it.printf(0, 0, id(my_font), "Shed Alleyway");
           it.printf(0, 20, id(my_font), "%.0f%%", id(shed_alleyway_shutter_io)->position * 100.0f);
+          if (id(shed_alleyway_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(shed_alleyway_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(shed_alleyway_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(shed_alleyway_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_shed_garden
         lambda: |-
           it.printf(0, 0, id(my_font), "Shed Garden");
           it.printf(0, 20, id(my_font), "%.0f%%", id(shed_garden_shutter_io)->position * 100.0f);
+          if (id(shed_garden_shutter_io_target_closure)->has_state()) {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "%.0f%%", 100.0f - id(shed_garden_shutter_io_target_closure)->state);
+          } else {
+            it.printf(128, 20, id(my_font), TextAlign::TOP_RIGHT, "--");
+          }
+          if (id(shed_garden_shutter_io_last_rssi)->has_state()) {
+            it.printf(0, 40, id(my_font), "RSSI: %.0fdBm", id(shed_garden_shutter_io_last_rssi)->state);
+          } else {
+            it.printf(0, 40, id(my_font), "RSSI: --");
+          }
       - id: page_status
         lambda: |-
           it.printf(0, 0, id(my_font), "Somfy IO Bridge");
-          // Hub-level RSSI only (last received packet, any source) - not
-          // attributable to a specific motor. 1W motors never transmit
-          // anything back to us (that's the whole "1W" in the name), so
-          // there's no packet FROM a given motor to measure RSSI of. Real
-          // per-motor RSSI would need 2W's own acknowledgment traffic,
-          // which isn't implemented (see README's Scope and status).
-          it.printf(0, 20, id(my_font), "Pkts: %u  RSSI: %.0f", id(iohc_hub)->get_packets_received(),
-                    id(iohc_hub)->get_last_rssi());
+          // Hub-level LoRa packet count/RSSI (any source, not attributed to
+          // any motor) dropped from this page - now that every cover's own
+          // page shows its own real RSSI (see above), an unattributed
+          // "last packet, whoever it was from" number added little. WiFi
+          // Signal shown here instead - this board's own radio link to the
+          // network, not the LoRa side at all, but still a genuinely useful
+          // at-a-glance health stat for this page.
+          if (id(wifi_signal_sensor)->has_state()) {
+            it.printf(0, 20, id(my_font), "WiFi: %.0fdBm", id(wifi_signal_sensor)->state);
+          } else {
+            it.printf(0, 20, id(my_font), "WiFi: --");
+          }
           it.printf(0, 40, id(my_font), "IP: %s", id(wifi_ip).state.c_str());
 
 interval:

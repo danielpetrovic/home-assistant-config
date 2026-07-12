@@ -65,6 +65,16 @@ namespace IOHC {
                 ERROR        ///< Error or unknown state
             };
             void start(uint8_t num_freqs, uint32_t *scan_freqs, uint32_t scanTimeUs, IohcPacketDelegate rxCallback, IohcPacketDelegate txCallback);
+            // Manually retune the carrier to a specific frequency, bypassing
+            // the num_freqs/currentFreqIdx auto-hop machinery entirely (that
+            // machinery stays disabled - num_freqs stays 1 - to avoid
+            // regressing ordinary CHANNEL2-only reception; see
+            // IOHC::IOHCController2W's 2W DISCOVER hopping for the one
+            // caller of this). Also updates scan_freqs[currentFreqIdx] so
+            // received packets keep getting tagged with the frequency they
+            // actually arrived on (iohcRadio::receive() reads that array to
+            // set iohcPacket::frequency).
+            void retune(uint32_t freq_hz);
             void send(iohcPacket *packet);
             void send(std::vector<iohcPacket*>&iohcTx);
             static void setRadioState(RadioState newState);

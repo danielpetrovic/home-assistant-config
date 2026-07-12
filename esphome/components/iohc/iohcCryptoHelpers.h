@@ -51,35 +51,51 @@ namespace iohcCrypto {
     void encrypt_1W_key(const uint8_t *node_address, uint8_t *key);
     void create_1W_hmac(uint8_t *hmac, const uint8_t *seq_number, uint8_t *controller_key, const std::vector<uint8_t>& frame_data);
 
-    // 2W bonding/control crypto (Phase 3b) - built on the existing
-    // constructInitialValue() `challenge` branch, same primitive
-    // create_1W_hmac() already uses for its `sequence_number` branch. Both
-    // functions below are UNVERIFIED against a real KEY_TRANSFERT capture -
-    // no genuine bonding ceremony has been observed yet on this install
-    // (see io-2w-protocol.md Finding 14) - only derived from reading
-    // upstream's exploratory main.cpp. The per-command CHALLENGE_ANSWER
-    // shape (build_challenge_answer) is comparatively lower-risk: it
-    // matches the structure of many real, confirmed 0x3C/0x3D exchanges
-    // captured this session, just not independently verified to produce
-    // byte-identical output to a real answer (that check, using only the
-    // fixed transfer_key, already failed once - see the addendum to
-    // Finding 6 - so treat this as one hypothesis for what a real per-motor
-    // secret combines with, not as confirmed-correct).
+    // 2W bonding/control crypto (Phase 3b, corrected Finding 20). Built on
+    // the existing constructInitialValue() `challenge` branch, same
+    // primitive create_1W_hmac() already uses for its `sequence_number`
+    // branch. Confirmed byte-for-byte against github.com/laberning/
+    // home_io_control (a mature, independently-tested ESPHome IO-
+    // Homecontrol component with confirmed real 2W pairing on the same
+    // SX1276 chip family) - see io-2w-protocol.md Finding 20. That project's
+    // proto_crypto.cpp construct_iv()/create_hmac()/crypt_key() match this
+    // file's constructInitialValue()/AES-ECB-truncate-to-6 pattern exactly,
+    // AND its TRANSFER_KEY constant is byte-identical to this file's
+    // `transfer_key` - strong independent confirmation the primitives here
+    // were always structurally right. What was wrong: BOTH functions below
+    // used the fixed, public transfer_key as the ongoing authentication
+    // key. The real protocol has a second, per-installation secret (a
+    // 16-byte "system key", generated once by the controller/hub and never
+    // transmitted in the clear) that gets used for every one of these
+    // instead - transfer_key's only real job is to obfuscate that system
+    // key during the one-time KEY_TRANSFERT (0x32) frame itself. This
+    // exactly explains why testing these functions against real captures
+    // using only transfer_key failed twice (addendum to Finding 6,
+    // Finding 14).
 
-    // Builds the 16-byte KEY_TRANSFERT (0x32) payload in response to a
-    // motor's LAUNCH_KEY_TRANSFERT (0x38) 6-byte challenge. Per upstream's
-    // RECEIVED_LAUNCH_KEY_TRANSFERT_0x38 handler: IV = constructInitialValue
-    // ({0x31 /* SEND_ASK_CHALLENGE */}, challenge), encrypted under
-    // transfer_key, then XORed with transfer_key again.
-    void build_key_transfert_response(const uint8_t *motor_challenge, uint8_t *out_response16);
+    // Builds the 16-byte KEY_TRANSFERT (0x32) payload sent after a device's
+    // CHALLENGE_REQUEST (0x3C) 6-byte challenge, during the key-exchange
+    // phase of bonding (CMD_KEY_INIT 0x31 -> 0x3C -> this -> CMD_KEY_CONFIRM
+    // 0x33). IV = constructInitialValue({0x3C, the CHALLENGE_REQUEST's own
+    // cmd byte + its own 6-byte challenge}, challenge), AES-ECB encrypted
+    // under the fixed, public transfer_key, then XORed with `system_key`.
+    // frame_data corrected against a real, independently-verified working
+    // reference (github.com/nicolas5000/io-rts-esp32's crypt_2w_key()) -
+    // see io-2w-protocol.md Finding 28. Same XOR is symmetric, so this
+    // function doubles as the passive-derivation primitive: called with a
+    // captured KEY_TRANSFERT payload in place of a real system_key, it
+    // recovers the real system_key instead (see IOHCController2W's passive
+    // key-sniff state machine).
+    void build_key_transfert_response(const uint8_t *motor_challenge, const uint8_t *system_key, uint8_t *out_response16);
 
     // Builds a 6-byte CHALLENGE_ANSWER (0x3D) payload in response to a
     // device's CHALLENGE_REQUEST (0x3C) 6-byte challenge, authenticating
     // whichever command was last sent (`last_sent_cmd` + `last_sent_data`).
-    // Per upstream's RECEIVED_CHALLENGE_REQUEST_0x3C handler's general
-    // case (not the KEY_TRANSFERT-specific branch): IV =
-    // constructInitialValue({last_sent_cmd} + last_sent_data, challenge),
-    // encrypted under transfer_key, first 6 bytes of the result.
-    void build_challenge_answer(uint8_t last_sent_cmd, const std::vector<uint8_t>& last_sent_data, const uint8_t *challenge, uint8_t *out_answer6);
+    // IV = constructInitialValue({last_sent_cmd} + last_sent_data,
+    // challenge), AES-ECB encrypted under `system_key` (the real shared
+    // secret established at bonding, NOT transfer_key as the old,
+    // unverified version of this function did), first 6 bytes of the
+    // result - matches home_io_control's create_hmac()/create_challenge_resp().
+    void build_challenge_answer(uint8_t last_sent_cmd, const std::vector<uint8_t>& last_sent_data, const uint8_t *challenge, const uint8_t *system_key, uint8_t *out_answer6);
 }
 #endif

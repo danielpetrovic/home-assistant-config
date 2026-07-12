@@ -210,6 +210,17 @@ namespace IOHC {
         Radio::setRx();
     }
 
+    void iohcRadio::retune(uint32_t freq_hz) {
+        // setCarrier(Frequency, ...) is explicitly safe to call while the
+        // radio is active (SX1276's "fast hopping" - writing FRFLSB alone
+        // retunes the PLL without a full standby/calibrate cycle), so this
+        // doesn't need to touch radioState at all.
+        Radio::setCarrier(Radio::Carrier::Frequency, freq_hz);
+        if (this->scan_freqs != nullptr && this->currentFreqIdx < this->num_freqs) {
+            this->scan_freqs[this->currentFreqIdx] = freq_hz;
+        }
+    }
+
 /**
  * The `tickerCounter` function in C++ handles various radio operations based on different conditions
  * and configurations for SX127X and CC1101 radios.

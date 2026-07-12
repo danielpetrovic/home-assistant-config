@@ -15,18 +15,21 @@ void IOHCPairButton::press_action() {
                       : type_ == IOHC::RemoteButton::Identify      ? "Identify"
                       : type_ == IOHC::RemoteButton::StartIdentify ? "Start Identify"
                       : type_ == IOHC::RemoteButton::StopIdentify  ? "Stop Identify"
-                                                                    : "Prog (2W)";
+                      : type_ == IOHC::RemoteButton::Prog2W        ? "Prog (2W)"
+                                                                    : "Get Name (2W)";
   ESP_LOGI(TAG, "%s pressed - transmitting %s", this->get_name().c_str(), name);
-  // My and Prog2W both need cover-level handling (position/state update for
-  // My, arming the shared 2W controller for Prog2W), unlike every other
-  // button type here which just fires the 1W radio command directly - see
-  // IOHCCover::press_my() / press_prog2w(). Prog (1W) resolves to Add or
-  // Remove internally (see IOHCRemote1W::cmd()'s RemoteButton::Prog case) -
-  // the actual command sent is logged there, not here.
+  // My, Prog2W, and GetName2W all need cover-level handling, unlike every
+  // other button type here which just fires the 1W radio command directly -
+  // see IOHCCover::press_my() / press_prog2w() / press_get_name2w(). Prog
+  // (1W) resolves to Add or Remove internally (see IOHCRemote1W::cmd()'s
+  // RemoteButton::Prog case) - the actual command sent is logged there, not
+  // here.
   if (type_ == IOHC::RemoteButton::Vent) {
     cover_->press_my();
   } else if (type_ == IOHC::RemoteButton::Prog2W) {
     cover_->press_prog2w();
+  } else if (type_ == IOHC::RemoteButton::GetName2W) {
+    cover_->press_get_name2w();
   } else {
     cover_->remote().cmd(type_);
   }

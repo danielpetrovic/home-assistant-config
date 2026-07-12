@@ -163,6 +163,17 @@ namespace IOHC {
                 packet->buffer_length = packet->payload.packet.header.CtrlByte1.asStruct.MsgLen + 1;
 
                 std::vector<iohcPacket *> packets2send{packet};
+                // Explicit retune before every 1W send (Finding 29) - this
+                // code has always assumed the radio's live frequency is
+                // already CH2, which held true for this whole project until
+                // the passive key-sniffer (Finding 28) started actively
+                // hopping the RX frequency in the background. Without this,
+                // a 1W send that happened to fire while the sniff had the
+                // radio parked on CH1/CH3 would silently go out on the
+                // wrong channel and never reach the motor - confirmed on
+                // real hardware (a real-time Add ceremony failed silently
+                // while the sniffer was armed).
+                radio_->retune(CHANNEL2);
                 radio_->send(packets2send);
 
                 paired_ = (button == RemoteButton::Pair);
@@ -218,6 +229,17 @@ namespace IOHC {
                 packet->buffer_length = packet->payload.packet.header.CtrlByte1.asStruct.MsgLen + 1;
 
                 std::vector<iohcPacket *> packets2send{packet};
+                // Explicit retune before every 1W send (Finding 29) - this
+                // code has always assumed the radio's live frequency is
+                // already CH2, which held true for this whole project until
+                // the passive key-sniffer (Finding 28) started actively
+                // hopping the RX frequency in the background. Without this,
+                // a 1W send that happened to fire while the sniff had the
+                // radio parked on CH1/CH3 would silently go out on the
+                // wrong channel and never reach the motor - confirmed on
+                // real hardware (a real-time Add ceremony failed silently
+                // while the sniffer was armed).
+                radio_->retune(CHANNEL2);
                 radio_->send(packets2send);
 
                 const char *name = button == RemoteButton::Identify     ? "Identify"
@@ -316,6 +338,9 @@ namespace IOHC {
                 pair->buffer_length = pair->payload.packet.header.CtrlByte1.asStruct.MsgLen + 1;
                 packets2send.push_back(pair);
 
+                // See Finding 29's comment above (other send sites in this
+                // file) for why this explicit retune is required.
+                radio_->retune(CHANNEL2);
                 radio_->send(packets2send);
 
                 paired_ = true;
@@ -456,6 +481,9 @@ namespace IOHC {
                     packets2send.push_back(companion);
                 }
 
+                // See Finding 29's comment above (other send sites in this
+                // file) for why this explicit retune is required.
+                radio_->retune(CHANNEL2);
                 radio_->send(packets2send);
 
                 ESP_LOGI(TAG, "Command sent to %02X%02X%02X, position now %.0f%%", node_[0], node_[1], node_[2],

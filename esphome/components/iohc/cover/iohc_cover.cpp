@@ -69,6 +69,28 @@ void IOHCCover::update_real_position(float closure_percent) {
   cover_prefs_.putFloat("target_closure", closure_percent);
 }
 
+void IOHCCover::update_last_rssi(float rssi_dbm) {
+  if (last_rssi_sensor_ != nullptr) {
+    last_rssi_sensor_->publish_state(rssi_dbm);
+  }
+}
+
+void IOHCCover::update_real_position_authoritative(float closure_percent) {
+  closure_percent = std::clamp(closure_percent, 0.0f, 100.0f);
+  // closure (0=open/100=closed) -> HA cover convention (0=closed/1=open).
+  float open_percent = 1.0f - (closure_percent / 100.0f);
+  ESP_LOGI(TAG, "2W command confirmed - real position now %.0f%% open", open_percent * 100.0f);
+  this->position = open_percent;
+  this->current_operation = cover::COVER_OPERATION_IDLE;
+  target_position_ = -1.0f;
+  cover_prefs_.putFloat("position", open_percent);
+  if (target_closure_sensor_ != nullptr) {
+    target_closure_sensor_->publish_state(closure_percent);
+  }
+  cover_prefs_.putFloat("target_closure", closure_percent);
+  this->publish_state();
+}
+
 void IOHCCover::set_mode(Mode mode) {
   mode_ = mode;
   cover_prefs_.putUChar("mode", static_cast<uint8_t>(mode));
@@ -116,7 +138,8 @@ void IOHCCover::loop() {
 void IOHCCover::dump_config() {
   LOG_COVER("", "Somfy IOHC Cover", this);
   ESP_LOGCONFIG(TAG, "  Paired: %s", remote_.is_paired() ? "yes" : "no");
-  const char *mode_name = mode_ == Mode::POSITION ? "Position" : mode_ == Mode::MY ? "Open / My / Close" : "Two-Way (Soon)";
+  const char *mode_name =
+      mode_ == Mode::POSITION ? "Position" : mode_ == Mode::MY ? "Open / My / Close" : "Two-Way (Experimental)";
   ESP_LOGCONFIG(TAG, "  Mode: %s", mode_name);
   ESP_LOGCONFIG(TAG, "  Travel time open/close: %us / %us (fixed)", TRAVEL_TIME_OPEN, TRAVEL_TIME_CLOSE);
 }
@@ -154,9 +177,47 @@ void IOHCCover::press_prog2w() {
   parent_->controller2w().arm_bonding(motor_address_, this);
 }
 
+void IOHCCover::press_get_name2w() {
+  if (!has_motor_address_) {
+    ESP_LOGW(TAG, "Get Name (2W) pressed but this cover has no motor_address configured - see README's Real "
+                  "position feedback section for how to look it up.");
+    return;
+  }
+  parent_->controller2w().send_get_name(motor_address_);
+}
+
 void IOHCCover::control(const cover::CoverCall &call) {
   if (mode_ == Mode::TWO_WAY) {
-    ESP_LOGW(TAG, "Two-Way mode selected but not implemented yet - command ignored");
+    // Phase 3d - real 2W command, only possible once this motor has
+    // actually bonded via arm_bonding(). The corrected, controller-initiated
+    // bonding sequence and crypto (Finding 20 onward) have been validated
+    // against real captured frames, but this bridge's own Program (2W)
+    // attempt has never yet completed a full bonding cycle on real hardware
+    // (Findings 21/23/25/26 - repeated real tests, always zero 0x29 reply) -
+    // see IOHCController2W::send_command()'s own bonded check for the
+    // actual gate, which is why every command here still refuses in
+    // practice. Same main-byte formula as 1W (Finding 11), reused rather
+    // than re-derived.
+    if (!has_motor_address_) {
+      ESP_LOGW(TAG, "Two-Way mode selected but this cover has no motor_address configured - refusing");
+      return;
+    }
+    uint8_t main0, main1 = 0x00;
+    if (call.get_stop()) {
+      main0 = 0xD2;
+    } else if (call.get_position().has_value()) {
+      int percent = static_cast<int>(lroundf(*call.get_position() * 100.0f));
+      if (percent >= 100) {
+        main0 = 0x00;
+      } else if (percent <= 0) {
+        main0 = 0xC8;
+      } else {
+        main0 = static_cast<uint8_t>((100 - percent) * 2);
+      }
+    } else {
+      return;
+    }
+    parent_->controller2w().send_command(motor_address_, main0, main1, this);
     return;
   }
 

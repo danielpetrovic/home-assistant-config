@@ -82,6 +82,11 @@ namespace Radio {
     void setPreambleLength(uint16_t preambleLen);
     void clearBuffer();
     void clearFlags();
+    // Instantaneous RSSI in dBm (REG_RSSIVALUE, +-2dBm precision per the
+    // RSSICONFIG smoothing already set in initRegisters()). Only meaningful
+    // while the radio is in RX - used for Listen-Before-Talk (LBT) before a
+    // 2W transmission, see IOHC::IOHCController2W's listen_before_talk().
+    float readRssi();
     bool preambleDetected();
     bool syncedAddress();
     bool dataAvail();
