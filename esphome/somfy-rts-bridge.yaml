@@ -283,6 +283,7 @@ text_sensor:
     ip_address:
       name: "IP Address"
       id: wifi_ip
+      entity_category: diagnostic
   # Why the board last rebooted (power-on, crash, watchdog, brownout, or a
   # deliberate restart - which shows as "Reboot request from <component>",
   # e.g. our own Restart button, OTA, or an API-initiated reboot). Named to
@@ -291,6 +292,7 @@ text_sensor:
   - platform: debug
     reset_reason:
       name: "Restart Reason"
+      entity_category: diagnostic
 
 # Bluetooth proxy: forwards BLE advertisements (and, since active: true is
 # the default, allows HA to open active GATT connections through this board
@@ -325,6 +327,7 @@ sensor:
   - platform: debug
     loop_time:
       name: "Loop Time"
+      entity_category: diagnostic
 
 button:
   - platform: restart
@@ -339,12 +342,23 @@ switch:
   - platform: template
     name: "Debug Logging"
     icon: mdi:bug
-    entity_category: config
     optimistic: true
     restore_mode: ALWAYS_OFF
     turn_on_action:
+      # Explicit, always-visible confirmation - ESPHome's own default
+      # switch-toggle log line is normally DEBUG level, which `initial_level:
+      # INFO` above (added in the same commit as this switch) silently
+      # suppresses unless a tag is individually bumped - this bypasses that
+      # by logging at INFO on the default/unfiltered tag before touching the
+      # somfy tag's own level below.
+      - logger.log:
+          format: "Debug Logging turned ON"
+          level: INFO
       - logger.set_level: {level: VERY_VERBOSE, tag: somfy}
     turn_off_action:
+      - logger.log:
+          format: "Debug Logging turned OFF"
+          level: INFO
       - logger.set_level: {level: INFO, tag: somfy}
   # Blanks the OLED without cutting power - useful for a wall-mounted unit at
   # night, and reduces long-term burn-in. Reflects real hardware state
@@ -356,8 +370,14 @@ switch:
     lambda: return id(oled)->is_on();
     turn_on_action:
       - lambda: id(oled)->turn_on();
+      - logger.log:
+          format: "Display turned ON"
+          level: INFO
     turn_off_action:
       - lambda: id(oled)->turn_off();
+      - logger.log:
+          format: "Display turned OFF"
+          level: INFO
 
 # Display Brightness actually drives the SSD1306's contrast register (0x81) -
 # there's no separate backlight to dim on this panel, contrast is what
@@ -399,6 +419,7 @@ number:
           id(oled)->set_contrast(x);
           id(display_brightness) = x;
           id(display_brightness_number)->update();
+          ESP_LOGI("main", "Display Brightness set to %.2f", x);
   - platform: template
     id: display_page_interval_number
     name: "Display Page Interval"
@@ -416,6 +437,7 @@ number:
           id(page_cycle_interval)->start_poller();
           id(display_page_interval) = x;
           id(display_page_interval_number)->update();
+          ESP_LOGI("main", "Display Page Interval set to %.0fs", x);
 
 font:
   - file: "gfonts://Roboto"
