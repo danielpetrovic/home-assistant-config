@@ -5673,9 +5673,6 @@
   - at: 01:01:00
     id: 01:00
     trigger: time
-  - trigger: time
-    at: 09:00:00
-    id: 09:00
   - entity_id: sensor.outdoor_brightness
     id: brightness
     trigger: state
@@ -5729,21 +5726,6 @@
           - shed
         data:
           transition: 60
-    - alias: 09:00
-      conditions:
-      - condition: trigger
-        id:
-        - 09:00
-      sequence:
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
-            | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
-            | int }}'
-        metadata: {}
-        target:
-          entity_id: light.living_room_cabinet_light
   - alias: Luminosity
     choose:
     - alias: dark or dim
@@ -5761,7 +5743,7 @@
       - action: light.turn_on
         target:
           entity_id:
-          - light.front_door_light
+          - light.front_door_lights
         data:
           brightness_pct: 100
           transition: 3600
@@ -5791,8 +5773,8 @@
       - action: light.turn_off
         target:
           entity_id:
-          - light.alleyway
-          - light.front_door_light
+          - light.alleyway_lights
+          - light.front_door_lights
         data:
           transition: 3600
   mode: queued
@@ -6790,9 +6772,9 @@
     entity_id: sensor.deni_laptop_display_display_count
     above: 1
   - condition: state
-    entity_id: media_player.office
+    entity_id: media_player.office_kef
     state:
-    - playing
+    - 'on'
   actions:
   - choose:
     - conditions:
@@ -6803,7 +6785,7 @@
       - action: media_player.volume_set
         metadata: {}
         target:
-          entity_id: media_player.office
+          area_id: office
         data:
           volume_level: 0.15
     - conditions:
@@ -6814,7 +6796,65 @@
       - action: media_player.volume_set
         metadata: {}
         target:
-          entity_id: media_player.office
+          area_id: office
         data:
           volume_level: 0.35
   mode: single
+- id: '1783672215651'
+  alias: Living Room TV Cabinet Light
+  description: Keep light.living_room_cabinet_light on between 09:00 and 00:00 while
+    anyone is home, using the adaptive lighting dimmed preset. Turns off outside that
+    window or the moment everyone leaves; turns back on if someone arrives back home
+    within the window.
+  triggers:
+  - at: 09:00:00
+    id: 09:00
+    trigger: time
+  - at: 00:00:00
+    id: 00:00
+    trigger: time
+  - entity_id: binary_sensor.presence
+    id: home
+    to: 'on'
+    trigger: state
+  - entity_id: binary_sensor.presence
+    id: away
+    to: 'off'
+    trigger: state
+  conditions: []
+  actions:
+  - choose:
+    - alias: 'On'
+      conditions:
+      - condition: trigger
+        id:
+        - 09:00
+        - home
+      - condition: state
+        entity_id: binary_sensor.presence
+        state: 'on'
+      - after: 09:00:00
+        condition: time
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
+          transition: 30
+        target:
+          entity_id: light.living_room_cabinet_light
+    - alias: 'Off'
+      conditions:
+      - condition: trigger
+        id:
+        - 00:00
+        - away
+      sequence:
+      - action: light.turn_off
+        data:
+          transition: 30
+        target:
+          entity_id: light.living_room_cabinet_light
+  mode: restart
