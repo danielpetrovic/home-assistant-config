@@ -18,6 +18,7 @@
 /backups
 /custom_components/
 /deps/
+/esphome/dev/
 /glances
 /image
 /tmp
