@@ -200,8 +200,6 @@
         data: {}
         target:
           entity_id: cover.garden_shade
-      - delay:
-          seconds: 3
       - action: cover.open_cover
         metadata: {}
         data: {}
@@ -218,8 +216,6 @@
         metadata: {}
         target:
           entity_id: cover.garden_shade
-      - delay:
-          seconds: 3
       - alias: Door or shed shutter open?
         choose:
         - conditions:
@@ -276,8 +272,6 @@
         metadata: {}
         target:
           entity_id: cover.garden_shade
-      - delay:
-          seconds: 3
       - alias: Door or shed shutter open?
         choose:
         - conditions:
@@ -333,8 +327,6 @@
         metadata: {}
         target:
           entity_id: cover.garden_shade
-      - delay:
-          seconds: 3
       - alias: Door or shed shutter open?
         choose:
         - conditions:
@@ -401,8 +393,6 @@
         data: {}
         target:
           entity_id: cover.roof_terrace_shade
-      - delay:
-          seconds: 3
       - action: cover.open_cover
         metadata: {}
         data: {}
@@ -419,8 +409,6 @@
         metadata: {}
         target:
           entity_id: cover.roof_terrace_shade
-      - delay:
-          seconds: 3
       - alias: Door open?
         choose:
         - conditions:
@@ -462,8 +450,6 @@
         metadata: {}
         target:
           entity_id: cover.roof_terrace_shade
-      - delay:
-          seconds: 3
       - alias: Door open?
         choose:
         - conditions:
@@ -504,8 +490,6 @@
         metadata: {}
         target:
           entity_id: cover.roof_terrace_shade
-      - delay:
-          seconds: 3
       - alias: Door open?
         choose:
         - conditions:
@@ -556,8 +540,6 @@
         data: {}
         target:
           entity_id: cover.kitchen_shade
-      - delay:
-          seconds: 3
       - action: cover.open_cover
         metadata: {}
         data: {}
@@ -574,8 +556,6 @@
         metadata: {}
         target:
           entity_id: cover.kitchen_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 90
@@ -593,8 +573,6 @@
         metadata: {}
         target:
           entity_id: cover.kitchen_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 80
@@ -612,8 +590,6 @@
         metadata: {}
         target:
           entity_id: cover.kitchen_shade
-      - delay:
-          seconds: 3
       - action: cover.close_cover
         data: {}
         metadata: {}
@@ -641,8 +617,6 @@
         data: {}
         target:
           entity_id: cover.living_room_shade
-      - delay:
-          seconds: 3
       - action: cover.open_cover
         metadata: {}
         data: {}
@@ -659,8 +633,6 @@
         metadata: {}
         target:
           entity_id: cover.living_room_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 90
@@ -678,8 +650,6 @@
         metadata: {}
         target:
           entity_id: cover.living_room_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 40
@@ -697,8 +667,6 @@
         metadata: {}
         target:
           entity_id: cover.living_room_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 20
@@ -716,8 +684,6 @@
         metadata: {}
         target:
           entity_id: cover.living_room_shade
-      - delay:
-          seconds: 3
       - action: cover.close_cover
         data: {}
         metadata: {}
@@ -749,8 +715,6 @@
           - cover.gameroom_left_2_shade
           - cover.gameroom_right_1_shade
           - cover.gameroom_right_2_shade
-      - delay:
-          seconds: 3
       - action: cover.open_cover
         data: {}
         metadata: {}
@@ -773,16 +737,12 @@
           - cover.gameroom_left_2_shade
           - cover.gameroom_right_1_shade
           - cover.gameroom_right_2_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 50
         metadata: {}
         target:
           entity_id: cover.gameroom_left_shutter
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 90
@@ -804,16 +764,12 @@
           - cover.gameroom_left_2_shade
           - cover.gameroom_right_1_shade
           - cover.gameroom_right_2_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 25
         metadata: {}
         target:
           entity_id: cover.gameroom_left_shutter
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 50
@@ -835,8 +791,6 @@
           - cover.gameroom_left_2_shade
           - cover.gameroom_right_1_shade
           - cover.gameroom_right_2_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 20
@@ -859,8 +813,6 @@
           - cover.gameroom_left_2_shade
           - cover.gameroom_right_1_shade
           - cover.gameroom_right_2_shade
-      - delay:
-          seconds: 3
       - action: cover.close_cover
         data: {}
         metadata: {}
@@ -890,8 +842,6 @@
         data: {}
         target:
           entity_id: cover.hallway_shade
-      - delay:
-          seconds: 3
       - action: cover.open_cover
         metadata: {}
         data: {}
@@ -908,8 +858,6 @@
         metadata: {}
         target:
           entity_id: cover.hallway_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 90
@@ -926,8 +874,6 @@
         metadata: {}
         target:
           entity_id: cover.hallway_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 50
@@ -944,8 +890,6 @@
         metadata: {}
         target:
           entity_id: cover.hallway_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 20
@@ -962,8 +906,6 @@
         metadata: {}
         target:
           entity_id: cover.hallway_shade
-      - delay:
-          seconds: 3
       - action: cover.close_cover
         data: {}
         metadata: {}
@@ -991,8 +933,6 @@
         data: {}
         target:
           entity_id: cover.gym_curtain
-      - delay:
-          seconds: 3
       - action: cover.open_cover
         metadata: {}
         data: {}
@@ -1008,8 +948,6 @@
         metadata: {}
         target:
           entity_id: cover.gym_curtain
-      - delay:
-          seconds: 3
       - action: cover.open_cover
         metadata: {}
         data: {}
@@ -1025,8 +963,6 @@
         metadata: {}
         target:
           entity_id: cover.gym_curtain
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 20
@@ -1043,8 +979,6 @@
         metadata: {}
         target:
           entity_id: cover.gym_curtain
-      - delay:
-          seconds: 3
       - action: cover.close_cover
         data: {}
         metadata: {}
@@ -1074,8 +1008,6 @@
           entity_id:
           - cover.office_left_shade
           - cover.office_right_shade
-      - delay:
-          seconds: 3
       - action: cover.open_cover
         data: {}
         metadata: {}
@@ -1094,8 +1026,6 @@
           entity_id:
           - cover.office_left_shade
           - cover.office_right_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 90
@@ -1115,8 +1045,6 @@
           entity_id:
           - cover.office_left_shade
           - cover.office_right_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 50
@@ -1136,8 +1064,6 @@
           entity_id:
           - cover.office_left_shade
           - cover.office_right_shade
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 20
@@ -1156,8 +1082,6 @@
           entity_id:
           - cover.office_left_shade
           - cover.office_right_shade
-      - delay:
-          seconds: 3
       - action: cover.close_cover
         data: {}
         metadata: {}
@@ -1352,8 +1276,6 @@
         metadata: {}
         target:
           entity_id: cover.bedroom_curtain
-      - delay:
-          seconds: 3
       - action: cover.open_cover
         data: {}
         metadata: {}
@@ -1372,8 +1294,6 @@
         target:
           entity_id: cover.bedroom_curtain
         data: {}
-      - delay:
-          seconds: 3
       - action: cover.open_cover
         data: {}
         metadata: {}
@@ -1392,8 +1312,6 @@
         target:
           entity_id: cover.bedroom_curtain
         data: {}
-      - delay:
-          seconds: 3
       - action: cover.set_cover_position
         data:
           position: 20
@@ -1413,8 +1331,6 @@
         metadata: {}
         target:
           entity_id: cover.bedroom_curtain
-      - delay:
-          seconds: 3
       - action: cover.close_cover
         data: {}
         metadata: {}
@@ -5124,8 +5040,6 @@
                 data:
                   option: '{{ repeat.item.preset }}'
                 action: input_select.select_option
-              - delay:
-                  seconds: 5
         - alias: 'No'
           conditions:
           - condition: state
@@ -5157,8 +5071,6 @@
                 data:
                   option: '{{ repeat.item.preset }}'
                 action: input_select.select_option
-              - delay:
-                  seconds: 5
     - alias: 08:30
       conditions:
       - condition: trigger
@@ -5178,8 +5090,6 @@
             data:
               option: Shaded
             action: input_select.select_option
-          - delay:
-              seconds: 5
           - target:
               entity_id: input_select.gym_covers
             data:
@@ -5197,8 +5107,6 @@
             data:
               option: Privacy
             action: input_select.select_option
-          - delay:
-              seconds: 5
           - target:
               entity_id: input_select.gym_covers
             data:
@@ -5223,15 +5131,11 @@
             data:
               option: Open
             action: input_select.select_option
-          - delay:
-              seconds: 5
           - target:
               entity_id: input_select.gym_covers
             data:
               option: Open
             action: input_select.select_option
-          - delay:
-              seconds: 5
           - target:
               entity_id: input_select.hallway_covers
             data:
@@ -5256,15 +5160,11 @@
             data:
               option: Open
             action: input_select.select_option
-          - delay:
-              seconds: 5
           - target:
               entity_id: input_select.gym_covers
             data:
               option: Open
             action: input_select.select_option
-          - delay:
-              seconds: 5
           - target:
               entity_id: input_select.hallway_covers
             data:
@@ -5282,8 +5182,6 @@
             data:
               option: Shaded
             action: input_select.select_option
-          - delay:
-              seconds: 5
           - target:
               entity_id: input_select.gym_covers
             data:
@@ -5299,15 +5197,11 @@
         data:
           option: Open
         action: input_select.select_option
-      - delay:
-          seconds: 5
       - target:
           entity_id: input_select.gym_covers
         data:
           option: Open
         action: input_select.select_option
-      - delay:
-          seconds: 5
       - target:
           entity_id: input_select.hallway_covers
         data:
@@ -5323,15 +5217,11 @@
         data:
           option: Closed
         action: input_select.select_option
-      - delay:
-          seconds: 5
       - target:
           entity_id: input_select.gym_covers
         data:
           option: Closed
         action: input_select.select_option
-      - delay:
-          seconds: 5
       - target:
           entity_id: input_select.bedroom_covers
         data:
@@ -5342,8 +5232,6 @@
           entity_id: sensor.daylight_duration
           above: 12
         then:
-        - delay:
-            seconds: 5
         - target:
             entity_id: input_select.living_room_covers
           data:
@@ -5374,8 +5262,6 @@
               data:
                 option: '{{ repeat.item.preset }}'
               action: input_select.select_option
-            - delay:
-                seconds: 5
   - alias: Dark after 18:00 - close remaining
     if:
     - condition: trigger
@@ -5406,8 +5292,6 @@
           data:
             option: '{{ repeat.item.preset }}'
           action: input_select.select_option
-        - delay:
-            seconds: 5
   - alias: Climate-based logic during day
     choose:
     - alias: freezing
@@ -5433,8 +5317,6 @@
             data:
               option: '{{ repeat.item.preset }}'
             action: input_select.select_option
-          - delay:
-              seconds: 5
     - alias: cold
       conditions:
       - condition: state
@@ -5458,8 +5340,6 @@
             data:
               option: '{{ repeat.item.preset }}'
             action: input_select.select_option
-          - delay:
-              seconds: 5
     - alias: mild
       conditions:
       - condition: state
@@ -5483,8 +5363,6 @@
             data:
               option: '{{ repeat.item.preset }}'
             action: input_select.select_option
-          - delay:
-              seconds: 5
     - alias: warm
       conditions:
       - condition: state
@@ -5515,8 +5393,6 @@
                 data:
                   option: '{{ repeat.item.preset }}'
                 action: input_select.select_option
-              - delay:
-                  seconds: 5
         - alias: overcast/bright
           conditions:
           - condition: state
@@ -5539,8 +5415,6 @@
                 data:
                   option: '{{ repeat.item.preset }}'
                 action: input_select.select_option
-              - delay:
-                  seconds: 5
         - alias: dim
           conditions:
           - condition: state
@@ -5561,8 +5435,6 @@
                 data:
                   option: '{{ repeat.item.preset }}'
                 action: input_select.select_option
-              - delay:
-                  seconds: 5
     - alias: hot
       conditions:
       - condition: state
@@ -5593,8 +5465,6 @@
                 data:
                   option: '{{ repeat.item.preset }}'
                 action: input_select.select_option
-              - delay:
-                  seconds: 5
         - alias: bright
           conditions:
           - condition: state
@@ -5615,8 +5485,6 @@
                 data:
                   option: '{{ repeat.item.preset }}'
                 action: input_select.select_option
-              - delay:
-                  seconds: 5
         - alias: overcast
           conditions:
           - condition: state
@@ -5637,8 +5505,6 @@
                 data:
                   option: '{{ repeat.item.preset }}'
                 action: input_select.select_option
-              - delay:
-                  seconds: 5
         - alias: dim
           conditions:
           - condition: state
@@ -5659,8 +5525,6 @@
                 data:
                   option: '{{ repeat.item.preset }}'
                 action: input_select.select_option
-              - delay:
-                  seconds: 5
   mode: queued
   max: 2
 - id: '1761750325973'
