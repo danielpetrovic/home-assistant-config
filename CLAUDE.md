@@ -2,9 +2,6 @@
 
 @.claude/MEMORY.md
 @.claude/git-workflow.md
-@.claude/zigbee-converters.md
-@.claude/zigbee-devices.md
-@.claude/io-2w-protocol.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -178,7 +175,7 @@ The installation is organized across 3 floors:
 - `sensor.heating` - Count of heating zones actively heating
 - `sensor.daylight_duration` - Hours between sunrise and sunset
 - `sensor.outdoor_brightness` - Categorized outdoor brightness (dark/dim/overcast/bright/sunny) with hysteresis, based on sensor.outdoor_luminosity
-- `sensor.climate_mode` - State machine for seasonal climate mode (freezing/cold/mild/warm/hot) with hysteresis. Hot enter: humidex ≥ 29, heat_stress ≥ 65, max4 ≥ 25, daylight > 13h. Hot exit: humidex ≤ 27, heat_stress ≤ 65, time 09:00–21:00 (daytime-only prevents overnight resets).
+- `sensor.climate_mode` - State machine for seasonal climate mode (freezing/cold/mild/warm/hot) with hysteresis. Hot enter: humidex ≥ 27, heat_stress ≥ 58, max4 ≥ 25, daylight > 13h. Hot exit: humidex ≤ 25, heat_stress ≤ 50, max4 < 25, time 09:00–21:00 (max4 < 25 prevents exiting hot during sustained warm periods on cool mornings).
 
 ### System Sensors
 
@@ -325,7 +322,7 @@ Daikin units cool to ~2°C below setpoint (effective temp = setpoint − 2°C).
 
 **Desk/media power thresholds:** Office & Gameroom desk: 40W (standby spikes to 36W). Gameroom media: 20W. Living Room media: 50W (standby 25–31W, active 100–150W).
 
-**`sensor.climate_mode` hot thresholds:** enter: humidex ≥ 29 AND heat_stress ≥ 65 AND max4 ≥ 25 AND daylight > 13h; exit: humidex ≤ 27 AND heat_stress ≤ 65 AND daytime (09:00–21:00 only — prevents overnight resets during heat waves).
+**`sensor.climate_mode` hot thresholds:** enter: humidex ≥ 27 AND heat_stress ≥ 58 AND max4 ≥ 25 AND daylight > 13h; exit: humidex ≤ 25 AND heat_stress ≤ 50 AND max4 < 25 AND daytime (09:00–21:00 only). max4 < 25 prevents exiting during sustained warm periods where cool mornings would otherwise trigger the exit.
 
 ## Alarm System
 
