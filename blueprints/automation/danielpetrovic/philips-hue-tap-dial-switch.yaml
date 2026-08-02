@@ -2859,8 +2859,8 @@ variables:
     {% endif %}
   button_num: "{{ command | regex_replace(find='[^1-4]', replace='') | default(states(last_pressed), true) }}"
   is_rotation: "{{ command == 'step_with_on_off' }}"
-  rotate_left: "{{ is_rotation and step_mode == 'StepMode.Down' and step_size | int(0) != 255 }}"
-  rotate_right: "{{ is_rotation and step_mode == 'StepMode.Up' and step_size | int(0) != 255 }}"
+  rotate_left: "{{ is_rotation and step_mode == 'StepMode.Down' and step_size | int(0) > 0 and step_size | int(0) != 255 }}"
+  rotate_right: "{{ is_rotation and step_mode == 'StepMode.Up' and step_size | int(0) > 0 and step_size | int(0) != 255 }}"
   # Button 1 config
   button_1_light: !input button_1_light
   button_1_adjustment_mode: !input button_1_light_adjustment_mode
