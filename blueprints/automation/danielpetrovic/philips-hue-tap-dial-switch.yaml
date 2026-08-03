@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Philips Hue Tap Dial Switch (Z2M / ZHA)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) ![Version](https://img.shields.io/badge/Version-2026.07.1-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) [![Community](https://img.shields.io/badge/Community-Discussion-ff6600?style=for-the-badge&logo=discourse&logoColor=white)](https://community.home-assistant.io/t/philips-hue-tap-dial-switch-z2m-zha-custom-light-and-media-mode-rdm002/828766) ![Version](https://img.shields.io/badge/Version-2026.08.1-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of a Philips Hue Tap Dial Switch through Zigbee2MQTT or ZHA integration, supporting custom actions, light automation, and media player control.
 
@@ -36,6 +36,9 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.08.1: Fix dial brightness jumping while turning**
+          - Fixed: spurious zero-step rotation messages were consuming the single-mode slot and issuing a brightness_step: 0 call, causing brightness to jump up and down while turning the dial. Added step_size > 0 guard alongside the existing step_size != 255 guard. Also fixes fast custom-action turns dropping clicks for the same reason.
+
         - **2026.07.1: Fix auto-adjust error when only one of brightness/color temp is enabled**
           - Fixed: "expected float for brightness_pct" error occurring when Auto-Adjust Brightness is off but Auto-Adjust Color Temperature is on (or vice versa). Replaced `omit` in typed numeric data fields with explicit `choose` branches per button: one call for both fields, one for brightness only, one for color temp only.
 
@@ -2859,8 +2862,8 @@ variables:
     {% endif %}
   button_num: "{{ command | regex_replace(find='[^1-4]', replace='') | default(states(last_pressed), true) }}"
   is_rotation: "{{ command == 'step_with_on_off' }}"
-  rotate_left: "{{ is_rotation and step_mode == 'StepMode.Down' and step_size | int(0) != 255 }}"
-  rotate_right: "{{ is_rotation and step_mode == 'StepMode.Up' and step_size | int(0) != 255 }}"
+  rotate_left: "{{ is_rotation and step_mode == 'StepMode.Down' and step_size | int(0) > 0 and step_size | int(0) != 255 }}"
+  rotate_right: "{{ is_rotation and step_mode == 'StepMode.Up' and step_size | int(0) > 0 and step_size | int(0) != 255 }}"
   # Button 1 config
   button_1_light: !input button_1_light
   button_1_adjustment_mode: !input button_1_light_adjustment_mode
