@@ -10890,6 +10890,16 @@
             },
             {
               "type": "entity",
+              "show_name": false,
+              "show_state": false,
+              "show_icon": true,
+              "tap_action": {
+                "action": "toggle"
+              },
+              "entity": "automation.bedroom_alex_motion"
+            },
+            {
+              "type": "entity",
               "show_name": true,
               "show_state": false,
               "show_icon": true,
@@ -10899,8 +10909,10 @@
             },
             {
               "type": "entity",
-              "entity": "automation.bedroom_media",
-              "display_type": "minimal",
+              "show_name": false,
+              "show_state": false,
+              "show_icon": true,
+              "entity": "automation.bedroom_deni_motion",
               "tap_action": {
                 "action": "toggle"
               }
