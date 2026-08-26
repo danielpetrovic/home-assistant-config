@@ -2264,7 +2264,7 @@
       hours: 1
       minutes: 0
       seconds: 0
-    below: 50
+    below: 30
     id: Desk
   conditions: []
   actions:
@@ -2834,8 +2834,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.bedroom_alex_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_2_light:
         entity_id: light.bedroom_alex_light
       button_2_light_brightness: 5
@@ -3251,10 +3251,6 @@
     - 'off'
     id: motion clear
     trigger: state
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
   conditions: []
   actions:
   - choose:
@@ -3272,7 +3268,7 @@
             | int }}'
           color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
             | int }}'
-          transition: 10
+          transition: 30
         metadata: {}
         target:
           entity_id:
@@ -3309,10 +3305,6 @@
     - 'off'
     id: motion clear
     trigger: state
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
   conditions: []
   actions:
   - choose:
@@ -3330,7 +3322,7 @@
             | int }}'
           color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
             | int }}'
-          transition: 10
+          transition: 30
         metadata: {}
         target:
           entity_id:
@@ -3361,7 +3353,7 @@
       hours: 1
       minutes: 0
       seconds: 0
-    below: 40
+    below: 30
   conditions: []
   actions:
   - action: switch.turn_off
@@ -6024,8 +6016,8 @@
       alarm_presence_sensor: binary_sensor.presence
       alarm_auto_arm_away: true
       alarm_notifications_target:
-      - ed18014bbde1fefe8254e55a058ec7b7
       - 98d9ae04b7a1a1fc1b674540398cdb11
+      - 1553230d498f0ca0231ff9aa8cdf16a7
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:
       - media_player.utility_closet
@@ -6515,7 +6507,7 @@
             target:
               device_id: d8519caad7a09f85aae51a68a31f6a7a
             data:
-              option: Vacuum & Mop
+              option: Mop after Vacuum
           - action: vacuum.start
             metadata: {}
             target:
@@ -6560,7 +6552,7 @@
             target:
               device_id: d8519caad7a09f85aae51a68a31f6a7a
             data:
-              option: Vacuum & Mop
+              option: Mop after Vacuum
           - action: vacuum.start
             metadata: {}
             target:
@@ -6600,7 +6592,7 @@
           - action: select.select_option
             metadata: {}
             data:
-              option: Vacuum & Mop
+              option: Mop after Vacuum
             target:
               device_id: 9b987af2242972d3a0c74613c303ced6
           - action: vacuum.start
