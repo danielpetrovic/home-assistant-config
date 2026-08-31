@@ -175,7 +175,7 @@ The installation is organized across 3 floors:
 - `sensor.heating` - Count of heating zones actively heating
 - `sensor.daylight_duration` - Hours between sunrise and sunset
 - `sensor.outdoor_brightness` - Categorized outdoor brightness (dark/dim/overcast/bright/sunny) with hysteresis, based on sensor.outdoor_luminosity
-- `sensor.climate_mode` - State machine for seasonal climate mode (freezing/cold/mild/warm/hot) with hysteresis. Hot enter: humidex ≥ 27, heat_stress ≥ 58, max4 ≥ 25, daylight > 13h. Hot exit: humidex ≤ 25, heat_stress ≤ 50, max4 < 25, time 09:00–21:00 (max4 < 25 prevents exiting hot during sustained warm periods on cool mornings).
+- `sensor.climate_mode` - State machine for seasonal climate mode (freezing/cold/mild/warm/hot) with hysteresis. Hot enter: humidex ≥ 27, heat_stress ≥ 58, max4 ≥ 25, daylight > 13h. Hot exit: humidex ≤ 24 during 09:00–21:00, OR humidex ≤ 20 any time (cold-snap override). Exit is humidex-only; heat_stress and max4 were dropped from the exit (both stay solar-biased/sticky and had latched the mode for days after the weather broke), but still gate entry.
 
 ### System Sensors
 
@@ -322,7 +322,7 @@ Daikin units cool to ~2°C below setpoint (effective temp = setpoint − 2°C).
 
 **Desk/media power thresholds:** Office & Gameroom desk: 40W (standby spikes to 36W). Gameroom media: 20W. Living Room media: 50W (standby 25–31W, active 100–150W).
 
-**`sensor.climate_mode` hot thresholds:** enter: humidex ≥ 27 AND heat_stress ≥ 58 AND max4 ≥ 25 AND daylight > 13h; exit: humidex ≤ 25 AND heat_stress ≤ 50 AND max4 < 25 AND daytime (09:00–21:00 only). max4 < 25 prevents exiting during sustained warm periods where cool mornings would otherwise trigger the exit.
+**`sensor.climate_mode` hot thresholds:** enter: humidex ≥ 27 AND heat_stress ≥ 58 AND max4 ≥ 25 AND daylight > 13h; exit: (humidex ≤ 24 AND daytime 09:00–21:00) OR humidex ≤ 20 any time. Exit is humidex-only; the humidex ≤ 24 vs ≥ 27 gap is the hysteresis. heat_stress ≤ 50 and max4 < 25 were removed from the exit (Aug 2026: they kept the mode latched on `hot` for ~5 days after a heatwave broke, because the 96h max4 stays ≥ 25 for 4 days after the last warm sample and the roof WS90 heat_stress reads 60+ midday from direct sun even on cool days). Both still gate entry, so a spurious exit cannot immediately re-enter hot.
 
 ## Alarm System
 

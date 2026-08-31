@@ -166,13 +166,18 @@ template:
           {% else %}
 
           {% set hot_enter = humidex >= 27 and hs >= 58 and max4 >= 25 and daylight_h > 13 %}
-          {% set hot_exit  = humidex <= 25 and hs <= 50 and max4 < 25 and (now().hour >= 9 and now().hour < 21) %}
+          {% set hot_exit  = (humidex <= 24 and (now().hour >= 9 and now().hour < 21)) or humidex <= 20 %}
 
           {#
-            Thresholds (non-overlapping for stability):
-              hot_exit only allowed 09:00–21:00 AND requires max4 < 25 so a cool
-              morning during a sustained warm period never drops the mode — only
-              a genuine multi-day cooldown (4-day max below 25°C) triggers the exit.
+            hot_exit is humidex-driven (feels-like temp+humidity, not the
+            solar-biased WS90 heat_stress or the sticky 96h max4, both of which
+            kept the mode latched for days after the weather had broken).
+            humidex <= 24 vs hot_enter's humidex >= 27 is a 3-point hysteresis
+            gap, so no oscillation. The 09:00-21:00 window stops a cool morning
+            during a heatwave from dropping the mode; humidex <= 20 is an
+            any-time override for a clear cold snap. max4 and hs still gate
+            entry, so a spurious exit cannot immediately re-enter hot.
+            Lower transitions (non-overlapping for stability):
               freezing → mild  : max4 > 14 AND min7 > 6
               freezing → cold  : max4 > 6  (and not meeting mild condition)
               cold     → mild  : max4 > 14 AND min7 > 6
