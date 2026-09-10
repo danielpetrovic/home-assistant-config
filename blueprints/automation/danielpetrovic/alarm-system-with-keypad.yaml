@@ -1,107 +1,36 @@
 blueprint:
   name: Alarm System with Keypad support (Z2M / ZHA / Dashboard)
   author: danielpetrovic
+  source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/alarm-system-with-keypad.yaml
   description: |
     # Alarm System with Keypad support (Z2M / ZHA / Dashboard)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/alarm-system-with-keypad.yaml) [![Community Discussion](https://img.shields.io/badge/Community-Discussion-41bdf5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://community.home-assistant.io/t/alarm-system-with-zigbee-z2m-zha-keypad-support-kepzb-110/958295) ![Version](https://img.shields.io/badge/Version-2026.04.1-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/alarm-system-with-keypad.yaml) [![Community](https://img.shields.io/badge/Community-Discussion-ff6600?style=for-the-badge&logo=discourse&logoColor=white)](https://community.home-assistant.io/t/alarm-system-with-zigbee-z2m-zha-keypad-support-kepzb-110/958295) ![Version](https://img.shields.io/badge/Version-2026.09.1-blue?style=for-the-badge)
 
     A comprehensive alarm system blueprint for Home Assistant with multiple keypad integration options. No custom components required.
 
-    ## Features
+    ## ✨ Key Features
     - **Multiple Keypad Options**: Choose Z2M, ZHA, Dashboard, or any combination
       - **Physical Zigbee Keypads**: Sync states with Z2M or ZHA (tested with frient KEPZB-110)
       - **Dashboard Keypad**: Custom on-screen numeric keypad for wall tablets/panels or Companion App
     - **Multiple User Codes**: Unlimited user codes with support for PIN codes (digits) and RFID tags (hexadecimal: 0-9/A-F) (pattern: `^[0-9A-F+]+$`)
-    - **Two-Tier Code System**: Blueprint validates user codes, then sends master code to alarm panel - your alarm panel doesn't need to support multiple codes
+    - **Two-Tier Code System**: Blueprint validates user codes, then sends master code to alarm panel, so your alarm panel does not need to support multiple codes
     - **Smart Automation**: Auto-arm when leaving, auto-disarm on arrival, flexible time-based schedules (per day, workday/non-workday, or disabled)
     - **Rich Notifications**: Text notifications with camera feeds (iOS live/Android snapshot), TTS announcements, critical alerts
     - **Mode-Specific Configuration**: Different sensors and actions for Away/Home/Night/Arming/Pending/Disarmed/Triggered/Emergency modes
     - **Emergency Mode**: Silent alarm via keypad SOS button (long-press 5+ seconds) (physical keypads only)
 
-    ## Prerequisites
-    - Home Assistant 2024.8.0 or later
-    - Manual Alarm Control Panel (see setup below)
-    - Text Helper entities for storing codes (see setup below)
-    - Physical Zigbee keypad connected via Z2M or ZHA (optional)
-    - Dashboard helper entities if using Dashboard keypad (see setup below)
+    *Each configuration option below includes detailed instructions in the automation editor.*
 
-    ## Recommended Setup Using Packages
-    Using packages keeps all alarm-related configuration in one file for easy management.
-
-    **1. Enable Packages** in `/config/configuration.yaml`:
-    ```yaml
-    homeassistant:
-      packages: !include_dir_named packages
-    ```
-
-    **2. Create `/config/packages/alarm.yaml`** with all alarm components:
-    ```yaml
-    # Manual Alarm Control Panel
-    alarm_control_panel:
-      - platform: manual
-        name: Alarm
-        code_arm_required: false
-        armed_away:
-          arming_time: 30
-          delay_time: 20
-        armed_home:
-          arming_time: 0
-          delay_time: 10
-        armed_night:
-          arming_time: 0
-          delay_time: 20
-
-    # Input Text Helpers
-    input_text:
-      # Main/Master code (sent to alarm panel)
-      alarm_code_main:
-        name: Alarm Code Main
-        icon: mdi:dialpad
-        mode: password
-        min: 4
-        max: 16
-        pattern: "^[0-9]+$"  # Supports PIN only
-
-      # User codes (validated by blueprint)
-      alarm_code_user_1:
-        name: Alarm Code John
-        icon: mdi:dialpad
-        mode: password
-        min: 4
-        max: 16
-        pattern: "^[0-9A-F+]+$"  # Supports PIN and RFID
-      alarm_code_user_2:
-        name: Alarm Code Jane
-        icon: mdi:dialpad
-        mode: password
-        min: 4
-        max: 16
-        pattern: "^[0-9A-F+]+$"  # Supports PIN and RFID
-
-      # User name storage (updated by blueprint)
-      alarm_code_user_name:
-        name: Alarm Last User Name
-        icon: mdi:account
-        max: 255
-
-    # Template Sensor for Presence Tracking (optional - for automation features)
-    template:
-      - binary_sensor:
-          - name: "Presence"
-            unique_id: presence
-            device_class: presence
-            state: >
-              {{ (states('zone.home') | int) > 0 }}
-    ```
-
-    **3. Restart Home Assistant** to load the new entities.
-
-    **4. Configure this blueprint** using the created entities.
-
-    The field descriptions below reference this `/config/packages/alarm.yaml` file.
+    ## 📋 Requirements
+    - **Home Assistant**: Version 2024.8.0 or later
+    - **Alarm Panel**: Manual Alarm Control Panel (see Setup Using Packages)
+    - **Text Helpers**: Input Text entities for storing codes (see Setup Using Packages)
+    - **Zigbee Keypad**: Physical keypad connected via Z2M or ZHA (optional)
+    - **Dashboard Helpers**: Required only when using the Dashboard keypad (see Setup Using Packages)
   domain: automation
-  source_url: https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/alarm-system-with-keypad.yaml
+  homeassistant:
+    min_version: 2024.8.0
   input:
     alarm_control_panel_main:
       name: Alarm Control Panel
@@ -173,51 +102,149 @@ blueprint:
     version_info:
       name: Version History
       description: |
-        - **2026.04.1: Modular Schedule Mode with Workday Support**
-          - **Breaking Change**: Replaced weekdays/weekends/custom schedules with individual per-day schedules (Monday–Sunday)
-          - Added Schedule Mode selector: choose between Per Day, Workday/Non-Workday, or Disabled
-          - Added Workday/Non-Workday mode: two schedules driven by a Workday integration sensor — handles public holidays automatically
-        - **2026.01.2: Notification Message Improvements & Documentation Updates**
-          - Improved default notification messages for better readability
-          - Moved user/sensor name variables to end of messages for more natural phrasing
-          - Updated all notification defaults: armed modes, disarmed, arming, pending, triggered, and sensor alerts
-          - Updated dashboard keypad script aliases to use dash separator for consistency
-        - **2026.01.1: Bug Fix & Documentation Updates**
-          - Fixed triggered mode notifications not being sent (config exclusion bug)
-          - Added badge-style buttons to blueprint header (GitHub, Blueprint Code, Community, Version)
-          - Added Version History section for tracking changes
-          - Added template binary sensor for presence tracking to package YAML example
-        - **2025.12.11: Sensor Trigger Template Fix**
-          - Fixed invalid trigger enabled templates causing sensor triggers to fail
-        - **2025.12.10: Dashboard Keypad Support**
-          - Added dashboard keypad support with script-based implementation
-          - Added complete Lovelace YAML examples for on-screen keypad
-        - **2025.12.9: Schedule Validation Fix**
-          - Fixed schedule day validation and refactor descriptions
-        - **2025.12.8: Alarm Action Template Fix**
-          - Fixed dynamic alarm action template to use correct service names
-        - **2025.12.7: Initial Release Patch**
-          - Small fixes after initial release
-        - **2025.12.6: Initial Combined Release**
-          - First combined Z2M/ZHA Blueprint version
-          - Merged separate Z2M and ZHA blueprints into one
-          - Added two-tier code system (user codes + master code)
-          - Added emergency mode support
-        - **2025.12.5: Logic Optimization**
-          - Optimized automation logic with template-driven approach
-        - **2025.12.4: Flexible Scheduling**
-          - Replaced fixed disarm/night schedules with flexible mode selection
-        - **2025.12.3: Notification System Extension**
-          - Extended notification system with critical alerts and channel control
-        - **2025.12.2: Presence Automation**
-          - Added presence-based alarm automation with flexible scheduling
-        - **2025.12.1: Notification Optimization**
-          - Optimized alarm system blueprint notifications
-        - **2025.12.0: First Combined Version**
-          - First combined Z2M/ZHA Blueprint version (merged from separate blueprints)
-          - **Breaking Changes**: No upgrade path from old versions - setup required
+        - **2026.09.1: Fix ZHA keypad no longer arming or disarming the alarm**
+          - Fixed: the ZHA branch read the code and arm mode from `trigger.event.data.args`, which recent ZHA releases leave empty, so the keypad fired the event but the alarm state never changed
+          - Changed: the ZHA branch now reads `trigger.event.data.params` (`code`, `arm_mode`); the deprecated positional `args` path was removed
+
+        - **2026.04.1: Modular schedule mode with workday support**
+          - Breaking: replaced weekdays/weekends/custom schedules with individual per-day schedules (Monday to Sunday)
+          - Added: Schedule Mode selector, choose between Per Day, Workday/Non-Workday, or Disabled
+          - Added: Workday/Non-Workday mode, two schedules driven by a Workday integration sensor, handles public holidays automatically
+
+        - **2026.01.2: Notification message improvements and documentation updates**
+          - Improved: default notification messages for better readability
+          - Changed: moved user and sensor name variables to the end of messages for more natural phrasing
+          - Changed: updated all notification defaults for armed modes, disarmed, arming, pending, triggered, and sensor alerts
+          - Changed: dashboard keypad script aliases now use a dash separator for consistency
+
+        - **2026.01.1: Bug fix and documentation updates**
+          - Fixed: triggered mode notifications not being sent (config exclusion bug)
+          - Added: badge-style buttons to the blueprint header (GitHub, Blueprint Code, Community, Version)
+          - Added: Version History section for tracking changes
+          - Added: template binary sensor for presence tracking to the package YAML example
+
+        - **2025.12.11: Sensor trigger template fix**
+          - Fixed: invalid trigger enabled templates causing sensor triggers to fail
+
+        - **2025.12.10: Dashboard keypad support**
+          - Added: dashboard keypad support with a script-based implementation
+          - Added: complete Lovelace YAML examples for the on-screen keypad
+
+        - **2025.12.9: Schedule validation fix**
+          - Fixed: schedule day validation and refactored descriptions
+
+        - **2025.12.8: Alarm action template fix**
+          - Fixed: dynamic alarm action template to use correct service names
+
+        - **2025.12.7: Initial release patch**
+          - Fixed: small fixes after the initial release
+
+        - **2025.12.6: Initial combined release**
+          - Changed: first combined Z2M/ZHA blueprint version
+          - Changed: merged the separate Z2M and ZHA blueprints into one
+          - Added: two-tier code system (user codes plus master code)
+          - Added: emergency mode support
+
+        - **2025.12.5: Logic optimization**
+          - Changed: optimized automation logic with a template-driven approach
+
+        - **2025.12.4: Flexible scheduling**
+          - Changed: replaced fixed disarm/night schedules with flexible mode selection
+
+        - **2025.12.3: Notification system extension**
+          - Added: critical alerts and channel control to the notification system
+
+        - **2025.12.2: Presence automation**
+          - Added: presence-based alarm automation with flexible scheduling
+
+        - **2025.12.1: Notification optimization**
+          - Changed: optimized alarm system blueprint notifications
+
+        - **2025.12.0: First combined version**
+          - Changed: first combined Z2M/ZHA blueprint version, merged from separate blueprints
+          - Breaking: no upgrade path from old versions, setup required
       collapsed: true
       icon: mdi:history
+      input: {}
+
+    setup_info:
+      name: Setup Using Packages
+      description: |
+        Using packages keeps all alarm-related configuration in one file for easy management.
+
+        **1. Enable Packages** in `/config/configuration.yaml`:
+        ```yaml
+        homeassistant:
+          packages: !include_dir_named packages
+        ```
+
+        **2. Create `/config/packages/alarm.yaml`** with all alarm components:
+        ```yaml
+        # Manual Alarm Control Panel
+        alarm_control_panel:
+          - platform: manual
+            name: Alarm
+            code_arm_required: false
+            armed_away:
+              arming_time: 30
+              delay_time: 20
+            armed_home:
+              arming_time: 0
+              delay_time: 10
+            armed_night:
+              arming_time: 0
+              delay_time: 20
+
+        # Input Text Helpers
+        input_text:
+          # Main/Master code (sent to alarm panel)
+          alarm_code_main:
+            name: Alarm Code Main
+            icon: mdi:dialpad
+            mode: password
+            min: 4
+            max: 16
+            pattern: "^[0-9]+$"  # Supports PIN only
+
+          # User codes (validated by blueprint)
+          alarm_code_user_1:
+            name: Alarm Code John
+            icon: mdi:dialpad
+            mode: password
+            min: 4
+            max: 16
+            pattern: "^[0-9A-F+]+$"  # Supports PIN and RFID
+          alarm_code_user_2:
+            name: Alarm Code Jane
+            icon: mdi:dialpad
+            mode: password
+            min: 4
+            max: 16
+            pattern: "^[0-9A-F+]+$"  # Supports PIN and RFID
+
+          # User name storage (updated by blueprint)
+          alarm_code_user_name:
+            name: Alarm Last User Name
+            icon: mdi:account
+            max: 255
+
+        # Template Sensor for Presence Tracking (optional, for automation features)
+        template:
+          - binary_sensor:
+              - name: "Presence"
+                unique_id: presence
+                device_class: presence
+                state: >
+                  {{ (states('zone.home') | int) > 0 }}
+        ```
+
+        **3. Restart Home Assistant** to load the new entities.
+
+        **4. Configure this blueprint** using the created entities.
+
+        The field descriptions in this blueprint reference this `/config/packages/alarm.yaml` file.
+      collapsed: true
+      icon: mdi:package-variant-closed
       input: {}
 
     z2m:
@@ -2892,22 +2919,22 @@ actions:
           - condition: trigger
             id: zha_keypad
           - condition: template
-            value_template: "{{ trigger.event.data.args.code in alarm_codes_state or (alarm_code_main_state != '' and trigger.event.data.args.code == alarm_code_main_state) }}"
+            value_template: "{{ trigger.event.data.params.code in alarm_codes_state or (alarm_code_main_state != '' and trigger.event.data.params.code == alarm_code_main_state) }}"
         then:
           - variables:
               zha_arm_action: |
-                {% if trigger.event.data.args.arm_mode == 3 %}
+                {% if trigger.event.data.params.arm_mode == 3 %}
                   alarm_control_panel.alarm_arm_away
-                {% elif trigger.event.data.args.arm_mode == 1 %}
+                {% elif trigger.event.data.params.arm_mode == 1 %}
                   alarm_control_panel.alarm_arm_home
-                {% elif trigger.event.data.args.arm_mode == 2 %}
+                {% elif trigger.event.data.params.arm_mode == 2 %}
                   alarm_control_panel.alarm_arm_night
-                {% elif trigger.event.data.args.arm_mode == 0 %}
+                {% elif trigger.event.data.params.arm_mode == 0 %}
                   alarm_control_panel.alarm_disarm
                 {% endif %}
-              triggered_code: "{{ trigger.event.data.args.code }}"
+              triggered_code: "{{ trigger.event.data.params.code }}"
               triggered_user_name: >
-                {% set code_to_match = trigger.event.data.args.code | string %}
+                {% set code_to_match = trigger.event.data.params.code | string %}
                 {% set ns = namespace(name=none) %}
                 {% for code_entity in alarm_codes %}
                   {% if states(code_entity) | string == code_to_match %}
