@@ -3188,7 +3188,7 @@
       target:
         entity_id: tts.home_assistant_cloud
     - alias: Notify
-      action: notify.mobile_app_alex_phone_bigme
+      action: notify.mobile_app_alex_phone
       data:
         message: Someone rang the doorbell!
         data:
@@ -3199,7 +3199,6 @@
           notification_icon: mdi:doorbell-video
           priority: high
           ttl: 0
-      enabled: true
     - alias: Notify
       action: notify.mobile_app_deni_phone
       data:
@@ -3212,7 +3211,6 @@
           notification_icon: mdi:doorbell-video
           priority: high
           ttl: 0
-      enabled: true
     - alias: Living Room TV
       if:
       - condition: not
@@ -3228,6 +3226,21 @@
         target:
           entity_id: media_player.living_room_tv
         data: {}
+    - if:
+      - condition: media_player.is_playing
+        target:
+          entity_id: media_player.living_room_osmc
+        options:
+          behavior: any
+          for: 00:00:00
+      then:
+      - action: media_player.media_pause
+        metadata: {}
+        target:
+          entity_id: media_player.living_room_osmc
+        data: {}
+      alias: Living Room OSMC
+      enabled: true
   variables:
     base_url_https: '{{ states(''input_text.base_url_https'') }}'
     base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
@@ -6016,7 +6029,7 @@
       alarm_presence_sensor: binary_sensor.presence
       alarm_auto_arm_away: true
       alarm_notifications_target:
-      - 98d9ae04b7a1a1fc1b674540398cdb11
+      - 481bd9a5335c5a5aa4e44ffbfe663137
       - 1553230d498f0ca0231ff9aa8cdf16a7
       alarm_announcements_engine: tts.home_assistant_cloud
       alarm_announcements_player:

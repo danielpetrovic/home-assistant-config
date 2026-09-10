@@ -1475,19 +1475,23 @@
                       "entities": [
                         {
                           "entity": "light.living_room_lights",
-                          "secondary_info": "last-changed"
+                          "secondary_info": "last_changed"
                         },
                         {
                           "entity": "light.living_room_above_light",
-                          "secondary_info": "last-changed"
+                          "secondary_info": "last_changed"
                         },
                         {
                           "entity": "light.living_room_below_light",
-                          "secondary_info": "last-changed"
+                          "secondary_info": "last_changed"
+                        },
+                        {
+                          "entity": "light.living_room_cabinet_light",
+                          "secondary_info": "last_changed"
                         },
                         {
                           "entity": "light.living_room_tv_light",
-                          "secondary_info": "last-changed"
+                          "secondary_info": "last_changed"
                         }
                       ]
                     },
@@ -10818,45 +10822,6 @@
                     }
                   ],
                   "columns": 1
-                },
-                {
-                  "type": "heading",
-                  "icon": "mdi:lightning-bolt",
-                  "heading": "Energy",
-                  "heading_style": "subtitle"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
-                    {
-                      "features": [
-                        {
-                          "type": "toggle"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "switch.bedroom_media",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "hide_state": true
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "trend-graph"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "sensor.bedroom_media_power",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "color": "yellow",
-                      "name": " ",
-                      "hide_state": false
-                    }
-                  ],
-                  "columns": 2
                 }
               ]
             }

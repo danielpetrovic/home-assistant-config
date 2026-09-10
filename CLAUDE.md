@@ -11,7 +11,7 @@ This repository contains a Home Assistant configuration for a residential smart 
 
 ## System Overview
 
-- **Home Assistant Version:** 2026.6.4
+- **Home Assistant Version:** 2026.9.0
 - **Primary Integration:** Zigbee2MQTT (Z2M)
 - **Configuration Style:** Package-based with YAML automations
 - **Network:** Trusted proxy configuration for reverse proxy access
