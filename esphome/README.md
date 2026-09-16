@@ -12,3 +12,7 @@ The four top-level files here (`somfy-rts-bridge.yaml`, `somfy-rts-cover.yaml`, 
 The IO bridge's `components/iohc` no longer needs a local copy at all - `somfy-io-bridge.yaml` sources it directly via `external_components: type: git`, so ESPHome fetches it straight from GitHub at compile time.
 
 `secrets.yaml` stays local to this repo/install, unaffected by the split (see each bridge's own README for which `!secret` keys it needs).
+
+## Open Air Mini (shed ventilation)
+
+`open-air-mini-3.yaml` is a real, directly-committed file, not a symlink - unlike the two bridges above, this isn't a custom board built here. It's a preflashed, vendor-produced PCB, [Flamingo-tech's Open Air Mini](https://github.com/Flamingo-tech/Open-AIR/tree/main/Open%20AIR%20Mini/Software), adapted from their published ESPHome source to this specific unit's hardware revision (legacy pre-V1.4.0 sensor pin mapping) and updated to syntax the currently-installed ESPHome version still accepts (their source file predates several since-removed config forms).

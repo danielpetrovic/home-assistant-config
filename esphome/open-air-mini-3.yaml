@@ -1,0 +1,179 @@
+esphome:
+  name: open-air-mini-3
+  friendly_name: "Open AIR Mini 3"
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  level: DEBUG
+
+# This is optional and can be commented out to disable the Web Server
+web_server:
+  port: 80
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret open_air_mini_3__encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret open_air_mini_3_ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Open-AIR-Mini Fallback"
+    password: !secret open_air_mini_3_ap_password
+
+captive_portal:
+
+globals:
+  # Disconnected Mode Max Fan Speed, linked to Disconnected Hum Level Max Speed
+  - id: disconnected_max_fan_speed
+    type: int
+    restore_value: no
+    initial_value: "100"
+  # Disconnected Mode Medium Fan Speed, linked to Disconnected Hum Level Medium Speed
+  - id: disconnected_medium_fan_speed
+    type: int
+    restore_value: no
+    initial_value: "60"
+  # Disconnected Mode Default Fan Speed, for humidities lower than Disconnected Hum Level Medium Speed
+  # or if NOT using a humidity sensor. Without sensor this speed will be maintained untill a connection
+  # to Home Assistant has been restored and your automations can take over.
+  - id: disconnected_default_fan_speed
+    type: int
+    restore_value: no
+    initial_value: "10"
+  # Disconnected Mode Max Fan Speed Threshold
+  - id: disconnected_hum_level_max_speed
+    type: int
+    restore_value: no
+    initial_value: "75"
+  # Disconnected Mode Medium Fan Speed Threshold
+  - id: disconnected_hum_level_medium_speed
+    type: int
+    restore_value: no
+    initial_value: "55"
+
+# Pre-V1.4.0 pin mapping (ordered 2023-08-20, flashed 2023-08-23 - seven months
+# before the V1.4.0 pin swap existed upstream). Sensor_1 = rx13/tx12 + sda19/scl18,
+# matching the combined CO2+humidity sensor on connector 1.
+uart:
+#UART For Sensor 1
+ - rx_pin: GPIO13
+   tx_pin: GPIO12
+   baud_rate: 9600
+   id: uart_sensor_1
+#UART For Sensor 2
+ - rx_pin: GPIO25
+   tx_pin: GPIO26
+   baud_rate: 9600
+   id: uart_sensor_2
+
+i2c:
+#I2C For Sensor 1
+- id: i2c_sensor_1
+  sda: GPIO19
+  scl: GPIO18
+  scan: false
+  frequency: 400kHz
+#I2C For Sensor 2
+- id: i2c_sensor_2
+  sda: GPIO16
+  scl: GPIO4
+  scan: false
+  frequency: 400kHz
+
+# Status led
+status_led:
+  pin:
+    number: GPIO33
+
+#PWM output for controlling the motor.
+output:
+  - platform: ledc
+    pin: GPIO15
+    inverted: true
+    id: open_air_mini
+
+fan:
+  - platform: speed
+    output: open_air_mini
+    name: "Open AIR Mini"
+    id: fan_motor
+    restore_mode: NO_RESTORE
+
+sensor:
+  - platform: pulse_counter
+    pin: GPIO14
+    unit_of_measurement: 'RPM'
+    name: 'AIR Mini RPM'
+    id: open_air_mini_rpm
+
+  - platform: wifi_signal # Reports the WiFi signal strength/RSSI in dB
+    name: "WiFi Signal dB"
+    id: wifi_signal_db
+    update_interval: 60s
+    entity_category: "diagnostic"
+
+  - platform: copy # Reports the WiFi signal strength in %
+    source_id: wifi_signal_db
+    name: "WiFi Signal Percent"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "%"
+    entity_category: "diagnostic"
+    device_class: ""
+
+  # Combined CO2 + humidity sensor on connector 1 (SHT-31 + Senseair S8)
+  - platform: sht3xd
+    i2c_id: i2c_sensor_1
+    temperature:
+      name: "Open AIR Temperature 3"
+      id: air_temperature
+    humidity:
+      name: "Open AIR Humidity 3"
+      id: air_humidity
+    address: 0x44
+    update_interval: 60s
+
+  - platform: senseair
+    uart_id: uart_sensor_1
+    co2:
+      name: "Open AIR Mini Co2"
+      id: air_co2
+    update_interval: 60s
+
+script:
+  - id: disconnected_mode
+    mode: single
+    then:
+      - logger.log: "Disconnected Mode Triggered"
+      - fan.turn_on:
+          id: fan_motor
+          speed: !lambda |-
+            return id(disconnected_default_fan_speed);
+
+interval:
+  - interval: 30s
+    then:
+      - logger.log: "API Connectivity Check for Disconnected Mode"
+      - if:
+          condition:
+            not:
+              api.connected:
+          then:
+            - logger.log: "API disconnected"
+            - script.execute: disconnected_mode
+          else:
+            - logger.log: "API connected"
+            - script.stop: disconnected_mode
