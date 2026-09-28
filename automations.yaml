@@ -2550,7 +2550,7 @@
       button_1_light_auto_adjust_brightness: true
       button_1_light_auto_adjust_color_temp: true
       button_3_light:
-        entity_id: light.gameroom_lighten
+        entity_id: light.gameroom_above_light
       button_3_light_schedule: schedule.lights_bright
       button_2_short_release:
       - action: input_select.select_next
@@ -3017,11 +3017,6 @@
     entity_id: media_player.living_room_tv_cast
     id: tv_title
     attribute: media_title
-  - trigger: state
-    entity_id: media_player.living_room_osmc
-    id: osmc
-    from:
-    to:
   conditions: []
   actions:
   - alias: Living Room TV
@@ -3048,76 +3043,6 @@
         metadata: {}
         target:
           entity_id: light.living_room_tv_light
-    - alias: TV title available
-      conditions:
-      - condition: trigger
-        id: tv_title
-      - condition: state
-        entity_id: media_player.living_room_tv_cast
-        state: playing
-      - condition: template
-        value_template: '{{ state_attr(''media_player.living_room_tv_cast'', ''media_title'')
-          not in [none, '''', ''OSMC HDMI 1''] }}'
-      sequence:
-      - action: media_player.volume_set
-        target:
-          entity_id: media_player.kitchen
-        data:
-          volume_level: 0.01
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
-            | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
-            | int }}'
-          transition: 30
-        metadata: {}
-        target:
-          entity_id: light.living_room_tv_light
-    - alias: OSMC
-      conditions:
-      - condition: trigger
-        id: osmc
-      - condition: state
-        entity_id: media_player.living_room_osmc
-        state: playing
-      sequence:
-      - action: media_player.volume_set
-        target:
-          entity_id: media_player.kitchen
-        data:
-          volume_level: 0.01
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
-            | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
-            | int }}'
-          transition: 30
-        metadata: {}
-        target:
-          entity_id: light.living_room_tv_light
-    - alias: OSMC not playing
-      conditions:
-      - condition: trigger
-        id: osmc
-      - condition: state
-        entity_id: media_player.living_room_osmc
-        state:
-        - paused
-        - idle
-      sequence:
-      - action: media_player.volume_set
-        target:
-          entity_id: media_player.kitchen
-        data:
-          volume_level: 0.35
-      - action: light.turn_off
-        metadata: {}
-        target:
-          entity_id: light.living_room_tv_light
-        data:
-          transition: 30
     - alias: Playing
       conditions:
       - condition: state
@@ -3187,30 +3112,6 @@
       action: tts.speak
       target:
         entity_id: tts.home_assistant_cloud
-    - alias: Notify
-      action: notify.mobile_app_alex_phone
-      data:
-        message: Someone rang the doorbell!
-        data:
-          channel: Doorbell
-          clickAction: /lovelace/front_door
-          image: /api/camera_proxy/camera.front_door
-          importance: high
-          notification_icon: mdi:doorbell-video
-          priority: high
-          ttl: 0
-    - alias: Notify
-      action: notify.mobile_app_deni_phone
-      data:
-        message: Someone rang the doorbell!
-        data:
-          channel: Doorbell
-          clickAction: /lovelace/front_door
-          image: /api/camera_proxy/camera.front_door
-          importance: high
-          notification_icon: mdi:doorbell-video
-          priority: high
-          ttl: 0
     - alias: Living Room TV
       if:
       - condition: not
@@ -3226,21 +3127,6 @@
         target:
           entity_id: media_player.living_room_tv
         data: {}
-    - if:
-      - condition: media_player.is_playing
-        target:
-          entity_id: media_player.living_room_osmc
-        options:
-          behavior: any
-          for: 00:00:00
-      then:
-      - action: media_player.media_pause
-        metadata: {}
-        target:
-          entity_id: media_player.living_room_osmc
-        data: {}
-      alias: Living Room OSMC
-      enabled: true
   variables:
     base_url_https: '{{ states(''input_text.base_url_https'') }}'
     base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
@@ -3639,6 +3525,7 @@
         - action: climate.set_temperature
           data:
             temperature: 21
+            hvac_mode: heat
           target:
             entity_id: climate.living_room_heating
       - alias: cold
@@ -3650,6 +3537,7 @@
         - action: climate.set_temperature
           data:
             temperature: 20
+            hvac_mode: heat
           target:
             entity_id: climate.living_room_heating
       - alias: mild
@@ -3661,6 +3549,7 @@
         - action: climate.set_temperature
           data:
             temperature: 20
+            hvac_mode: heat
           target:
             entity_id: climate.living_room_heating
       - alias: warm
@@ -3693,6 +3582,7 @@
         - action: climate.set_temperature
           data:
             temperature: 19
+            hvac_mode: heat
           target:
             entity_id: climate.living_room_heating
       - alias: cold
@@ -3704,6 +3594,7 @@
         - action: climate.set_temperature
           data:
             temperature: 18
+            hvac_mode: heat
           target:
             entity_id: climate.living_room_heating
       - alias: mild
@@ -3715,6 +3606,7 @@
         - action: climate.set_temperature
           data:
             temperature: 18
+            hvac_mode: heat
           target:
             entity_id: climate.living_room_heating
       - alias: warm
@@ -3737,7 +3629,7 @@
             entity_id: climate.living_room_heating
   - alias: cooling
     choose:
-    - alias: freezing or cold
+    - alias: freezing, cold, or mild
       conditions:
       - condition: or
         conditions:
@@ -3747,6 +3639,9 @@
         - condition: state
           entity_id: sensor.climate_mode
           state: cold
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: mild
       sequence:
       - action: climate.turn_off
         target:
@@ -3796,16 +3691,11 @@
           hvac_mode: cool
         target:
           entity_id: climate.living_room_ac
-    - alias: mild or warm - passive
+    - alias: warm - passive
       conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: sensor.climate_mode
-          state: mild
-        - condition: state
-          entity_id: sensor.climate_mode
-          state: warm
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: warm
       sequence:
       - action: climate.set_temperature
         data:
@@ -3884,6 +3774,7 @@
         - action: climate.set_temperature
           data:
             temperature: 21
+            hvac_mode: heat
           target:
             entity_id: climate.bedroom_heating
       - alias: cold
@@ -3895,6 +3786,7 @@
         - action: climate.set_temperature
           data:
             temperature: 20
+            hvac_mode: heat
           target:
             entity_id: climate.bedroom_heating
       - alias: mild
@@ -3906,6 +3798,7 @@
         - action: climate.set_temperature
           data:
             temperature: 20
+            hvac_mode: heat
           target:
             entity_id: climate.bedroom_heating
       - alias: warm
@@ -3938,6 +3831,7 @@
         - action: climate.set_temperature
           data:
             temperature: 19
+            hvac_mode: heat
           target:
             entity_id: climate.bedroom_heating
       - alias: cold
@@ -3949,6 +3843,7 @@
         - action: climate.set_temperature
           data:
             temperature: 18
+            hvac_mode: heat
           target:
             entity_id: climate.bedroom_heating
       - alias: mild
@@ -3960,6 +3855,7 @@
         - action: climate.set_temperature
           data:
             temperature: 18
+            hvac_mode: heat
           target:
             entity_id: climate.bedroom_heating
       - alias: warm
@@ -3982,7 +3878,7 @@
             entity_id: climate.bedroom_heating
   - alias: cooling
     choose:
-    - alias: freezing or cold
+    - alias: freezing, cold, or mild
       conditions:
       - condition: or
         conditions:
@@ -3992,6 +3888,9 @@
         - condition: state
           entity_id: sensor.climate_mode
           state: cold
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: mild
       sequence:
       - action: climate.turn_off
         target:
@@ -4089,16 +3988,11 @@
           hvac_mode: cool
         target:
           entity_id: climate.bedroom_ac
-    - alias: mild or warm - passive
+    - alias: warm - passive
       conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: sensor.climate_mode
-          state: mild
-        - condition: state
-          entity_id: sensor.climate_mode
-          state: warm
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: warm
       sequence:
       - action: climate.set_temperature
         data:
@@ -4183,6 +4077,7 @@
         - action: climate.set_temperature
           data:
             temperature: 20
+            hvac_mode: heat
           target:
             entity_id: climate.office_heating
       - alias: cold
@@ -4194,6 +4089,7 @@
         - action: climate.set_temperature
           data:
             temperature: 19
+            hvac_mode: heat
           target:
             entity_id: climate.office_heating
       - alias: mild
@@ -4205,6 +4101,7 @@
         - action: climate.set_temperature
           data:
             temperature: 19
+            hvac_mode: heat
           target:
             entity_id: climate.office_heating
       - alias: warm
@@ -4237,6 +4134,7 @@
         - action: climate.set_temperature
           data:
             temperature: 19
+            hvac_mode: heat
           target:
             entity_id: climate.office_heating
       - alias: cold
@@ -4248,6 +4146,7 @@
         - action: climate.set_temperature
           data:
             temperature: 18
+            hvac_mode: heat
           target:
             entity_id: climate.office_heating
       - alias: mild
@@ -4259,6 +4158,7 @@
         - action: climate.set_temperature
           data:
             temperature: 18
+            hvac_mode: heat
           target:
             entity_id: climate.office_heating
       - alias: warm
@@ -4281,7 +4181,7 @@
             entity_id: climate.office_heating
   - alias: cooling
     choose:
-    - alias: freezing or cold
+    - alias: freezing, cold, or mild
       conditions:
       - condition: or
         conditions:
@@ -4291,6 +4191,9 @@
         - condition: state
           entity_id: sensor.climate_mode
           state: cold
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: mild
       sequence:
       - action: climate.turn_off
         target:
@@ -4340,16 +4243,11 @@
           hvac_mode: cool
         target:
           entity_id: climate.office_ac
-    - alias: mild or warm - passive
+    - alias: warm - passive
       conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: sensor.climate_mode
-          state: mild
-        - condition: state
-          entity_id: sensor.climate_mode
-          state: warm
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: warm
       sequence:
       - action: climate.set_temperature
         data:
@@ -4442,6 +4340,7 @@
         - action: climate.set_temperature
           data:
             temperature: 20
+            hvac_mode: heat
           target:
             entity_id: climate.gameroom_heating
       - alias: cold
@@ -4453,6 +4352,7 @@
         - action: climate.set_temperature
           data:
             temperature: 19
+            hvac_mode: heat
           target:
             entity_id: climate.gameroom_heating
       - alias: mild
@@ -4464,6 +4364,7 @@
         - action: climate.set_temperature
           data:
             temperature: 19
+            hvac_mode: heat
           target:
             entity_id: climate.gameroom_heating
       - alias: warm
@@ -4496,6 +4397,7 @@
         - action: climate.set_temperature
           data:
             temperature: 19
+            hvac_mode: heat
           target:
             entity_id: climate.gameroom_heating
       - alias: cold
@@ -4507,6 +4409,7 @@
         - action: climate.set_temperature
           data:
             temperature: 18
+            hvac_mode: heat
           target:
             entity_id: climate.gameroom_heating
       - alias: mild
@@ -4518,6 +4421,7 @@
         - action: climate.set_temperature
           data:
             temperature: 18
+            hvac_mode: heat
           target:
             entity_id: climate.gameroom_heating
       - alias: warm
@@ -4540,7 +4444,7 @@
             entity_id: climate.gameroom_heating
   - alias: cooling
     choose:
-    - alias: freezing or cold
+    - alias: freezing, cold, or mild
       conditions:
       - condition: or
         conditions:
@@ -4550,6 +4454,9 @@
         - condition: state
           entity_id: sensor.climate_mode
           state: cold
+        - condition: state
+          entity_id: sensor.climate_mode
+          state: mild
       sequence:
       - action: climate.turn_off
         target:
@@ -4609,16 +4516,11 @@
           hvac_mode: cool
         target:
           entity_id: climate.gameroom_ac
-    - alias: mild or warm - passive
+    - alias: warm - passive
       conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: sensor.climate_mode
-          state: mild
-        - condition: state
-          entity_id: sensor.climate_mode
-          state: warm
+      - condition: state
+        entity_id: sensor.climate_mode
+        state: warm
       sequence:
       - action: climate.set_temperature
         data:
@@ -4677,6 +4579,7 @@
         - action: climate.set_temperature
           data:
             temperature: 22
+            hvac_mode: heat
           target:
             entity_id: climate.gym_heating
       - alias: cold
@@ -4688,6 +4591,7 @@
         - action: climate.set_temperature
           data:
             temperature: 21
+            hvac_mode: heat
           target:
             entity_id: climate.gym_heating
       - alias: mild
@@ -4699,6 +4603,7 @@
         - action: climate.set_temperature
           data:
             temperature: 21
+            hvac_mode: heat
           target:
             entity_id: climate.gym_heating
       - alias: warm
@@ -4731,6 +4636,7 @@
         - action: climate.set_temperature
           data:
             temperature: 19
+            hvac_mode: heat
           target:
             entity_id: climate.gym_heating
       - alias: cold
@@ -4742,6 +4648,7 @@
         - action: climate.set_temperature
           data:
             temperature: 18
+            hvac_mode: heat
           target:
             entity_id: climate.gym_heating
       - alias: mild
@@ -4753,6 +4660,7 @@
         - action: climate.set_temperature
           data:
             temperature: 18
+            hvac_mode: heat
           target:
             entity_id: climate.gym_heating
       - alias: warm
@@ -4812,6 +4720,7 @@
         - action: climate.set_temperature
           data:
             temperature: 22
+            hvac_mode: heat
           target:
             entity_id: climate.bathroom_heating
       - alias: cold
@@ -4823,6 +4732,7 @@
         - action: climate.set_temperature
           data:
             temperature: 21
+            hvac_mode: heat
           target:
             entity_id: climate.bathroom_heating
       - alias: mild
@@ -4834,6 +4744,7 @@
         - action: climate.set_temperature
           data:
             temperature: 21
+            hvac_mode: heat
           target:
             entity_id: climate.bathroom_heating
       - alias: warm
@@ -4866,6 +4777,7 @@
         - action: climate.set_temperature
           data:
             temperature: 19
+            hvac_mode: heat
           target:
             entity_id: climate.bathroom_heating
       - alias: cold
@@ -4877,6 +4789,7 @@
         - action: climate.set_temperature
           data:
             temperature: 18
+            hvac_mode: heat
           target:
             entity_id: climate.bathroom_heating
       - alias: mild
@@ -4888,6 +4801,7 @@
         - action: climate.set_temperature
           data:
             temperature: 18
+            hvac_mode: heat
           target:
             entity_id: climate.bathroom_heating
       - alias: warm
@@ -4912,7 +4826,6 @@
 - id: '1759521293992'
   alias: Geofence - Zone Notifications
   description: ''
-  mode: parallel
   triggers:
   - trigger: state
     entity_id:
@@ -4928,7 +4841,7 @@
       value_template: '{{ trigger.from_state.state != "not_home" }}'
     then:
     - parallel:
-      - action: notify.mobile_app_alex_phone_bigme
+      - action: notify.mobile_app_alex_phone
         data:
           title: Home Assistant
           message: '{{ state_attr(trigger.entity_id, "friendly_name") }} leaves {{
@@ -4953,7 +4866,7 @@
       value_template: '{{ trigger.to_state.state != "not_home" }}'
     then:
     - parallel:
-      - action: notify.mobile_app_alex_phone_bigme
+      - action: notify.mobile_app_alex_phone
         data:
           title: Home Assistant
           message: '{{ state_attr(trigger.entity_id, "friendly_name") }} arrives at
@@ -4973,6 +4886,7 @@
             priority: high
             channel: Geofence
             group: Geofence
+  mode: parallel
 - id: '1761738156612'
   alias: Covers
   description: All logic for window coverings (time + climate)
@@ -5770,6 +5684,15 @@
     above: 400
     id: too bright
     trigger: numeric_state
+  - alias: desk idle
+    entity_id: sensor.office_desk_power
+    below: 40
+    id: desk idle
+    trigger: numeric_state
+    for:
+      hours: 0
+      minutes: 3
+      seconds: 0
   conditions:
   - condition: or
     conditions:
@@ -5846,6 +5769,22 @@
             entity_id:
             - light.office_light
       alias: too bright
+    - conditions:
+      - condition: trigger
+        id:
+        - desk idle
+      - condition: state
+        entity_id: binary_sensor.office_motion_occupancy
+        state: 'off'
+      sequence:
+      - action: light.turn_off
+        data:
+          transition: 30
+        metadata: {}
+        target:
+          entity_id:
+          - light.office_light
+      alias: desk idle - already away
   mode: restart
 - id: '1764268766514'
   alias: Kitchen Motion
@@ -5928,6 +5867,24 @@
     above: 200
     id: too bright
     trigger: numeric_state
+  - alias: desk idle
+    entity_id: sensor.gameroom_desk_power
+    below: 30
+    id: desk idle
+    trigger: numeric_state
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  - alias: media idle
+    entity_id: sensor.gameroom_media_power
+    below: 50
+    id: media idle
+    trigger: numeric_state
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
   conditions:
   - condition: or
     conditions:
@@ -6008,6 +5965,29 @@
             entity_id:
             - light.gameroom_above_light
       alias: too bright
+    - conditions:
+      - condition: trigger
+        id:
+        - desk idle
+        - media idle
+      - condition: state
+        entity_id: binary_sensor.gameroom_motion_occupancy
+        state: 'off'
+      - condition: numeric_state
+        entity_id: sensor.gameroom_desk_power
+        below: 30
+      - condition: numeric_state
+        entity_id: sensor.gameroom_media_power
+        below: 50
+      sequence:
+      - action: light.turn_off
+        data:
+          transition: 30
+        metadata: {}
+        target:
+          entity_id:
+          - light.gameroom_above_light
+      alias: desk/media idle - already away
   mode: restart
 - id: '1764712921094'
   alias: Alarm
@@ -6294,82 +6274,6 @@
         - light.living_room_cabinet_light
       auto_adjust_brightness: true
       auto_adjust_color_temp: true
-- id: '1769193997494'
-  alias: Car
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.t047zg_charging
-    to:
-    - 'on'
-    id: charging
-    from:
-    - 'off'
-  - trigger: state
-    entity_id:
-    - binary_sensor.t047zg_charging
-    to:
-    - 'off'
-    id: stopped
-    from:
-    - 'on'
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: charging
-      sequence:
-      - parallel:
-        - action: tts.speak
-          target:
-            entity_id: tts.home_assistant_cloud
-          data:
-            cache: true
-            media_player_entity_id: media_player.utility_closet
-            message: Car charging started at {{ states('sensor.t047zg_battery') }}%
-        - action: notify.mobile_app_alex_phone_bigme
-          metadata: {}
-          data:
-            message: Car charging started at {{ states('sensor.t047zg_battery') }}%
-            data:
-              channel: Car
-              notification_icon: mdi:car
-        - action: notify.mobile_app_deni_phone
-          metadata: {}
-          data:
-            message: Car charging started at {{ states('sensor.t047zg_battery') }}%
-            data:
-              channel: Car
-              notification_icon: mdi:car
-    - conditions:
-      - condition: trigger
-        id: stopped
-      sequence:
-      - parallel:
-        - action: tts.speak
-          target:
-            entity_id: tts.home_assistant_cloud
-          data:
-            cache: true
-            media_player_entity_id: media_player.utility_closet
-            message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
-        - action: notify.mobile_app_alex_phone_bigme
-          metadata: {}
-          data:
-            message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
-            data:
-              channel: Car
-              notification_icon: mdi:car
-        - action: notify.mobile_app_deni_phone
-          metadata: {}
-          data:
-            message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
-            data:
-              channel: Car
-              notification_icon: mdi:car
-  mode: single
 - id: '1774838850323'
   alias: Gameroom Media
   description: ''
@@ -6613,61 +6517,6 @@
             data: {}
             target:
               device_id: 9b987af2242972d3a0c74613c303ced6
-  mode: single
-- id: '1782809861139'
-  alias: Deni Laptop
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.deni_laptop_microphoneactive
-    from:
-    - 'off'
-    to:
-    - 'on'
-    alias: mic on
-    id: mic on
-  - trigger: state
-    entity_id:
-    - binary_sensor.deni_laptop_microphoneactive
-    from:
-    - 'on'
-    to:
-    - 'off'
-    alias: mic off
-    id: mic off
-  conditions:
-  - condition: numeric_state
-    entity_id: sensor.deni_laptop_display_display_count
-    above: 1
-  - condition: state
-    entity_id: media_player.office_kef
-    state:
-    - 'on'
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - mic on
-      sequence:
-      - action: media_player.volume_set
-        metadata: {}
-        target:
-          area_id: office
-        data:
-          volume_level: 0.15
-    - conditions:
-      - condition: trigger
-        id:
-        - mic off
-      sequence:
-      - action: media_player.volume_set
-        metadata: {}
-        target:
-          area_id: office
-        data:
-          volume_level: 0.35
   mode: single
 - id: '1783672215651'
   alias: Living Room TV Cabinet Light
