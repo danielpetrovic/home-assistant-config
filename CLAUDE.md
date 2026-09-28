@@ -11,7 +11,7 @@ This repository contains a Home Assistant configuration for a residential smart 
 
 ## System Overview
 
-- **Home Assistant Version:** 2026.9.0
+- **Home Assistant Version:** 2026.9.3
 - **Primary Integration:** Zigbee2MQTT (Z2M)
 - **Configuration Style:** Package-based with YAML automations
 - **Network:** Trusted proxy configuration for reverse proxy access
@@ -175,7 +175,7 @@ The installation is organized across 3 floors:
 - `sensor.heating` - Count of heating zones actively heating
 - `sensor.daylight_duration` - Hours between sunrise and sunset
 - `sensor.outdoor_brightness` - Categorized outdoor brightness (dark/dim/overcast/bright/sunny) with hysteresis, based on sensor.outdoor_luminosity
-- `sensor.climate_mode` - State machine for seasonal climate mode (freezing/cold/mild/warm/hot) with hysteresis. Hot enter: humidex ≥ 27, heat_stress ≥ 58, max4 ≥ 25, daylight > 13h. Hot exit: humidex ≤ 24 during 09:00–21:00, OR humidex ≤ 20 any time (cold-snap override). Exit is humidex-only; heat_stress and max4 were dropped from the exit (both stay solar-biased/sticky and had latched the mode for days after the weather broke), but still gate entry.
+- `sensor.climate_mode` - State machine for seasonal climate mode (freezing/cold/mild/warm/hot) with hysteresis. Hot enter: humidex ≥ 27, heat_stress ≥ 58, max4 ≥ 25, daylight > 13h. Hot exit: (humidex ≤ 24 OR temp ≤ 20) during 09:00–21:00, OR humidex ≤ 20 any time, OR temp ≤ 16 any time (cold-snap overrides). Exit checks humidex OR raw temp so either a humid-but-mild day or a hot-but-dry day can release it; heat_stress and max4 were dropped from the exit (both stay solar-biased/sticky and had latched the mode for days after the weather broke), but still gate entry. Warm ↔ mild: enter warm needs max4 > 18 AND min7 > 16 (raised from 8); exit warm to mild at min7 < 13 (raised from 6). Warm mode turns heating off and allows active AC cooling, so the old low threshold left it stuck through ordinary mild-autumn nights.
 
 ### System Sensors
 
@@ -307,22 +307,24 @@ Implemented via inline `time` triggers + `time` conditions + `homeassistant.star
 
 ### Cooling/AC Windows
 
-All AC zones: off when freezing/cold, off when no presence.
+All AC zones: off when freezing/cold/mild, off when no presence.
 Daikin units cool to ~2°C below setpoint (effective temp = setpoint − 2°C).
 
 | Location | Active cooling trigger | Active setpoint | Passive setpoint | Sleep setpoint |
 |----------|----------------------|-----------------|------------------|----------------|
 | Bathroom/Gym | — (no AC) | — | — | — |
-| Office | desk_power > 40W + presence (any time) | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | — |
-| Gameroom | desk_power > 40W OR media_power > 20W + presence (any time) | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | — |
-| Bedroom | 22:00–01:00 or 06:00–08:00 + presence | warm→26°C, hot→24°C | warm/mild→30°C, hot→28°C | warm→27°C, hot→25°C during 01:00–06:00 |
-| Living Room | media_power > 50W + presence (any time) | warm→28°C, hot→26°C | warm/mild→30°C, hot→28°C | — |
+| Office | desk_power > 40W + presence (any time) | warm→28°C, hot→26°C | warm→30°C, hot→28°C | — |
+| Gameroom | desk_power > 40W OR media_power > 20W + presence (any time) | warm→28°C, hot→26°C | warm→30°C, hot→28°C | — |
+| Bedroom | 22:00–01:00 or 06:00–08:00 + presence | warm→26°C, hot→24°C | warm→30°C, hot→28°C | warm→27°C, hot→25°C during 01:00–06:00 |
+| Living Room | media_power > 50W + presence (any time) | warm→28°C, hot→26°C | warm→30°C, hot→28°C | — |
 
-**Effective temperatures (setpoint − 2°C):** Office/Gameroom/LR: warm active→~26°C, hot active→~24°C. Bedroom: warm active→~24°C, hot active→~22°C, warm sleep→~25°C, hot sleep→~23°C. All rooms: warm/mild passive→~28°C, hot passive→~26°C.
+**Effective temperatures (setpoint − 2°C):** Office/Gameroom/LR: warm active→~26°C, hot active→~24°C. Bedroom: warm active→~24°C, hot active→~22°C, warm sleep→~25°C, hot sleep→~23°C. All rooms: warm passive→~28°C, hot passive→~26°C. Mild is fully off (see "All AC zones" note above), not passive.
 
 **Desk/media power thresholds:** Office & Gameroom desk: 40W (standby spikes to 36W). Gameroom media: 20W. Living Room media: 50W (standby 25–31W, active 100–150W).
 
-**`sensor.climate_mode` hot thresholds:** enter: humidex ≥ 27 AND heat_stress ≥ 58 AND max4 ≥ 25 AND daylight > 13h; exit: (humidex ≤ 24 AND daytime 09:00–21:00) OR humidex ≤ 20 any time. Exit is humidex-only; the humidex ≤ 24 vs ≥ 27 gap is the hysteresis. heat_stress ≤ 50 and max4 < 25 were removed from the exit (Aug 2026: they kept the mode latched on `hot` for ~5 days after a heatwave broke, because the 96h max4 stays ≥ 25 for 4 days after the last warm sample and the roof WS90 heat_stress reads 60+ midday from direct sun even on cool days). Both still gate entry, so a spurious exit cannot immediately re-enter hot.
+**`sensor.climate_mode` hot thresholds:** enter: humidex ≥ 27 AND heat_stress ≥ 58 AND max4 ≥ 25 AND daylight > 13h; exit: ((humidex ≤ 24 OR temp ≤ 20) AND daytime 09:00–21:00) OR humidex ≤ 20 any time OR temp ≤ 16 any time. Exit checks humidex OR raw temp (Sept 2026: humidex-only exit could itself get stuck on a humid-but-mild day, since high humidity inflates humidex well above actual air temp (e.g. 19.7°C air read as 24.7 humidex at 82% humidity); either signal being clearly non-hot is enough to release it. heat_stress ≤ 50 and max4 < 25 were removed from the exit (Aug 2026: they kept the mode latched on `hot` for ~5 days after a heatwave broke, because the 96h max4 stays ≥ 25 for 4 days after the last warm sample and the roof WS90 heat_stress reads 60+ midday from direct sun even on cool days). heat_stress and max4 still gate entry, so a spurious exit cannot immediately re-enter hot.
+
+**`sensor.climate_mode` warm/mild thresholds:** enter warm (from mild): max4 > 18 AND min7 > 16 (raised Sept 2026 from > 8). exit warm to mild: min7 < 13 (raised from < 6). Reason: warm mode turns heating off entirely (see Living Room/Bedroom/Office/Gameroom Climate automations) and permits active AC cooling on ordinary desk/media power + presence. The old min7 < 6 threshold meant it stayed "warm" (no heat, AC cold bursts on media use) through weeks of genuinely mild autumn nights (11-13°C) before nights got anywhere near freezing.
 
 ## Alarm System
 

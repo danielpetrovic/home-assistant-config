@@ -152,6 +152,7 @@ template:
         state: >
           {% set hs = states('sensor.roof_terrace_sensor_heat_stress') | float(0) %}
           {% set humidex = states('sensor.roof_terrace_sensor_humidex') | float(0) %}
+          {% set temp = states('sensor.roof_terrace_sensor_temperature') | float(0) %}
           {% set daylight_h = states('sensor.daylight_duration') | float(0) %}
           {% set min7 = states('sensor.outdoor_temperature_min') | float(none) %}
           {% set max4 = states('sensor.outdoor_temperature_max') | float(none) %}
@@ -166,16 +167,19 @@ template:
           {% else %}
 
           {% set hot_enter = humidex >= 27 and hs >= 58 and max4 >= 25 and daylight_h > 13 %}
-          {% set hot_exit  = (humidex <= 24 and (now().hour >= 9 and now().hour < 21)) or humidex <= 20 %}
+          {% set hot_exit  = ((humidex <= 24 or temp <= 20) and (now().hour >= 9 and now().hour < 21)) or humidex <= 20 or temp <= 16 %}
 
           {#
-            hot_exit is humidex-driven (feels-like temp+humidity, not the
-            solar-biased WS90 heat_stress or the sticky 96h max4, both of which
-            kept the mode latched for days after the weather had broken).
-            humidex <= 24 vs hot_enter's humidex >= 27 is a 3-point hysteresis
-            gap, so no oscillation. The 09:00-21:00 window stops a cool morning
-            during a heatwave from dropping the mode; humidex <= 20 is an
-            any-time override for a clear cold snap. max4 and hs still gate
+            hot_exit checks humidex OR raw temp, not just humidex alone, so a
+            humid-but-mild day (humidex inflated by humidity with temp
+            actually low) can still exit via temp, same as a hot-but-dry day
+            still exits via humidex. Also not the solar-biased WS90
+            heat_stress or the sticky 96h max4, both of which kept the mode
+            latched for days after the weather had broken. humidex <= 24 vs
+            hot_enter's humidex >= 27 is a 3-point hysteresis gap, so no
+            oscillation. The 09:00-21:00 window stops a cool morning during a
+            heatwave from dropping the mode; humidex <= 20 / temp <= 16 are
+            any-time overrides for a clear cold snap. max4 and hs still gate
             entry, so a spurious exit cannot immediately re-enter hot.
             Lower transitions (non-overlapping for stability):
               freezing → mild  : max4 > 14 AND min7 > 6
@@ -183,8 +187,13 @@ template:
               cold     → mild  : max4 > 14 AND min7 > 6
               cold     → freeze: min7 < 0  AND max4 < 6
               mild     → cold  : min7 < 2  AND max4 < 14
-              mild     → warm  : max4 > 18 AND min7 > 8
-              warm     → mild  : min7 < 6
+              mild     → warm  : max4 > 18 AND min7 > 16
+              warm     → mild  : min7 < 13
+            warm/mild gap widened (was 8/6) so "warm" reflects genuinely
+            balmy nights, not just above-freezing-adjacent ones. Warm mode
+            turns heating off entirely and allows active AC cooling, so
+            sitting in it through ordinary mild-autumn nights meant no heat
+            plus unwanted cold AC bursts from routine desk/media use.
             Gaps prevent simultaneous exit+re-entry (no oscillation).
           #}
 
@@ -209,7 +218,7 @@ template:
           {% elif last == 'mild' %}
             {% if hot_enter %}
               hot
-            {% elif max4 > 18 and min7 > 8 %}
+            {% elif max4 > 18 and min7 > 16 %}
               warm
             {% elif min7 < 2 and max4 < 14 %}
               cold
@@ -220,7 +229,7 @@ template:
           {% elif last == 'warm' %}
             {% if hot_enter %}
               hot
-            {% elif min7 < 6 %}
+            {% elif min7 < 13 %}
               mild
             {% else %}
               warm
