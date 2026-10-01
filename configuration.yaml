@@ -12,12 +12,12 @@ schedule: !include schedules.yaml
 
 homeassistant:
   packages: !include_dir_named packages
-#
-# zha:
-#   database_path: /config/zha/zigbee.db
-#   custom_quirks_path: /config/zha/quirks
-#   zigpy_config:
-#     ota:
-#       extra_providers:
-#         - type: z2m
-#           url: https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/index.json
+
+zha:
+  database_path: /config/zha/zigbee.db
+  custom_quirks_path: /config/zha/quirks
+  zigpy_config:
+    ota:
+      extra_providers:
+        - type: z2m
+          url: https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/index.json
