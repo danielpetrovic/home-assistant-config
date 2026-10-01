@@ -3112,6 +3112,30 @@
       action: tts.speak
       target:
         entity_id: tts.home_assistant_cloud
+    - alias: Notify
+      action: notify.mobile_app_alex_phone
+      data:
+        message: Someone rang the doorbell!
+        data:
+          channel: Doorbell
+          clickAction: /lovelace/front_door
+          image: /api/camera_proxy/camera.front_door
+          importance: high
+          notification_icon: mdi:doorbell-video
+          priority: high
+          ttl: 0
+    - alias: Notify
+      action: notify.mobile_app_deni_phone
+      data:
+        message: Someone rang the doorbell!
+        data:
+          channel: Doorbell
+          clickAction: /lovelace/front_door
+          image: /api/camera_proxy/camera.front_door
+          importance: high
+          notification_icon: mdi:doorbell-video
+          priority: high
+          ttl: 0
     - alias: Living Room TV
       if:
       - condition: not
@@ -6576,3 +6600,79 @@
         target:
           entity_id: light.living_room_cabinet_light
   mode: restart
+- id: '1769193997494'
+  alias: Car
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.t047zg_charging
+    to:
+    - 'on'
+    id: charging
+    from:
+    - 'off'
+  - trigger: state
+    entity_id:
+    - binary_sensor.t047zg_charging
+    to:
+    - 'off'
+    id: stopped
+    from:
+    - 'on'
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: charging
+      sequence:
+      - parallel:
+        - action: tts.speak
+          target:
+            entity_id: tts.home_assistant_cloud
+          data:
+            cache: true
+            media_player_entity_id: media_player.utility_closet
+            message: Car charging started at {{ states('sensor.t047zg_battery') }}%
+        - action: notify.mobile_app_alex_phone
+          metadata: {}
+          data:
+            message: Car charging started at {{ states('sensor.t047zg_battery') }}%
+            data:
+              channel: Car
+              notification_icon: mdi:car
+        - action: notify.mobile_app_deni_phone
+          metadata: {}
+          data:
+            message: Car charging started at {{ states('sensor.t047zg_battery') }}%
+            data:
+              channel: Car
+              notification_icon: mdi:car
+    - conditions:
+      - condition: trigger
+        id: stopped
+      sequence:
+      - parallel:
+        - action: tts.speak
+          target:
+            entity_id: tts.home_assistant_cloud
+          data:
+            cache: true
+            media_player_entity_id: media_player.utility_closet
+            message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
+        - action: notify.mobile_app_alex_phone
+          metadata: {}
+          data:
+            message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
+            data:
+              channel: Car
+              notification_icon: mdi:car
+        - action: notify.mobile_app_deni_phone
+          metadata: {}
+          data:
+            message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
+            data:
+              channel: Car
+              notification_icon: mdi:car
+  mode: single
