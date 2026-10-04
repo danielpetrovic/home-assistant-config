@@ -32,3 +32,4 @@ home-assistant_v2.db-wal
 home-assistant.log.fault
 secrets.yaml
 /zha/zigbee.db*
+__pycache__/
