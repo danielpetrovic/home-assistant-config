@@ -2340,7 +2340,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Dining Table Button
       last_pressed: input_text.dining_table_button_last_pressed
@@ -2394,6 +2394,7 @@
       button_3_light_schedule: schedule.lights_dimmed
       button_3_light_auto_adjust_brightness: true
       button_3_light_auto_adjust_color_temp: true
+      zha_remote: fcf365b34b298bb6c2c124bc50cb095d
 - id: '1736812245757'
   alias: Gameroom Desk Button
   description: ''
@@ -2648,7 +2649,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Kitchen Button
       last_pressed: input_text.kitchen_button_last_pressed
@@ -2700,6 +2701,7 @@
         metadata: {}
         target:
           entity_id: input_select.shed_covers
+      zha_remote: 842b014acf85e146f76d7449f8b5ba08
 - id: '1736812474175'
   alias: Gym Button
   description: ''
@@ -2895,7 +2897,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Living Room Button
       last_pressed: input_text.living_room_button_last_pressed
@@ -2951,6 +2953,7 @@
       button_3_light_schedule: schedule.lights_dimmed
       button_3_light_auto_adjust_brightness: true
       button_3_light_auto_adjust_color_temp: true
+      zha_remote: 82644d10c933e34e3bb7c6f86a6b991a
 - id: '1736862489459'
   alias: Shed Garden Button
   description: ''
@@ -3293,7 +3296,7 @@
     path: danielpetrovic/niko-battery-switch-multi-button.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Entrance Button
       button_1_light:
@@ -3314,6 +3317,7 @@
       - turn_off
       button_1_light_schedule: schedule.lights_bright
       button_1_light_auto_adjust: true
+      zha_remote: 7f3210d6729e48d6b475c64cb9714589
 - id: '1755899171238'
   alias: Toilet Button
   description: ''
@@ -3321,7 +3325,7 @@
     path: danielpetrovic/niko-battery-switch-multi-button.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Toilet Button
       button_1_light:
@@ -3342,6 +3346,7 @@
           entity_id: automation.toilet_door_contact
       button_1_light_schedule: schedule.lights_bright
       button_1_light_auto_adjust: true
+      zha_remote: 151df19136bbebb6d91ba269daba4e97
 - id: '1755965337801'
   alias: Shed Alleyway Button
   description: ''
