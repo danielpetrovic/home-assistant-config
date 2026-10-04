@@ -2099,40 +2099,6 @@
                     {
                       "features": [
                         {
-                          "type": "toggle"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "switch.bedroom_media",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "hide_state": true
-                    },
-                    {
-                      "features": [
-                        {
-                          "type": "trend-graph"
-                        }
-                      ],
-                      "type": "tile",
-                      "entity": "sensor.bedroom_media_power",
-                      "features_position": "bottom",
-                      "vertical": false,
-                      "color": "yellow",
-                      "name": " ",
-                      "hide_state": false
-                    }
-                  ],
-                  "columns": 2,
-                  "title": "Bedroom"
-                },
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
-                    {
-                      "features": [
-                        {
                           "type": "trend-graph"
                         }
                       ],

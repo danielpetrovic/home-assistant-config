@@ -156,7 +156,7 @@ The installation is organized across 3 floors:
 ### Climate Control
 - **6 Heating Zones:** Bathroom, Gameroom, Office, Gym, Bedroom, Living Room
 - **4 AC Units:** Gameroom, Office, Bedroom, Living Room
-- **3 Underfloor Heating Circulation Pumps:** Monitored via HomeWizard Energy Sockets (Heating Pump 0, 1, 2)
+- **3 Underfloor Heating Circulation Pumps:** Monitored via Niko Zigbee sockets and plugs (Heating Pump 0 and 1 on Zigbee2MQTT, Heating Pump 2 on ZHA)
 - Generic thermostat platform (1h min cycle, 0.5°C step, 16-22°C range)
 - Schedule-based activation (weekday/weekend patterns)
 
@@ -202,21 +202,16 @@ The installation is organized across 3 floors:
 - Steam oven
 - Utility closet
 
-**Wi-Fi Energy Sockets (13):**
-- Washing machine
-- Dryer
-- Kitchen media + Fridge + Freezer
-- Heat recovery ventilation
-- Living room media
-- Bedroom media
-- Gameroom media
-- Alex PC
-- Deni PC
-- Large freezer
-- Heating pump 0, 1, 2 (Underfloor heating circulation pumps)
-
 **Wi-Fi Watermeter (1):**
 - Water meter (Water consumption)
+
+### Niko Zigbee Energy Sockets and Plugs (14)
+
+These replaced the HomeWizard Wi-Fi Energy Sockets. Energy sensors are named `sensor.<device>_energy` (name "Energy").
+- ZHA, Connected socket outlet (built-in, uses the local quirk `zha/quirks/niko_outlet.py`): Washing machine, Dryer, Heat recovery ventilation, Office desk, Gameroom desk
+- ZHA, Smart plug Zigbee SE: Living room media, Kitchen media + Fridge + Freezer, Heating pump 2
+- Zigbee2MQTT, Connected socket outlet (still to be moved): Alex PC, Deni PC, Large freezer, Heating pump 0, Heating pump 1
+- Gameroom media: Connected socket outlet, removed from Zigbee2MQTT and waiting to be re-paired into ZHA
 
 ## Automation Architecture
 
