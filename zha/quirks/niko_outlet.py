@@ -11,8 +11,8 @@ NIKO = "NIKO NV"
 NIKO_MFG_CODE = 0x125F
 
 
-class LedAlertColor(t.enum24):
-    """Colour the status LED shows briefly as an alert."""
+class LedOffColor(t.enum24):
+    """Color the status LED shows while the socket is turned off."""
 
     Off = 0x000000
     White = 0x0000FF
@@ -31,11 +31,12 @@ class NikoOutletConfigCluster(CustomCluster):
     class AttributeDefs(BaseAttributeDefs):
         """Attributes of the outlet configuration cluster."""
 
-        # Alert colour of the status LED. The device shows it for a few seconds and
-        # then returns to its normal colour for the relay state (white when on).
-        led_alert_color = ZCLAttributeDef(
+        # Color of the status LED while the socket is turned off. While the socket is
+        # turned on, the selected color is only shown briefly and the LED returns to
+        # white, so the attribute always reads white then.
+        led_off_color = ZCLAttributeDef(
             id=0x0100,
-            type=LedAlertColor,
+            type=LedOffColor,
             access="rw",
             manufacturer_code=NIKO_MFG_CODE,
         )
@@ -56,9 +57,22 @@ class NikoOutletConfigCluster(CustomCluster):
 
     async def bind(self):
         """Bind cluster and pre-load attributes."""
-        self.create_catching_task(
-            self.read_attributes([attr.name for attr in self.AttributeDefs])
-        )
+        attributes = [attr.name for attr in self.AttributeDefs]
+        off_color = self.AttributeDefs.led_off_color.name
+
+        # Reading the off color returns the color the LED shows at that moment (white
+        # while the socket is turned on, blue while it blinks during pairing), not the
+        # stored setting, and the socket is turned on while pairing or rejoining. So
+        # never read it here. The factory default is off, so on a fresh pairing (nothing
+        # cached yet) write that default instead. Later binds keep the cached value and
+        # never overwrite a color chosen by the user.
+        attributes.remove(off_color)
+        if self.get(off_color) is None:
+            self.create_catching_task(
+                self.write_attributes({off_color: LedOffColor.Off})
+            )
+
+        self.create_catching_task(self.read_attributes(attributes))
         return await super().bind()
 
 
@@ -82,13 +96,12 @@ class NikoOutletConfigCluster(CustomCluster):
         fallback_name="LED indicator",
     )
     .enum(
-        NikoOutletConfigCluster.AttributeDefs.led_alert_color.name,
-        LedAlertColor,
+        NikoOutletConfigCluster.AttributeDefs.led_off_color.name,
+        LedOffColor,
         NikoOutletConfigCluster.cluster_id,
         entity_type=EntityType.CONFIG,
-        initially_disabled=True,
-        translation_key="led_indicator_alert_color",
-        fallback_name="LED indicator alert colour",
+        translation_key="off_led_color",
+        fallback_name="Off LED color",
     )
     # The socket reports voltage and current every few seconds with a small jitter,
     # which floods the recorder, so they are disabled by default. Power and energy stay
