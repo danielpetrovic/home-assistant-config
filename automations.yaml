@@ -2767,7 +2767,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Bedroom Button
       last_pressed: input_text.bedroom_button_last_pressed
@@ -2816,6 +2816,7 @@
         metadata: {}
         target:
           entity_id: input_select.bedroom_covers
+      zha_remote: c283b8ea4c7e46c2c01a12d2f1c0c5d9
 - id: '1736812743223'
   alias: Bedroom Alex Button
   description: ''
@@ -2823,7 +2824,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Bedroom Alex Button
       last_pressed: input_text.bedroom_alex_button_last_pressed
@@ -2840,8 +2841,8 @@
       button_1_light_auto_adjust_color_temp: false
       button_2_light:
         entity_id: light.bedroom_alex_light
-      button_2_light_brightness: 5
-      button_2_light_color: 2500
+      button_2_light_brightness: 1
+      button_2_light_color: 2000
       button_3_light:
         entity_id:
         - light.bedroom_alex_bed_light
@@ -2851,8 +2852,10 @@
       button_3_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_4_light:
         entity_id: light.bedroom_deni_light
-      button_4_light_brightness: 5
-      button_4_light_color: 2500
+      button_4_light_brightness: 1
+      button_4_light_color: 2000
+      zha_remote: 2b542ebad585a84499b3c4b4a3f943a4
+      button_2_light_transition: 1
 - id: '1736812877909'
   alias: Bedroom Deni Button
   description: ''
@@ -2860,7 +2863,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Bedroom Deni Button
       last_pressed: input_text.bedroom_deni_button_last_pressed
@@ -2877,8 +2880,8 @@
       button_1_light_auto_adjust_color_temp: true
       button_2_light:
         entity_id: light.bedroom_alex_light
-      button_2_light_brightness: 5
-      button_2_light_color: 2500
+      button_2_light_brightness: 1
+      button_2_light_color: 2000
       button_3_light:
         entity_id:
         - light.bedroom_alex_bed_light
@@ -2888,8 +2891,11 @@
       button_3_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_4_light:
         entity_id: light.bedroom_deni_light
-      button_4_light_brightness: 5
-      button_4_light_color: 2500
+      button_4_light_brightness: 1
+      button_4_light_color: 2000
+      zha_remote: c7f69360e0a014045c3d5debfef2c9ee
+      button_2_light_transition: 1
+      button_4_light_transition: 1
 - id: '1736813115022'
   alias: Living Room Button
   description: ''
@@ -2961,7 +2967,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Shed Garden Button
       last_pressed: input_text.shed_garden_button_last_pressed
@@ -3007,6 +3013,7 @@
         metadata: {}
         target:
           entity_id: input_select.shed_covers
+      zha_remote: 5fbe6c7cbb8e038fda7d7f54b3fc8ecf
 - id: '1743325307976'
   alias: Living Room Media
   description: ''
@@ -3354,7 +3361,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Shed Alleyway Button
       last_pressed: input_text.shed_alleyway_button_last_pressed
@@ -3400,6 +3407,7 @@
         metadata: {}
         target:
           entity_id: input_select.shed_covers
+      zha_remote: 3fdc6763c4afc091cf78b07826b9b7bb
 - id: '1756122670916'
   alias: Roof Terrace Button
   description: ''
