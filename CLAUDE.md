@@ -36,6 +36,7 @@ config/
 │   ├── covers.yaml                # Window covering presets
 │   ├── duco.yaml                  # DucoBox ventilation REST API
 │   ├── lights.yaml                # Adaptive lighting system & sensors
+│   ├── plants.yaml                # Plant status template sensors for the 6 ZHA soil sensors
 │   └── system.yaml                # System-wide helpers & counters
 ├── blueprints/automation/         # Custom automation blueprints
 │   ├── danielpetrovic/            # Author: danielpetrovic (4 blueprints)
@@ -405,6 +406,7 @@ Daikin units cool to ~2°C below setpoint (effective temp = setpoint − 2°C).
 - **covers.yaml** - Window covering presets
 - **duco.yaml** - Ventilation system integration
 - **lights.yaml** - Adaptive lighting helpers and schedules, automatic light counter sensor
+- **plants.yaml** - Native template entities per Third Reality soil sensor: `sensor.<plant>_status` (ok / needs water / too wet / too cold / too hot / battery low) and `binary_sensor.<plant>_needs_water`; moisture uses the `_soil_moisture` sensor (the `_moisture` duplicate is disabled). Limits come from the Xiaomi Flower Care database (khronimo/MiFloraDB), see the file header. No custom components (the built-in `plant:` integration and HACS options were rejected)
 - **system.yaml** - System-wide helpers (base URL input_text), automatic entity counters (switches)
 
 ## Git Practices

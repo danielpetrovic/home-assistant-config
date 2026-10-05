@@ -1,0 +1,289 @@
+# Plant status for the Third Reality 3RSM0147Z soil sensors (ZHA), built only from native
+# template entities. Each plant gets a status sensor and a needs-water binary sensor, both
+# with a unique_id so name, icon and area can be set in the UI.
+#
+# Thresholds come from the Xiaomi Flower Care plant database
+# (https://github.com/khronimo/MiFloraDB, PlantDB_5335_U0.csv, min/max_soil_moist and
+# min/max_temp per species). That database is coarse (almost every species is 15-60
+# moisture) and was measured with Xiaomi sensors, so the Third Reality scale may differ.
+# Hydrangea macrophylla is not listed by name; all Hydrangea entries are identical (20-60).
+# Below the moisture minimum means water thoroughly; above the maximum means too wet (a few
+# hours right after watering can briefly read above it). Temperature limits are set for the
+# indoor plants only: the garden plants are hardy, so a fixed minimum would sit in a problem
+# state all winter. Battery minimum is 20% for all. The sensor's own "moisture" entity is
+# disabled because it duplicates "soil moisture", so everything reads _soil_moisture.
+#
+# Status priority: needs water, too wet, too cold, too hot, battery low, ok. The status
+# sensor is unavailable while the soil moisture sensor is unavailable.
+
+template:
+
+  # Yucca
+  - sensor:
+      - name: "Yucca Status"
+        unique_id: plant_yucca_status
+        availability: "{{ has_value('sensor.yucca_soil_moisture') }}"
+        state: >
+          {% set m = states('sensor.yucca_soil_moisture') | float(none) %}
+          {% set t = states('sensor.yucca_temperature') | float(none) %}
+          {% set b = states('sensor.yucca_battery') | float(none) %}
+          {% if m is none %}
+            unknown
+          {% elif m < 15 %}
+            needs water
+          {% elif m > 60 %}
+            too wet
+          {% elif t is not none and t < 8 %}
+            too cold
+          {% elif t is not none and t > 32 %}
+            too hot
+          {% elif b is not none and b < 20 %}
+            battery low
+          {% else %}
+            ok
+          {% endif %}
+        icon: >
+          {% set s = this.state %}
+          {% if s == 'ok' %}mdi:flower
+          {% elif s == 'needs water' %}mdi:watering-can
+          {% elif s == 'too wet' %}mdi:water-alert
+          {% elif s == 'battery low' %}mdi:battery-alert
+          {% elif s in ['too cold', 'too hot'] %}mdi:thermometer-alert
+          {% else %}mdi:flower-outline{% endif %}
+        attributes:
+          moisture: "{{ states('sensor.yucca_soil_moisture') | float(none) }}"
+          moisture_min: 15
+          moisture_max: 60
+          temperature: "{{ states('sensor.yucca_temperature') | float(none) }}"
+          temperature_min: 8
+          temperature_max: 32
+          battery: "{{ states('sensor.yucca_battery') | float(none) }}"
+          battery_min: 20
+  - binary_sensor:
+      - name: "Yucca Needs Water"
+        unique_id: plant_yucca_needs_water
+        availability: "{{ has_value('sensor.yucca_soil_moisture') }}"
+        state: "{{ states('sensor.yucca_soil_moisture') | float(100) < 15 }}"
+        icon: mdi:watering-can
+
+  # Ficus Elastica Belize
+  - sensor:
+      - name: "Ficus Elastica Belize Status"
+        unique_id: plant_ficus_elastica_belize_status
+        availability: "{{ has_value('sensor.ficus_elastica_belize_soil_moisture') }}"
+        state: >
+          {% set m = states('sensor.ficus_elastica_belize_soil_moisture') | float(none) %}
+          {% set t = states('sensor.ficus_elastica_belize_temperature') | float(none) %}
+          {% set b = states('sensor.ficus_elastica_belize_battery') | float(none) %}
+          {% if m is none %}
+            unknown
+          {% elif m < 15 %}
+            needs water
+          {% elif m > 60 %}
+            too wet
+          {% elif t is not none and t < 10 %}
+            too cold
+          {% elif t is not none and t > 35 %}
+            too hot
+          {% elif b is not none and b < 20 %}
+            battery low
+          {% else %}
+            ok
+          {% endif %}
+        icon: >
+          {% set s = this.state %}
+          {% if s == 'ok' %}mdi:flower
+          {% elif s == 'needs water' %}mdi:watering-can
+          {% elif s == 'too wet' %}mdi:water-alert
+          {% elif s == 'battery low' %}mdi:battery-alert
+          {% elif s in ['too cold', 'too hot'] %}mdi:thermometer-alert
+          {% else %}mdi:flower-outline{% endif %}
+        attributes:
+          moisture: "{{ states('sensor.ficus_elastica_belize_soil_moisture') | float(none) }}"
+          moisture_min: 15
+          moisture_max: 60
+          temperature: "{{ states('sensor.ficus_elastica_belize_temperature') | float(none) }}"
+          temperature_min: 10
+          temperature_max: 35
+          battery: "{{ states('sensor.ficus_elastica_belize_battery') | float(none) }}"
+          battery_min: 20
+  - binary_sensor:
+      - name: "Ficus Elastica Belize Needs Water"
+        unique_id: plant_ficus_elastica_belize_needs_water
+        availability: "{{ has_value('sensor.ficus_elastica_belize_soil_moisture') }}"
+        state: "{{ states('sensor.ficus_elastica_belize_soil_moisture') | float(100) < 15 }}"
+        icon: mdi:watering-can
+
+  # Dypsis lutescens
+  - sensor:
+      - name: "Dypsis lutescens Status"
+        unique_id: plant_dypsis_lutescens_status
+        availability: "{{ has_value('sensor.dypsis_lutescens_soil_moisture') }}"
+        state: >
+          {% set m = states('sensor.dypsis_lutescens_soil_moisture') | float(none) %}
+          {% set t = states('sensor.dypsis_lutescens_temperature') | float(none) %}
+          {% set b = states('sensor.dypsis_lutescens_battery') | float(none) %}
+          {% if m is none %}
+            unknown
+          {% elif m < 15 %}
+            needs water
+          {% elif m > 60 %}
+            too wet
+          {% elif t is not none and t < 10 %}
+            too cold
+          {% elif t is not none and t > 35 %}
+            too hot
+          {% elif b is not none and b < 20 %}
+            battery low
+          {% else %}
+            ok
+          {% endif %}
+        icon: >
+          {% set s = this.state %}
+          {% if s == 'ok' %}mdi:flower
+          {% elif s == 'needs water' %}mdi:watering-can
+          {% elif s == 'too wet' %}mdi:water-alert
+          {% elif s == 'battery low' %}mdi:battery-alert
+          {% elif s in ['too cold', 'too hot'] %}mdi:thermometer-alert
+          {% else %}mdi:flower-outline{% endif %}
+        attributes:
+          moisture: "{{ states('sensor.dypsis_lutescens_soil_moisture') | float(none) }}"
+          moisture_min: 15
+          moisture_max: 60
+          temperature: "{{ states('sensor.dypsis_lutescens_temperature') | float(none) }}"
+          temperature_min: 10
+          temperature_max: 35
+          battery: "{{ states('sensor.dypsis_lutescens_battery') | float(none) }}"
+          battery_min: 20
+  - binary_sensor:
+      - name: "Dypsis lutescens Needs Water"
+        unique_id: plant_dypsis_lutescens_needs_water
+        availability: "{{ has_value('sensor.dypsis_lutescens_soil_moisture') }}"
+        state: "{{ states('sensor.dypsis_lutescens_soil_moisture') | float(100) < 15 }}"
+        icon: mdi:watering-can
+
+  # Acer palmatum
+  - sensor:
+      - name: "Acer palmatum Status"
+        unique_id: plant_acer_palmatum_status
+        availability: "{{ has_value('sensor.acer_palmatum_soil_moisture') }}"
+        state: >
+          {% set m = states('sensor.acer_palmatum_soil_moisture') | float(none) %}
+          {% set t = states('sensor.acer_palmatum_temperature') | float(none) %}
+          {% set b = states('sensor.acer_palmatum_battery') | float(none) %}
+          {% if m is none %}
+            unknown
+          {% elif m < 15 %}
+            needs water
+          {% elif m > 60 %}
+            too wet
+          {% elif b is not none and b < 20 %}
+            battery low
+          {% else %}
+            ok
+          {% endif %}
+        icon: >
+          {% set s = this.state %}
+          {% if s == 'ok' %}mdi:flower
+          {% elif s == 'needs water' %}mdi:watering-can
+          {% elif s == 'too wet' %}mdi:water-alert
+          {% elif s == 'battery low' %}mdi:battery-alert
+          {% elif s in ['too cold', 'too hot'] %}mdi:thermometer-alert
+          {% else %}mdi:flower-outline{% endif %}
+        attributes:
+          moisture: "{{ states('sensor.acer_palmatum_soil_moisture') | float(none) }}"
+          moisture_min: 15
+          moisture_max: 60
+          temperature: "{{ states('sensor.acer_palmatum_temperature') | float(none) }}"
+          battery: "{{ states('sensor.acer_palmatum_battery') | float(none) }}"
+          battery_min: 20
+  - binary_sensor:
+      - name: "Acer palmatum Needs Water"
+        unique_id: plant_acer_palmatum_needs_water
+        availability: "{{ has_value('sensor.acer_palmatum_soil_moisture') }}"
+        state: "{{ states('sensor.acer_palmatum_soil_moisture') | float(100) < 15 }}"
+        icon: mdi:watering-can
+
+  # Hydrangea macrophylla
+  - sensor:
+      - name: "Hydrangea macrophylla Status"
+        unique_id: plant_hydrangea_macrophylla_status
+        availability: "{{ has_value('sensor.hydrangea_macrophylla_soil_moisture') }}"
+        state: >
+          {% set m = states('sensor.hydrangea_macrophylla_soil_moisture') | float(none) %}
+          {% set t = states('sensor.hydrangea_macrophylla_temperature') | float(none) %}
+          {% set b = states('sensor.hydrangea_macrophylla_battery') | float(none) %}
+          {% if m is none %}
+            unknown
+          {% elif m < 20 %}
+            needs water
+          {% elif m > 60 %}
+            too wet
+          {% elif b is not none and b < 20 %}
+            battery low
+          {% else %}
+            ok
+          {% endif %}
+        icon: >
+          {% set s = this.state %}
+          {% if s == 'ok' %}mdi:flower
+          {% elif s == 'needs water' %}mdi:watering-can
+          {% elif s == 'too wet' %}mdi:water-alert
+          {% elif s == 'battery low' %}mdi:battery-alert
+          {% elif s in ['too cold', 'too hot'] %}mdi:thermometer-alert
+          {% else %}mdi:flower-outline{% endif %}
+        attributes:
+          moisture: "{{ states('sensor.hydrangea_macrophylla_soil_moisture') | float(none) }}"
+          moisture_min: 20
+          moisture_max: 60
+          temperature: "{{ states('sensor.hydrangea_macrophylla_temperature') | float(none) }}"
+          battery: "{{ states('sensor.hydrangea_macrophylla_battery') | float(none) }}"
+          battery_min: 20
+  - binary_sensor:
+      - name: "Hydrangea macrophylla Needs Water"
+        unique_id: plant_hydrangea_macrophylla_needs_water
+        availability: "{{ has_value('sensor.hydrangea_macrophylla_soil_moisture') }}"
+        state: "{{ states('sensor.hydrangea_macrophylla_soil_moisture') | float(100) < 20 }}"
+        icon: mdi:watering-can
+
+  # Liquidambar styraciflua
+  - sensor:
+      - name: "Liquidambar styraciflua Status"
+        unique_id: plant_liquidambar_styraciflua_status
+        availability: "{{ has_value('sensor.liquidambar_styraciflua_soil_moisture') }}"
+        state: >
+          {% set m = states('sensor.liquidambar_styraciflua_soil_moisture') | float(none) %}
+          {% set t = states('sensor.liquidambar_styraciflua_temperature') | float(none) %}
+          {% set b = states('sensor.liquidambar_styraciflua_battery') | float(none) %}
+          {% if m is none %}
+            unknown
+          {% elif m < 15 %}
+            needs water
+          {% elif m > 60 %}
+            too wet
+          {% elif b is not none and b < 20 %}
+            battery low
+          {% else %}
+            ok
+          {% endif %}
+        icon: >
+          {% set s = this.state %}
+          {% if s == 'ok' %}mdi:flower
+          {% elif s == 'needs water' %}mdi:watering-can
+          {% elif s == 'too wet' %}mdi:water-alert
+          {% elif s == 'battery low' %}mdi:battery-alert
+          {% elif s in ['too cold', 'too hot'] %}mdi:thermometer-alert
+          {% else %}mdi:flower-outline{% endif %}
+        attributes:
+          moisture: "{{ states('sensor.liquidambar_styraciflua_soil_moisture') | float(none) }}"
+          moisture_min: 15
+          moisture_max: 60
+          temperature: "{{ states('sensor.liquidambar_styraciflua_temperature') | float(none) }}"
+          battery: "{{ states('sensor.liquidambar_styraciflua_battery') | float(none) }}"
+          battery_min: 20
+  - binary_sensor:
+      - name: "Liquidambar styraciflua Needs Water"
+        unique_id: plant_liquidambar_styraciflua_needs_water
+        availability: "{{ has_value('sensor.liquidambar_styraciflua_soil_moisture') }}"
+        state: "{{ states('sensor.liquidambar_styraciflua_soil_moisture') | float(100) < 15 }}"
+        icon: mdi:watering-can

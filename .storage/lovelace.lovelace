@@ -4453,6 +4453,120 @@
                   "name": "Quooker"
                 }
               ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Plants",
+                  "heading_style": "subtitle",
+                  "icon": "mdi:flower"
+                },
+                {
+                  "type": "heading",
+                  "heading": "Yucca",
+                  "heading_style": "subtitle"
+                },
+                {
+                  "type": "grid",
+                  "columns": 2,
+                  "square": false,
+                  "cards": [
+                    {
+                      "type": "tile",
+                      "entity": "sensor.yucca_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "green",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.yucca_status",
+                          "state": [
+                            "ok"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.yucca_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "blue",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.yucca_status",
+                          "state": [
+                            "needs water"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.yucca_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "orange",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.yucca_status",
+                          "state": [
+                            "too wet",
+                            "too cold",
+                            "too hot",
+                            "battery low"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.yucca_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.yucca_status",
+                          "state": [
+                            "unavailable",
+                            "unknown"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.yucca_soil_moisture",
+                      "name": "Soil Moisture",
+                      "icon": "mdi:water-percent",
+                      "color": "blue",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "features_position": "bottom"
+                    }
+                  ]
+                }
+              ]
             }
           ],
           "badges": [
@@ -6029,6 +6143,326 @@
                 }
               ],
               "column_span": 1
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Plants",
+                  "heading_style": "subtitle",
+                  "icon": "mdi:flower"
+                },
+                {
+                  "type": "heading",
+                  "heading": "Acer palmatum",
+                  "heading_style": "subtitle"
+                },
+                {
+                  "type": "grid",
+                  "columns": 2,
+                  "square": false,
+                  "cards": [
+                    {
+                      "type": "tile",
+                      "entity": "sensor.acer_palmatum_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "green",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.acer_palmatum_status",
+                          "state": [
+                            "ok"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.acer_palmatum_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "blue",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.acer_palmatum_status",
+                          "state": [
+                            "needs water"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.acer_palmatum_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "orange",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.acer_palmatum_status",
+                          "state": [
+                            "too wet",
+                            "too cold",
+                            "too hot",
+                            "battery low"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.acer_palmatum_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.acer_palmatum_status",
+                          "state": [
+                            "unavailable",
+                            "unknown"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.acer_palmatum_soil_moisture",
+                      "name": "Soil Moisture",
+                      "icon": "mdi:water-percent",
+                      "color": "blue",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "features_position": "bottom"
+                    }
+                  ]
+                },
+                {
+                  "type": "heading",
+                  "heading": "Hydrangea macrophylla",
+                  "heading_style": "subtitle"
+                },
+                {
+                  "type": "grid",
+                  "columns": 2,
+                  "square": false,
+                  "cards": [
+                    {
+                      "type": "tile",
+                      "entity": "sensor.hydrangea_macrophylla_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "green",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.hydrangea_macrophylla_status",
+                          "state": [
+                            "ok"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.hydrangea_macrophylla_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "blue",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.hydrangea_macrophylla_status",
+                          "state": [
+                            "needs water"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.hydrangea_macrophylla_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "orange",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.hydrangea_macrophylla_status",
+                          "state": [
+                            "too wet",
+                            "too cold",
+                            "too hot",
+                            "battery low"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.hydrangea_macrophylla_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.hydrangea_macrophylla_status",
+                          "state": [
+                            "unavailable",
+                            "unknown"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.hydrangea_macrophylla_soil_moisture",
+                      "name": "Soil Moisture",
+                      "icon": "mdi:water-percent",
+                      "color": "blue",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "features_position": "bottom"
+                    }
+                  ]
+                },
+                {
+                  "type": "heading",
+                  "heading": "Liquidambar styraciflua",
+                  "heading_style": "subtitle"
+                },
+                {
+                  "type": "grid",
+                  "columns": 2,
+                  "square": false,
+                  "cards": [
+                    {
+                      "type": "tile",
+                      "entity": "sensor.liquidambar_styraciflua_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "green",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.liquidambar_styraciflua_status",
+                          "state": [
+                            "ok"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.liquidambar_styraciflua_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "blue",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.liquidambar_styraciflua_status",
+                          "state": [
+                            "needs water"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.liquidambar_styraciflua_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "orange",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.liquidambar_styraciflua_status",
+                          "state": [
+                            "too wet",
+                            "too cold",
+                            "too hot",
+                            "battery low"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.liquidambar_styraciflua_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.liquidambar_styraciflua_status",
+                          "state": [
+                            "unavailable",
+                            "unknown"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.liquidambar_styraciflua_soil_moisture",
+                      "name": "Soil Moisture",
+                      "icon": "mdi:water-percent",
+                      "color": "blue",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "features_position": "bottom"
+                    }
+                  ]
+                }
+              ]
             }
           ],
           "cards": [],
@@ -8569,6 +9003,120 @@
                           }
                         }
                       ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Plants",
+                  "heading_style": "subtitle",
+                  "icon": "mdi:flower"
+                },
+                {
+                  "type": "heading",
+                  "heading": "Dypsis lutescens",
+                  "heading_style": "subtitle"
+                },
+                {
+                  "type": "grid",
+                  "columns": 2,
+                  "square": false,
+                  "cards": [
+                    {
+                      "type": "tile",
+                      "entity": "sensor.dypsis_lutescens_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "green",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.dypsis_lutescens_status",
+                          "state": [
+                            "ok"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.dypsis_lutescens_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "blue",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.dypsis_lutescens_status",
+                          "state": [
+                            "needs water"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.dypsis_lutescens_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "orange",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.dypsis_lutescens_status",
+                          "state": [
+                            "too wet",
+                            "too cold",
+                            "too hot",
+                            "battery low"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.dypsis_lutescens_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.dypsis_lutescens_status",
+                          "state": [
+                            "unavailable",
+                            "unknown"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.dypsis_lutescens_soil_moisture",
+                      "name": "Soil Moisture",
+                      "icon": "mdi:water-percent",
+                      "color": "blue",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "features_position": "bottom"
                     }
                   ]
                 }
@@ -12726,6 +13274,120 @@
                     }
                   ],
                   "columns": 2
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Plants",
+                  "heading_style": "subtitle",
+                  "icon": "mdi:flower"
+                },
+                {
+                  "type": "heading",
+                  "heading": "Ficus Elastica Belize",
+                  "heading_style": "subtitle"
+                },
+                {
+                  "type": "grid",
+                  "columns": 2,
+                  "square": false,
+                  "cards": [
+                    {
+                      "type": "tile",
+                      "entity": "sensor.ficus_elastica_belize_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "green",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.ficus_elastica_belize_status",
+                          "state": [
+                            "ok"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.ficus_elastica_belize_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "blue",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.ficus_elastica_belize_status",
+                          "state": [
+                            "needs water"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.ficus_elastica_belize_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "orange",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.ficus_elastica_belize_status",
+                          "state": [
+                            "too wet",
+                            "too cold",
+                            "too hot",
+                            "battery low"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.ficus_elastica_belize_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.ficus_elastica_belize_status",
+                          "state": [
+                            "unavailable",
+                            "unknown"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.ficus_elastica_belize_soil_moisture",
+                      "name": "Soil Moisture",
+                      "icon": "mdi:water-percent",
+                      "color": "blue",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "features_position": "bottom"
+                    }
+                  ]
                 }
               ]
             }
