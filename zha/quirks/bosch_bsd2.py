@@ -301,6 +301,8 @@ def zone_status_bit(mask: int):
 (
     QuirkBuilder("Bosch", MODEL)
     .applies_to("BOSCH", MODEL)
+    # Bosch's product code instead of the Zigbee model string, like Z2M's model id
+    .friendly_name(model="BSD-2", manufacturer="Bosch")
     .replaces(BoschSmokeAlarmIasZone)
     .adds_endpoint(SMOKE_SIREN_ENDPOINT, device_type=zha.DeviceType.IAS_WARNING_DEVICE)
     .adds_endpoint(
