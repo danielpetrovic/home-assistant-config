@@ -6689,3 +6689,17 @@
               channel: Car
               notification_icon: mdi:car
   mode: single
+- id: '1791279033456'
+  alias: HA Start Log Dump
+  description: Saves the previous run's last log lines, crash records and memory state
+    to /share/ha_crash_dumps two minutes after every Home Assistant start.
+  triggers:
+  - trigger: homeassistant
+    event: start
+  actions:
+  - alias: Wait for the Supervisor to settle
+    delay:
+      minutes: 2
+  - alias: Write the snapshot
+    action: shell_command.dump_crash_logs
+  mode: single

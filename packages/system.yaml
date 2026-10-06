@@ -6,6 +6,9 @@ input_text:
 recorder:
   purge_keep_days: 5
 
+shell_command:
+  dump_crash_logs: python3 /config/shell/dump_logs.py
+
 template:
   - sensor:
       - name: "Lights"
