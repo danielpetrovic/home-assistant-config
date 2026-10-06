@@ -1025,8 +1025,9 @@
         entity_id: input_select.office_covers
         state: Closed
       sequence:
-      - action: cover.close_cover
-        data: {}
+      - action: cover.set_cover_position
+        data:
+          position: 50
         metadata: {}
         target:
           entity_id:
@@ -2260,7 +2261,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Bathroom Button
       last_pressed: input_text.bathroom_button_last_pressed
@@ -2283,6 +2284,7 @@
       button_3_long_release_media_mode:
       - turn_off
       - unjoin
+      zha_remote: bfe4c5c0382ebed9cabccab252558b46
 - id: '1736811938136'
   alias: Dining Table Button
   description: ''
@@ -2352,7 +2354,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Gameroom Desk Button
       last_pressed: input_text.gameroom_desk_button_last_pressed
@@ -2411,6 +2413,7 @@
           entity_id:
           - input_select.roof_terrace_covers
           - input_select.gameroom_covers
+      zha_remote: f54db05d45ad40c87df6ca609b92365b
 - id: '1736812276991'
   alias: Gameroom Button
   description: ''
@@ -2418,7 +2421,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Gameroom Button
       last_pressed: input_text.gameroom_button_last_pressed
@@ -2478,6 +2481,7 @@
           entity_id:
           - input_select.roof_terrace_covers
           - input_select.gameroom_covers
+      zha_remote: f1d15d6e9b28dadf84881328ef026616
 - id: '1736812360019'
   alias: Hallway Button
   description: ''
@@ -2485,7 +2489,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Hallway Button
       last_pressed: input_text.hallway_button_last_pressed
@@ -2531,6 +2535,7 @@
         metadata: {}
         target:
           entity_id: input_select.hallway_covers
+      zha_remote: ed90c560d7da90b2eb7720586290f348
 - id: '1736812390460'
   alias: Office Button
   description: ''
@@ -2538,7 +2543,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Office Button
       last_pressed: input_text.office_button_last_pressed
@@ -2592,6 +2597,7 @@
         metadata: {}
         target:
           entity_id: input_select.office_covers
+      zha_remote: 13c133d7c726b4aae54cb1c41e870fcd
 - id: '1736812457946'
   alias: Kitchen Button
   description: ''
@@ -2659,7 +2665,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Gym Button
       last_pressed: input_text.gym_button_last_pressed
@@ -2710,6 +2716,7 @@
         metadata: {}
         target:
           entity_id: input_select.gym_covers
+      zha_remote: cb29b0ae0273ac2e27af78a65a2f89d6
 - id: '1736812648341'
   alias: Bedroom Button
   description: ''
@@ -3365,7 +3372,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - z2m
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Roof Terrace Button
       last_pressed: input_text.roof_terrace_button_last_pressed
@@ -3427,6 +3434,7 @@
         data: {}
         target:
           entity_id: switch.gameroom_media
+      zha_remote: 8b185cb44284ce03c813615e591497bf
 - id: '1757451715340'
   alias: Living Room Climate
   description: ''
