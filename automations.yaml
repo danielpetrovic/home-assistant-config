@@ -20,6 +20,10 @@
     - 'off'
     from:
     - 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
   - alias: shower on
     id: shower on
     trigger: numeric_state
@@ -40,31 +44,18 @@
       hours: 0
       minutes: 0
       seconds: 10
-  - alias: player idle
-    id: player idle
-    trigger: state
-    entity_id:
-    - media_player.bathroom_kef
-    from:
-    - playing
-    to:
-    - idle
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 30
-  - trigger: time
-    at: 07:00:00
-    id: 07:00
-    enabled: false
   conditions: []
   actions:
   - choose:
-    - alias: lights on - speaker on
+    - alias: lights on - join bedroom
       conditions:
       - condition: trigger
         id:
         - lights on
+      - condition: state
+        entity_id: media_player.bedroom
+        state:
+        - playing
       sequence:
       - action: media_player.join
         metadata: {}
@@ -73,24 +64,41 @@
         data:
           group_members:
           - media_player.bathroom
+      - variables:
+          bathroom_volume: '{{ 0.25 if now().hour < 9 else 0.35 }}'
       - action: media_player.volume_set
         metadata: {}
         data:
-          volume_level: 0.35
+          volume_level: '{{ bathroom_volume }}'
         target:
           entity_id: media_player.bathroom
-    - alias: lights off - speaker off
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 3
+          milliseconds: 0
+      - action: media_player.volume_set
+        metadata: {}
+        data:
+          volume_level: '{{ bathroom_volume }}'
+        target:
+          entity_id: media_player.bathroom
+    - alias: lights off for 10s - unjoin and speaker off
       conditions:
       - condition: trigger
         id:
         - lights off
       sequence:
-      - action: media_player.volume_set
+      - action: media_player.unjoin
         metadata: {}
-        data:
-          volume_level: 0.25
         target:
           entity_id: media_player.bathroom
+        data: {}
+      - action: media_player.turn_off
+        metadata: {}
+        target:
+          entity_id: media_player.bathroom_kef
+        data: {}
     - conditions:
       - condition: trigger
         id:
@@ -116,69 +124,11 @@
         - 'on'
       sequence:
       - data:
-          volume_level: 0.35
+          volume_level: '{{ 0.25 if now().hour < 9 else 0.35 }}'
         target:
           entity_id: media_player.bathroom
         action: media_player.volume_set
       alias: shower off - volume down
-    - conditions:
-      - condition: trigger
-        id:
-        - player idle
-      - condition: state
-        entity_id: media_player.bedroom
-        state:
-        - playing
-      sequence:
-      - action: media_player.unjoin
-        metadata: {}
-        target:
-          entity_id: media_player.bathroom
-        data: {}
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 0
-      - action: media_player.join
-        metadata: {}
-        data:
-          group_members:
-          - media_player.bathroom
-        target:
-          entity_id: media_player.bedroom
-      alias: player idle
-    - conditions:
-      - condition: trigger
-        id:
-        - 07:00
-      - condition: state
-        entity_id: media_player.bedroom
-        state:
-        - playing
-      sequence:
-      - action: media_player.unjoin
-        metadata: {}
-        target:
-          entity_id: media_player.bathroom
-        data: {}
-      - action: unifi.reconnect_client
-        metadata: {}
-        data:
-          device_id: 7ff037c01f437519717d932cedd8bb25
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 10
-          milliseconds: 0
-      - action: media_player.join
-        metadata: {}
-        data:
-          group_members:
-          - media_player.bathroom
-        target:
-          entity_id: media_player.bedroom
-      alias: 07:00
   mode: restart
 - id: '1704667361587'
   alias: Garden Covers
