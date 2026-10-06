@@ -166,7 +166,7 @@ template:
             {{ last }}
           {% else %}
 
-          {% set hot_enter = humidex >= 27 and hs >= 58 and max4 >= 25 and daylight_h > 13 %}
+          {% set hot_enter = humidex >= 27 and hs >= 70 and max4 >= 25 and daylight_h > 13 %}
           {% set hot_exit  = ((humidex <= 24 or temp <= 20) and (now().hour >= 9 and now().hour < 21)) or humidex <= 20 or temp <= 16 %}
 
           {#
