@@ -416,12 +416,19 @@ lights_orange:
     enabled: true
 alarm_pending:
   sequence:
-  - action: button.press
+  - action: siren.turn_on
     metadata: {}
-    data: {}
+    data:
+      duration: >-
+        {# The siren only shows "on" for this long, and the device decides how long
+        it really sounds, so cover the longest of its two alarms and the delays #}
+        {% set siren = states('number.alarm_siren_siren_delay') | int(0)
+          + states('number.alarm_siren_siren_duration') | int(3) * 60 %}
+        {% set light = states('number.alarm_siren_light_delay') | int(0)
+          + states('number.alarm_siren_light_duration') | int(15) * 60 %}
+        {{ ([siren, light] | max) + 5 }}
     target:
-      entity_id:
-      - button.alarm_siren_trigger_alarm
+      entity_id: siren.alarm_siren
   alias: Alarm - Pending
   description: ''
   icon: mdi:shield-outline
@@ -432,33 +439,31 @@ alarm_away:
   icon: mdi:shield-lock
 alarm_home:
   sequence:
-  - action: button.press
+  - action: siren.turn_off
     metadata: {}
     data: {}
     target:
-      entity_id:
-      - button.alarm_siren_stop_alarm
+      entity_id: siren.alarm_siren
   alias: Alarm - Home
   description: ''
   icon: mdi:shield-home
 alarm_night:
   sequence:
-  - action: button.press
+  - action: siren.turn_off
     metadata: {}
     data: {}
     target:
-      entity_id:
-      - button.alarm_siren_stop_alarm
+      entity_id: siren.alarm_siren
   alias: Alarm - Night
   description: ''
   icon: mdi:shield-moon
 alarm_disarmed:
   sequence:
-  - action: button.press
+  - action: siren.turn_off
     metadata: {}
     data: {}
     target:
-      entity_id: button.alarm_siren_stop_alarm
+      entity_id: siren.alarm_siren
   alias: Alarm - Disarmed
   description: ''
   icon: mdi:shield-off
