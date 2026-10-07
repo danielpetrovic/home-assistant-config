@@ -363,12 +363,12 @@
                           "conditions": [
                             {
                               "condition": "state",
-                              "entity": "sensor.t047zg_charge_state",
+                              "entity": "sensor.renault_charge_state",
                               "state_not": "charge_in_progress"
                             },
                             {
                               "condition": "state",
-                              "entity": "sensor.t047zg_charge_state",
+                              "entity": "sensor.renault_charge_state",
                               "state_not": "charge_ended"
                             }
                           ],
@@ -382,7 +382,7 @@
                                 "type": "button",
                                 "show_state": true,
                                 "icon": "",
-                                "entity": "sensor.t047zg_battery",
+                                "entity": "sensor.renault_battery",
                                 "icon_height": "30px",
                                 "theme": "Enhanced Grey"
                               },
@@ -393,7 +393,7 @@
                                 "show_state": true,
                                 "icon": "",
                                 "icon_height": "30px",
-                                "entity": "sensor.t047zg_battery_autonomy",
+                                "entity": "sensor.renault_battery_autonomy",
                                 "theme": "Enhanced Grey"
                               },
                               {
@@ -403,7 +403,7 @@
                                 "show_state": true,
                                 "icon": "",
                                 "icon_height": "30px",
-                                "entity": "sensor.t047zg_mileage",
+                                "entity": "sensor.renault_mileage",
                                 "theme": "Enhanced Grey"
                               },
                               {
@@ -412,7 +412,7 @@
                                 "type": "button",
                                 "show_state": true,
                                 "icon": "",
-                                "entity": "binary_sensor.t047zg_plug",
+                                "entity": "binary_sensor.renault_plug",
                                 "icon_height": "30px",
                                 "theme": "Enhanced Grey"
                               }
@@ -425,7 +425,7 @@
                           "conditions": [
                             {
                               "condition": "state",
-                              "entity": "sensor.t047zg_charge_state",
+                              "entity": "sensor.renault_charge_state",
                               "state": "charge_in_progress"
                             }
                           ],
@@ -439,7 +439,7 @@
                                 "type": "button",
                                 "show_state": true,
                                 "icon": "",
-                                "entity": "sensor.t047zg_battery",
+                                "entity": "sensor.renault_battery",
                                 "icon_height": "30px",
                                 "theme": "Enhanced Orange"
                               },
@@ -450,7 +450,7 @@
                                 "show_state": true,
                                 "icon": "",
                                 "icon_height": "30px",
-                                "entity": "sensor.t047zg_battery_autonomy",
+                                "entity": "sensor.renault_battery_autonomy",
                                 "theme": "Enhanced Orange"
                               },
                               {
@@ -460,7 +460,7 @@
                                 "show_state": true,
                                 "icon": "",
                                 "icon_height": "30px",
-                                "entity": "sensor.t047zg_charging_remaining_time",
+                                "entity": "sensor.renault_charging_remaining_time",
                                 "theme": "Enhanced Orange"
                               },
                               {
@@ -469,7 +469,7 @@
                                 "type": "button",
                                 "show_state": true,
                                 "icon": "",
-                                "entity": "binary_sensor.t047zg_plug",
+                                "entity": "binary_sensor.renault_plug",
                                 "icon_height": "30px",
                                 "theme": "Enhanced Orange"
                               }
@@ -482,7 +482,7 @@
                           "conditions": [
                             {
                               "condition": "state",
-                              "entity": "sensor.t047zg_charge_state",
+                              "entity": "sensor.renault_charge_state",
                               "state": "charge_ended"
                             }
                           ],
@@ -496,7 +496,7 @@
                                 "type": "button",
                                 "show_state": true,
                                 "icon": "",
-                                "entity": "sensor.t047zg_battery",
+                                "entity": "sensor.renault_battery",
                                 "icon_height": "30px",
                                 "theme": "Enhanced Grey"
                               },
@@ -507,7 +507,7 @@
                                 "show_state": true,
                                 "icon": "",
                                 "icon_height": "30px",
-                                "entity": "sensor.t047zg_battery_autonomy",
+                                "entity": "sensor.renault_battery_autonomy",
                                 "theme": "Enhanced Green"
                               },
                               {
@@ -517,7 +517,7 @@
                                 "show_state": true,
                                 "icon": "",
                                 "icon_height": "30px",
-                                "entity": "sensor.t047zg_mileage",
+                                "entity": "sensor.renault_mileage",
                                 "theme": "Enhanced Green"
                               },
                               {
@@ -526,7 +526,7 @@
                                 "type": "button",
                                 "show_state": true,
                                 "icon": "",
-                                "entity": "binary_sensor.t047zg_plug",
+                                "entity": "binary_sensor.renault_plug",
                                 "icon_height": "30px",
                                 "theme": "Enhanced Green"
                               }

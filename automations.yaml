@@ -6577,7 +6577,7 @@
   triggers:
   - trigger: state
     entity_id:
-    - binary_sensor.t047zg_charging
+    - binary_sensor.renault_charging
     to:
     - 'on'
     id: charging
@@ -6585,7 +6585,7 @@
     - 'off'
   - trigger: state
     entity_id:
-    - binary_sensor.t047zg_charging
+    - binary_sensor.renault_charging
     to:
     - 'off'
     id: stopped
@@ -6605,18 +6605,18 @@
           data:
             cache: true
             media_player_entity_id: media_player.utility_closet
-            message: Car charging started at {{ states('sensor.t047zg_battery') }}%
+            message: Car charging started at {{ states('sensor.renault_battery') }}%
         - action: notify.mobile_app_alex_phone
           metadata: {}
           data:
-            message: Car charging started at {{ states('sensor.t047zg_battery') }}%
+            message: Car charging started at {{ states('sensor.renault_battery') }}%
             data:
               channel: Car
               notification_icon: mdi:car
         - action: notify.mobile_app_deni_phone
           metadata: {}
           data:
-            message: Car charging started at {{ states('sensor.t047zg_battery') }}%
+            message: Car charging started at {{ states('sensor.renault_battery') }}%
             data:
               channel: Car
               notification_icon: mdi:car
@@ -6631,18 +6631,21 @@
           data:
             cache: true
             media_player_entity_id: media_player.utility_closet
-            message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
+            message: Car finished charging at {{ states('sensor.renault_battery')
+              }}%
         - action: notify.mobile_app_alex_phone
           metadata: {}
           data:
-            message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
+            message: Car finished charging at {{ states('sensor.renault_battery')
+              }}%
             data:
               channel: Car
               notification_icon: mdi:car
         - action: notify.mobile_app_deni_phone
           metadata: {}
           data:
-            message: Car finished charging at {{ states('sensor.t047zg_battery') }}%
+            message: Car finished charging at {{ states('sensor.renault_battery')
+              }}%
             data:
               channel: Car
               notification_icon: mdi:car

@@ -14,15 +14,6 @@
         "show_in_sidebar": true
       },
       {
-        "id": "dashboard_tablet",
-        "show_in_sidebar": false,
-        "icon": "mdi:tablet-dashboard",
-        "title": "Tablet Dasbhoard",
-        "require_admin": false,
-        "mode": "storage",
-        "url_path": "dashboard-tablet"
-      },
-      {
         "id": "dashboard_map",
         "show_in_sidebar": true,
         "icon": "mdi:map",
