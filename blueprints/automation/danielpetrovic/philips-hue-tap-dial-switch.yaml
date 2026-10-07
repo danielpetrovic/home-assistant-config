@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Philips Hue Tap Dial Switch (Z2M / ZHA)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) [![Community](https://img.shields.io/badge/Community-Discussion-ff6600?style=for-the-badge&logo=discourse&logoColor=white)](https://community.home-assistant.io/t/philips-hue-tap-dial-switch-z2m-zha-custom-light-and-media-mode-rdm002/828766) ![Version](https://img.shields.io/badge/Version-2026.08.1-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) [![Community](https://img.shields.io/badge/Community-Discussion-ff6600?style=for-the-badge&logo=discourse&logoColor=white)](https://community.home-assistant.io/t/philips-hue-tap-dial-switch-z2m-zha-custom-light-and-media-mode-rdm002/828766) ![Version](https://img.shields.io/badge/Version-2026.10.1-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of a Philips Hue Tap Dial Switch through Zigbee2MQTT or ZHA integration, supporting custom actions, light automation, and media player control.
 
@@ -36,6 +36,10 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.10.1: Fix ZHA offline events raising template errors**
+          - Fixed: ZHA fires a `device_offline` event when it marks a sleepy Tap Dial unavailable. That event has no `command` and no `params`, so reading `params.step_mode` and `params.step_size` raised "Error rendering variables: UndefinedError" and reading `command` logged a template warning. These lookups now fall back to safe defaults, so offline events no longer produce errors and do nothing.
+          - Improved: Button presses and dial rotation are unchanged, the defaults only apply when a value is missing.
+
         - **2026.08.1: Fix dial brightness jumping while turning**
           - Fixed: spurious zero-step rotation messages were consuming the single-mode slot and issuing a brightness_step: 0 call, causing brightness to jump up and down while turning the dial. Added step_size > 0 guard alongside the existing step_size != 255 guard. Also fixes fast custom-action turns dropping clicks for the same reason.
 
@@ -2814,7 +2818,7 @@ variables:
   z2m_device_name: !input z2m_device_name
   last_pressed: !input last_pressed
   # Command parsing - handles both Z2M MQTT payloads and ZHA events
-  zha_command: "{{ trigger.event.data.command if trigger.event is defined else '' }}"
+  zha_command: "{{ trigger.event.data.command | default('') if trigger.event is defined else '' }}"
   z2m_action: "{{ trigger.payload_json.action | default('') if trigger.payload_json is defined else '' }}"
   # Unified command - normalize Z2M actions to match ZHA command format
   command: >-
@@ -2845,7 +2849,7 @@ variables:
   # Rotation parameters
   step_mode: >-
     {% if trigger.event is defined %}
-      {{ trigger.event.data.params.step_mode | default('0') }}
+      {{ (trigger.event.data.params | default({})).step_mode | default('0') }}
     {% elif z2m_action != '' %}
       {% if 'left' in z2m_action or 'down' in z2m_action %}StepMode.Down
       {% elif 'right' in z2m_action or 'up' in z2m_action %}StepMode.Up
@@ -2855,7 +2859,7 @@ variables:
     {% endif %}
   step_size: >-
     {% if trigger.event is defined %}
-      {{ trigger.event.data.params.step_size | default(0) }}
+      {{ (trigger.event.data.params | default({})).step_size | default(0) }}
     {% elif trigger.payload_json is defined %}
       {{ trigger.payload_json.action_step_size | default(0) }}
     {% else %}0
