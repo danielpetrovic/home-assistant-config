@@ -8,11 +8,15 @@ and entity names, so the entity unique IDs stay the same), extended with:
   from the Zigbee2MQTT converter so both stacks give the same values
 - non-value markers and the all-zero frames the station sometimes sends are dropped
   before they reach the cache and the calculations
+- the pressure only changes by more than 1 hPa (the station flips between two whole
+  hPa values on every report), and the pressure trend is a fitted line through the
+  readings of the last 3 hours instead of a difference of two flipping values
 - battery voltage and the solar capacitor voltage (battery 2 voltage)
 """
 
 from __future__ import annotations
 
+from collections import deque
 import enum
 import math
 import time
@@ -60,9 +64,16 @@ CALCULATED_SCALE = 10
 RAIN_RATE_MAX = 300
 # A rain rate needs at least a minute between two precipitation samples
 RAIN_RATE_MIN_INTERVAL = 60
-# A pressure trend needs at least 30 minutes between two pressure samples
-PRESSURE_TREND_MIN_INTERVAL = 30 * 60
-
+# The pressure comes in whole hPa and flips by 1 hPa between reports, so the published
+# pressure ignores changes of this size or less (in hPa)
+PRESSURE_DEAD_BAND = 1
+# The pressure trend is the least squares slope over all readings of this window (s),
+# which averages the flipping out. It needs this much history and this many readings
+# before it moves, and is recalculated at most this often (s)
+PRESSURE_TREND_WINDOW = 3 * 3600
+PRESSURE_TREND_MIN_SPAN = 30 * 60
+PRESSURE_TREND_MIN_SAMPLES = 6
+PRESSURE_TREND_UPDATE_INTERVAL = 5 * 60
 
 # Weather conditions, named like the Home Assistant weather entity conditions. The
 # value is what is stored in the attribute, the name is the state of the enum sensor
@@ -231,11 +242,18 @@ class ShellyWS90CalculatedCluster(LocalDataCluster):
         pressure_trend = ZCLAttributeDef(id=0x0006, type=t.int16s, access="rp")
         weather_condition = ZCLAttributeDef(id=0x0007, type=t.uint8_t, access="rp")
 
+    # These two need history that is gone after a restart, so they read 0 until it is built
+    _DEFAULT_VALUES = {
+        AttributeDefs.rain_rate.id: 0,
+        AttributeDefs.pressure_trend.id: 0,
+    }
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Init, the sampling histories only live as long as the cluster."""
         super().__init__(*args, **kwargs)
         self._precipitation_history: tuple[float, float] | None = None
-        self._pressure_history: tuple[float, float] | None = None
+        self._pressure_samples: deque[tuple[float, float]] = deque()
+        self._last_trend_update: float | None = None
 
     def _input(self, ep_attribute: str, attribute_name: str) -> Any:
         """Read a cached value of a sibling cluster."""
@@ -267,10 +285,8 @@ class ShellyWS90CalculatedCluster(LocalDataCluster):
         history = self._precipitation_history
 
         if history is None:
-            # No history after a restart: keep the last known rate until the next sample
+            # No history after a restart: the rate stays as it is until the next sample
             self._precipitation_history = (precipitation, now)
-            if self.get("rain_rate") is None:
-                self._set("rain_rate", 0)
             return
 
         last_value, last_time = history
@@ -288,75 +304,138 @@ class ShellyWS90CalculatedCluster(LocalDataCluster):
         rate = delta / (elapsed / 3600)
         self._set("rain_rate", min(_round1(rate), RAIN_RATE_MAX))
 
-    def _update_pressure_trend(self, pressure: float) -> None:
-        """Pressure trend in hPa/h, sampled at least 30 minutes apart."""
+    def add_pressure_sample(self, pressure: float) -> None:
+        """Add a pressure reading to the trend, also one the published pressure ignores."""
         now = time.monotonic()
-        history = self._pressure_history
+        samples = self._pressure_samples
+        samples.append((now, pressure))
+        while samples[0][0] < now - PRESSURE_TREND_WINDOW:
+            samples.popleft()
 
-        if history is None:
-            # No history after a restart: keep the last known trend until the next sample
-            self._pressure_history = (pressure, now)
-            if self.get("pressure_trend") is None:
-                self._set("pressure_trend", 0)
+        if (
+            self._last_trend_update is not None
+            and now - self._last_trend_update < PRESSURE_TREND_UPDATE_INTERVAL
+        ):
+            return
+        self._last_trend_update = now
+        self._update_pressure_trend()
+        self.recalculate("pressure_trend")
+
+    def _update_pressure_trend(self) -> None:
+        """Pressure trend in hPa/h, the slope of a line fitted through the recent readings."""
+        samples = self._pressure_samples
+        if (
+            len(samples) < PRESSURE_TREND_MIN_SAMPLES
+            or samples[-1][0] - samples[0][0] < PRESSURE_TREND_MIN_SPAN
+        ):
+            # Not enough history yet, also right after a restart: the trend stays as it is
             return
 
-        last_value, last_time = history
-        elapsed = now - last_time
-        if elapsed < PRESSURE_TREND_MIN_INTERVAL:
+        count = len(samples)
+        mean_time = sum(moment for moment, _ in samples) / count
+        mean_pressure = sum(pressure for _, pressure in samples) / count
+        spread = sum((moment - mean_time) ** 2 for moment, _ in samples)
+        if spread == 0:
             return
+        slope = (
+            sum(
+                (moment - mean_time) * (pressure - mean_pressure)
+                for moment, pressure in samples
+            )
+            / spread
+        )
+        self._set("pressure_trend", _round1(slope * 3600))
 
-        self._pressure_history = (pressure, now)
-        self._set("pressure_trend", _round1((pressure - last_value) / (elapsed / 3600)))
-
-    def recalculate(self, source: str) -> None:
-        """Update the calculated values after the input `source` changed."""
+    def _readings(self) -> dict[str, float | bool | None]:
+        """Return the cached readings in real units, None for the ones not seen yet."""
         temp_raw = self._input("temperature", "measured_value")
         humidity_raw = self._input("humidity", "measured_value")
         pressure_raw = self._input("pressure", "measured_value")
         illuminance_raw = self._input("illuminance", "measured_value")
         wind_raw = self._input("shelly_wind_cluster", "wind_speed")
         precipitation_raw = self._input("shelly_rain_cluster", "precipitation")
-        rain_status = self._input("shelly_rain_cluster", "rain_status")
+        return {
+            "temp": None if temp_raw is None else temp_raw / 100,
+            "humidity": None if humidity_raw is None else humidity_raw / 100,
+            # The ZCL pressure measured value is in units of 0.1 kPa, which is 1 hPa
+            "pressure": None if pressure_raw is None else float(pressure_raw),
+            "lux": None
+            if illuminance_raw is None
+            else illuminance_lux(illuminance_raw),
+            "wind": None if wind_raw is None else wind_raw / 10,
+            "precipitation": (
+                None if precipitation_raw is None else precipitation_raw / 10
+            ),
+            "raining": bool(self._input("shelly_rain_cluster", "rain_status")),
+        }
 
-        temp = None if temp_raw is None else temp_raw / 100
-        humidity = None if humidity_raw is None else humidity_raw / 100
-        # The ZCL pressure measured value is in units of 0.1 kPa, which is 1 hPa
-        pressure = None if pressure_raw is None else float(pressure_raw)
-        lux = None if illuminance_raw is None else illuminance_lux(illuminance_raw)
-        wind = None if wind_raw is None else wind_raw / 10
-        precipitation = None if precipitation_raw is None else precipitation_raw / 10
+    def _stateless_values(self) -> dict[str, tuple[float, int]]:
+        """Calculate the values that only depend on the current readings.
 
-        if source == "precipitation" and precipitation is not None:
-            self._update_rain_rate(precipitation)
-        if source == "pressure" and pressure is not None:
-            self._update_pressure_trend(pressure)
+        Returns the value and the scale it is stored with, for every value that can be
+        calculated from the readings seen so far.
+        """
+        r = self._readings()
+        temp, humidity, wind, lux = r["temp"], r["humidity"], r["wind"], r["lux"]
+        values: dict[str, tuple[float, int]] = {}
 
         if temp is not None and humidity is not None:
-            self._set("dew_point", calculate_dew_point(temp, humidity))
-            self._set("humidex", calculate_humidex(temp, humidity))
-            self._set(
-                "heat_stress",
-                calculate_heat_stress(temp, humidity, lux, wind, bool(rain_status)),
-                scale=1,
+            dew_point = calculate_dew_point(temp, humidity)
+            humidex = calculate_humidex(temp, humidity)
+            if dew_point is not None:
+                values["dew_point"] = (dew_point, CALCULATED_SCALE)
+            if humidex is not None:
+                values["humidex"] = (humidex, CALCULATED_SCALE)
+            values["heat_stress"] = (
+                calculate_heat_stress(temp, humidity, lux, wind, r["raining"]),
+                1,
             )
         if temp is not None and wind is not None:
-            self._set("wind_chill", calculate_wind_chill(temp, wind))
+            values["wind_chill"] = (calculate_wind_chill(temp, wind), CALCULATED_SCALE)
         if temp is not None:
-            self._set(
-                "apparent_temperature",
+            values["apparent_temperature"] = (
                 calculate_apparent_temperature(temp, humidity, wind),
+                CALCULATED_SCALE,
             )
         if lux is not None:
             condition = calculate_weather_condition(
                 temp=temp,
                 lux=lux,
-                raining=bool(rain_status),
+                raining=r["raining"],
                 wind_ms=wind,
                 rain_rate=self._calculated("rain_rate"),
-                pressure=pressure,
+                pressure=r["pressure"],
                 pressure_trend=self._calculated("pressure_trend"),
             )
-            self._set("weather_condition", condition.value, scale=1)
+            values["weather_condition"] = (condition.value, 1)
+        return values
+
+    def get(self, key: int | str, default: Any = None) -> Any:
+        """Return a cached value, or calculate it from the cached readings.
+
+        The calculated values are not restored after a restart, so until the next
+        reading arrives they are worked out from the readings that are.
+        """
+        value = super().get(key)
+        if value is not None:
+            return value
+        try:
+            name = self.find_attribute(key).name
+        except KeyError:
+            return default
+        calculated = self._stateless_values().get(name)
+        if calculated is None:
+            return default
+        return round(calculated[0] * calculated[1])
+
+    def recalculate(self, source: str) -> None:
+        """Update the calculated values after the input `source` changed."""
+        precipitation = self._readings()["precipitation"]
+        if source == "precipitation" and precipitation is not None:
+            self._update_rain_rate(precipitation)
+
+        for name, (value, scale) in self._stateless_values().items():
+            self._set(name, value, scale=scale)
 
 
 class WS90InputMixin:
@@ -369,6 +448,13 @@ class WS90InputMixin:
         """Return True if the value cannot be a real reading, compared to the last one."""
         return False
 
+    def _on_reading(self, attribute_name: str, value: Any) -> None:
+        """Handle every reading that is not a glitch, before it is published."""
+
+    def _is_noise(self, attribute_name: str, value: Any) -> bool:
+        """Return True for a real reading that differs too little to publish."""
+        return False
+
     def _update_attribute(self, attrid: int | t.uint16_t, value: Any) -> None:
         """Ignore unusable readings, and update the calculated values after a new one."""
         try:
@@ -379,6 +465,10 @@ class WS90InputMixin:
 
         if self._is_glitch(attribute_name, value):
             self.debug("ignoring %s reading %s", attribute_name, value)
+            return
+
+        self._on_reading(attribute_name, value)
+        if self._is_noise(attribute_name, value):
             return
 
         super()._update_attribute(attrid, value)
@@ -515,13 +605,30 @@ class ShellyWS90Humidity(WS90InputMixin, CustomCluster, RelativeHumidity):
 
 
 class ShellyWS90Pressure(WS90InputMixin, CustomCluster, PressureMeasurement):
-    """Pressure measurement, dropping the all-zero frames."""
+    """Pressure measurement, dropping the all-zero frames and the 1 hPa flipping."""
 
     CALCULATION_SOURCE = "pressure"
 
     def _is_glitch(self, attribute_name: str, value: Any) -> bool:
         """Return True for a pressure of 0 hPa, which is never real."""
         return attribute_name == "measured_value" and value == 0
+
+    def _on_reading(self, attribute_name: str, value: Any) -> None:
+        """Feed every reading to the trend, including the ones that are not published."""
+        if attribute_name != "measured_value":
+            return
+        calculated = getattr(
+            self.endpoint, ShellyWS90CalculatedCluster.ep_attribute, None
+        )
+        if calculated is not None:
+            calculated.add_pressure_sample(float(value))
+
+    def _is_noise(self, attribute_name: str, value: Any) -> bool:
+        """Return True for a change of 1 hPa or less, the station flips between two values."""
+        if attribute_name != "measured_value":
+            return False
+        previous = self.get(attribute_name)
+        return previous is not None and abs(value - previous) <= PRESSURE_DEAD_BAND
 
 
 class ShellyWS90Illuminance(WS90InputMixin, CustomCluster, IlluminanceMeasurement):
@@ -557,7 +664,9 @@ CALCULATED = ShellyWS90CalculatedCluster
         device_class=SensorDeviceClass.WIND_SPEED,
         state_class=SensorStateClass.MEASUREMENT,
         reporting_config=ReportingConfig(
-            min_interval=10, max_interval=900, reportable_change=5
+            min_interval=10,
+            max_interval=900,
+            reportable_change=5,
         ),
         fallback_name="Wind speed",
     )
@@ -569,7 +678,9 @@ CALCULATED = ShellyWS90CalculatedCluster
         device_class=SensorDeviceClass.WIND_DIRECTION,
         state_class=SensorStateClass.MEASUREMENT_ANGLE,
         reporting_config=ReportingConfig(
-            min_interval=10, max_interval=900, reportable_change=50
+            min_interval=10,
+            max_interval=900,
+            reportable_change=50,
         ),
         fallback_name="Wind direction",
     )
@@ -581,7 +692,9 @@ CALCULATED = ShellyWS90CalculatedCluster
         device_class=SensorDeviceClass.WIND_SPEED,
         state_class=SensorStateClass.MEASUREMENT,
         reporting_config=ReportingConfig(
-            min_interval=10, max_interval=900, reportable_change=10
+            min_interval=10,
+            max_interval=900,
+            reportable_change=10,
         ),
         translation_key="gust_speed",
         fallback_name="Gust speed",
