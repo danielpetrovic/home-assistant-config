@@ -65,7 +65,7 @@
           group_members:
           - media_player.bathroom
       - variables:
-          bathroom_volume: '{{ 0.25 if now().hour < 9 else 0.35 }}'
+          bathroom_volume: '{{ 0.3 if now().hour < 9 else 0.35 }}'
       - action: media_player.volume_set
         metadata: {}
         data:
@@ -124,7 +124,7 @@
         - 'on'
       sequence:
       - data:
-          volume_level: '{{ 0.25 if now().hour < 9 else 0.35 }}'
+          volume_level: '{{ 0.3 if now().hour < 9 else 0.35 }}'
         target:
           entity_id: media_player.bathroom
         action: media_player.volume_set
@@ -2598,6 +2598,13 @@
         target:
           entity_id: input_select.office_covers
       zha_remote: 13c133d7c726b4aae54cb1c41e870fcd
+      button_2_triple: []
+      button_1_triple:
+      - action: switch.toggle
+        metadata: {}
+        target:
+          entity_id: switch.office_desk
+        data: {}
 - id: '1736812457946'
   alias: Kitchen Button
   description: ''
@@ -6515,13 +6522,13 @@
   mode: single
 - id: '1783672215651'
   alias: Living Room TV Cabinet Light
-  description: Keep light.living_room_cabinet_light on between 09:00 and 00:00 while
+  description: Keep light.living_room_cabinet_light on between 08:00 and 00:00 while
     anyone is home, using the adaptive lighting dimmed preset. Turns off outside that
     window or the moment everyone leaves; turns back on if someone arrives back home
     within the window.
   triggers:
-  - at: 09:00:00
-    id: 09:00
+  - at: 08:00:00
+    id: 08:00
     trigger: time
   - at: 00:00:00
     id: 00:00
@@ -6541,12 +6548,12 @@
       conditions:
       - condition: trigger
         id:
-        - 09:00
+        - 08:00
         - home
       - condition: state
         entity_id: binary_sensor.presence
         state: 'on'
-      - after: 09:00:00
+      - after: 08:00:00
         condition: time
       sequence:
       - action: light.turn_on
