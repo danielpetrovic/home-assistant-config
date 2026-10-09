@@ -916,24 +916,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "media_player.living_room_kef",
-                      "show_entity_picture": false,
-                      "state_content": [
-                        "state",
-                        "source",
-                        "audio_codec"
-                      ],
-                      "vertical": false,
-                      "features": [
-                        {
-                          "type": "media-player-volume-buttons"
-                        }
-                      ],
-                      "features_position": "inline"
-                    },
-                    {
-                      "type": "tile",
-                      "entity": "media_player.office_kef",
+                      "entity": "media_player.living_room_surround_kef",
                       "show_entity_picture": false,
                       "state_content": [
                         "state",

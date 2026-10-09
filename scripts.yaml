@@ -419,14 +419,12 @@ alarm_pending:
   - action: siren.turn_on
     metadata: {}
     data:
-      duration: >-
-        {# The siren only shows "on" for this long, and the device decides how long
-        it really sounds, so cover the longest of its two alarms and the delays #}
-        {% set siren = states('number.alarm_siren_siren_delay') | int(0)
-          + states('number.alarm_siren_siren_duration') | int(3) * 60 %}
-        {% set light = states('number.alarm_siren_light_delay') | int(0)
-          + states('number.alarm_siren_light_duration') | int(15) * 60 %}
-        {{ ([siren, light] | max) + 5 }}
+      duration: "{# The siren only shows \"on\" for this long, and the device decides
+        how long it really sounds, so cover the longest of its two alarms and the
+        delays #} {% set siren = states('number.alarm_siren_siren_delay') | int(0)\n
+        \ + states('number.alarm_siren_siren_duration') | int(3) * 60 %}\n{% set light
+        = states('number.alarm_siren_light_delay') | int(0)\n  + states('number.alarm_siren_light_duration')
+        | int(15) * 60 %}\n{{ ([siren, light] | max) + 5 }}"
     target:
       entity_id: siren.alarm_siren
   alias: Alarm - Pending
