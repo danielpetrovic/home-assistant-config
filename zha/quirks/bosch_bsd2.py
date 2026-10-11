@@ -25,7 +25,7 @@ turns the smoke sensor on. Z2M only looks at bit 0.
 """
 
 import asyncio
-from typing import Any
+from typing import Any, Final
 
 from zha.quirks import SIREN_BASIC
 from zigpy import types as t
@@ -50,7 +50,6 @@ MAX_ALARM_TIMEOUT = 240
 
 # Sleepy devices miss broadcasts, so the broadcast is sent twice like Bosch and Z2M do
 BROADCAST_REPEAT_DELAY = 4
-HA_PROFILE_ID = 0x0104
 BROADCAST_SRC_ENDPOINT = 1
 BROADCAST_DST_ENDPOINT = 0xFF
 BROADCAST_RADIUS = 30
@@ -86,24 +85,22 @@ class BoschAlarmMode(t.enum8):
 class BoschSmokeAlarmIasZone(CustomCluster, IasZone):
     """IAS Zone cluster of the BSD-2 with local attributes for the settings."""
 
-    # pylint: disable=R0903
     class AttributeDefs(IasZone.AttributeDefs):
         """Local attributes added to the IAS Zone attributes."""
 
-        broadcast_alarms = ZCLAttributeDef(
+        broadcast_alarms: Final = ZCLAttributeDef(
             id=ATTR_BROADCAST_ALARMS, type=t.Bool, access="rw"
         )
-        test_mode = ZCLAttributeDef(id=ATTR_TEST_MODE, type=t.Bool, access="rw")
+        test_mode: Final = ZCLAttributeDef(id=ATTR_TEST_MODE, type=t.Bool, access="rw")
         # Seconds
-        test_mode_timeout = ZCLAttributeDef(
+        test_mode_timeout: Final = ZCLAttributeDef(
             id=ATTR_TEST_MODE_TIMEOUT, type=t.uint8_t, access="rw"
         )
 
-    # pylint: disable=R0903
     class ServerCommandDefs(IasZone.ServerCommandDefs):
         """Bosch manufacturer specific command added to the IAS Zone commands."""
 
-        alarm_control = ZCLCommandDef(
+        alarm_control: Final = ZCLCommandDef(
             id=CMD_ALARM_CONTROL,
             schema={"alarm_mode": BoschAlarmMode, "alarm_timeout": t.uint8_t},
             is_manufacturer_specific=True,
@@ -118,11 +115,7 @@ class BoschSmokeAlarmIasZone(CustomCluster, IasZone):
 
     def get(self, key: int | str, default: Any | None = None) -> Any:
         """Return the cached value, falling back to the default of a local attribute."""
-        try:
-            attr_def = self.find_attribute(key)
-        except KeyError:
-            return super().get(key, default)
-
+        attr_def = self.find_attribute(key)
         value = super().get(key)
         if value is None:
             return self._DEFAULT_VALUES.get(attr_def.id, default)
@@ -156,7 +149,7 @@ class BoschSmokeAlarmIasZone(CustomCluster, IasZone):
             command_id=CMD_ALARM_CONTROL,
         )
         await app.broadcast(
-            profile=HA_PROFILE_ID,
+            profile=zha.PROFILE_ID,
             cluster=self.cluster_id,
             src_ep=BROADCAST_SRC_ENDPOINT,
             dst_ep=BROADCAST_DST_ENDPOINT,
@@ -261,7 +254,7 @@ class BoschAlarmSiren(LocalDataCluster, IasWd):
 
     alarm_mode: BoschAlarmMode
 
-    async def start_warning(  # pylint: disable=W0221
+    async def start_warning(
         self, warning: WarningType, warning_duration: int, **kwargs: Any
     ) -> None:
         """Sound the alarm for the duration, or stop it."""
@@ -272,8 +265,8 @@ class BoschAlarmSiren(LocalDataCluster, IasWd):
         ias_zone = self.endpoint.device.endpoints[1].ias_zone
         await ias_zone.set_alarm(self.alarm_mode, timeout)
 
-    async def squawk(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=W0221
-        """The device cannot squawk."""
+    async def squawk(self, *args: Any, **kwargs: Any) -> None:
+        """Raise, because the device cannot squawk."""
         raise ZigbeeException("The BSD-2 does not support squawking")
 
 
