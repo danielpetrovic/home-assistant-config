@@ -6,13 +6,15 @@ from zigpy import types as t
 from zigpy.zcl.foundation import (
     BaseAttributeDefs,
     BaseCommandDefs,
+    WriteAttributesStatusRecord,
     ZCLAttributeDef,
     ZCLCommandDef,
+    ZCLHeader,
 )
 
-from zhaquirks import CustomCluster
 from zhaquirks.bosch import BOSCH
 from zhaquirks.builder import QuirkBuilder, UnitOfTime
+from zhaquirks.clusters import CustomCluster
 from zhaquirks.const import (
     COMMAND,
     ENDPOINT_ID,
@@ -21,6 +23,8 @@ from zhaquirks.const import (
     SHORT_PRESS,
     ZHA_SEND_EVENT,
 )
+
+BOSCH_MFG_CODE = 0x1209
 
 SWITCH = "switch"
 COMMAND_PRESS_RELEASED = "press_released"
@@ -75,14 +79,14 @@ class BoschRelayControl(CustomCluster):
             id=0x0001,
             type=BoschSwitchType,
             access="rwp",
-            is_manufacturer_specific=True,
+            manufacturer_code=BOSCH_MFG_CODE,
         )
 
         auto_off_enabled = ZCLAttributeDef(
             id=0x0006,
             type=t.Bool,
             access="rwp",
-            is_manufacturer_specific=True,
+            manufacturer_code=BOSCH_MFG_CODE,
         )
 
         # Seconds
@@ -90,14 +94,14 @@ class BoschRelayControl(CustomCluster):
             id=0x0007,
             type=t.uint16_t,
             access="rwp",
-            is_manufacturer_specific=True,
+            manufacturer_code=BOSCH_MFG_CODE,
         )
 
         child_lock = ZCLAttributeDef(
             id=0x0008,
             type=t.Bool,
             access="rwp",
-            is_manufacturer_specific=True,
+            manufacturer_code=BOSCH_MFG_CODE,
         )
 
         # Tenths of a second, 0 means the relay follows the switch state
@@ -105,7 +109,7 @@ class BoschRelayControl(CustomCluster):
             id=0x0024,
             type=t.uint16_t,
             access="rwp",
-            is_manufacturer_specific=True,
+            manufacturer_code=BOSCH_MFG_CODE,
         )
 
         # 0 is coupled, 1 is decoupled (a uint8 on the wire, not a bool)
@@ -113,14 +117,14 @@ class BoschRelayControl(CustomCluster):
             id=0x0031,
             type=t.uint8_t,
             access="rwp",
-            is_manufacturer_specific=True,
+            manufacturer_code=BOSCH_MFG_CODE,
         )
 
         actuator_type = ZCLAttributeDef(
             id=0x0034,
             type=BoschActuatorType,
             access="rwp",
-            is_manufacturer_specific=True,
+            manufacturer_code=BOSCH_MFG_CODE,
         )
 
         # Not a device attribute: derived from and written through pulse_length
@@ -136,14 +140,14 @@ class BoschRelayControl(CustomCluster):
         switch_event = ZCLCommandDef(
             id=0x03,
             schema={"status": t.uint8_t, "duration": t.uint8_t},
-            is_manufacturer_specific=True,
+            manufacturer_code=BOSCH_MFG_CODE,
         )
 
         # Second input of the dual input models (BMCT-DZ), handled like the first
         switch_event_right = ZCLCommandDef(
             id=0x04,
             schema={"status": t.uint8_t, "duration": t.uint8_t},
-            is_manufacturer_specific=True,
+            manufacturer_code=BOSCH_MFG_CODE,
         )
 
     _last_pulse_length: int = DEFAULT_PULSE_LENGTH
@@ -168,7 +172,11 @@ class BoschRelayControl(CustomCluster):
             BoschDeviceMode.Pulsed if pulse_length else BoschDeviceMode.Switch,
         )
 
-    async def write_attributes(self, attributes, **kwargs):
+    async def write_attributes(
+        self,
+        attributes: dict[str | int | ZCLAttributeDef, Any],
+        **kwargs: Any,
+    ) -> list[list[WriteAttributesStatusRecord]]:
         """Write the device mode as a pulse length.
 
         Pulsed restores the last pulse length, switch writes 0. An explicit
@@ -203,7 +211,13 @@ class BoschRelayControl(CustomCluster):
         self._sync_device_mode(self.get(self.AttributeDefs.pulse_length.name))
         return result
 
-    def handle_cluster_request(self, hdr, args, *, dst_addressing=None):
+    def handle_cluster_request(
+        self,
+        hdr: ZCLHeader,
+        args: list[Any],
+        *,
+        dst_addressing: t.AddrMode | None = None,
+    ) -> None:
         """Turn the raw switch status into named events."""
         if hdr.command_id not in (
             self.ClientCommandDefs.switch_event.id,
