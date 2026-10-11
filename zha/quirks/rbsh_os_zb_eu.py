@@ -1,28 +1,21 @@
-"""Bosch outdoor siren (RBSH-OS-ZB-EU, BSIR-EZ): alarm settings, power sources, diagnostics.
+"""Device handler for the Bosch outdoor siren, RBSH-OS-ZB-EU (BSIR-EZ).
 
-Mirrors the Zigbee2MQTT definition (boschBsirExtend in zigbee-herdsman-converters).
-ZHA alone only gave a siren with tones the device does not have, default tone, level
-and strobe selects that do nothing, one IAS zone sensor, and none of the settings of
-the device.
+The siren has the standard IAS WD cluster, but it sounds its alarm through a Bosch
+manufacturer specific command and applies the alarm mode, volume, delays and durations
+that are stored on the device. So the siren entity is a basic siren (on and off) that
+sends that command, and the stored settings are entities of their own.
 
-The device has the standard IAS WD cluster, but it sounds its alarm through a Bosch
-manufacturer specific command, with the mode, volume, delays and durations stored on
-the device. So the siren entity is a basic siren (on and off) that sends that command,
-and the settings are entities of their own. ZHA's default tone, level and strobe selects
-only exist for sirens that do not expose the basic siren feature, so they disappear.
+Zone status bits (Bosch specific):
+- Alarm_1: alarm from the external trigger input
+- Alarm_2: power outage (only with an AC or DC supply)
+- Tamper: the device is tampered with
 
-Zone status bits (Bosch specific, from the Z2M definition):
-- bit 0: alarm from the external trigger input
-- bit 1: power outage (only with an AC or DC supply)
-- bit 2: tamper
-
-The device wants a manufacturer specific acknowledgement for the tamper and power
-outage bits, which the IAS Zone cluster here sends like Z2M does. ZHA's own IAS zone
-sensor would treat the external trigger and the power outage as one alarm, so it is
-replaced by one binary sensor per bit.
+The device wants a manufacturer specific acknowledgement for the tamper and power outage
+bits. ZHA's own IAS zone sensor would treat the external trigger and the power outage as
+one alarm, so it is replaced by one binary sensor per bit.
 """
 
-from typing import Any
+from typing import Any, Final
 
 from zha.quirks import SIREN_BASIC
 from zigpy import types as t
@@ -32,6 +25,7 @@ from zigpy.zcl.clusters.general import PowerConfiguration
 from zigpy.zcl.clusters.security import IasWd, IasZone, WarningMode, WarningType
 from zigpy.zcl.foundation import ZCLAttributeDef, ZCLCommandDef
 
+from zhaquirks.bosch import BOSCH
 from zhaquirks.builder import (
     BinarySensorDeviceClass,
     EntityPlatform,
@@ -46,9 +40,9 @@ from zhaquirks.builder import (
 from zhaquirks.clusters import CustomCluster
 
 MODEL = "RBSH-OS-ZB-EU"
-BOSCH_MFG_CODE = 0x1209
+BOSCH_MANUFACTURER_CODE = 0x1209
 
-# Data of the alarm_control command, from the Z2M trigger and stop buttons
+# Data of the alarm_control command: start the alarm with the stored settings, or stop it
 ALARM_TRIGGER = 0x07
 ALARM_STOP = 0x00
 
@@ -56,13 +50,9 @@ ALARM_STOP = 0x00
 ACK_TAMPER = 0x02
 ACK_POWER_OUTAGE = 0x04
 
-BIT_EXTERNAL_TRIGGER = 1 << 0
-BIT_POWER_OUTAGE = 1 << 1
-BIT_TAMPER = 1 << 2
 
-
-# These values are plain uint8 attributes on the wire, like in Z2M. The device refuses
-# a write with an enum8 data type (INVALID_DATA_TYPE), so the enums only name the values
+# The values below are plain uint8 attributes on the wire. The device refuses a write
+# with an enum8 data type (INVALID_DATA_TYPE), so the enums only name the values.
 class BoschAlarmMode(t.enum8):
     """What the device does when an alarm is triggered."""
 
@@ -111,48 +101,45 @@ class BoschCurrentPowerSource(t.enum8):
 class BoschSirenPowerConfiguration(CustomCluster, PowerConfiguration):
     """Power configuration cluster with the Bosch power source attributes."""
 
-    # pylint: disable=R0903
     class AttributeDefs(PowerConfiguration.AttributeDefs):
         """Manufacturer specific attributes."""
 
         # Tenths of a volt
-        solar_panel_voltage = ZCLAttributeDef(
+        solar_panel_voltage: Final = ZCLAttributeDef(
             id=0xA000,
             type=t.uint16_t,
             access="rp",
-            manufacturer_code=BOSCH_MFG_CODE,
+            manufacturer_code=BOSCH_MANUFACTURER_CODE,
         )
 
-        primary_power_source = ZCLAttributeDef(
+        primary_power_source: Final = ZCLAttributeDef(
             id=0xA002,
             type=t.uint8_t,
             access="rwp",
-            manufacturer_code=BOSCH_MFG_CODE,
+            manufacturer_code=BOSCH_MANUFACTURER_CODE,
         )
 
 
 class BoschSirenIasZone(CustomCluster, IasZone):
     """IAS Zone cluster that acknowledges the Bosch zone status bits."""
 
-    # pylint: disable=R0903
     class AttributeDefs(IasZone.AttributeDefs):
         """Manufacturer specific attributes."""
 
-        current_power_source = ZCLAttributeDef(
+        current_power_source: Final = ZCLAttributeDef(
             id=0xA001,
             type=t.uint8_t,
             access="rp",
-            manufacturer_code=BOSCH_MFG_CODE,
+            manufacturer_code=BOSCH_MANUFACTURER_CODE,
         )
 
-    # pylint: disable=R0903
     class ServerCommandDefs(IasZone.ServerCommandDefs):
-        """Bosch manufacturer specific command added to the IAS Zone commands."""
+        """Manufacturer specific commands."""
 
-        acknowledge_status_change = ZCLCommandDef(
+        acknowledge_status_change: Final = ZCLCommandDef(
             id=0xF3,
             schema={"data": t.uint8_t},
-            is_manufacturer_specific=True,
+            manufacturer_code=BOSCH_MANUFACTURER_CODE,
         )
 
     def handle_cluster_request(
@@ -168,20 +155,17 @@ class BoschSirenIasZone(CustomCluster, IasZone):
         if hdr.command_id != IasZone.ClientCommandDefs.status_change_notification.id:
             return
 
-        zone_status = getattr(args, "zone_status", None)
-        if zone_status is None:
-            zone_status = args[0]
-        zone_status = int(zone_status)
+        zone_status = IasZone.ZoneStatus(args.zone_status)
 
-        if zone_status & BIT_TAMPER:
+        if zone_status & IasZone.ZoneStatus.Tamper:
             self.create_catching_task(self._acknowledge(ACK_TAMPER))
-        if zone_status & BIT_POWER_OUTAGE:
+        if zone_status & IasZone.ZoneStatus.Alarm_2:
             self.create_catching_task(self._acknowledge(ACK_POWER_OUTAGE))
 
     async def _acknowledge(self, data: int) -> None:
         """Confirm a zone status bit to the device."""
         try:
-            await self.acknowledge_status_change(data=data, manufacturer=BOSCH_MFG_CODE)
+            await self.acknowledge_status_change(data=data)
         except (ZigbeeException, TimeoutError) as err:
             self.warning("Acknowledging zone status 0x%02X failed: %s", data, err)
 
@@ -189,74 +173,72 @@ class BoschSirenIasZone(CustomCluster, IasZone):
 class BoschSirenIasWd(CustomCluster, IasWd):
     """IAS WD cluster with the Bosch alarm settings and the alarm command."""
 
-    # pylint: disable=R0903
     class AttributeDefs(IasWd.AttributeDefs):
         """Manufacturer specific attributes."""
 
         # Minutes
-        siren_duration = ZCLAttributeDef(
+        siren_duration: Final = ZCLAttributeDef(
             id=0xA000,
             type=t.uint8_t,
             access="rwp",
-            manufacturer_code=BOSCH_MFG_CODE,
+            manufacturer_code=BOSCH_MANUFACTURER_CODE,
         )
 
-        alarm_mode = ZCLAttributeDef(
+        alarm_mode: Final = ZCLAttributeDef(
             id=0xA001,
             type=t.uint8_t,
             access="rwp",
-            manufacturer_code=BOSCH_MFG_CODE,
+            manufacturer_code=BOSCH_MANUFACTURER_CODE,
         )
 
-        siren_volume = ZCLAttributeDef(
+        siren_volume: Final = ZCLAttributeDef(
             id=0xA002,
             type=t.uint8_t,
             access="rwp",
-            manufacturer_code=BOSCH_MFG_CODE,
+            manufacturer_code=BOSCH_MANUFACTURER_CODE,
         )
 
         # Seconds
-        siren_delay = ZCLAttributeDef(
+        siren_delay: Final = ZCLAttributeDef(
             id=0xA003,
             type=t.uint16_t,
             access="rwp",
-            manufacturer_code=BOSCH_MFG_CODE,
+            manufacturer_code=BOSCH_MANUFACTURER_CODE,
         )
 
         # Seconds
-        light_delay = ZCLAttributeDef(
+        light_delay: Final = ZCLAttributeDef(
             id=0xA004,
             type=t.uint16_t,
             access="rwp",
-            manufacturer_code=BOSCH_MFG_CODE,
+            manufacturer_code=BOSCH_MANUFACTURER_CODE,
         )
 
         # Minutes
-        light_duration = ZCLAttributeDef(
+        light_duration: Final = ZCLAttributeDef(
             id=0xA005,
             type=t.uint8_t,
             access="rwp",
-            manufacturer_code=BOSCH_MFG_CODE,
+            manufacturer_code=BOSCH_MANUFACTURER_CODE,
         )
 
-        device_state = ZCLAttributeDef(
+        device_state: Final = ZCLAttributeDef(
             id=0xA006,
             type=t.uint8_t,
             access="rp",
-            manufacturer_code=BOSCH_MFG_CODE,
+            manufacturer_code=BOSCH_MANUFACTURER_CODE,
         )
 
-    # pylint: disable=R0903
     class ServerCommandDefs(IasWd.ServerCommandDefs):
-        """Bosch manufacturer specific command added to the IAS WD commands."""
+        """Manufacturer specific commands."""
 
-        alarm_control = ZCLCommandDef(
+        alarm_control: Final = ZCLCommandDef(
             id=0xF0,
             schema={"data": t.uint8_t},
-            is_manufacturer_specific=True,
+            manufacturer_code=BOSCH_MANUFACTURER_CODE,
         )
 
-    async def start_warning(  # pylint: disable=W0221
+    async def start_warning(
         self, warning: WarningType, warning_duration: int, **kwargs: Any
     ) -> None:
         """Trigger the alarm with the stored settings, or stop it.
@@ -265,40 +247,38 @@ class BoschSirenIasWd(CustomCluster, IasWd):
         device uses its own settings and delays.
         """
         data = ALARM_STOP if warning.mode == WarningMode.Stop else ALARM_TRIGGER
-        result = await self.alarm_control(data=data, manufacturer=BOSCH_MFG_CODE)
+        result = await self.alarm_control(data=data)
         status = getattr(result, "status", foundation.Status.SUCCESS)
         if status != foundation.Status.SUCCESS:
             raise ZigbeeException(f"The device refused the alarm command: {status}")
 
-    async def squawk(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=W0221
+    async def squawk(self, *args: Any, **kwargs: Any) -> None:
         """Refuse to squawk, the device cannot."""
         raise ZigbeeException("The outdoor siren does not support squawking")
 
 
-def zone_status_bit(mask: int):
-    """Return a converter that reads one bit of the zone status."""
+def zone_status_flag(flag: int):
+    """Return a converter that reads one flag of the zone status."""
 
     def convert(value: int) -> bool:
-        return bool(int(value) & mask)
+        return bool(IasZone.ZoneStatus(value) & flag)
 
     return convert
 
 
-# Reporting like Z2M sets it up, the device sends changes of these by itself
+# The device sends changes of these by itself once reporting is configured
 STATE_REPORTING = ReportingConfig(
     min_interval=0, max_interval=3600, reportable_change=1
 )
 
 (
-    QuirkBuilder("Bosch", MODEL)
-    .applies_to("BOSCH", MODEL)
-    # Bosch's product code instead of the Zigbee model string, like Z2M's model id
-    .friendly_name(model="BSIR-EZ", manufacturer="Bosch")
+    QuirkBuilder(BOSCH, MODEL)
+    .friendly_name(model="BSIR-EZ", manufacturer=BOSCH)
     .replaces(BoschSirenPowerConfiguration)
     .replaces(BoschSirenIasZone)
     .replaces(BoschSirenIasWd)
-    # Basic siren: turn on and off, no tones, volume or strobe options. This also
-    # removes ZHA's default tone, level and strobe selects
+    # Basic siren: turn on and off, no tones, volume or strobe options. ZHA's default
+    # tone, level and strobe selects only exist for sirens without this feature
     .exposes_feature(SIREN_BASIC)
     # Replaced by one binary sensor per zone status bit below. The function filter
     # keeps the rule from matching those new sensors as well
@@ -307,39 +287,39 @@ STATE_REPORTING = ReportingConfig(
         cluster_id=IasZone.cluster_id,
         function=lambda entity: entity.__class__.__name__ == "IASZone",
     )
-    # The siren entity triggers the alarm. The siren only shows "on" for the duration the
-    # caller passes, so an alarm started by the external trigger input, or after that
-    # duration, can only be stopped with this button
+    # The siren entity only shows "on" for the duration that the caller passes, so an
+    # alarm that it does not show, such as one from the external trigger input, can
+    # only be stopped with this button
     .command_button(
-        BoschSirenIasWd.ServerCommandDefs.alarm_control.name,
-        IasWd.cluster_id,
-        command_kwargs={"data": ALARM_STOP, "manufacturer": BOSCH_MFG_CODE},
+        command_name=BoschSirenIasWd.ServerCommandDefs.alarm_control.name,
+        cluster_id=IasWd.cluster_id,
+        command_kwargs={"data": ALARM_STOP},
         entity_type=EntityType.CONFIG,
         unique_id_suffix="stop_alarm",
         translation_key="stop_alarm",
         fallback_name="Stop alarm",
     )
     .enum(
-        BoschSirenIasWd.AttributeDefs.alarm_mode.name,
-        BoschAlarmMode,
-        IasWd.cluster_id,
+        attribute_name=BoschSirenIasWd.AttributeDefs.alarm_mode.name,
+        enum_class=BoschAlarmMode,
+        cluster_id=IasWd.cluster_id,
         entity_type=EntityType.CONFIG,
         attribute_initialized_from_cache=False,
         translation_key="alarm_mode",
         fallback_name="Alarm mode",
     )
     .enum(
-        BoschSirenIasWd.AttributeDefs.siren_volume.name,
-        BoschSirenVolume,
-        IasWd.cluster_id,
+        attribute_name=BoschSirenIasWd.AttributeDefs.siren_volume.name,
+        enum_class=BoschSirenVolume,
+        cluster_id=IasWd.cluster_id,
         entity_type=EntityType.CONFIG,
         attribute_initialized_from_cache=False,
         translation_key="siren_volume",
         fallback_name="Siren volume",
     )
     .number(
-        BoschSirenIasWd.AttributeDefs.siren_duration.name,
-        IasWd.cluster_id,
+        attribute_name=BoschSirenIasWd.AttributeDefs.siren_duration.name,
+        cluster_id=IasWd.cluster_id,
         min_value=1,
         max_value=15,
         step=1,
@@ -350,8 +330,8 @@ STATE_REPORTING = ReportingConfig(
         fallback_name="Siren duration",
     )
     .number(
-        BoschSirenIasWd.AttributeDefs.light_duration.name,
-        IasWd.cluster_id,
+        attribute_name=BoschSirenIasWd.AttributeDefs.light_duration.name,
+        cluster_id=IasWd.cluster_id,
         min_value=1,
         max_value=15,
         step=1,
@@ -362,8 +342,8 @@ STATE_REPORTING = ReportingConfig(
         fallback_name="Light duration",
     )
     .number(
-        BoschSirenIasWd.AttributeDefs.siren_delay.name,
-        IasWd.cluster_id,
+        attribute_name=BoschSirenIasWd.AttributeDefs.siren_delay.name,
+        cluster_id=IasWd.cluster_id,
         min_value=0,
         max_value=180,
         step=1,
@@ -374,8 +354,8 @@ STATE_REPORTING = ReportingConfig(
         fallback_name="Siren delay",
     )
     .number(
-        BoschSirenIasWd.AttributeDefs.light_delay.name,
-        IasWd.cluster_id,
+        attribute_name=BoschSirenIasWd.AttributeDefs.light_delay.name,
+        cluster_id=IasWd.cluster_id,
         min_value=0,
         max_value=180,
         step=1,
@@ -386,9 +366,9 @@ STATE_REPORTING = ReportingConfig(
         fallback_name="Light delay",
     )
     .enum(
-        BoschSirenPowerConfiguration.AttributeDefs.primary_power_source.name,
-        BoschPrimaryPowerSource,
-        PowerConfiguration.cluster_id,
+        attribute_name=BoschSirenPowerConfiguration.AttributeDefs.primary_power_source.name,
+        enum_class=BoschPrimaryPowerSource,
+        cluster_id=PowerConfiguration.cluster_id,
         entity_type=EntityType.CONFIG,
         attribute_initialized_from_cache=False,
         reporting_config=STATE_REPORTING,
@@ -396,9 +376,9 @@ STATE_REPORTING = ReportingConfig(
         fallback_name="Primary power source",
     )
     .enum(
-        BoschSirenIasWd.AttributeDefs.device_state.name,
-        BoschDeviceState,
-        IasWd.cluster_id,
+        attribute_name=BoschSirenIasWd.AttributeDefs.device_state.name,
+        enum_class=BoschDeviceState,
+        cluster_id=IasWd.cluster_id,
         entity_platform=EntityPlatform.SENSOR,
         entity_type=EntityType.DIAGNOSTIC,
         attribute_initialized_from_cache=False,
@@ -407,9 +387,9 @@ STATE_REPORTING = ReportingConfig(
         fallback_name="Device state",
     )
     .enum(
-        BoschSirenIasZone.AttributeDefs.current_power_source.name,
-        BoschCurrentPowerSource,
-        IasZone.cluster_id,
+        attribute_name=BoschSirenIasZone.AttributeDefs.current_power_source.name,
+        enum_class=BoschCurrentPowerSource,
+        cluster_id=IasZone.cluster_id,
         entity_platform=EntityPlatform.SENSOR,
         entity_type=EntityType.DIAGNOSTIC,
         attribute_initialized_from_cache=False,
@@ -418,8 +398,8 @@ STATE_REPORTING = ReportingConfig(
         fallback_name="Current power source",
     )
     .sensor(
-        BoschSirenPowerConfiguration.AttributeDefs.solar_panel_voltage.name,
-        PowerConfiguration.cluster_id,
+        attribute_name=BoschSirenPowerConfiguration.AttributeDefs.solar_panel_voltage.name,
+        cluster_id=PowerConfiguration.cluster_id,
         divisor=10,
         unit=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
@@ -433,28 +413,28 @@ STATE_REPORTING = ReportingConfig(
         fallback_name="Solar panel voltage",
     )
     .binary_sensor(
-        IasZone.AttributeDefs.zone_status.name,
-        IasZone.cluster_id,
-        attribute_converter=zone_status_bit(BIT_EXTERNAL_TRIGGER),
+        attribute_name=IasZone.AttributeDefs.zone_status.name,
+        cluster_id=IasZone.cluster_id,
+        attribute_converter=zone_status_flag(IasZone.ZoneStatus.Alarm_1),
         entity_type=EntityType.STANDARD,
         unique_id_suffix="external_trigger",
         translation_key="external_trigger",
         fallback_name="External trigger",
     )
     .binary_sensor(
-        IasZone.AttributeDefs.zone_status.name,
-        IasZone.cluster_id,
-        attribute_converter=zone_status_bit(BIT_TAMPER),
+        attribute_name=IasZone.AttributeDefs.zone_status.name,
+        cluster_id=IasZone.cluster_id,
         device_class=BinarySensorDeviceClass.TAMPER,
+        attribute_converter=zone_status_flag(IasZone.ZoneStatus.Tamper),
         entity_type=EntityType.DIAGNOSTIC,
         unique_id_suffix="tamper",
         translation_key="tamper",
         fallback_name="Tamper",
     )
     .binary_sensor(
-        IasZone.AttributeDefs.zone_status.name,
-        IasZone.cluster_id,
-        attribute_converter=zone_status_bit(BIT_POWER_OUTAGE),
+        attribute_name=IasZone.AttributeDefs.zone_status.name,
+        cluster_id=IasZone.cluster_id,
+        attribute_converter=zone_status_flag(IasZone.ZoneStatus.Alarm_2),
         entity_type=EntityType.DIAGNOSTIC,
         unique_id_suffix="power_outage",
         translation_key="power_outage",
