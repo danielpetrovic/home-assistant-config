@@ -180,8 +180,9 @@ def calculate_weather_condition(
     pressure_trend: float | None,
 ) -> enum.Enum:
     """Weather condition from the measurements (same rules as Zigbee2MQTT)."""
-    is_raining = raining and rain_rate is not None and rain_rate > 0
-    is_pouring = is_raining and rain_rate > 10
+    rate = rain_rate or 0
+    is_raining = raining and rate > 0
+    is_pouring = is_raining and rate > 10
     is_windy = wind_ms is not None and wind_ms > 10
     is_night = lux < 10
 
@@ -190,7 +191,7 @@ def calculate_weather_condition(
 
     is_hail = (
         is_raining
-        and rain_rate > 5
+        and rate > 5
         and lux < 5000
         and wind_ms is not None
         and wind_ms > 5
