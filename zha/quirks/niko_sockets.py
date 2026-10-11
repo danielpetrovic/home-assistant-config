@@ -1,4 +1,12 @@
-"""Niko Connected socket outlet (170-33505 / 170-34605)."""
+"""Niko Connected socket outlet and Smart plugs.
+
+Local copy of the quirks of the upstream pull request (zhaquirks/niko/outlet.py and
+zhaquirks/niko/plug.py). The shared constants are defined here because the installed
+zha-quirks has no zhaquirks.niko package yet. Delete this file once a zha-quirks
+release that contains the Niko quirks is installed.
+"""
+
+from typing import Final
 
 from zigpy import types as t
 from zigpy.zcl.clusters.homeautomation import ElectricalMeasurement
@@ -9,6 +17,9 @@ from zhaquirks.clusters import CustomCluster
 
 NIKO = "NIKO NV"
 NIKO_MFG_CODE = 0x125F
+
+# The 552-80698 reports its manufacturer as "Niko NV", the outlet as "NIKO NV".
+NIKO_PLUG_MANUFACTURER = "Niko NV"
 
 
 class LedOffColor(t.enum24):
@@ -27,28 +38,27 @@ class NikoOutletConfigCluster(CustomCluster):
     cluster_id = 0xFC00
     ep_attribute = "niko_config"
 
-    # pylint: disable=R0903
     class AttributeDefs(BaseAttributeDefs):
         """Attributes of the outlet configuration cluster."""
 
         # Color of the status LED while the socket is turned off. While the socket is
         # turned on, the selected color is only shown briefly and the LED returns to
         # white, so the attribute always reads white then.
-        led_off_color = ZCLAttributeDef(
+        led_off_color: Final = ZCLAttributeDef(
             id=0x0100,
             type=LedOffColor,
             access="rw",
             manufacturer_code=NIKO_MFG_CODE,
         )
         # 0 = locked (physical button disabled), 1 = unlocked (default)
-        child_lock = ZCLAttributeDef(
+        child_lock: Final = ZCLAttributeDef(
             id=0x0101,
             type=t.uint8_t,
             access="rw",
             manufacturer_code=NIKO_MFG_CODE,
         )
         # 0 = status LED disabled, 1 = status LED enabled (default)
-        led_enable = ZCLAttributeDef(
+        led_enable: Final = ZCLAttributeDef(
             id=0x0104,
             type=t.uint8_t,
             access="rw",
@@ -78,6 +88,10 @@ class NikoOutletConfigCluster(CustomCluster):
 
 (
     QuirkBuilder(NIKO, "Connected socket outlet")
+    .friendly_name(
+        manufacturer="Niko",
+        model="Connected socket outlet (170-33505/170-34605)",
+    )
     .replaces(NikoOutletConfigCluster)
     .switch(
         NikoOutletConfigCluster.AttributeDefs.child_lock.name,
@@ -117,6 +131,25 @@ class NikoOutletConfigCluster(CustomCluster):
         cluster_id=ElectricalMeasurement.cluster_id,
         unique_id_suffix="rms_current",
         new_entity_registry_enabled_default=False,
+    )
+    .add_to_registry()
+)
+
+(
+    QuirkBuilder(NIKO_PLUG_MANUFACTURER, "Smart plug Zigbee SE")
+    .friendly_name(
+        manufacturer="Niko",
+        model="Smart plug with side earthing pin (552-80698)",
+    )
+    .add_to_registry()
+)
+
+(
+    QuirkBuilder(NIKO_PLUG_MANUFACTURER, "Smart plug Zigbee PE")
+    .applies_to(NIKO, "Smart plug Zigbee PE")
+    .friendly_name(
+        manufacturer="Niko",
+        model="Smart plug with earthing pin (552-80699)",
     )
     .add_to_registry()
 )

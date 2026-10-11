@@ -209,7 +209,7 @@ The installation is organized across 3 floors:
 ### Niko Zigbee Energy Sockets and Plugs (14)
 
 These replaced the HomeWizard Wi-Fi Energy Sockets. Energy sensors are named `sensor.<device>_energy` (name "Energy").
-- ZHA, Connected socket outlet (built-in, uses the local quirk `zha/quirks/niko_outlet.py`): Washing machine, Dryer, Heat recovery ventilation, Office desk, Gameroom desk
+- ZHA, Connected socket outlet (built-in, uses the local quirk `zha/quirks/niko_sockets.py`): Washing machine, Dryer, Heat recovery ventilation, Office desk, Gameroom desk
 - ZHA, Smart plug Zigbee SE: Living room media, Kitchen media + Fridge + Freezer, Heating pump 2
 - Zigbee2MQTT, Connected socket outlet (still to be moved): Alex PC, Deni PC, Large freezer, Heating pump 0, Heating pump 1
 - Gameroom media: Connected socket outlet, removed from Zigbee2MQTT and waiting to be re-paired into ZHA
