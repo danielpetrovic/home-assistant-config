@@ -3092,7 +3092,7 @@
         message: Someone rang the doorbell!
         data:
           channel: Doorbell
-          clickAction: /lovelace/front_door
+          clickAction: intent://deeplink_v1/cameraTimeline?console_id=1C0B8B1075B60000000008E65A2400000000095FEF3A0000000067E13887:2090230765&camera_mac=68D79AE5ACA5#Intent;scheme=unifi-protect;package=com.ubnt.unifi.protect;end
           image: /api/camera_proxy/camera.front_door
           importance: high
           notification_icon: mdi:doorbell-video
@@ -3104,7 +3104,7 @@
         message: Someone rang the doorbell!
         data:
           channel: Doorbell
-          clickAction: /lovelace/front_door
+          clickAction: intent://deeplink_v1/cameraTimeline?console_id=1C0B8B1075B60000000008E65A2400000000095FEF3A0000000067E13887:2090230765&camera_mac=68D79AE5ACA5#Intent;scheme=unifi-protect;package=com.ubnt.unifi.protect;end
           image: /api/camera_proxy/camera.front_door
           importance: high
           notification_icon: mdi:doorbell-video
@@ -3125,11 +3125,6 @@
         target:
           entity_id: media_player.living_room_tv
         data: {}
-  variables:
-    base_url_https: '{{ states(''input_text.base_url_https'') }}'
-    base_url_rtsp: '{{ states(''input_text.base_url_rtsp'') }}'
-    image_url: '{{ base_url_https }}{{state_attr(''camera.front_door'',''entity_picture'')+''&time=''}}{{as_timestamp(now())}}'
-    video_url: '{{ base_url_rtsp }}/front_door'
   mode: restart
 - id: '1746611445373'
   alias: Bedroom Alex Motion
