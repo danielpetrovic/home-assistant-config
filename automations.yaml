@@ -5465,47 +5465,61 @@
       - condition: trigger
         id: 00:00
       sequence:
-      - action: light.turn_off
-        target:
-          area_id:
-          - bedroom
-          - dining_table
-          - entrance
-          - gameroom
-          - garden
-          - gym
-          - hallway
-          - kitchen
-          - laundry_room
-          - living_room
-          - office
-          - roof_terrace
-          - shed
-        data:
-          transition: 60
+      - alias: One room at a time
+        repeat:
+          for_each:
+          - light.bedroom_lights
+          - light.dining_table_lights
+          - light.entrance_lights
+          - light.gameroom_lights
+          - light.garden_lights
+          - light.gym_lights
+          - light.hallway_lights
+          - light.kitchen_lights
+          - light.laundry_room_lights
+          - light.living_room_lights
+          - light.office_lights
+          - light.roof_terrace_lights
+          - light.shed_lights
+          sequence:
+          - action: light.turn_off
+            continue_on_error: true
+            target:
+              entity_id: '{{ repeat.item }}'
+            data:
+              transition: 60
+          - delay:
+              seconds: 3
     - alias: 01:00
       conditions:
       - condition: trigger
         id: 01:00
       sequence:
-      - action: light.turn_off
-        target:
-          area_id:
-          - bedroom
-          - dining_table
-          - entrance
-          - gameroom
-          - garden
-          - gym
-          - hallway
-          - kitchen
-          - laundry_room
-          - living_room
-          - office
-          - roof_terrace
-          - shed
-        data:
-          transition: 60
+      - alias: One room at a time
+        repeat:
+          for_each:
+          - light.bedroom_lights
+          - light.dining_table_lights
+          - light.entrance_lights
+          - light.gameroom_lights
+          - light.garden_lights
+          - light.gym_lights
+          - light.hallway_lights
+          - light.kitchen_lights
+          - light.laundry_room_lights
+          - light.living_room_lights
+          - light.office_lights
+          - light.roof_terrace_lights
+          - light.shed_lights
+          sequence:
+          - action: light.turn_off
+            continue_on_error: true
+            target:
+              entity_id: '{{ repeat.item }}'
+            data:
+              transition: 60
+          - delay:
+              seconds: 3
   - alias: Luminosity
     choose:
     - alias: dark or dim
