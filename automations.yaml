@@ -5999,8 +5999,8 @@
       - input_text.alarm_code_user_3
       alarm_code_user_name: input_text.alarm_code_user_name
       integration_type:
-      - z2m
       - dashboard
+      - zha
       z2m_base_topic: zigbee2mqtt
       z2m_alarm_keypad: Alarm Keypad
       alarm_presence_sensor: binary_sensor.presence
@@ -6069,6 +6069,9 @@
       - script.lights_breathe_orange
       schedule_mode: workday
       alarm_workday_sensor: binary_sensor.workday_sensor
+      zha_alarm_keypad_device: f2b6b66760a5fd1c9cc712d516d58680
+      zha_alarm_control_panel_keypad: alarm_control_panel.alarm_keypad_alarm_control_panel
+      zha_alarm_code_keypad: input_text.alarm_code_keypad
 - id: '1765450835637'
   alias: Gym Motion
   description: ''
