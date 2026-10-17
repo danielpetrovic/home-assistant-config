@@ -167,8 +167,8 @@ lights_green:
     data:
       brightness_pct: 100
       color_name: green
-      effect: breathe
       transition: 1
+      flash: long
     target:
       entity_id:
       - light.alarm
@@ -235,8 +235,8 @@ lights_blue:
     data:
       brightness_pct: 100
       color_name: blue
-      effect: breathe
       transition: 1
+      flash: long
     target:
       entity_id:
       - light.alarm
@@ -303,8 +303,8 @@ lights_red:
     data:
       brightness_pct: 100
       color_name: red
-      effect: breathe
       transition: 1
+      flash: long
     target:
       entity_id:
       - light.alarm
@@ -371,8 +371,8 @@ lights_orange:
     data:
       brightness_pct: 100
       color_name: orange
-      effect: breathe
       transition: 1
+      flash: long
     target:
       entity_id:
       - light.alarm
