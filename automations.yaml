@@ -6269,6 +6269,7 @@
         - light.deni_tv_light
         - light.living_room_tv_light
         - light.living_room_cabinet_light
+        - light.dining_table_cabinet_light
       auto_adjust_brightness: true
       auto_adjust_color_temp: true
 - id: '1774838850323'
@@ -6559,7 +6560,9 @@
             | int }}'
           transition: 30
         target:
-          entity_id: light.living_room_cabinet_light
+          entity_id:
+          - light.living_room_cabinet_light
+          - light.dining_table_cabinet_light
     - alias: 'Off'
       conditions:
       - condition: trigger
@@ -6571,7 +6574,9 @@
         data:
           transition: 30
         target:
-          entity_id: light.living_room_cabinet_light
+          entity_id:
+          - light.living_room_cabinet_light
+          - light.dining_table_cabinet_light
   mode: restart
 - id: '1769193997494'
   alias: Car

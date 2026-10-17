@@ -478,6 +478,7 @@ light:
     entities:
       - light.dining_table_above_light
       - light.dining_table_below_light
+      - light.dining_table_cabinet_light
 
   - platform: group
     name: Entrance Lights
@@ -529,6 +530,7 @@ light:
       - light.living_room_above_light
       - light.living_room_below_light
       - light.living_room_tv_light
+      - light.living_room_cabinet_light
 
   # First Floor Areas
   - platform: group
