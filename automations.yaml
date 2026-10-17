@@ -4890,28 +4890,28 @@
   triggers:
   - at: 07:30:00
     id: 07:30
-    platform: time
+    trigger: time
   - at: 08:30:00
     id: 08:30
-    platform: time
+    trigger: time
   - at: 09:00:00
     id: 09:00
-    platform: time
+    trigger: time
   - at: '10:00:00'
     id: '10:00'
-    platform: time
+    trigger: time
   - at: '11:00:00'
     id: '11:00'
-    platform: time
+    trigger: time
   - at: '12:00:00'
     id: '12:00'
-    platform: time
+    trigger: time
   - at: '18:00:00'
     id: '18:00'
-    platform: time
-  - platform: state
-    entity_id: sensor.outdoor_brightness
+    trigger: time
+  - entity_id: sensor.outdoor_brightness
     id: brightness
+    trigger: state
   conditions: []
   actions:
   - alias: Time-based logic
@@ -5271,13 +5271,38 @@
             preset: Exposed
           - entity: input_select.office_covers
             preset: Exposed
-          - entity: input_select.living_room_covers
-            preset: Shaded
           sequence:
           - target:
               entity_id: '{{ repeat.item.entity }}'
             data:
               option: '{{ repeat.item.preset }}'
+            action: input_select.select_option
+      - choose:
+        - alias: dim
+          conditions:
+          - condition: state
+            entity_id: sensor.outdoor_brightness
+            state:
+            - dim
+            - overcast
+          sequence:
+          - target:
+              entity_id: input_select.living_room_covers
+            data:
+              option: Exposed
+            action: input_select.select_option
+        - alias: sunny/bright
+          conditions:
+          - condition: state
+            entity_id: sensor.outdoor_brightness
+            state:
+            - sunny
+            - bright
+          sequence:
+          - target:
+              entity_id: input_select.living_room_covers
+            data:
+              option: Shaded
             action: input_select.select_option
     - alias: warm
       conditions:
