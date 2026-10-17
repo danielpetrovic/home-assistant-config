@@ -8064,11 +8064,11 @@
                   "cards": [
                     {
                       "type": "media-control",
-                      "entity": "media_player.living_room"
+                      "entity": "media_player.living_room_surround"
                     },
                     {
                       "type": "tile",
-                      "entity": "media_player.living_room_kef",
+                      "entity": "media_player.living_room_surround_kef",
                       "name": "KEF",
                       "show_entity_picture": false,
                       "hide_state": false,
@@ -8087,7 +8087,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "media_player.living_room",
+                      "entity": "media_player.living_room_surround",
                       "name": "Music Assistant",
                       "show_entity_picture": false,
                       "hide_state": false,
@@ -9718,61 +9718,6 @@
             {
               "type": "grid",
               "cards": [
-                {
-                  "square": false,
-                  "type": "grid",
-                  "cards": [
-                    {
-                      "type": "heading",
-                      "heading": "Media",
-                      "heading_style": "subtitle",
-                      "icon": "mdi:multimedia"
-                    },
-                    {
-                      "type": "media-control",
-                      "entity": "media_player.office"
-                    },
-                    {
-                      "type": "tile",
-                      "entity": "media_player.office_kef",
-                      "name": "KEF",
-                      "show_entity_picture": false,
-                      "hide_state": false,
-                      "state_content": [
-                        "state",
-                        "volume_level"
-                      ],
-                      "vertical": false,
-                      "features_position": "inline",
-                      "features": [
-                        {
-                          "type": "media-player-volume-buttons",
-                          "step": 5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "tile",
-                      "entity": "media_player.office",
-                      "name": "Music Assistant",
-                      "show_entity_picture": false,
-                      "hide_state": false,
-                      "state_content": [
-                        "state",
-                        "volume_level"
-                      ],
-                      "vertical": false,
-                      "features": [
-                        {
-                          "type": "media-player-volume-buttons",
-                          "step": 5
-                        }
-                      ],
-                      "features_position": "inline"
-                    }
-                  ],
-                  "columns": 1
-                },
                 {
                   "type": "heading",
                   "heading_style": "subtitle",
@@ -11854,6 +11799,26 @@
                       ]
                     }
                   ]
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading_style": "subtitle",
+                  "heading": "Ventilation",
+                  "icon": "mdi:fan"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ducobox_filter_remaining_time",
+                  "name": {
+                    "type": "entity"
+                  },
+                  "vertical": false,
+                  "features_position": "bottom"
                 }
               ]
             },
