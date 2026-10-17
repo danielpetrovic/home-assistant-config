@@ -1632,7 +1632,7 @@
     from:
     - playing
     to:
-    - idle
+    - 'on'
     for:
       hours: 0
       minutes: 0
@@ -1863,7 +1863,7 @@
     from:
     - playing
     to:
-    - idle
+    - 'on'
     for:
       hours: 0
       minutes: 0
@@ -5613,7 +5613,7 @@
     from:
     - playing
     to:
-    - idle
+    - 'on'
     for:
       hours: 0
       minutes: 0
