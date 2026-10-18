@@ -16,14 +16,10 @@
     trigger: state
     entity_id:
     - light.bathroom_light
-    to:
-    - 'off'
     from:
     - 'on'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 10
+    to:
+    - 'off'
   - alias: shower on
     id: shower on
     trigger: numeric_state
@@ -64,31 +60,144 @@
         data:
           group_members:
           - media_player.bathroom
-      - variables:
-          bathroom_volume: '{{ 0.3 if now().hour < 9 else 0.35 }}'
-      - action: media_player.volume_set
-        metadata: {}
-        data:
-          volume_level: '{{ bathroom_volume }}'
-        target:
-          entity_id: media_player.bathroom
+      - alias: Set volume
+        choose:
+        - alias: Workday, before 09:00
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: 'on'
+          - condition: time
+            before: 09:00:00
+          sequence:
+          - action: media_player.volume_set
+            metadata: {}
+            data:
+              volume_level: 0.3
+            target:
+              entity_id: media_player.bathroom
+        - alias: Non-workday, before 10:00
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: 'off'
+          - condition: time
+            before: '10:00:00'
+          sequence:
+          - action: media_player.volume_set
+            metadata: {}
+            data:
+              volume_level: 0.3
+            target:
+              entity_id: media_player.bathroom
+        - alias: Workday, from 09:00
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: 'on'
+          - condition: time
+            after: 09:00:00
+          sequence:
+          - action: media_player.volume_set
+            metadata: {}
+            data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.bathroom
+        - alias: Non-workday, from 10:00
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: 'off'
+          - condition: time
+            after: '10:00:00'
+          sequence:
+          - action: media_player.volume_set
+            metadata: {}
+            data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.bathroom
       - delay:
           hours: 0
           minutes: 0
           seconds: 3
           milliseconds: 0
-      - action: media_player.volume_set
-        metadata: {}
-        data:
-          volume_level: '{{ bathroom_volume }}'
-        target:
-          entity_id: media_player.bathroom
-    - alias: lights off for 10s - unjoin and speaker off
+      - alias: Set volume again
+        choose:
+        - alias: Workday, before 09:00
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: 'on'
+          - condition: time
+            before: 09:00:00
+          sequence:
+          - action: media_player.volume_set
+            metadata: {}
+            data:
+              volume_level: 0.3
+            target:
+              entity_id: media_player.bathroom
+        - alias: Non-workday, before 10:00
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: 'off'
+          - condition: time
+            before: '10:00:00'
+          sequence:
+          - action: media_player.volume_set
+            metadata: {}
+            data:
+              volume_level: 0.3
+            target:
+              entity_id: media_player.bathroom
+        - alias: Workday, from 09:00
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: 'on'
+          - condition: time
+            after: 09:00:00
+          sequence:
+          - action: media_player.volume_set
+            metadata: {}
+            data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.bathroom
+        - alias: Non-workday, from 10:00
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: 'off'
+          - condition: time
+            after: '10:00:00'
+          sequence:
+          - action: media_player.volume_set
+            metadata: {}
+            data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.bathroom
+    - alias: lights off - volume down, then unjoin and speaker off
       conditions:
       - condition: trigger
         id:
         - lights off
       sequence:
+      - action: media_player.volume_set
+        metadata: {}
+        data:
+          volume_level: 0.25
+        target:
+          entity_id: media_player.bathroom
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 10
+          milliseconds: 0
       - action: media_player.unjoin
         metadata: {}
         target:
@@ -97,7 +206,7 @@
       - action: media_player.turn_off
         metadata: {}
         target:
-          entity_id: media_player.bathroom_kef
+          entity_id: media_player.bathroom
         data: {}
     - conditions:
       - condition: trigger
@@ -123,11 +232,64 @@
         state:
         - 'on'
       sequence:
-      - data:
-          volume_level: '{{ 0.3 if now().hour < 9 else 0.35 }}'
-        target:
-          entity_id: media_player.bathroom
-        action: media_player.volume_set
+      - alias: Set volume
+        choose:
+        - alias: Workday, before 09:00
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: 'on'
+          - condition: time
+            before: 09:00:00
+          sequence:
+          - action: media_player.volume_set
+            metadata: {}
+            data:
+              volume_level: 0.3
+            target:
+              entity_id: media_player.bathroom
+        - alias: Non-workday, before 10:00
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: 'off'
+          - condition: time
+            before: '10:00:00'
+          sequence:
+          - action: media_player.volume_set
+            metadata: {}
+            data:
+              volume_level: 0.3
+            target:
+              entity_id: media_player.bathroom
+        - alias: Workday, from 09:00
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: 'on'
+          - condition: time
+            after: 09:00:00
+          sequence:
+          - action: media_player.volume_set
+            metadata: {}
+            data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.bathroom
+        - alias: Non-workday, from 10:00
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: 'off'
+          - condition: time
+            after: '10:00:00'
+          sequence:
+          - action: media_player.volume_set
+            metadata: {}
+            data:
+              volume_level: 0.35
+            target:
+              entity_id: media_player.bathroom
       alias: shower off - volume down
   mode: restart
 - id: '1704667361587'
