@@ -2436,8 +2436,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.bathroom_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_3_media_leader: media_player.bedroom
       button_3_media: media_player.bathroom
       button_3_short_release_media_mode:
@@ -2467,8 +2467,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.dining_table_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -2506,8 +2506,8 @@
       - toggle_rotate_mode
       button_3_rotate_mode_helper: input_text.dining_table_dial_mode
       button_3_light_schedule: schedule.lights_dimmed
-      button_3_light_auto_adjust_brightness: true
-      button_3_light_auto_adjust_color_temp: true
+      button_3_light_auto_adjust_brightness: false
+      button_3_light_auto_adjust_color_temp: false
       zha_remote: fcf365b34b298bb6c2c124bc50cb095d
 - id: '1736812245757'
   alias: Gameroom Desk Button
@@ -2529,8 +2529,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.gameroom_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_3_media: media_player.gameroom
       button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
@@ -2597,8 +2597,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.gameroom_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_3_media: media_player.gameroom
       button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
@@ -2664,8 +2664,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.hallway_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_3_light:
         entity_id: light.gameroom_above_light
       button_3_light_schedule: schedule.lights_bright
@@ -2719,8 +2719,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.office_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_1_double: []
       button_2_short_release:
       - action: input_select.select_next
@@ -2788,8 +2788,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.kitchen_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_3_media: media_player.kitchen
       button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
@@ -2847,8 +2847,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.gym_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_3_media: media_player.gym
       button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
@@ -2907,8 +2907,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.bedroom_dial_mode
       button_1_light_schedule: schedule.lights_dimmed
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_3_media: media_player.bedroom
       button_3_short_release_media_mode:
       - turn_on
@@ -2957,12 +2957,12 @@
       button_1_light:
         entity_id: light.bedroom_light
       button_1_light_adjustment_mode: adaptive
-      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
-      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_dimmed
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_dimmed
       button_1_double_light_mode:
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.bedroom_alex_dial_mode
-      button_1_light_schedule: schedule.lights_bright
+      button_1_light_schedule: schedule.lights_dimmed
       button_1_light_auto_adjust_brightness: false
       button_1_light_auto_adjust_color_temp: false
       button_2_light:
@@ -2996,14 +2996,14 @@
       button_1_light:
         entity_id: light.bedroom_light
       button_1_light_adjustment_mode: adaptive
-      button_1_light_adaptive_brightness: input_number.adaptive_brightness_bright
-      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
+      button_1_light_adaptive_brightness: input_number.adaptive_brightness_dimmed
+      button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_dimmed
       button_1_double_light_mode:
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.bedroom_deni_dial_mode
-      button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_schedule: schedule.lights_dimmed
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_2_light:
         entity_id: light.bedroom_alex_light
       button_2_light_brightness: 1
@@ -3043,8 +3043,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.living_room_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -3083,8 +3083,8 @@
       - toggle_rotate_mode
       button_3_rotate_mode_helper: input_text.living_room_dial_mode
       button_3_light_schedule: schedule.lights_dimmed
-      button_3_light_auto_adjust_brightness: true
-      button_3_light_auto_adjust_color_temp: true
+      button_3_light_auto_adjust_brightness: false
+      button_3_light_auto_adjust_color_temp: false
       zha_remote: 82644d10c933e34e3bb7c6f86a6b991a
 - id: '1736862489459'
   alias: Shed Garden Button
@@ -3106,8 +3106,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.shed_garden_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_3_light:
         entity_id: light.garden
       button_3_light_schedule: schedule.lights_bright
@@ -3444,7 +3444,7 @@
       button_1_off_light_mode:
       - turn_off
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust: true
+      button_1_light_auto_adjust: false
       zha_remote: 7f3210d6729e48d6b475c64cb9714589
 - id: '1755899171238'
   alias: Toilet Button
@@ -3473,7 +3473,7 @@
         target:
           entity_id: automation.toilet_door_contact
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust: true
+      button_1_light_auto_adjust: false
       zha_remote: 151df19136bbebb6d91ba269daba4e97
 - id: '1755965337801'
   alias: Shed Alleyway Button
@@ -3495,8 +3495,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.shed_alleyway_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_3_light:
         entity_id: light.garden
       button_3_light_schedule: schedule.lights_bright
@@ -3549,8 +3549,8 @@
       - toggle_rotate_mode
       button_1_rotate_mode_helper: input_text.roof_terrace_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: true
-      button_1_light_auto_adjust_color_temp: true
+      button_1_light_auto_adjust_brightness: false
+      button_1_light_auto_adjust_color_temp: false
       button_3_media: media_player.gameroom
       button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
@@ -6449,10 +6449,22 @@
         - light.roof_terrace_light
         - light.garden
         - light.front_door_light
+        - light.bathroom_light
+        - light.dining_table_above_light
+        - light.gameroom_above_light
+        - light.hallway_light
+        - light.office_light
+        - light.kitchen
+        - light.gym_light
+        - light.living_room_above_light
+        - light.shed
+        - light.entrance_light
+        - light.toilet_light
       auto_adjust_enabled: true
       workday_sensor: binary_sensor.workday_sensor
       auto_adjust_brightness: true
       auto_adjust_color_temp: true
+      auto_adjust_only_on_change: true
 - id: '1766509365106'
   alias: Adaptive Lighting Scheduler Dimmed
   description: ''
@@ -6474,8 +6486,12 @@
         - light.living_room_tv_light
         - light.living_room_cabinet_light
         - light.dining_table_cabinet_light
+        - light.dining_table_below_light
+        - light.living_room_below_light
+        - light.bedroom_light
       auto_adjust_brightness: true
       auto_adjust_color_temp: true
+      auto_adjust_only_on_change: true
 - id: '1774838850323'
   alias: Gameroom Media
   description: ''
