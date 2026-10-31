@@ -916,6 +916,23 @@
                     },
                     {
                       "type": "tile",
+                      "entity": "media_player.living_room_kef",
+                      "show_entity_picture": false,
+                      "state_content": [
+                        "state",
+                        "source",
+                        "audio_codec"
+                      ],
+                      "vertical": false,
+                      "features": [
+                        {
+                          "type": "media-player-volume-buttons"
+                        }
+                      ],
+                      "features_position": "inline"
+                    },
+                    {
+                      "type": "tile",
                       "entity": "media_player.living_room_surround_kef",
                       "show_entity_picture": false,
                       "state_content": [
@@ -3729,6 +3746,120 @@
                   ]
                 }
               ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Plants",
+                  "heading_style": "subtitle",
+                  "icon": "mdi:flower"
+                },
+                {
+                  "type": "heading",
+                  "heading": "Dracaena sunray",
+                  "heading_style": "subtitle"
+                },
+                {
+                  "type": "grid",
+                  "columns": 2,
+                  "square": false,
+                  "cards": [
+                    {
+                      "type": "tile",
+                      "entity": "sensor.dracaena_sunray_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "green",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.dracaena_sunray_status",
+                          "state": [
+                            "ok"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.dracaena_sunray_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "blue",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.dracaena_sunray_status",
+                          "state": [
+                            "needs water"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.dracaena_sunray_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "color": "orange",
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.dracaena_sunray_status",
+                          "state": [
+                            "too wet",
+                            "too cold",
+                            "too hot",
+                            "battery low"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.dracaena_sunray_status",
+                      "name": "Status",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.dracaena_sunray_status",
+                          "state": [
+                            "unavailable",
+                            "unknown"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.dracaena_sunray_soil_moisture",
+                      "name": "Soil Moisture",
+                      "icon": "mdi:water-percent",
+                      "color": "blue",
+                      "vertical": false,
+                      "hide_state": false,
+                      "show_entity_picture": false,
+                      "features": [
+                        {
+                          "type": "trend-graph"
+                        }
+                      ],
+                      "features_position": "bottom"
+                    }
+                  ]
+                }
+              ]
             }
           ],
           "badges": [
@@ -4639,7 +4770,7 @@
                 },
                 {
                   "type": "heading",
-                  "heading": "Yucca",
+                  "heading": "Dracaena magenta",
                   "heading_style": "subtitle"
                 },
                 {
@@ -4649,7 +4780,7 @@
                   "cards": [
                     {
                       "type": "tile",
-                      "entity": "sensor.yucca_status",
+                      "entity": "sensor.dracaena_magenta_status",
                       "name": "Status",
                       "vertical": false,
                       "hide_state": false,
@@ -4658,7 +4789,7 @@
                       "visibility": [
                         {
                           "condition": "state",
-                          "entity": "sensor.yucca_status",
+                          "entity": "sensor.dracaena_magenta_status",
                           "state": [
                             "ok"
                           ]
@@ -4667,7 +4798,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "sensor.yucca_status",
+                      "entity": "sensor.dracaena_magenta_status",
                       "name": "Status",
                       "vertical": false,
                       "hide_state": false,
@@ -4676,7 +4807,7 @@
                       "visibility": [
                         {
                           "condition": "state",
-                          "entity": "sensor.yucca_status",
+                          "entity": "sensor.dracaena_magenta_status",
                           "state": [
                             "needs water"
                           ]
@@ -4685,7 +4816,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "sensor.yucca_status",
+                      "entity": "sensor.dracaena_magenta_status",
                       "name": "Status",
                       "vertical": false,
                       "hide_state": false,
@@ -4694,7 +4825,7 @@
                       "visibility": [
                         {
                           "condition": "state",
-                          "entity": "sensor.yucca_status",
+                          "entity": "sensor.dracaena_magenta_status",
                           "state": [
                             "too wet",
                             "too cold",
@@ -4706,7 +4837,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "sensor.yucca_status",
+                      "entity": "sensor.dracaena_magenta_status",
                       "name": "Status",
                       "vertical": false,
                       "hide_state": false,
@@ -4714,7 +4845,7 @@
                       "visibility": [
                         {
                           "condition": "state",
-                          "entity": "sensor.yucca_status",
+                          "entity": "sensor.dracaena_magenta_status",
                           "state": [
                             "unavailable",
                             "unknown"
@@ -4724,7 +4855,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "sensor.yucca_soil_moisture",
+                      "entity": "sensor.dracaena_magenta_soil_moisture",
                       "name": "Soil Moisture",
                       "icon": "mdi:water-percent",
                       "color": "blue",
@@ -8064,17 +8195,18 @@
                   "cards": [
                     {
                       "type": "media-control",
-                      "entity": "media_player.living_room_surround"
+                      "entity": "media_player.living_room"
                     },
                     {
                       "type": "tile",
-                      "entity": "media_player.living_room_surround_kef",
+                      "entity": "media_player.living_room_kef",
                       "name": "KEF",
                       "show_entity_picture": false,
                       "hide_state": false,
                       "state_content": [
                         "state",
-                        "volume_level"
+                        "source",
+                        "audio_codec"
                       ],
                       "vertical": false,
                       "features": [
@@ -8087,7 +8219,7 @@
                     },
                     {
                       "type": "tile",
-                      "entity": "media_player.living_room_surround",
+                      "entity": "media_player.living_room",
                       "name": "Music Assistant",
                       "show_entity_picture": false,
                       "hide_state": false,
@@ -9177,120 +9309,6 @@
                           }
                         }
                       ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "heading",
-                  "heading": "Plants",
-                  "heading_style": "subtitle",
-                  "icon": "mdi:flower"
-                },
-                {
-                  "type": "heading",
-                  "heading": "Dypsis lutescens",
-                  "heading_style": "subtitle"
-                },
-                {
-                  "type": "grid",
-                  "columns": 2,
-                  "square": false,
-                  "cards": [
-                    {
-                      "type": "tile",
-                      "entity": "sensor.dypsis_lutescens_status",
-                      "name": "Status",
-                      "vertical": false,
-                      "hide_state": false,
-                      "show_entity_picture": false,
-                      "color": "green",
-                      "visibility": [
-                        {
-                          "condition": "state",
-                          "entity": "sensor.dypsis_lutescens_status",
-                          "state": [
-                            "ok"
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "tile",
-                      "entity": "sensor.dypsis_lutescens_status",
-                      "name": "Status",
-                      "vertical": false,
-                      "hide_state": false,
-                      "show_entity_picture": false,
-                      "color": "blue",
-                      "visibility": [
-                        {
-                          "condition": "state",
-                          "entity": "sensor.dypsis_lutescens_status",
-                          "state": [
-                            "needs water"
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "tile",
-                      "entity": "sensor.dypsis_lutescens_status",
-                      "name": "Status",
-                      "vertical": false,
-                      "hide_state": false,
-                      "show_entity_picture": false,
-                      "color": "orange",
-                      "visibility": [
-                        {
-                          "condition": "state",
-                          "entity": "sensor.dypsis_lutescens_status",
-                          "state": [
-                            "too wet",
-                            "too cold",
-                            "too hot",
-                            "battery low"
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "tile",
-                      "entity": "sensor.dypsis_lutescens_status",
-                      "name": "Status",
-                      "vertical": false,
-                      "hide_state": false,
-                      "show_entity_picture": false,
-                      "visibility": [
-                        {
-                          "condition": "state",
-                          "entity": "sensor.dypsis_lutescens_status",
-                          "state": [
-                            "unavailable",
-                            "unknown"
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "tile",
-                      "entity": "sensor.dypsis_lutescens_soil_moisture",
-                      "name": "Soil Moisture",
-                      "icon": "mdi:water-percent",
-                      "color": "blue",
-                      "vertical": false,
-                      "hide_state": false,
-                      "show_entity_picture": false,
-                      "features": [
-                        {
-                          "type": "trend-graph"
-                        }
-                      ],
-                      "features_position": "bottom"
                     }
                   ]
                 }
