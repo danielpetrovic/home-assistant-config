@@ -14,6 +14,7 @@
 !.storage/lovelace_dashboards
 !.storage/lovelace_resources
 /.vscode
+/addons_autoscripts
 /addons_config
 /backups
 /custom_components/
