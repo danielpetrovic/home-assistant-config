@@ -36,7 +36,7 @@ config/
 │   ├── covers.yaml                # Window covering presets
 │   ├── duco.yaml                  # DucoBox ventilation REST API
 │   ├── lights.yaml                # Adaptive lighting system & sensors
-│   ├── plants.yaml                # Plant status template sensors for the 6 ZHA soil sensors
+│   ├── plants.yaml                # Plant status template sensors for the 6 soil sensors (5 on Z2M, 1 on ZHA)
 │   └── system.yaml                # System-wide helpers & counters
 ├── blueprints/automation/         # Custom automation blueprints
 │   ├── danielpetrovic/            # Author: danielpetrovic (4 blueprints)
@@ -69,7 +69,7 @@ The installation is organized across 3 floors:
 |------|------|---------|
 | Bathroom | mdi:shower-head | Climate, lighting |
 | Hallway | mdi:stairs | Motion, lighting |
-| Office | mdi:desk | Climate, media, automation |
+| Office | mdi:desk | Climate, automation |
 | Gym | mdi:dumbbell | Climate, media, lighting |
 | Bedroom | mdi:bed-king | Climate, dual sensors |
 
@@ -118,28 +118,29 @@ The installation is organized across 3 floors:
 ## Key Integrations
 
 ### Zigbee2MQTT (Z2M)
-- Primary protocol for switches, sensors, lights
+- Primary protocol for switches, sensors, lights (ZHA was tried in October 2026; devices are being moved back to Z2M gradually, battery devices need a button press, so some devices may still be on ZHA)
 - OTA firmware updates for Zigbee devices
 - Philips Hue Tap Dial switches
 - Niko battery switches (552-720X1)
 
 ### Music Assistant
 
-7 KEF wireless speakers integrated via Music Assistant:
+7 KEF wireless speakers in 6 areas integrated via Music Assistant:
 
 | Location | Model | Notes |
 |----------|-------|-------|
 | Bathroom | LSX II LT | Bookshelf |
 | Gameroom | LSX II | Bookshelf |
-| Office | LSX II | Bookshelf |
 | Kitchen | LSX II | Bookshelf |
 | Gym | LSX II | Bookshelf |
 | Bedroom | LSX II | Bookshelf |
 | Living Room | XIO Soundbar | 5.1.2 soundbar system |
+| Living Room Surround | LSX II | Rear surround for the XIO soundbar (wireless surround update expected November 2026), also usable for music |
 
 **Features:**
 - Playlist management (Classical, Dance, Eurovision, Hip Hop, Jazz, Metal, Pop, R&B, Rock)
 - Coordinated multi-room playback with grouping
+- Music Assistant players use fake power control; `automation.media_power` mirrors their on/off to the KEF speakers
 - KEF custom integration via [hass-kef-connector](https://github.com/your-repo/hass-kef-connector)
 - Profile-based EQ management per speaker
 
@@ -157,7 +158,7 @@ The installation is organized across 3 floors:
 ### Climate Control
 - **6 Heating Zones:** Bathroom, Gameroom, Office, Gym, Bedroom, Living Room
 - **4 AC Units:** Gameroom, Office, Bedroom, Living Room
-- **3 Underfloor Heating Circulation Pumps:** Monitored via Niko Zigbee sockets and plugs (Heating Pump 0 and 1 on Zigbee2MQTT, Heating Pump 2 on ZHA)
+- **3 Underfloor Heating Circulation Pumps:** Monitored via Niko Zigbee sockets and plugs (all three on ZHA)
 - Generic thermostat platform (1h min cycle, 0.5°C step, 16-22°C range)
 - Schedule-based activation (weekday/weekend patterns)
 
@@ -209,10 +210,9 @@ The installation is organized across 3 floors:
 ### Niko Zigbee Energy Sockets and Plugs (14)
 
 These replaced the HomeWizard Wi-Fi Energy Sockets. Energy sensors are named `sensor.<device>_energy` (name "Energy").
-- ZHA, Connected socket outlet (built-in, uses the local quirk `zha/quirks/niko_sockets.py`): Washing machine, Dryer, Heat recovery ventilation, Office desk, Gameroom desk
+- All 14 are on ZHA (checked 2026-10-27); a move back to Zigbee2MQTT is planned but not started for the sockets
+- ZHA, Connected socket outlet (built-in, uses the local quirk `zha/quirks/niko_sockets.py`): Washing machine, Dryer, Heat recovery ventilation, Office desk, Gameroom desk, Gameroom media, Alex PC, Deni PC, Large freezer (Gym Freezer), Heating pump 0, Heating pump 1
 - ZHA, Smart plug Zigbee SE: Living room media, Kitchen media + Fridge + Freezer, Heating pump 2
-- Zigbee2MQTT, Connected socket outlet (still to be moved): Alex PC, Deni PC, Large freezer, Heating pump 0, Heating pump 1
-- Gameroom media: Connected socket outlet, removed from Zigbee2MQTT and waiting to be re-paired into ZHA
 
 ## Automation Architecture
 
