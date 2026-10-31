@@ -7,6 +7,7 @@
 # min/max_temp per species). That database is coarse (almost every species is 15-60
 # moisture) and was measured with Xiaomi sensors, so the Third Reality scale may differ.
 # Hydrangea macrophylla is not listed by name; all Hydrangea entries are identical (20-60).
+# Dracaena magenta and Dracaena sunray are Dracaena marginata cultivars and use that entry (15-60, 10-32).
 # Below the moisture minimum means water thoroughly; above the maximum means too wet (a few
 # hours right after watering can briefly read above it). Temperature limits are set for the
 # indoor plants only: the garden plants are hardy, so a fixed minimum would sit in a problem
@@ -18,22 +19,22 @@
 
 template:
 
-  # Yucca
+  # Dracaena magenta
   - sensor:
-      - name: "Yucca Status"
-        unique_id: plant_yucca_status
-        availability: "{{ has_value('sensor.yucca_soil_moisture') }}"
+      - name: "Dracaena magenta Status"
+        unique_id: plant_dracaena_magenta_status
+        availability: "{{ has_value('sensor.dracaena_magenta_soil_moisture') }}"
         state: >
-          {% set m = states('sensor.yucca_soil_moisture') | float(none) %}
-          {% set t = states('sensor.yucca_temperature') | float(none) %}
-          {% set b = states('sensor.yucca_battery') | float(none) %}
+          {% set m = states('sensor.dracaena_magenta_soil_moisture') | float(none) %}
+          {% set t = states('sensor.dracaena_magenta_temperature') | float(none) %}
+          {% set b = states('sensor.dracaena_magenta_battery') | float(none) %}
           {% if m is none %}
             unknown
           {% elif m < 15 %}
             needs water
           {% elif m > 60 %}
             too wet
-          {% elif t is not none and t < 8 %}
+          {% elif t is not none and t < 10 %}
             too cold
           {% elif t is not none and t > 32 %}
             too hot
@@ -51,19 +52,19 @@ template:
           {% elif s in ['too cold', 'too hot'] %}mdi:thermometer-alert
           {% else %}mdi:flower-outline{% endif %}
         attributes:
-          moisture: "{{ states('sensor.yucca_soil_moisture') | float(none) }}"
+          moisture: "{{ states('sensor.dracaena_magenta_soil_moisture') | float(none) }}"
           moisture_min: 15
           moisture_max: 60
-          temperature: "{{ states('sensor.yucca_temperature') | float(none) }}"
-          temperature_min: 8
+          temperature: "{{ states('sensor.dracaena_magenta_temperature') | float(none) }}"
+          temperature_min: 10
           temperature_max: 32
-          battery: "{{ states('sensor.yucca_battery') | float(none) }}"
+          battery: "{{ states('sensor.dracaena_magenta_battery') | float(none) }}"
           battery_min: 20
   - binary_sensor:
-      - name: "Yucca Needs Water"
-        unique_id: plant_yucca_needs_water
-        availability: "{{ has_value('sensor.yucca_soil_moisture') }}"
-        state: "{{ states('sensor.yucca_soil_moisture') | float(100) < 15 }}"
+      - name: "Dracaena magenta Needs Water"
+        unique_id: plant_dracaena_magenta_needs_water
+        availability: "{{ has_value('sensor.dracaena_magenta_soil_moisture') }}"
+        state: "{{ states('sensor.dracaena_magenta_soil_moisture') | float(100) < 15 }}"
         icon: mdi:watering-can
 
   # Ficus Elastica Belize
@@ -114,15 +115,15 @@ template:
         state: "{{ states('sensor.ficus_elastica_belize_soil_moisture') | float(100) < 15 }}"
         icon: mdi:watering-can
 
-  # Dypsis lutescens
+  # Dracaena sunray
   - sensor:
-      - name: "Dypsis lutescens Status"
-        unique_id: plant_dypsis_lutescens_status
-        availability: "{{ has_value('sensor.dypsis_lutescens_soil_moisture') }}"
+      - name: "Dracaena sunray Status"
+        unique_id: plant_dracaena_sunray_status
+        availability: "{{ has_value('sensor.dracaena_sunray_soil_moisture') }}"
         state: >
-          {% set m = states('sensor.dypsis_lutescens_soil_moisture') | float(none) %}
-          {% set t = states('sensor.dypsis_lutescens_temperature') | float(none) %}
-          {% set b = states('sensor.dypsis_lutescens_battery') | float(none) %}
+          {% set m = states('sensor.dracaena_sunray_soil_moisture') | float(none) %}
+          {% set t = states('sensor.dracaena_sunray_temperature') | float(none) %}
+          {% set b = states('sensor.dracaena_sunray_battery') | float(none) %}
           {% if m is none %}
             unknown
           {% elif m < 15 %}
@@ -131,7 +132,7 @@ template:
             too wet
           {% elif t is not none and t < 10 %}
             too cold
-          {% elif t is not none and t > 35 %}
+          {% elif t is not none and t > 32 %}
             too hot
           {% elif b is not none and b < 20 %}
             battery low
@@ -147,19 +148,19 @@ template:
           {% elif s in ['too cold', 'too hot'] %}mdi:thermometer-alert
           {% else %}mdi:flower-outline{% endif %}
         attributes:
-          moisture: "{{ states('sensor.dypsis_lutescens_soil_moisture') | float(none) }}"
+          moisture: "{{ states('sensor.dracaena_sunray_soil_moisture') | float(none) }}"
           moisture_min: 15
           moisture_max: 60
-          temperature: "{{ states('sensor.dypsis_lutescens_temperature') | float(none) }}"
+          temperature: "{{ states('sensor.dracaena_sunray_temperature') | float(none) }}"
           temperature_min: 10
-          temperature_max: 35
-          battery: "{{ states('sensor.dypsis_lutescens_battery') | float(none) }}"
+          temperature_max: 32
+          battery: "{{ states('sensor.dracaena_sunray_battery') | float(none) }}"
           battery_min: 20
   - binary_sensor:
-      - name: "Dypsis lutescens Needs Water"
-        unique_id: plant_dypsis_lutescens_needs_water
-        availability: "{{ has_value('sensor.dypsis_lutescens_soil_moisture') }}"
-        state: "{{ states('sensor.dypsis_lutescens_soil_moisture') | float(100) < 15 }}"
+      - name: "Dracaena sunray Needs Water"
+        unique_id: plant_dracaena_sunray_needs_water
+        availability: "{{ has_value('sensor.dracaena_sunray_soil_moisture') }}"
+        state: "{{ states('sensor.dracaena_sunray_soil_moisture') | float(100) < 15 }}"
         icon: mdi:watering-can
 
   # Acer palmatum
