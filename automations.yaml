@@ -1783,25 +1783,6 @@
       hours: 0
       minutes: 0
       seconds: 3
-  - trigger: time
-    at: 01:00:00
-    id: 01:00
-  - alias: player idle
-    id: player idle
-    trigger: state
-    entity_id:
-    - media_player.gym_kef
-    from:
-    - playing
-    to:
-    - 'on'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 30
-  - trigger: time
-    at: 07:00:00
-    id: 07:00
   conditions: []
   actions:
   - choose:
@@ -1809,24 +1790,57 @@
       - condition: trigger
         id:
         - lights on
+      - condition: state
+        entity_id: media_player.bedroom
+        state:
+        - playing
       sequence:
+      - action: media_player.join
+        metadata: {}
+        data:
+          group_members:
+          - media_player.gym
+        target:
+          entity_id: media_player.bedroom
       - action: media_player.volume_set
         data:
           volume_level: 0.35
         metadata: {}
         target:
           entity_id: media_player.gym
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 3
+          milliseconds: 0
+      - action: media_player.volume_set
+        data:
+          volume_level: 0.35
+        metadata: {}
+        target:
+          entity_id: media_player.gym
+      alias: lights on - join bedroom
     - conditions:
       - condition: trigger
         id:
         - lights off
       sequence:
-      - action: media_player.volume_set
-        data:
-          volume_level: 0.25
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 10
+          milliseconds: 0
+      - action: media_player.unjoin
         metadata: {}
+        data: {}
         target:
           entity_id: media_player.gym
+      - action: media_player.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: media_player.gym
+      alias: lights off - unjoin and speaker off
     - conditions:
       - condition: trigger
         id:
@@ -1841,66 +1855,9 @@
       - condition: trigger
         id:
         - tv off
-      sequence:
-      - action: media_player.join
-        metadata: {}
-        data:
-          group_members:
-          - media_player.gym
-        target:
-          entity_id: media_player.bedroom
-    - conditions:
-      - condition: trigger
-        id:
-        - 01:00
-      sequence:
-      - action: media_player.unjoin
-        metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.gym
-      - action: media_player.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.gym
-    - conditions:
-      - condition: trigger
-        id:
-        - player idle
       - condition: state
-        entity_id: media_player.bedroom
-        state:
-        - playing
-      - condition: time
-        after: 07:00:00
-      sequence:
-      - action: media_player.unjoin
-        metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.gym
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 0
-      - action: media_player.join
-        metadata: {}
-        data:
-          group_members:
-          - media_player.gym
-        target:
-          entity_id: media_player.bedroom
-      alias: player idle
-    - conditions:
-      - condition: trigger
-        id:
-        - 07:00
-      - condition: state
-        entity_id: media_player.bedroom
-        state:
-        - playing
+        entity_id: light.gym_light
+        state: 'on'
       sequence:
       - action: media_player.join
         metadata: {}
@@ -1909,14 +1866,7 @@
           - media_player.gym
         target:
           entity_id: media_player.bedroom
-      - action: media_player.volume_set
-        data:
-          volume_level: 0.25
-        metadata: {}
-        target:
-          entity_id: media_player.gym
-  mode: queued
-  max: 10
+  mode: restart
 - id: '1706168546378'
   alias: Hallway Motion
   description: ''
@@ -2423,7 +2373,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Bathroom Button
       last_pressed: input_text.bathroom_button_last_pressed
@@ -2446,7 +2396,6 @@
       button_3_long_release_media_mode:
       - turn_off
       - unjoin
-      zha_remote: bfe4c5c0382ebed9cabccab252558b46
 - id: '1736811938136'
   alias: Dining Table Button
   description: ''
@@ -2454,7 +2403,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Dining Table Button
       last_pressed: input_text.dining_table_button_last_pressed
@@ -2508,7 +2457,6 @@
       button_3_light_schedule: schedule.lights_dimmed
       button_3_light_auto_adjust_brightness: false
       button_3_light_auto_adjust_color_temp: false
-      zha_remote: fcf365b34b298bb6c2c124bc50cb095d
 - id: '1736812245757'
   alias: Gameroom Desk Button
   description: ''
@@ -2516,7 +2464,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Gameroom Desk Button
       last_pressed: input_text.gameroom_desk_button_last_pressed
@@ -2531,8 +2479,6 @@
       button_1_light_schedule: schedule.lights_bright
       button_1_light_auto_adjust_brightness: false
       button_1_light_auto_adjust_color_temp: false
-      button_3_media: media_player.gameroom
-      button_3_media_leader: media_player.bedroom
       button_3_short_release_media_mode:
       - turn_on
       - join
@@ -2575,7 +2521,12 @@
           entity_id:
           - input_select.roof_terrace_covers
           - input_select.gameroom_covers
-      zha_remote: f54db05d45ad40c87df6ca609b92365b
+      button_3_double:
+      - action: switch.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.gameroom_desk
 - id: '1736812276991'
   alias: Gameroom Button
   description: ''
@@ -2583,7 +2534,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Gameroom Button
       last_pressed: input_text.gameroom_button_last_pressed
@@ -2643,7 +2594,6 @@
           entity_id:
           - input_select.roof_terrace_covers
           - input_select.gameroom_covers
-      zha_remote: f1d15d6e9b28dadf84881328ef026616
 - id: '1736812360019'
   alias: Hallway Button
   description: ''
@@ -2651,7 +2601,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Hallway Button
       last_pressed: input_text.hallway_button_last_pressed
@@ -2697,7 +2647,6 @@
         metadata: {}
         target:
           entity_id: input_select.hallway_covers
-      zha_remote: ed90c560d7da90b2eb7720586290f348
 - id: '1736812390460'
   alias: Office Button
   description: ''
@@ -2705,7 +2654,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Office Button
       last_pressed: input_text.office_button_last_pressed
@@ -2736,15 +2685,6 @@
         metadata: {}
         target:
           entity_id: input_select.office_covers
-      button_3_media: media_player.office
-      button_3_media_leader: media_player.bedroom
-      button_3_media_volume: 25
-      button_3_short_release_media_mode:
-      - turn_on
-      - join
-      button_3_long_release_media_mode:
-      - turn_off
-      - unjoin
       button_4_short_release:
       - action: input_select.select_previous
         data:
@@ -2759,9 +2699,7 @@
         metadata: {}
         target:
           entity_id: input_select.office_covers
-      zha_remote: 13c133d7c726b4aae54cb1c41e870fcd
-      button_2_triple: []
-      button_1_triple:
+      button_3_double:
       - action: switch.toggle
         metadata: {}
         target:
@@ -2774,7 +2712,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Kitchen Button
       last_pressed: input_text.kitchen_button_last_pressed
@@ -2826,7 +2764,6 @@
         metadata: {}
         target:
           entity_id: input_select.shed_covers
-      zha_remote: 842b014acf85e146f76d7449f8b5ba08
 - id: '1736812474175'
   alias: Gym Button
   description: ''
@@ -2834,7 +2771,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Gym Button
       last_pressed: input_text.gym_button_last_pressed
@@ -2885,7 +2822,6 @@
         metadata: {}
         target:
           entity_id: input_select.gym_covers
-      zha_remote: cb29b0ae0273ac2e27af78a65a2f89d6
 - id: '1736812648341'
   alias: Bedroom Button
   description: ''
@@ -2893,7 +2829,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Bedroom Button
       last_pressed: input_text.bedroom_button_last_pressed
@@ -2942,7 +2878,6 @@
         metadata: {}
         target:
           entity_id: input_select.bedroom_covers
-      zha_remote: c283b8ea4c7e46c2c01a12d2f1c0c5d9
 - id: '1736812743223'
   alias: Bedroom Alex Button
   description: ''
@@ -2950,7 +2885,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Bedroom Alex Button
       last_pressed: input_text.bedroom_alex_button_last_pressed
@@ -2980,7 +2915,6 @@
         entity_id: light.bedroom_deni_light
       button_4_light_brightness: 1
       button_4_light_color: 2000
-      zha_remote: 2b542ebad585a84499b3c4b4a3f943a4
       button_2_light_transition: 1
 - id: '1736812877909'
   alias: Bedroom Deni Button
@@ -2989,7 +2923,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Bedroom Deni Button
       last_pressed: input_text.bedroom_deni_button_last_pressed
@@ -3019,7 +2953,6 @@
         entity_id: light.bedroom_deni_light
       button_4_light_brightness: 1
       button_4_light_color: 2000
-      zha_remote: c7f69360e0a014045c3d5debfef2c9ee
       button_2_light_transition: 1
       button_4_light_transition: 1
 - id: '1736813115022'
@@ -3029,7 +2962,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Living Room Button
       last_pressed: input_text.living_room_button_last_pressed
@@ -3085,7 +3018,6 @@
       button_3_light_schedule: schedule.lights_dimmed
       button_3_light_auto_adjust_brightness: false
       button_3_light_auto_adjust_color_temp: false
-      zha_remote: 82644d10c933e34e3bb7c6f86a6b991a
 - id: '1736862489459'
   alias: Shed Garden Button
   description: ''
@@ -3093,7 +3025,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Shed Garden Button
       last_pressed: input_text.shed_garden_button_last_pressed
@@ -3139,7 +3071,6 @@
         metadata: {}
         target:
           entity_id: input_select.shed_covers
-      zha_remote: 5fbe6c7cbb8e038fda7d7f54b3fc8ecf
 - id: '1743325307976'
   alias: Living Room Media
   description: ''
@@ -3153,6 +3084,11 @@
     entity_id: media_player.living_room_tv_cast
     id: tv_title
     attribute: media_title
+  - trigger: state
+    entity_id: media_player.living_room_osmc
+    id: osmc
+    from:
+    to:
   conditions: []
   actions:
   - alias: Living Room TV
@@ -3164,11 +3100,16 @@
         attribute: app_name
         state: NLZIET
       sequence:
-      - action: media_player.volume_set
+      - action: media_player.unjoin
+        metadata: {}
         target:
           entity_id: media_player.kitchen
-        data:
-          volume_level: 0.01
+        data: {}
+      - action: media_player.turn_off
+        metadata: {}
+        target:
+          entity_id: media_player.kitchen
+        data: {}
       - action: light.turn_on
         data:
           brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
@@ -3179,6 +3120,88 @@
         metadata: {}
         target:
           entity_id: light.living_room_tv_light
+    - alias: OSMC
+      conditions:
+      - condition: trigger
+        id: osmc
+      - condition: state
+        entity_id: media_player.living_room_osmc
+        state: playing
+      sequence:
+      - action: media_player.unjoin
+        metadata: {}
+        target:
+          entity_id: media_player.kitchen
+        data: {}
+      - action: media_player.turn_off
+        metadata: {}
+        target:
+          entity_id: media_player.kitchen
+        data: {}
+      - action: light.turn_on
+        data:
+          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
+            | int }}'
+          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
+            | int }}'
+          transition: 30
+        metadata: {}
+        target:
+          entity_id: light.living_room_tv_light
+    - alias: OSMC not playing
+      conditions:
+      - condition: trigger
+        id: osmc
+      - condition: state
+        entity_id: media_player.living_room_osmc
+        state:
+        - paused
+        - idle
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        target:
+          entity_id: light.living_room_tv_light
+        data:
+          transition: 30
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 5
+          milliseconds: 0
+      - alias: Rejoin kitchen to bedroom
+        if:
+        - condition: state
+          entity_id: media_player.bedroom
+          state: playing
+        - condition: state
+          entity_id: media_player.living_room_osmc
+          state:
+          - idle
+          - 'off'
+          - unavailable
+          - unknown
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: media_player.living_room_tv_cast
+            state:
+            - 'off'
+            - idle
+            - unavailable
+            - unknown
+          - condition: state
+            entity_id: media_player.living_room_tv_cast
+            attribute: media_title
+            state: OSMC HDMI 1
+        then:
+        - action: media_player.join
+          metadata: {}
+          data:
+            group_members:
+            - media_player.kitchen
+          target:
+            entity_id: media_player.bedroom
     - alias: Playing
       conditions:
       - condition: state
@@ -3189,11 +3212,16 @@
           != ''TV'' or state_attr(''media_player.living_room_tv_cast'', ''media_title'')
           not in [none, '''', ''OSMC HDMI 1''] }}'
       sequence:
-      - action: media_player.volume_set
+      - action: media_player.unjoin
+        metadata: {}
         target:
           entity_id: media_player.kitchen
-        data:
-          volume_level: 0.01
+        data: {}
+      - action: media_player.turn_off
+        metadata: {}
+        target:
+          entity_id: media_player.kitchen
+        data: {}
       - action: light.turn_on
         data:
           brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
@@ -3213,17 +3241,50 @@
         - idle
         - paused
       sequence:
-      - action: media_player.volume_set
-        target:
-          entity_id: media_player.kitchen
-        data:
-          volume_level: 0.35
       - action: light.turn_off
         metadata: {}
         target:
           entity_id: light.living_room_tv_light
         data:
           transition: 30
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 5
+          milliseconds: 0
+      - alias: Rejoin kitchen to bedroom
+        if:
+        - condition: state
+          entity_id: media_player.bedroom
+          state: playing
+        - condition: state
+          entity_id: media_player.living_room_osmc
+          state:
+          - idle
+          - 'off'
+          - unavailable
+          - unknown
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: media_player.living_room_tv_cast
+            state:
+            - 'off'
+            - idle
+            - unavailable
+            - unknown
+          - condition: state
+            entity_id: media_player.living_room_tv_cast
+            attribute: media_title
+            state: OSMC HDMI 1
+        then:
+        - action: media_player.join
+          metadata: {}
+          data:
+            group_members:
+            - media_player.kitchen
+          target:
+            entity_id: media_player.bedroom
   mode: restart
 - id: '1745758491686'
   alias: Front Door
@@ -3286,6 +3347,17 @@
         metadata: {}
         target:
           entity_id: media_player.living_room_tv
+        data: {}
+    - alias: Living Room OSMC
+      if:
+      - condition: state
+        entity_id: media_player.living_room_osmc
+        state: playing
+      then:
+      - action: media_player.media_pause
+        metadata: {}
+        target:
+          entity_id: media_player.living_room_osmc
         data: {}
   mode: restart
 - id: '1746611445373'
@@ -3482,7 +3554,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Shed Alleyway Button
       last_pressed: input_text.shed_alleyway_button_last_pressed
@@ -3528,7 +3600,6 @@
         metadata: {}
         target:
           entity_id: input_select.shed_covers
-      zha_remote: 3fdc6763c4afc091cf78b07826b9b7bb
 - id: '1756122670916'
   alias: Roof Terrace Button
   description: ''
@@ -3536,7 +3607,7 @@
     path: danielpetrovic/philips-hue-tap-dial-switch.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Roof Terrace Button
       last_pressed: input_text.roof_terrace_button_last_pressed
@@ -3598,7 +3669,6 @@
         data: {}
         target:
           entity_id: switch.gameroom_media
-      zha_remote: 8b185cb44284ce03c813615e591497bf
 - id: '1757451715340'
   alias: Living Room Climate
   description: ''
@@ -5811,6 +5881,26 @@
         - playing
       - condition: time
         after: 07:00:00
+      - condition: state
+        entity_id: media_player.living_room_osmc
+        state:
+        - idle
+        - 'off'
+        - unavailable
+        - unknown
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: media_player.living_room_tv_cast
+          state:
+          - 'off'
+          - idle
+          - unavailable
+          - unknown
+        - condition: state
+          entity_id: media_player.living_room_tv_cast
+          attribute: media_title
+          state: OSMC HDMI 1
       sequence:
       - action: media_player.unjoin
         metadata: {}
@@ -6201,7 +6291,7 @@
       alarm_code_user_name: input_text.alarm_code_user_name
       integration_type:
       - dashboard
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_alarm_keypad: Alarm Keypad
       alarm_presence_sensor: binary_sensor.presence
@@ -6270,9 +6360,6 @@
       - script.lights_breathe_orange
       schedule_mode: workday
       alarm_workday_sensor: binary_sensor.workday_sensor
-      zha_alarm_keypad_device: f2b6b66760a5fd1c9cc712d516d58680
-      zha_alarm_control_panel_keypad: alarm_control_panel.alarm_keypad_alarm_control_panel
-      zha_alarm_code_keypad: input_text.alarm_code_keypad
 - id: '1765450835637'
   alias: Gym Motion
   description: ''
@@ -6301,9 +6388,6 @@
       - condition: trigger
         id:
         - motion detected
-      - condition: numeric_state
-        entity_id: sensor.gym_motion_illuminance
-        below: 300
       sequence:
       - action: light.turn_on
         data:
@@ -6891,3 +6975,68 @@
   - alias: Write the snapshot
     action: shell_command.dump_crash_logs
   mode: single
+- id: '1793017591026'
+  alias: Media Power
+  description: Mirrors the on/off state of the Music Assistant players (fake power)
+    to the real KEF speakers.
+  triggers:
+  - alias: MA player off
+    id: 'off'
+    trigger: state
+    entity_id:
+    - media_player.bathroom
+    - media_player.bedroom
+    - media_player.gameroom
+    - media_player.gym
+    - media_player.kitchen
+    - media_player.living_room
+    - media_player.living_room_surround
+    to: 'off'
+    not_from:
+    - unavailable
+    - unknown
+  - alias: MA player on
+    id: 'on'
+    trigger: state
+    entity_id:
+    - media_player.bathroom
+    - media_player.bedroom
+    - media_player.gameroom
+    - media_player.gym
+    - media_player.kitchen
+    - media_player.living_room
+    - media_player.living_room_surround
+    from: 'off'
+    not_to:
+    - unavailable
+    - unknown
+  conditions: []
+  actions:
+  - variables:
+      kef: media_player.{{ trigger.entity_id.split('.')[1] }}_kef
+  - choose:
+    - alias: Power off the KEF speaker
+      conditions:
+      - condition: trigger
+        id: 'off'
+      - alias: KEF speaker is not already off or offline
+        condition: template
+        value_template: '{{ states(kef) not in [''off'', ''unavailable'', ''unknown'']
+          }}'
+      sequence:
+      - action: media_player.turn_off
+        target:
+          entity_id: '{{ kef }}'
+    - alias: Power on the KEF speaker
+      conditions:
+      - condition: trigger
+        id: 'on'
+      - alias: KEF speaker is currently off
+        condition: template
+        value_template: '{{ is_state(kef, ''off'') }}'
+      sequence:
+      - action: media_player.turn_on
+        target:
+          entity_id: '{{ kef }}'
+  mode: parallel
+  max: 10
