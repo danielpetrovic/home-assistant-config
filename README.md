@@ -30,8 +30,9 @@ My personal Home Assistant configuration for a comprehensive smart home installa
 - Visual and audible alerts
 
 ### Media
-- 7 distributed speakers via Music Assistant
+- 7 speakers in 6 rooms via Music Assistant
 - Multi-room synchronized playback with grouping
+- Speaker power follows the Music Assistant on/off state
 - Playlist management (Classical, Dance, Eurovision, Hip Hop, Jazz, Metal, Pop, R&B, Rock)
 - Scenario-based playback (Away, Night, Home)
 
