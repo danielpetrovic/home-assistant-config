@@ -1234,6 +1234,7 @@
         metadata: {}
         target:
           entity_id:
+          - light.garden_lights
           - light.shed_lights
       - action: scene.create
         data:
@@ -1274,6 +1275,7 @@
         metadata: {}
         target:
           entity_id:
+          - light.garden_lights
           - light.shed_lights
     - conditions:
       - condition: state
@@ -1302,6 +1304,7 @@
         metadata: {}
         target:
           entity_id:
+          - light.garden_lights
           - light.shed_lights
       - action: scene.create
         data:
@@ -1333,6 +1336,7 @@
         metadata: {}
         target:
           entity_id:
+          - light.garden_lights
           - light.shed_lights
       - if:
         - condition: state
@@ -3105,11 +3109,17 @@
         target:
           entity_id: media_player.kitchen
         data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 2
+          milliseconds: 0
       - action: media_player.turn_off
         metadata: {}
         target:
           entity_id: media_player.kitchen
         data: {}
+        continue_on_error: true
       - action: light.turn_on
         data:
           brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
@@ -3133,11 +3143,17 @@
         target:
           entity_id: media_player.kitchen
         data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 2
+          milliseconds: 0
       - action: media_player.turn_off
         metadata: {}
         target:
           entity_id: media_player.kitchen
         data: {}
+        continue_on_error: true
       - action: light.turn_on
         data:
           brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
@@ -3167,7 +3183,7 @@
       - delay:
           hours: 0
           minutes: 0
-          seconds: 5
+          seconds: 3
           milliseconds: 0
       - alias: Rejoin kitchen to bedroom
         if:
@@ -3178,6 +3194,7 @@
           entity_id: media_player.living_room_osmc
           state:
           - idle
+          - paused
           - 'off'
           - unavailable
           - unknown
@@ -3188,6 +3205,7 @@
             state:
             - 'off'
             - idle
+            - paused
             - unavailable
             - unknown
           - condition: state
@@ -3217,11 +3235,17 @@
         target:
           entity_id: media_player.kitchen
         data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 2
+          milliseconds: 0
       - action: media_player.turn_off
         metadata: {}
         target:
           entity_id: media_player.kitchen
         data: {}
+        continue_on_error: true
       - action: light.turn_on
         data:
           brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
@@ -3250,7 +3274,7 @@
       - delay:
           hours: 0
           minutes: 0
-          seconds: 5
+          seconds: 3
           milliseconds: 0
       - alias: Rejoin kitchen to bedroom
         if:
@@ -3261,6 +3285,7 @@
           entity_id: media_player.living_room_osmc
           state:
           - idle
+          - paused
           - 'off'
           - unavailable
           - unknown
@@ -3271,6 +3296,7 @@
             state:
             - 'off'
             - idle
+            - paused
             - unavailable
             - unknown
           - condition: state
@@ -3290,11 +3316,12 @@
   alias: Front Door
   description: ''
   triggers:
-  - entity_id:
-    - binary_sensor.front_door_doorbell
-    trigger: state
-    to:
-    - 'on'
+  - trigger: event.received
+    target:
+      entity_id: event.front_door_doorbell
+    options:
+      event_type:
+      - ring
   conditions: []
   actions:
   - parallel:
@@ -3384,9 +3411,6 @@
       - condition: trigger
         id:
         - motion detected
-      - condition: numeric_state
-        entity_id: sensor.bedroom_alex_motion_illuminance
-        below: 10
       sequence:
       - action: light.turn_on
         data:
@@ -3399,6 +3423,47 @@
         target:
           entity_id:
           - light.bedroom_alex_bed_light
+      - choose:
+        - conditions:
+          - condition: time
+            after: '10:00:00'
+            before: '22:00:00'
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'on'
+          sequence:
+          - action: light.turn_on
+            data:
+              brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+                | int }}'
+              color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+                | int }}'
+              transition: 3
+            metadata: {}
+            target:
+              entity_id: light.bedroom_light
+          alias: workday
+        - conditions:
+          - condition: time
+            after: '11:00:00'
+            before: '23:00:00'
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'off'
+          sequence:
+          - action: light.turn_on
+            data:
+              brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+                | int }}'
+              color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+                | int }}'
+              transition: 3
+            metadata: {}
+            target:
+              entity_id: light.bedroom_light
+          alias: non-workday
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -3412,6 +3477,39 @@
         target:
           entity_id:
           - light.bedroom_alex_bed_light
+      - choose:
+        - conditions:
+          - condition: time
+            after: '10:00:00'
+            before: '22:00:00'
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'on'
+          sequence:
+          - action: light.turn_off
+            metadata: {}
+            target:
+              entity_id: light.bedroom_light
+            data:
+              transition: 3
+          alias: workday
+        - conditions:
+          - condition: time
+            after: '11:00:00'
+            before: '23:00:00'
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'off'
+          sequence:
+          - action: light.turn_off
+            metadata: {}
+            target:
+              entity_id: light.bedroom_light
+            data:
+              transition: 3
+          alias: non-workday
       alias: motion clear
   mode: restart
 - id: '1746611520879'
@@ -3438,9 +3536,6 @@
       - condition: trigger
         id:
         - motion detected
-      - condition: numeric_state
-        entity_id: sensor.bedroom_deni_motion_illuminance
-        below: 10
       sequence:
       - action: light.turn_on
         data:
@@ -3453,6 +3548,47 @@
         target:
           entity_id:
           - light.bedroom_deni_bed_light
+      - choose:
+        - conditions:
+          - condition: time
+            after: '10:00:00'
+            before: '22:00:00'
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'on'
+          sequence:
+          - action: light.turn_on
+            data:
+              brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+                | int }}'
+              color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+                | int }}'
+              transition: 3
+            metadata: {}
+            target:
+              entity_id: light.bedroom_light
+          alias: workday
+        - conditions:
+          - condition: time
+            after: '11:00:00'
+            before: '23:00:00'
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'off'
+          sequence:
+          - action: light.turn_on
+            data:
+              brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+                | int }}'
+              color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+                | int }}'
+              transition: 3
+            metadata: {}
+            target:
+              entity_id: light.bedroom_light
+          alias: non-workday
       alias: motion detected
     - conditions:
       - condition: trigger
@@ -3466,6 +3602,39 @@
         target:
           entity_id:
           - light.bedroom_deni_bed_light
+      - choose:
+        - conditions:
+          - condition: time
+            after: '10:00:00'
+            before: '22:00:00'
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'on'
+          sequence:
+          - action: light.turn_off
+            metadata: {}
+            target:
+              entity_id: light.bedroom_light
+            data:
+              transition: 3
+          alias: workday
+        - conditions:
+          - condition: time
+            after: '11:00:00'
+            before: '23:00:00'
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state:
+            - 'off'
+          sequence:
+          - action: light.turn_off
+            metadata: {}
+            target:
+              entity_id: light.bedroom_light
+            data:
+              transition: 3
+          alias: non-workday
       alias: motion clear
   mode: restart
 - id: '1753111025679'
@@ -3496,7 +3665,7 @@
     path: danielpetrovic/niko-battery-switch-multi-button.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Entrance Button
       button_1_light:
@@ -3517,7 +3686,6 @@
       - turn_off
       button_1_light_schedule: schedule.lights_bright
       button_1_light_auto_adjust: false
-      zha_remote: 7f3210d6729e48d6b475c64cb9714589
 - id: '1755899171238'
   alias: Toilet Button
   description: ''
@@ -3525,7 +3693,7 @@
     path: danielpetrovic/niko-battery-switch-multi-button.yaml
     input:
       integration_type:
-      - zha
+      - z2m
       z2m_base_topic: zigbee2mqtt
       z2m_device_name: Toilet Button
       button_1_light:
@@ -3546,7 +3714,6 @@
           entity_id: automation.toilet_door_contact
       button_1_light_schedule: schedule.lights_bright
       button_1_light_auto_adjust: false
-      zha_remote: 151df19136bbebb6d91ba269daba4e97
 - id: '1755965337801'
   alias: Shed Alleyway Button
   description: ''
@@ -5052,70 +5219,6 @@
           target:
             entity_id: climate.bathroom_heating
   mode: restart
-- id: '1759521293992'
-  alias: Geofence - Zone Notifications
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - person.alex
-    - person.deni
-  conditions:
-  - condition: template
-    value_template: "{{ trigger.to_state.state != trigger.from_state.state and\n   (trigger.to_state.state
-      != 'not_home' or trigger.from_state.state != 'not_home') }}"
-  actions:
-  - if:
-    - condition: template
-      value_template: '{{ trigger.from_state.state != "not_home" }}'
-    then:
-    - parallel:
-      - action: notify.mobile_app_alex_phone
-        data:
-          title: Home Assistant
-          message: '{{ state_attr(trigger.entity_id, "friendly_name") }} leaves {{
-            trigger.from_state.state | title }}.'
-          data:
-            ttl: 0
-            priority: high
-            channel: Geofence
-            group: Geofence
-      - action: notify.mobile_app_deni_phone
-        data:
-          title: Home Assistant
-          message: '{{ state_attr(trigger.entity_id, "friendly_name") }} leaves {{
-            trigger.from_state.state | title }}.'
-          data:
-            ttl: 0
-            priority: high
-            channel: Geofence
-            group: Geofence
-  - if:
-    - condition: template
-      value_template: '{{ trigger.to_state.state != "not_home" }}'
-    then:
-    - parallel:
-      - action: notify.mobile_app_alex_phone
-        data:
-          title: Home Assistant
-          message: '{{ state_attr(trigger.entity_id, "friendly_name") }} arrives at
-            {{ trigger.to_state.state | title }}.'
-          data:
-            ttl: 0
-            priority: high
-            channel: Geofence
-            group: Geofence
-      - action: notify.mobile_app_deni_phone
-        data:
-          title: Home Assistant
-          message: '{{ state_attr(trigger.entity_id, "friendly_name") }} arrives at
-            {{ trigger.to_state.state | title }}.'
-          data:
-            ttl: 0
-            priority: high
-            channel: Geofence
-            group: Geofence
-  mode: parallel
 - id: '1761738156612'
   alias: Covers
   description: All logic for window coverings (time + climate)
