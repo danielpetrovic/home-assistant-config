@@ -53,19 +53,6 @@ music_night:
       shuffle: true
     target:
       entity_id: media_player.bedroom
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 1
-      milliseconds: 0
-  - action: media_player.join
-    metadata: {}
-    data:
-      group_members:
-      - media_player.gym
-      - media_player.kitchen
-    target:
-      entity_id: media_player.bedroom
   - action: media_player.volume_set
     metadata: {}
     data:
@@ -73,7 +60,6 @@ music_night:
     target:
       entity_id:
       - media_player.bedroom_kef
-      - media_player.gym_kef
   - action: media_player.media_play
     metadata: {}
     data: {}
@@ -118,7 +104,6 @@ music_home:
     metadata: {}
     data:
       group_members:
-      - media_player.gym
       - media_player.kitchen
     target:
       entity_id: media_player.bedroom
@@ -136,7 +121,6 @@ music_home:
     target:
       entity_id:
       - media_player.bedroom
-      - media_player.gym
   - action: media_player.media_play
     metadata: {}
     data: {}
