@@ -1389,51 +1389,27 @@
                       "entities": [
                         {
                           "entity": "light.garden_lights",
-                          "secondary_info": "last-changed"
+                          "secondary_info": "last_changed"
                         },
                         {
                           "entity": "light.garden_left_1_light",
-                          "secondary_info": "last-changed"
+                          "secondary_info": "last_changed"
                         },
                         {
                           "entity": "light.garden_left_2_light",
-                          "secondary_info": "last-changed"
+                          "secondary_info": "last_changed"
                         },
                         {
                           "entity": "light.garden_left_3_light",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.garden_left_4_light",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.garden_left_5_light",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.garden_left_6_light",
-                          "secondary_info": "last-changed"
+                          "secondary_info": "last_changed"
                         },
                         {
                           "entity": "light.garden_right_1_light",
-                          "secondary_info": "last-changed"
+                          "secondary_info": "last_changed"
                         },
                         {
                           "entity": "light.garden_right_2_light",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.garden_right_3_light",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.garden_right_4_light",
-                          "secondary_info": "last-changed"
-                        },
-                        {
-                          "entity": "light.garden_right_5_light",
-                          "secondary_info": "last-changed"
+                          "secondary_info": "last_changed"
                         }
                       ]
                     },
@@ -6332,102 +6308,6 @@
                     {
                       "type": "light-brightness"
                     }
-                  ],
-                  "features_position": "bottom"
-                },
-                {
-                  "features": [
-                    {
-                      "type": "light-brightness"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "light.garden_right_3_light",
-                  "name": "Right 3",
-                  "vertical": false,
-                  "state_content": [
-                    "brightness",
-                    "last-changed"
-                  ],
-                  "features_position": "bottom"
-                },
-                {
-                  "features": [
-                    {
-                      "type": "light-brightness"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "light.garden_left_4_light",
-                  "name": "Left 4",
-                  "vertical": false,
-                  "state_content": [
-                    "brightness",
-                    "last-changed"
-                  ],
-                  "features_position": "bottom"
-                },
-                {
-                  "features": [
-                    {
-                      "type": "light-brightness"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "light.garden_right_4_light",
-                  "name": "Right 4",
-                  "vertical": false,
-                  "state_content": [
-                    "brightness",
-                    "last-changed"
-                  ],
-                  "features_position": "bottom"
-                },
-                {
-                  "features": [
-                    {
-                      "type": "light-brightness"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "light.garden_left_5_light",
-                  "name": "Left 5",
-                  "vertical": false,
-                  "state_content": [
-                    "brightness",
-                    "last-changed"
-                  ],
-                  "features_position": "bottom"
-                },
-                {
-                  "features": [
-                    {
-                      "type": "light-brightness"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "light.garden_right_5_light",
-                  "name": "Right 5",
-                  "vertical": false,
-                  "state_content": [
-                    "brightness",
-                    "last-changed"
-                  ],
-                  "features_position": "bottom"
-                },
-                {
-                  "features": [
-                    {
-                      "type": "light-brightness"
-                    }
-                  ],
-                  "type": "tile",
-                  "entity": "light.garden_left_6_light",
-                  "name": "Left 6",
-                  "vertical": false,
-                  "state_content": [
-                    "brightness",
-                    "last-changed"
                   ],
                   "features_position": "bottom"
                 },
