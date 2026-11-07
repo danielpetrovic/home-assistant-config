@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Niko Battery Switch (1/2/4 Buttons) (Z2M / ZHA)
 
-    [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Code](https://img.shields.io/badge/Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) ![Version](https://img.shields.io/badge/Version-2026.03.1-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/niko-battery-switch-multi-button.yaml) [![Community](https://img.shields.io/badge/Community-Discussion-ff6600?style=for-the-badge&logo=discourse&logoColor=white)](https://community.home-assistant.io/t/niko-battery-switch-multi-button-z2m-zha-custom-and-light-mode-552-720x1-552-720x2-552-720x4/924010) ![Version](https://img.shields.io/badge/Version-2026.11.1-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of Niko Battery switches (models 552-720X1, 552-720X2, 552-720X4) through Zigbee2MQTT or ZHA integration, supporting both custom actions and light automation.
 
@@ -15,11 +15,12 @@ blueprint:
     - **552-720X4**: Battery switch with 4 buttons (Top Left, Bottom Left, Top Right, Bottom Right)
 
     ## ✨ Key Features
-    - **Multiple Integration Options**: Choose Zigbee2MQTT (Z2M), ZHA, or both
-    - **Custom Mode:** Program the buttons to execute your personalized home automation routines, from controlling your shades to activating security modes.
-    - **Lights Mode:** Dim, brighten, and change the color of your lights depending on day and time of day with the intuitive buttons and a schedule.
-    - **Adaptive Lighting Support:** Integrates with Home Assistant schedule helpers and adaptive lighting sensors for dynamic brightness and color temperature adjustments throughout the day.
-    - **Auto-Adjust:** Optionally enable automatic light adjustment when your schedule changes - lights will smoothly transition to match the current schedule settings.
+    - **Multiple Integration Options**: Zigbee2MQTT (Z2M), ZHA, or both
+    - **Custom Mode**: Program each button to run your own routines, from controlling your shades to activating security modes
+    - **Light Mode**: Short press on/off and long press dimming for lights, with brightness and color temperature that follow the time of day
+    - **Dim Limits**: Optional minimum and maximum brightness for long press dimming, set per button
+    - **Adaptive Lighting Support**: Brightness and color temperature from schedule helpers and adaptive lighting sensors
+    - **Auto-Adjust**: Automatically update lights when the schedule changes, with a smooth transition
 
     *Each configuration option below includes detailed instructions in the automation editor.*
 
@@ -55,21 +56,27 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.11.1: Add dim brightness limits, show info sections again**
+          - Added: Dim Minimum Brightness and Dim Maximum Brightness per button, so long press dimming cannot go below a usable level or past a chosen maximum. The defaults (0% and 100%) limit nothing and dimming behaves exactly as before. Once a limit is set, each dim step checks the current brightness of the first light in the target. Dimming up from off or from below the minimum starts at the minimum.
+          - Fixed: Version History and Schedule Helper Configuration were no longer shown in Home Assistant 2026.11, because the automation editor now hides sections without inputs. Each now contains an informational row, so they are shown again. Nothing to configure there.
+          - Changed: Debug log messages use a comma instead of a long dash.
+          - Improved: Blueprint header aligned with the other blueprints (badges, Key Features).
+
         - **2026.03.1: Fix dim-stop and double-click reliability for Z2M**
-          - Fixed: All Z2M MQTT triggers switched from the device topic (zigbee2mqtt/device) to the action sub-topic (zigbee2mqtt/device/action) — Z2M only publishes to this sub-topic when a real action occurs, so spurious messages (linkquality, battery updates, extra Zigbee frames from the 4-button firmware) never reach the blueprint; double-click window is now fully available for the user's second press; requires Z2M with Home Assistant integration enabled and advanced.output: json (both Z2M defaults)
-          - Fixed: Dim-stop broken on Z2M 4-button — spurious MQTT messages fired the dim-stop wait prematurely causing Thread 1 to exit before the real brightness_stop arrived; replaced single wait with a repeat:while loop that re-waits on non-matching messages and exits only on a real stop signal or 30s timeout
-          - Fixed: Button 3 DOWN dim-stop never worked — the condition validating the stop action was placed as a separate parallel branch, always running before the wait completed and never setting the stop flag; now correctly placed inside Thread 1's sequence
+          - Fixed: All Z2M MQTT triggers switched from the device topic (zigbee2mqtt/device) to the action sub-topic (zigbee2mqtt/device/action): Z2M only publishes to this sub-topic when a real action occurs, so spurious messages (linkquality, battery updates, extra Zigbee frames from the 4-button firmware) never reach the blueprint; double-click window is now fully available for the user's second press; requires Z2M with Home Assistant integration enabled and advanced.output: json (both Z2M defaults)
+          - Fixed: Dim-stop broken on Z2M 4-button: spurious MQTT messages fired the dim-stop wait prematurely causing Thread 1 to exit before the real brightness_stop arrived; replaced single wait with a repeat:while loop that re-waits on non-matching messages and exits only on a real stop signal or 30s timeout
+          - Fixed: Button 3 DOWN dim-stop never worked: the condition validating the stop action was placed as a separate parallel branch, always running before the wait completed and never setting the stop flag; now correctly placed inside Thread 1's sequence
 
         - **2026.02.3: Fix double-click with loop-based wait (MQTT trigger fires on all messages)**
-          - Fixed: Double-click not detected — HA's MQTT wait_for_trigger fires on every message on the device topic regardless of value_template (spurious empty-action messages, battery updates, linkquality updates all fire the wait prematurely); replaced single re-wait with a repeat loop that keeps waiting until a valid action is received or the window truly expires via wait.trigger is none
+          - Fixed: Double-click not detected: HA's MQTT wait_for_trigger fires on every message on the device topic regardless of value_template (spurious empty-action messages, battery updates, linkquality updates all fire the wait prematurely); replaced single re-wait with a repeat loop that keeps waiting until a valid action is received or the window truly expires via wait.trigger is none
 
         - **2026.02.2: Fix double-click and dimming for Z2M 4-button (spurious MQTT trigger)**
-          - Fixed: Double-click not detected — Z2M sends a spurious empty-action MQTT message within ~10ms of each press that fired the wait prematurely; re-wait now absorbs it and continues listening for the real second press
-          - Fixed: Dimming stops after 1 step — same spurious trigger was immediately setting the dim-stop flag; stop flag now validates the received action is an actual brightness_stop event
+          - Fixed: Double-click not detected: Z2M sends a spurious empty-action MQTT message within ~10ms of each press that fired the wait prematurely; re-wait now absorbs it and continues listening for the real second press
+          - Fixed: Dimming stops after 1 step: same spurious trigger was immediately setting the dim-stop flag; stop flag now validates the received action is an actual brightness_stop event
 
         - **2026.02.1: Add debug logging and configurable double-click window**
-          - New: Debug logging toggle — writes to System Log at key points in double-click and dimming flows
-          - New: Configurable double-click window (150–500ms, default 300ms) in Debugging section
+          - Added: Debug logging toggle: writes to System Log at key points in double-click and dimming flows
+          - Added: Configurable double-click window (150–500ms, default 300ms) in Debugging section
           - Changed: Double-click timeout reduced from 400ms to 300ms for snappier response
 
         - **2026.01.14: Fix template errors and unified double-click timing**
@@ -85,7 +92,7 @@ blueprint:
           - Changed: Double-click timeout increased from 300ms to 500ms for better MQTT latency tolerance
           - Removed: Z2M elapsed field requirement (no longer needed in Z2M settings)
 
-        - **2026.01.12: Direct mapping - eliminate normalization layer**
+        - **2026.01.12: Direct mapping, eliminate normalization layer**
           - Changed: Replaced normalization-based routing with direct ZHA/Z2M conditions per handler
           - Fixed: Multi-button Z2M dimming and double-click now work correctly
           - Improved: Each handler explicitly lists supported ZHA endpoints and Z2M actions
@@ -98,7 +105,7 @@ blueprint:
           - Improved: Eliminates complex 60-line device-model-specific action mapping
           - Improved: Z2M suffix checking uses most-specific-first logic to prevent overlap
           - Removed: Useless `value_json.brightness is not defined` filters (Z2M never sends this field)
-          - Note: This is a major code simplification - easier to verify and maintain
+          - Note: This is a major code simplification, easier to verify and maintain
 
         - **2026.01.9: Fix double-press detection, remove helpers, and remove adaptive lighting triggers**
           - **BREAKING:** Removed text helper requirement - delete the helper you created for v2026.01.8
@@ -156,11 +163,11 @@ blueprint:
           - Changed: Using cleaner `params.move_mode` instead of `args[0]` for ZHA brightness commands
           - Removed: Unused `zha_command`, `zha_endpoint`, `zha_args`, and `z2m_action` variables
 
-        - **2026.01.2: Button-First Architecture (Major Refactor)**
+        - **2026.01.2: Button-first architecture (major refactor)**
           - Fixed: Complete restructuring to button-first architecture preventing NoneType errors
           - Fixed: Variables now load only when their specific button is used
           - Improved: Cleaner organization with 20 button-specific handlers
-          - Enhanced: Support for 1, 2, and 4-button models without configuration conflicts
+          - Improved: Support for 1, 2, and 4-button models without configuration conflicts
 
         - **2026.01.1: Fix critical multi-button light control and Z2M subscription issues**
           - Fixed: Multi-button light control handlers
@@ -192,7 +199,15 @@ blueprint:
           - First release
       collapsed: true
       icon: mdi:history
-      input: {}
+      input:
+        version_info_note:
+          name: Information only
+          description: Nothing to configure here.
+          default: true
+          selector:
+            constant:
+              value: true
+              label: ""
     device_model:
       name: Device Model
       description: |
@@ -333,7 +348,15 @@ blueprint:
         - Can be enabled/disabled per automation
       collapsed: true
       icon: mdi:calendar-clock
-      input: {}
+      input:
+        schedule_helper_info_note:
+          name: Information only
+          description: Nothing to configure here.
+          default: true
+          selector:
+            constant:
+              value: true
+              label: ""
     button_1_custom:
       name: Button 1 - Custom Actions
       icon: mdi:numeric-1-circle-outline
@@ -472,6 +495,41 @@ blueprint:
               min: 1.0
               max: 10.0
               step: 1.0
+              mode: slider
+        button_1_light_min_brightness:
+          name: Dim Minimum Brightness
+          default: 0
+          description: |
+            `optional` `number`
+
+            Lowest brightness percentage that long press dimming can reach. Only used when "Dim" is selected above.
+            0 means no minimum (default): dimming works as before, down to off.
+            Above 0, dimming down stops at this value, and dimming up from off starts at this value at least.
+            If it is set above the maximum, the maximum is used.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
+        button_1_light_max_brightness:
+          name: Dim Maximum Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Highest brightness percentage that long press dimming can reach. Only used when "Dim" is selected above.
+            100 means no maximum (default): dimming up works as before.
+            Below 100, dimming up stops at this value.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 1
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
               mode: slider
     button_1_light_settings:
       name: Button 1 - Light Mode Settings
@@ -764,6 +822,41 @@ blueprint:
               max: 10.0
               step: 1.0
               mode: slider
+        button_2_light_min_brightness:
+          name: Dim Minimum Brightness
+          default: 0
+          description: |
+            `optional` `number`
+
+            Lowest brightness percentage that long press dimming can reach. Only used when "Dim" is selected above.
+            0 means no minimum (default): dimming works as before, down to off.
+            Above 0, dimming down stops at this value, and dimming up from off starts at this value at least.
+            If it is set above the maximum, the maximum is used.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
+        button_2_light_max_brightness:
+          name: Dim Maximum Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Highest brightness percentage that long press dimming can reach. Only used when "Dim" is selected above.
+            100 means no maximum (default): dimming up works as before.
+            Below 100, dimming up stops at this value.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 1
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
     button_2_light_settings:
       name: Button 2 - Light Mode Settings
       icon: mdi:cog
@@ -1055,6 +1148,41 @@ blueprint:
               max: 10.0
               step: 1.0
               mode: slider
+        button_3_light_min_brightness:
+          name: Dim Minimum Brightness
+          default: 0
+          description: |
+            `optional` `number`
+
+            Lowest brightness percentage that long press dimming can reach. Only used when "Dim" is selected above.
+            0 means no minimum (default): dimming works as before, down to off.
+            Above 0, dimming down stops at this value, and dimming up from off starts at this value at least.
+            If it is set above the maximum, the maximum is used.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
+        button_3_light_max_brightness:
+          name: Dim Maximum Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Highest brightness percentage that long press dimming can reach. Only used when "Dim" is selected above.
+            100 means no maximum (default): dimming up works as before.
+            Below 100, dimming up stops at this value.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 1
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
     button_3_light_settings:
       name: Button 3 - Light Mode Settings
       icon: mdi:cog
@@ -1345,6 +1473,41 @@ blueprint:
               min: 1.0
               max: 10.0
               step: 1.0
+              mode: slider
+        button_4_light_min_brightness:
+          name: Dim Minimum Brightness
+          default: 0
+          description: |
+            `optional` `number`
+
+            Lowest brightness percentage that long press dimming can reach. Only used when "Dim" is selected above.
+            0 means no minimum (default): dimming works as before, down to off.
+            Above 0, dimming down stops at this value, and dimming up from off starts at this value at least.
+            If it is set above the maximum, the maximum is used.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
+        button_4_light_max_brightness:
+          name: Dim Maximum Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Highest brightness percentage that long press dimming can reach. Only used when "Dim" is selected above.
+            100 means no maximum (default): dimming up works as before.
+            Below 100, dimming up stops at this value.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 1
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
               mode: slider
     button_4_light_settings:
       name: Button 4 - Light Mode Settings
@@ -1999,6 +2162,35 @@ actions:
                 {% else %}
                   {{ button_1_light_color }}
                 {% endif %}
+          - variables:
+              button_1_light_min_brightness: !input button_1_light_min_brightness
+              button_1_light_max_brightness: !input button_1_light_max_brightness
+              button_1_limit_wanted: "{{ button_1_light_min_brightness | int(0) > 0 or button_1_light_max_brightness | int(100) < 100 }}"
+              button_1_limit_entities: >-
+                {% set ns = namespace(entities=[]) %}
+                {% if button_1_limit_wanted %}
+                  {% if button_1_light.entity_id is defined and button_1_light.entity_id | length > 0 %}
+                    {% if button_1_light.entity_id is string %}
+                      {% set ns.entities = [button_1_light.entity_id] %}
+                    {% else %}
+                      {% set ns.entities = button_1_light.entity_id %}
+                    {% endif %}
+                  {% elif button_1_light.device_id is defined and button_1_light.device_id | length > 0 %}
+                    {% set devices = [button_1_light.device_id] if button_1_light.device_id is string else button_1_light.device_id %}
+                    {% for device in devices %}
+                      {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% elif button_1_light.area_id is defined and button_1_light.area_id | length > 0 %}
+                    {% set areas = [button_1_light.area_id] if button_1_light.area_id is string else button_1_light.area_id %}
+                    {% for area in areas %}
+                      {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% endif %}
+                {% endif %}
+                {{ ns.entities }}
+              button_1_limit_on: "{{ button_1_limit_wanted and button_1_limit_entities | length > 0 }}"
+              button_1_limit_max: "{{ (button_1_light_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+              button_1_limit_min: "{{ ([button_1_light_min_brightness | int(0), button_1_light_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
           - if:
               - "{{ debug_logging }}"
             alias: "Debug Point E: button 1 dim up start"
@@ -2008,7 +2200,7 @@ actions:
                   level: warning
                   logger: niko_debug.e.1u
                   message: >-
-                    E: dim_start — button=1, direction=up,
+                    E: dim_start, button=1, direction=up,
                     trigger={{ trigger.id }},
                     action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_1_dimmer_light_mode }}, has_light={{ button_1_has_light }},
@@ -2051,28 +2243,62 @@ actions:
                                             level: warning
                                             logger: niko_debug.f.1u
                                             message: >-
-                                              F: dim_stop_received — button=1, direction=up,
+                                              F: dim_stop_received, button=1, direction=up,
                                               raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_1_light_count }}"
                               sequence:
-                                - choose:
-                                    - conditions:
-                                        - "{{ button_1_dimmer_reset_to_defaults }}"
-                                      sequence:
+                                - variables:
+                                    button_1_limit_current: "{{ state_attr(button_1_limit_entities[0], 'brightness') | int(0) if button_1_limit_on else 0 }}"
+                                    button_1_limit_action: "{{ 'step' if not button_1_limit_on or (button_1_limit_current >= button_1_limit_min and button_1_limit_current + button_1_light_step_size <= button_1_limit_max) else ('set' if button_1_limit_current < button_1_limit_max else 'stop') }}"
+                                    button_1_limit_target: "{{ [[button_1_limit_current + button_1_light_step_size, button_1_limit_min] | max, button_1_limit_max] | min }}"
+                                - if:
+                                    - "{{ button_1_limit_action == 'set' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_1_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_1_light }}"
+                                              data:
+                                                brightness: "{{ button_1_limit_target }}"
+                                                color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                                transition: "{{ button_1_dimming_delay }}"
+                                      default:
+                                        - action: light.turn_on
+                                          target: "{{ button_1_light }}"
+                                          data:
+                                            brightness: "{{ button_1_limit_target }}"
+                                            transition: "{{ button_1_dimming_delay }}"
+                                    - if:
+                                        - "{{ button_1_limit_target >= button_1_limit_max }}"
+                                      then:
+                                        - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_1_limit_action == 'stop' }}"
+                                  then:
+                                    - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_1_limit_action == 'step' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_1_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_1_light }}"
+                                              data:
+                                                brightness_step: "{{ button_1_light_step_size }}"
+                                                color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                                transition: "{{ button_1_dimming_delay }}"
+                                      default:
                                         - action: light.turn_on
                                           target: "{{ button_1_light }}"
                                           data:
                                             brightness_step: "{{ button_1_light_step_size }}"
-                                            color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
                                             transition: "{{ button_1_dimming_delay }}"
-                                  default:
-                                    - action: light.turn_on
-                                      target: "{{ button_1_light }}"
-                                      data:
-                                        brightness_step: "{{ button_1_light_step_size }}"
-                                        transition: "{{ button_1_dimming_delay }}"
                                 - delay:
                                     seconds: "{{ button_1_dimming_delay }}"
                                 - if:
@@ -2119,6 +2345,35 @@ actions:
                 {% else %}
                   {{ button_2_light_color }}
                 {% endif %}
+          - variables:
+              button_2_light_min_brightness: !input button_2_light_min_brightness
+              button_2_light_max_brightness: !input button_2_light_max_brightness
+              button_2_limit_wanted: "{{ button_2_light_min_brightness | int(0) > 0 or button_2_light_max_brightness | int(100) < 100 }}"
+              button_2_limit_entities: >-
+                {% set ns = namespace(entities=[]) %}
+                {% if button_2_limit_wanted %}
+                  {% if button_2_light.entity_id is defined and button_2_light.entity_id | length > 0 %}
+                    {% if button_2_light.entity_id is string %}
+                      {% set ns.entities = [button_2_light.entity_id] %}
+                    {% else %}
+                      {% set ns.entities = button_2_light.entity_id %}
+                    {% endif %}
+                  {% elif button_2_light.device_id is defined and button_2_light.device_id | length > 0 %}
+                    {% set devices = [button_2_light.device_id] if button_2_light.device_id is string else button_2_light.device_id %}
+                    {% for device in devices %}
+                      {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% elif button_2_light.area_id is defined and button_2_light.area_id | length > 0 %}
+                    {% set areas = [button_2_light.area_id] if button_2_light.area_id is string else button_2_light.area_id %}
+                    {% for area in areas %}
+                      {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% endif %}
+                {% endif %}
+                {{ ns.entities }}
+              button_2_limit_on: "{{ button_2_limit_wanted and button_2_limit_entities | length > 0 }}"
+              button_2_limit_max: "{{ (button_2_light_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+              button_2_limit_min: "{{ ([button_2_light_min_brightness | int(0), button_2_light_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
           - if:
               - "{{ debug_logging }}"
             alias: "Debug Point E: button 2 dim up start"
@@ -2128,7 +2383,7 @@ actions:
                   level: warning
                   logger: niko_debug.e.2u
                   message: >-
-                    E: dim_start — button=2, direction=up,
+                    E: dim_start, button=2, direction=up,
                     trigger={{ trigger.id }},
                     action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_2_dimmer_light_mode }}, has_light={{ button_2_has_light }},
@@ -2171,28 +2426,62 @@ actions:
                                             level: warning
                                             logger: niko_debug.f.2u
                                             message: >-
-                                              F: dim_stop_received — button=2, direction=up,
+                                              F: dim_stop_received, button=2, direction=up,
                                               raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_2_light_count }}"
                               sequence:
-                                - choose:
-                                    - conditions:
-                                        - "{{ button_2_dimmer_reset_to_defaults }}"
-                                      sequence:
+                                - variables:
+                                    button_2_limit_current: "{{ state_attr(button_2_limit_entities[0], 'brightness') | int(0) if button_2_limit_on else 0 }}"
+                                    button_2_limit_action: "{{ 'step' if not button_2_limit_on or (button_2_limit_current >= button_2_limit_min and button_2_limit_current + button_2_light_step_size <= button_2_limit_max) else ('set' if button_2_limit_current < button_2_limit_max else 'stop') }}"
+                                    button_2_limit_target: "{{ [[button_2_limit_current + button_2_light_step_size, button_2_limit_min] | max, button_2_limit_max] | min }}"
+                                - if:
+                                    - "{{ button_2_limit_action == 'set' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_2_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_2_light }}"
+                                              data:
+                                                brightness: "{{ button_2_limit_target }}"
+                                                color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                                transition: "{{ button_2_dimming_delay }}"
+                                      default:
+                                        - action: light.turn_on
+                                          target: "{{ button_2_light }}"
+                                          data:
+                                            brightness: "{{ button_2_limit_target }}"
+                                            transition: "{{ button_2_dimming_delay }}"
+                                    - if:
+                                        - "{{ button_2_limit_target >= button_2_limit_max }}"
+                                      then:
+                                        - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_2_limit_action == 'stop' }}"
+                                  then:
+                                    - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_2_limit_action == 'step' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_2_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_2_light }}"
+                                              data:
+                                                brightness_step: "{{ button_2_light_step_size }}"
+                                                color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                                transition: "{{ button_2_dimming_delay }}"
+                                      default:
                                         - action: light.turn_on
                                           target: "{{ button_2_light }}"
                                           data:
                                             brightness_step: "{{ button_2_light_step_size }}"
-                                            color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
                                             transition: "{{ button_2_dimming_delay }}"
-                                  default:
-                                    - action: light.turn_on
-                                      target: "{{ button_2_light }}"
-                                      data:
-                                        brightness_step: "{{ button_2_light_step_size }}"
-                                        transition: "{{ button_2_dimming_delay }}"
                                 - delay:
                                     seconds: "{{ button_2_dimming_delay }}"
                                 - if:
@@ -2239,6 +2528,35 @@ actions:
                 {% else %}
                   {{ button_3_light_color }}
                 {% endif %}
+          - variables:
+              button_3_light_min_brightness: !input button_3_light_min_brightness
+              button_3_light_max_brightness: !input button_3_light_max_brightness
+              button_3_limit_wanted: "{{ button_3_light_min_brightness | int(0) > 0 or button_3_light_max_brightness | int(100) < 100 }}"
+              button_3_limit_entities: >-
+                {% set ns = namespace(entities=[]) %}
+                {% if button_3_limit_wanted %}
+                  {% if button_3_light.entity_id is defined and button_3_light.entity_id | length > 0 %}
+                    {% if button_3_light.entity_id is string %}
+                      {% set ns.entities = [button_3_light.entity_id] %}
+                    {% else %}
+                      {% set ns.entities = button_3_light.entity_id %}
+                    {% endif %}
+                  {% elif button_3_light.device_id is defined and button_3_light.device_id | length > 0 %}
+                    {% set devices = [button_3_light.device_id] if button_3_light.device_id is string else button_3_light.device_id %}
+                    {% for device in devices %}
+                      {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% elif button_3_light.area_id is defined and button_3_light.area_id | length > 0 %}
+                    {% set areas = [button_3_light.area_id] if button_3_light.area_id is string else button_3_light.area_id %}
+                    {% for area in areas %}
+                      {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% endif %}
+                {% endif %}
+                {{ ns.entities }}
+              button_3_limit_on: "{{ button_3_limit_wanted and button_3_limit_entities | length > 0 }}"
+              button_3_limit_max: "{{ (button_3_light_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+              button_3_limit_min: "{{ ([button_3_light_min_brightness | int(0), button_3_light_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
           - if:
               - "{{ debug_logging }}"
             alias: "Debug Point E: button 3 dim up start"
@@ -2248,7 +2566,7 @@ actions:
                   level: warning
                   logger: niko_debug.e.3u
                   message: >-
-                    E: dim_start — button=3, direction=up,
+                    E: dim_start, button=3, direction=up,
                     trigger={{ trigger.id }},
                     action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_3_dimmer_light_mode }}, has_light={{ button_3_has_light }},
@@ -2291,28 +2609,62 @@ actions:
                                             level: warning
                                             logger: niko_debug.f.3u
                                             message: >-
-                                              F: dim_stop_received — button=3, direction=up,
+                                              F: dim_stop_received, button=3, direction=up,
                                               raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_3_light_count }}"
                               sequence:
-                                - choose:
-                                    - conditions:
-                                        - "{{ button_3_dimmer_reset_to_defaults }}"
-                                      sequence:
+                                - variables:
+                                    button_3_limit_current: "{{ state_attr(button_3_limit_entities[0], 'brightness') | int(0) if button_3_limit_on else 0 }}"
+                                    button_3_limit_action: "{{ 'step' if not button_3_limit_on or (button_3_limit_current >= button_3_limit_min and button_3_limit_current + button_3_light_step_size <= button_3_limit_max) else ('set' if button_3_limit_current < button_3_limit_max else 'stop') }}"
+                                    button_3_limit_target: "{{ [[button_3_limit_current + button_3_light_step_size, button_3_limit_min] | max, button_3_limit_max] | min }}"
+                                - if:
+                                    - "{{ button_3_limit_action == 'set' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_3_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_3_light }}"
+                                              data:
+                                                brightness: "{{ button_3_limit_target }}"
+                                                color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                                transition: "{{ button_3_dimming_delay }}"
+                                      default:
+                                        - action: light.turn_on
+                                          target: "{{ button_3_light }}"
+                                          data:
+                                            brightness: "{{ button_3_limit_target }}"
+                                            transition: "{{ button_3_dimming_delay }}"
+                                    - if:
+                                        - "{{ button_3_limit_target >= button_3_limit_max }}"
+                                      then:
+                                        - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_3_limit_action == 'stop' }}"
+                                  then:
+                                    - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_3_limit_action == 'step' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_3_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_3_light }}"
+                                              data:
+                                                brightness_step: "{{ button_3_light_step_size }}"
+                                                color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                                transition: "{{ button_3_dimming_delay }}"
+                                      default:
                                         - action: light.turn_on
                                           target: "{{ button_3_light }}"
                                           data:
                                             brightness_step: "{{ button_3_light_step_size }}"
-                                            color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
                                             transition: "{{ button_3_dimming_delay }}"
-                                  default:
-                                    - action: light.turn_on
-                                      target: "{{ button_3_light }}"
-                                      data:
-                                        brightness_step: "{{ button_3_light_step_size }}"
-                                        transition: "{{ button_3_dimming_delay }}"
                                 - delay:
                                     seconds: "{{ button_3_dimming_delay }}"
                                 - if:
@@ -2359,6 +2711,35 @@ actions:
                 {% else %}
                   {{ button_4_light_color }}
                 {% endif %}
+          - variables:
+              button_4_light_min_brightness: !input button_4_light_min_brightness
+              button_4_light_max_brightness: !input button_4_light_max_brightness
+              button_4_limit_wanted: "{{ button_4_light_min_brightness | int(0) > 0 or button_4_light_max_brightness | int(100) < 100 }}"
+              button_4_limit_entities: >-
+                {% set ns = namespace(entities=[]) %}
+                {% if button_4_limit_wanted %}
+                  {% if button_4_light.entity_id is defined and button_4_light.entity_id | length > 0 %}
+                    {% if button_4_light.entity_id is string %}
+                      {% set ns.entities = [button_4_light.entity_id] %}
+                    {% else %}
+                      {% set ns.entities = button_4_light.entity_id %}
+                    {% endif %}
+                  {% elif button_4_light.device_id is defined and button_4_light.device_id | length > 0 %}
+                    {% set devices = [button_4_light.device_id] if button_4_light.device_id is string else button_4_light.device_id %}
+                    {% for device in devices %}
+                      {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% elif button_4_light.area_id is defined and button_4_light.area_id | length > 0 %}
+                    {% set areas = [button_4_light.area_id] if button_4_light.area_id is string else button_4_light.area_id %}
+                    {% for area in areas %}
+                      {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% endif %}
+                {% endif %}
+                {{ ns.entities }}
+              button_4_limit_on: "{{ button_4_limit_wanted and button_4_limit_entities | length > 0 }}"
+              button_4_limit_max: "{{ (button_4_light_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+              button_4_limit_min: "{{ ([button_4_light_min_brightness | int(0), button_4_light_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
           - if:
               - "{{ debug_logging }}"
             alias: "Debug Point E: button 4 dim up start"
@@ -2368,7 +2749,7 @@ actions:
                   level: warning
                   logger: niko_debug.e.4u
                   message: >-
-                    E: dim_start — button=4, direction=up,
+                    E: dim_start, button=4, direction=up,
                     trigger={{ trigger.id }},
                     action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_4_dimmer_light_mode }}, has_light={{ button_4_has_light }},
@@ -2411,28 +2792,62 @@ actions:
                                             level: warning
                                             logger: niko_debug.f.4u
                                             message: >-
-                                              F: dim_stop_received — button=4, direction=up,
+                                              F: dim_stop_received, button=4, direction=up,
                                               raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_4_light_count }}"
                               sequence:
-                                - choose:
-                                    - conditions:
-                                        - "{{ button_4_dimmer_reset_to_defaults }}"
-                                      sequence:
+                                - variables:
+                                    button_4_limit_current: "{{ state_attr(button_4_limit_entities[0], 'brightness') | int(0) if button_4_limit_on else 0 }}"
+                                    button_4_limit_action: "{{ 'step' if not button_4_limit_on or (button_4_limit_current >= button_4_limit_min and button_4_limit_current + button_4_light_step_size <= button_4_limit_max) else ('set' if button_4_limit_current < button_4_limit_max else 'stop') }}"
+                                    button_4_limit_target: "{{ [[button_4_limit_current + button_4_light_step_size, button_4_limit_min] | max, button_4_limit_max] | min }}"
+                                - if:
+                                    - "{{ button_4_limit_action == 'set' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_4_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_4_light }}"
+                                              data:
+                                                brightness: "{{ button_4_limit_target }}"
+                                                color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                                transition: "{{ button_4_dimming_delay }}"
+                                      default:
+                                        - action: light.turn_on
+                                          target: "{{ button_4_light }}"
+                                          data:
+                                            brightness: "{{ button_4_limit_target }}"
+                                            transition: "{{ button_4_dimming_delay }}"
+                                    - if:
+                                        - "{{ button_4_limit_target >= button_4_limit_max }}"
+                                      then:
+                                        - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_4_limit_action == 'stop' }}"
+                                  then:
+                                    - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_4_limit_action == 'step' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_4_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_4_light }}"
+                                              data:
+                                                brightness_step: "{{ button_4_light_step_size }}"
+                                                color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                                transition: "{{ button_4_dimming_delay }}"
+                                      default:
                                         - action: light.turn_on
                                           target: "{{ button_4_light }}"
                                           data:
                                             brightness_step: "{{ button_4_light_step_size }}"
-                                            color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
                                             transition: "{{ button_4_dimming_delay }}"
-                                  default:
-                                    - action: light.turn_on
-                                      target: "{{ button_4_light }}"
-                                      data:
-                                        brightness_step: "{{ button_4_light_step_size }}"
-                                        transition: "{{ button_4_dimming_delay }}"
                                 - delay:
                                     seconds: "{{ button_4_dimming_delay }}"
                                 - if:
@@ -2479,6 +2894,35 @@ actions:
                 {% else %}
                   {{ button_1_light_color }}
                 {% endif %}
+          - variables:
+              button_1_light_min_brightness: !input button_1_light_min_brightness
+              button_1_light_max_brightness: !input button_1_light_max_brightness
+              button_1_limit_wanted: "{{ button_1_light_min_brightness | int(0) > 0 }}"
+              button_1_limit_entities: >-
+                {% set ns = namespace(entities=[]) %}
+                {% if button_1_limit_wanted %}
+                  {% if button_1_light.entity_id is defined and button_1_light.entity_id | length > 0 %}
+                    {% if button_1_light.entity_id is string %}
+                      {% set ns.entities = [button_1_light.entity_id] %}
+                    {% else %}
+                      {% set ns.entities = button_1_light.entity_id %}
+                    {% endif %}
+                  {% elif button_1_light.device_id is defined and button_1_light.device_id | length > 0 %}
+                    {% set devices = [button_1_light.device_id] if button_1_light.device_id is string else button_1_light.device_id %}
+                    {% for device in devices %}
+                      {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% elif button_1_light.area_id is defined and button_1_light.area_id | length > 0 %}
+                    {% set areas = [button_1_light.area_id] if button_1_light.area_id is string else button_1_light.area_id %}
+                    {% for area in areas %}
+                      {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% endif %}
+                {% endif %}
+                {{ ns.entities }}
+              button_1_limit_on: "{{ button_1_limit_wanted and button_1_limit_entities | length > 0 }}"
+              button_1_limit_max: "{{ (button_1_light_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+              button_1_limit_min: "{{ ([button_1_light_min_brightness | int(0), button_1_light_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
           - if:
               - "{{ debug_logging }}"
             alias: "Debug Point E: button 1 dim down start"
@@ -2488,7 +2932,7 @@ actions:
                   level: warning
                   logger: niko_debug.e.1d
                   message: >-
-                    E: dim_start — button=1, direction=down,
+                    E: dim_start, button=1, direction=down,
                     trigger={{ trigger.id }},
                     action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_1_dimmer_light_mode }}, has_light={{ button_1_has_light }},
@@ -2531,26 +2975,55 @@ actions:
                                             level: warning
                                             logger: niko_debug.f.1d
                                             message: >-
-                                              F: dim_stop_received — button=1, direction=down,
+                                              F: dim_stop_received, button=1, direction=down,
                                               raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_1_light_count }}"
                               sequence:
-                                - choose:
-                                    - conditions:
-                                        - "{{ button_1_dimmer_reset_to_defaults }}"
-                                      sequence:
+                                - variables:
+                                    button_1_limit_current: "{{ state_attr(button_1_limit_entities[0], 'brightness') | int(0) if button_1_limit_on else 0 }}"
+                                    button_1_limit_action: "{{ 'step' if not button_1_limit_on or button_1_limit_current - button_1_light_step_size >= button_1_limit_min else ('set' if button_1_limit_current > button_1_limit_min else 'stop') }}"
+                                    button_1_limit_target: "{{ button_1_limit_min }}"
+                                - if:
+                                    - "{{ button_1_limit_action == 'set' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_1_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_1_light }}"
+                                              data:
+                                                brightness: "{{ button_1_limit_target }}"
+                                                color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                      default:
+                                        - action: light.turn_on
+                                          target: "{{ button_1_light }}"
+                                          data:
+                                            brightness: "{{ button_1_limit_target }}"
+                                    - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_1_limit_action == 'stop' }}"
+                                  then:
+                                    - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_1_limit_action == 'step' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_1_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_1_light }}"
+                                              data:
+                                                brightness_step: "{{ 0 - button_1_light_step_size }}"
+                                                color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
+                                      default:
                                         - action: light.turn_on
                                           target: "{{ button_1_light }}"
                                           data:
                                             brightness_step: "{{ 0 - button_1_light_step_size }}"
-                                            color_temp_kelvin: "{{ button_1_color_temp_kelvin }}"
-                                  default:
-                                    - action: light.turn_on
-                                      target: "{{ button_1_light }}"
-                                      data:
-                                        brightness_step: "{{ 0 - button_1_light_step_size }}"
                                 - delay:
                                     seconds: "{{ button_1_dimming_delay }}"
                                 - if:
@@ -2597,6 +3070,35 @@ actions:
                 {% else %}
                   {{ button_2_light_color }}
                 {% endif %}
+          - variables:
+              button_2_light_min_brightness: !input button_2_light_min_brightness
+              button_2_light_max_brightness: !input button_2_light_max_brightness
+              button_2_limit_wanted: "{{ button_2_light_min_brightness | int(0) > 0 }}"
+              button_2_limit_entities: >-
+                {% set ns = namespace(entities=[]) %}
+                {% if button_2_limit_wanted %}
+                  {% if button_2_light.entity_id is defined and button_2_light.entity_id | length > 0 %}
+                    {% if button_2_light.entity_id is string %}
+                      {% set ns.entities = [button_2_light.entity_id] %}
+                    {% else %}
+                      {% set ns.entities = button_2_light.entity_id %}
+                    {% endif %}
+                  {% elif button_2_light.device_id is defined and button_2_light.device_id | length > 0 %}
+                    {% set devices = [button_2_light.device_id] if button_2_light.device_id is string else button_2_light.device_id %}
+                    {% for device in devices %}
+                      {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% elif button_2_light.area_id is defined and button_2_light.area_id | length > 0 %}
+                    {% set areas = [button_2_light.area_id] if button_2_light.area_id is string else button_2_light.area_id %}
+                    {% for area in areas %}
+                      {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% endif %}
+                {% endif %}
+                {{ ns.entities }}
+              button_2_limit_on: "{{ button_2_limit_wanted and button_2_limit_entities | length > 0 }}"
+              button_2_limit_max: "{{ (button_2_light_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+              button_2_limit_min: "{{ ([button_2_light_min_brightness | int(0), button_2_light_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
           - if:
               - "{{ debug_logging }}"
             alias: "Debug Point E: button 2 dim down start"
@@ -2606,7 +3108,7 @@ actions:
                   level: warning
                   logger: niko_debug.e.2d
                   message: >-
-                    E: dim_start — button=2, direction=down,
+                    E: dim_start, button=2, direction=down,
                     trigger={{ trigger.id }},
                     action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_2_dimmer_light_mode }}, has_light={{ button_2_has_light }},
@@ -2649,26 +3151,55 @@ actions:
                                             level: warning
                                             logger: niko_debug.f.2d
                                             message: >-
-                                              F: dim_stop_received — button=2, direction=down,
+                                              F: dim_stop_received, button=2, direction=down,
                                               raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_2_light_count }}"
                               sequence:
-                                - choose:
-                                    - conditions:
-                                        - "{{ button_2_dimmer_reset_to_defaults }}"
-                                      sequence:
+                                - variables:
+                                    button_2_limit_current: "{{ state_attr(button_2_limit_entities[0], 'brightness') | int(0) if button_2_limit_on else 0 }}"
+                                    button_2_limit_action: "{{ 'step' if not button_2_limit_on or button_2_limit_current - button_2_light_step_size >= button_2_limit_min else ('set' if button_2_limit_current > button_2_limit_min else 'stop') }}"
+                                    button_2_limit_target: "{{ button_2_limit_min }}"
+                                - if:
+                                    - "{{ button_2_limit_action == 'set' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_2_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_2_light }}"
+                                              data:
+                                                brightness: "{{ button_2_limit_target }}"
+                                                color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                      default:
+                                        - action: light.turn_on
+                                          target: "{{ button_2_light }}"
+                                          data:
+                                            brightness: "{{ button_2_limit_target }}"
+                                    - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_2_limit_action == 'stop' }}"
+                                  then:
+                                    - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_2_limit_action == 'step' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_2_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_2_light }}"
+                                              data:
+                                                brightness_step: "{{ 0 - button_2_light_step_size }}"
+                                                color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
+                                      default:
                                         - action: light.turn_on
                                           target: "{{ button_2_light }}"
                                           data:
                                             brightness_step: "{{ 0 - button_2_light_step_size }}"
-                                            color_temp_kelvin: "{{ button_2_color_temp_kelvin }}"
-                                  default:
-                                    - action: light.turn_on
-                                      target: "{{ button_2_light }}"
-                                      data:
-                                        brightness_step: "{{ 0 - button_2_light_step_size }}"
                                 - delay:
                                     seconds: "{{ button_2_dimming_delay }}"
                                 - if:
@@ -2715,6 +3246,35 @@ actions:
                 {% else %}
                   {{ button_3_light_color }}
                 {% endif %}
+          - variables:
+              button_3_light_min_brightness: !input button_3_light_min_brightness
+              button_3_light_max_brightness: !input button_3_light_max_brightness
+              button_3_limit_wanted: "{{ button_3_light_min_brightness | int(0) > 0 }}"
+              button_3_limit_entities: >-
+                {% set ns = namespace(entities=[]) %}
+                {% if button_3_limit_wanted %}
+                  {% if button_3_light.entity_id is defined and button_3_light.entity_id | length > 0 %}
+                    {% if button_3_light.entity_id is string %}
+                      {% set ns.entities = [button_3_light.entity_id] %}
+                    {% else %}
+                      {% set ns.entities = button_3_light.entity_id %}
+                    {% endif %}
+                  {% elif button_3_light.device_id is defined and button_3_light.device_id | length > 0 %}
+                    {% set devices = [button_3_light.device_id] if button_3_light.device_id is string else button_3_light.device_id %}
+                    {% for device in devices %}
+                      {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% elif button_3_light.area_id is defined and button_3_light.area_id | length > 0 %}
+                    {% set areas = [button_3_light.area_id] if button_3_light.area_id is string else button_3_light.area_id %}
+                    {% for area in areas %}
+                      {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% endif %}
+                {% endif %}
+                {{ ns.entities }}
+              button_3_limit_on: "{{ button_3_limit_wanted and button_3_limit_entities | length > 0 }}"
+              button_3_limit_max: "{{ (button_3_light_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+              button_3_limit_min: "{{ ([button_3_light_min_brightness | int(0), button_3_light_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
           - if:
               - "{{ debug_logging }}"
             alias: "Debug Point E: button 3 dim down start"
@@ -2724,7 +3284,7 @@ actions:
                   level: warning
                   logger: niko_debug.e.3d
                   message: >-
-                    E: dim_start — button=3, direction=down,
+                    E: dim_start, button=3, direction=down,
                     trigger={{ trigger.id }},
                     action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_3_dimmer_light_mode }}, has_light={{ button_3_has_light }},
@@ -2767,26 +3327,55 @@ actions:
                                             level: warning
                                             logger: niko_debug.f.3d
                                             message: >-
-                                              F: dim_stop_received — button=3, direction=down,
+                                              F: dim_stop_received, button=3, direction=down,
                                               raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_3_light_count }}"
                               sequence:
-                                - choose:
-                                    - conditions:
-                                        - "{{ button_3_dimmer_reset_to_defaults }}"
-                                      sequence:
+                                - variables:
+                                    button_3_limit_current: "{{ state_attr(button_3_limit_entities[0], 'brightness') | int(0) if button_3_limit_on else 0 }}"
+                                    button_3_limit_action: "{{ 'step' if not button_3_limit_on or button_3_limit_current - button_3_light_step_size >= button_3_limit_min else ('set' if button_3_limit_current > button_3_limit_min else 'stop') }}"
+                                    button_3_limit_target: "{{ button_3_limit_min }}"
+                                - if:
+                                    - "{{ button_3_limit_action == 'set' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_3_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_3_light }}"
+                                              data:
+                                                brightness: "{{ button_3_limit_target }}"
+                                                color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                      default:
+                                        - action: light.turn_on
+                                          target: "{{ button_3_light }}"
+                                          data:
+                                            brightness: "{{ button_3_limit_target }}"
+                                    - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_3_limit_action == 'stop' }}"
+                                  then:
+                                    - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_3_limit_action == 'step' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_3_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_3_light }}"
+                                              data:
+                                                brightness_step: "{{ 0 - button_3_light_step_size }}"
+                                                color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
+                                      default:
                                         - action: light.turn_on
                                           target: "{{ button_3_light }}"
                                           data:
                                             brightness_step: "{{ 0 - button_3_light_step_size }}"
-                                            color_temp_kelvin: "{{ button_3_color_temp_kelvin }}"
-                                  default:
-                                    - action: light.turn_on
-                                      target: "{{ button_3_light }}"
-                                      data:
-                                        brightness_step: "{{ 0 - button_3_light_step_size }}"
                                 - delay:
                                     seconds: "{{ button_3_dimming_delay }}"
                                 - if:
@@ -2833,6 +3422,35 @@ actions:
                 {% else %}
                   {{ button_4_light_color }}
                 {% endif %}
+          - variables:
+              button_4_light_min_brightness: !input button_4_light_min_brightness
+              button_4_light_max_brightness: !input button_4_light_max_brightness
+              button_4_limit_wanted: "{{ button_4_light_min_brightness | int(0) > 0 }}"
+              button_4_limit_entities: >-
+                {% set ns = namespace(entities=[]) %}
+                {% if button_4_limit_wanted %}
+                  {% if button_4_light.entity_id is defined and button_4_light.entity_id | length > 0 %}
+                    {% if button_4_light.entity_id is string %}
+                      {% set ns.entities = [button_4_light.entity_id] %}
+                    {% else %}
+                      {% set ns.entities = button_4_light.entity_id %}
+                    {% endif %}
+                  {% elif button_4_light.device_id is defined and button_4_light.device_id | length > 0 %}
+                    {% set devices = [button_4_light.device_id] if button_4_light.device_id is string else button_4_light.device_id %}
+                    {% for device in devices %}
+                      {% set ns.entities = ns.entities + device_entities(device) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% elif button_4_light.area_id is defined and button_4_light.area_id | length > 0 %}
+                    {% set areas = [button_4_light.area_id] if button_4_light.area_id is string else button_4_light.area_id %}
+                    {% for area in areas %}
+                      {% set ns.entities = ns.entities + area_entities(area) | select('match', '^light\.') | list %}
+                    {% endfor %}
+                  {% endif %}
+                {% endif %}
+                {{ ns.entities }}
+              button_4_limit_on: "{{ button_4_limit_wanted and button_4_limit_entities | length > 0 }}"
+              button_4_limit_max: "{{ (button_4_light_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+              button_4_limit_min: "{{ ([button_4_light_min_brightness | int(0), button_4_light_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
           - if:
               - "{{ debug_logging }}"
             alias: "Debug Point E: button 4 dim down start"
@@ -2842,7 +3460,7 @@ actions:
                   level: warning
                   logger: niko_debug.e.4d
                   message: >-
-                    E: dim_start — button=4, direction=down,
+                    E: dim_start, button=4, direction=down,
                     trigger={{ trigger.id }},
                     action={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
                     mode={{ button_4_dimmer_light_mode }}, has_light={{ button_4_has_light }},
@@ -2885,26 +3503,55 @@ actions:
                                             level: warning
                                             logger: niko_debug.f.4d
                                             message: >-
-                                              F: dim_stop_received — button=4, direction=down,
+                                              F: dim_stop_received, button=4, direction=down,
                                               raw={{ (wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('n/a') }}
                       - sequence:
                           - repeat:
                               count: "{{ button_4_light_count }}"
                               sequence:
-                                - choose:
-                                    - conditions:
-                                        - "{{ button_4_dimmer_reset_to_defaults }}"
-                                      sequence:
+                                - variables:
+                                    button_4_limit_current: "{{ state_attr(button_4_limit_entities[0], 'brightness') | int(0) if button_4_limit_on else 0 }}"
+                                    button_4_limit_action: "{{ 'step' if not button_4_limit_on or button_4_limit_current - button_4_light_step_size >= button_4_limit_min else ('set' if button_4_limit_current > button_4_limit_min else 'stop') }}"
+                                    button_4_limit_target: "{{ button_4_limit_min }}"
+                                - if:
+                                    - "{{ button_4_limit_action == 'set' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_4_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_4_light }}"
+                                              data:
+                                                brightness: "{{ button_4_limit_target }}"
+                                                color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                      default:
+                                        - action: light.turn_on
+                                          target: "{{ button_4_light }}"
+                                          data:
+                                            brightness: "{{ button_4_limit_target }}"
+                                    - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_4_limit_action == 'stop' }}"
+                                  then:
+                                    - stop: Dim limit reached
+                                - if:
+                                    - "{{ button_4_limit_action == 'step' }}"
+                                  then:
+                                    - choose:
+                                        - conditions:
+                                            - "{{ button_4_dimmer_reset_to_defaults }}"
+                                          sequence:
+                                            - action: light.turn_on
+                                              target: "{{ button_4_light }}"
+                                              data:
+                                                brightness_step: "{{ 0 - button_4_light_step_size }}"
+                                                color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
+                                      default:
                                         - action: light.turn_on
                                           target: "{{ button_4_light }}"
                                           data:
                                             brightness_step: "{{ 0 - button_4_light_step_size }}"
-                                            color_temp_kelvin: "{{ button_4_color_temp_kelvin }}"
-                                  default:
-                                    - action: light.turn_on
-                                      target: "{{ button_4_light }}"
-                                      data:
-                                        brightness_step: "{{ 0 - button_4_light_step_size }}"
                                 - delay:
                                     seconds: "{{ button_4_dimming_delay }}"
                                 - if:
@@ -2963,7 +3610,7 @@ actions:
           level: warning
           logger: niko_debug.a
           message: >-
-            A: first_press —
+            A: first_press,
             trigger={{ trigger.id }},
             raw={{ (trigger.payload if trigger.id == 'z2m_button' else trigger.event.data.command) | default('n/a') }},
             first_button={{ first_button }}, first_action={{ first_action }},
@@ -2998,7 +3645,7 @@ actions:
                 level: warning
                 logger: niko_debug.b
                 message: >-
-                  B: wait_result —
+                  B: wait_result,
                   timed_out={{ wait.trigger is none }},
                   elapsed_ms={{ ((as_timestamp(now()) - first_press_time) * 1000) | round(0) }},
                   raw={{ ((wait.trigger.payload if wait.trigger.platform == 'mqtt' else wait.trigger.event.data.command) | default('timeout')) if wait.trigger is not none else 'timeout' }},
@@ -3019,7 +3666,7 @@ actions:
           level: warning
           logger: niko_debug.c
           message: >-
-            C: second_press —
+            C: second_press,
             second_action={{ second_action }}, second_button={{ second_button }}
   - if:
       - "{{ debug_logging }}"
@@ -3030,7 +3677,7 @@ actions:
           level: warning
           logger: niko_debug.d
           message: >-
-            D: double_click_check —
+            D: double_click_check,
             second_action={{ second_action }}, first_action={{ first_action }},
             second_button={{ second_button }}, first_button={{ first_button }},
             result={{ second_action in ['on', 'off'] and second_action != first_action and second_button == first_button }}
