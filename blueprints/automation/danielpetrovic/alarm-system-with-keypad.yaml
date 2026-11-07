@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Alarm System with Keypad support (Z2M / ZHA / Dashboard)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/alarm-system-with-keypad.yaml) [![Community](https://img.shields.io/badge/Community-Discussion-ff6600?style=for-the-badge&logo=discourse&logoColor=white)](https://community.home-assistant.io/t/alarm-system-with-zigbee-z2m-zha-keypad-support-kepzb-110/958295) ![Version](https://img.shields.io/badge/Version-2026.09.1-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/alarm-system-with-keypad.yaml) [![Community](https://img.shields.io/badge/Community-Discussion-ff6600?style=for-the-badge&logo=discourse&logoColor=white)](https://community.home-assistant.io/t/alarm-system-with-zigbee-z2m-zha-keypad-support-kepzb-110/958295) ![Version](https://img.shields.io/badge/Version-2026.11.1-blue?style=for-the-badge)
 
     A comprehensive alarm system blueprint for Home Assistant with multiple keypad integration options. No custom components required.
 
@@ -102,6 +102,10 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.11.1: Fix info sections disappearing on HA 2026.11**
+          - Fixed: Version History, Setup Using Packages, and the two dashboard keypad info sections stopped showing in the automation editor on HA 2026.11, since a section with no inputs is no longer rendered
+          - Changed: each of those sections now has one informational entry so it keeps showing
+
         - **2026.09.1: Fix ZHA keypad no longer arming or disarming the alarm**
           - Fixed: the ZHA branch read the code and arm mode from `trigger.event.data.args`, which recent ZHA releases leave empty, so the keypad fired the event but the alarm state never changed
           - Changed: the ZHA branch now reads `trigger.event.data.params` (`code`, `arm_mode`); the deprecated positional `args` path was removed
@@ -165,7 +169,15 @@ blueprint:
           - Breaking: no upgrade path from old versions, setup required
       collapsed: true
       icon: mdi:history
-      input: {}
+      input:
+        version_info_note:
+          name: Information only
+          description: Nothing to configure here.
+          default: true
+          selector:
+            constant:
+              value: true
+              label: ""
 
     setup_info:
       name: Setup Using Packages
@@ -245,7 +257,15 @@ blueprint:
         The field descriptions in this blueprint reference this `/config/packages/alarm.yaml` file.
       collapsed: true
       icon: mdi:package-variant-closed
-      input: {}
+      input:
+        setup_info_note:
+          name: Information only
+          description: Nothing to configure here.
+          default: true
+          selector:
+            constant:
+              value: true
+              label: ""
 
     z2m:
       name: Zigbee2MQTT (Z2M)
@@ -470,7 +490,15 @@ blueprint:
         ```
       icon: mdi:script-text
       collapsed: true
-      input: {}
+      input:
+        dashboard_scripts_note:
+          name: Information only
+          description: Nothing to configure here.
+          default: true
+          selector:
+            constant:
+              value: true
+              label: ""
 
     dashboard_lovelace_example:
       name: Dashboard Keypad - Lovelace YAML
@@ -657,7 +685,15 @@ blueprint:
         ```
       icon: mdi:code-braces
       collapsed: true
-      input: {}
+      input:
+        dashboard_lovelace_example_note:
+          name: Information only
+          description: Nothing to configure here.
+          default: true
+          selector:
+            constant:
+              value: true
+              label: ""
 
     alarm_automation_main:
       name: Automation - Main Settings
