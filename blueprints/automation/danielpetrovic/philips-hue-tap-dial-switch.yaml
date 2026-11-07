@@ -5,7 +5,7 @@ blueprint:
   description: |
     # Philips Hue Tap Dial Switch (Z2M / ZHA)
 
-    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) [![Community](https://img.shields.io/badge/Community-Discussion-ff6600?style=for-the-badge&logo=discourse&logoColor=white)](https://community.home-assistant.io/t/philips-hue-tap-dial-switch-z2m-zha-custom-light-and-media-mode-rdm002/828766) ![Version](https://img.shields.io/badge/Version-2026.10.1-blue?style=for-the-badge)
+    [![GitHub Repository](https://img.shields.io/badge/My%20GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config) [![Blueprint Code](https://img.shields.io/badge/View-Blueprint%20Code-2ea44f?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/danielpetrovic/home-assistant-config/blob/main/blueprints/automation/danielpetrovic/philips-hue-tap-dial-switch.yaml) [![Community](https://img.shields.io/badge/Community-Discussion-ff6600?style=for-the-badge&logo=discourse&logoColor=white)](https://community.home-assistant.io/t/philips-hue-tap-dial-switch-z2m-zha-custom-light-and-media-mode-rdm002/828766) ![Version](https://img.shields.io/badge/Version-2026.11.1-blue?style=for-the-badge)
 
     This blueprint enables comprehensive control of a Philips Hue Tap Dial Switch through Zigbee2MQTT or ZHA integration, supporting custom actions, light automation, and media player control.
 
@@ -19,6 +19,7 @@ blueprint:
     - **Dial Color Temperature Control**: Context-aware color temperature adjustment based on the last button pressed
     - **Dynamic Dial Mode**: Switch the dial between brightness and color temperature control from any button action
     - **Configurable Dial Speed**: Independent speed settings for brightness and color temperature
+    - **Dial Limits**: Optional minimum and maximum brightness and color temperature for the dial, set per button
     - **Adaptive Lighting Support**: Time-based brightness and color temperature via schedule helpers and adaptive lighting sensors
     - **Auto-Adjust**: Automatically update lights when adaptive or schedule values change, independently for brightness and color temperature
 
@@ -36,6 +37,11 @@ blueprint:
     version_info:
       name: Version History
       description: |
+        - **2026.11.1: Add dial brightness and color temperature limits, show info sections again**
+          - Added: Dial Minimum Brightness and Dial Maximum Brightness sliders per button, so the dial cannot dim a light below a usable level or brighten it past a chosen maximum. The defaults (0% and 100%) limit nothing and dial dimming behaves exactly as before. Once a limit is set, each brightness turn checks the current brightness of the first light in the target.
+          - Added: Dial Minimum Color Temperature and Dial Maximum Color Temperature sliders per button to narrow the color temperature range the dial can reach. The defaults do not limit anything, the range of the light itself still applies.
+          - Fixed: Version History, Button Helpers Configuration and Schedule Helper Configuration were no longer shown in Home Assistant 2026.11, because the automation editor now hides sections without inputs. Each of them now contains an informational row, so they are shown again. Nothing to configure there.
+
         - **2026.10.1: Fix ZHA offline events raising template errors**
           - Fixed: ZHA fires a `device_offline` event when it marks a sleepy Tap Dial unavailable. That event has no `command` and no `params`, so reading `params.step_mode` and `params.step_size` raised "Error rendering variables: UndefinedError" and reading `command` logged a template warning. These lookups now fall back to safe defaults, so offline events no longer produce errors and do nothing.
           - Improved: Button presses and dial rotation are unchanged, the defaults only apply when a value is missing.
@@ -116,7 +122,15 @@ blueprint:
           - First release with basic Philips Hue Tap Dial Switch support
       collapsed: true
       icon: mdi:history
-      input: {}
+      input:
+        version_info_note:
+          name: Information only
+          description: Nothing to configure here.
+          default: true
+          selector:
+            constant:
+              value: true
+              label: ""
     button_helpers_info:
       name: Button Helpers Configuration
       description: |
@@ -178,7 +192,15 @@ blueprint:
         - **Helper configured**: helper value takes over, toggle it from any button, script, or dashboard
       collapsed: true
       icon: mdi:tune-variant
-      input: {}
+      input:
+        button_helpers_info_note:
+          name: Information only
+          description: Nothing to configure here.
+          default: true
+          selector:
+            constant:
+              value: true
+              label: ""
     schedule_helper_info:
       name: Schedule Helper Configuration
       description: |
@@ -239,7 +261,15 @@ blueprint:
         - Can be enabled/disabled per button
       collapsed: true
       icon: mdi:calendar-clock
-      input: {}
+      input:
+        schedule_helper_info_note:
+          name: Information only
+          description: Nothing to configure here.
+          default: true
+          selector:
+            constant:
+              value: true
+              label: ""
     integration_type:
       name: Integration Type
       description: |
@@ -532,6 +562,69 @@ blueprint:
               min: 1
               max: 10
               step: 1
+              mode: slider
+        button_1_rotate_min_brightness:
+          name: Dial Minimum Brightness
+          default: 0
+          description: |
+            `optional` `number`
+
+            Lowest brightness percentage the dial can dim to. Only used when Rotate Mode includes "Brightness".
+            0 means no minimum (default): the dial dims as before, down to off.
+            Above 0, the dial stops at this value, and turning up from off starts at this value at least.
+            If it is set above the maximum, the maximum is used.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
+        button_1_rotate_max_brightness:
+          name: Dial Maximum Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Highest brightness percentage the dial can brighten to. Only used when Rotate Mode includes "Brightness".
+            100 means no maximum (default): the dial brightens as before.
+            Below 100, the dial stops at this value.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 1
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
+        button_1_rotate_min_color_temp:
+          name: Dial Minimum Color Temperature
+          default: 1500
+          description: |
+            `optional` `number`
+
+            Warmest color temperature (lowest Kelvin) the dial can reach. The default does not limit anything, the range of the light itself always applies. If it is set above the maximum, the maximum is used. Only used when Rotate Mode includes "Color Temperature".
+          selector:
+            number:
+              min: 1500
+              max: 7000
+              step: 100
+              unit_of_measurement: "K"
+              mode: slider
+        button_1_rotate_max_color_temp:
+          name: Dial Maximum Color Temperature
+          default: 7000
+          description: |
+            `optional` `number`
+
+            Coolest color temperature (highest Kelvin) the dial can reach. The default does not limit anything, the range of the light itself always applies. Only used when Rotate Mode includes "Color Temperature".
+          selector:
+            number:
+              min: 1500
+              max: 7000
+              step: 100
+              unit_of_measurement: "K"
               mode: slider
         button_1_rotate_mode_helper:
           name: Rotate Mode Helper
@@ -1154,6 +1247,69 @@ blueprint:
               max: 10
               step: 1
               mode: slider
+        button_2_rotate_min_brightness:
+          name: Dial Minimum Brightness
+          default: 0
+          description: |
+            `optional` `number`
+
+            Lowest brightness percentage the dial can dim to. Only used when Rotate Mode includes "Brightness".
+            0 means no minimum (default): the dial dims as before, down to off.
+            Above 0, the dial stops at this value, and turning up from off starts at this value at least.
+            If it is set above the maximum, the maximum is used.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
+        button_2_rotate_max_brightness:
+          name: Dial Maximum Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Highest brightness percentage the dial can brighten to. Only used when Rotate Mode includes "Brightness".
+            100 means no maximum (default): the dial brightens as before.
+            Below 100, the dial stops at this value.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 1
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
+        button_2_rotate_min_color_temp:
+          name: Dial Minimum Color Temperature
+          default: 1500
+          description: |
+            `optional` `number`
+
+            Warmest color temperature (lowest Kelvin) the dial can reach. The default does not limit anything, the range of the light itself always applies. If it is set above the maximum, the maximum is used. Only used when Rotate Mode includes "Color Temperature".
+          selector:
+            number:
+              min: 1500
+              max: 7000
+              step: 100
+              unit_of_measurement: "K"
+              mode: slider
+        button_2_rotate_max_color_temp:
+          name: Dial Maximum Color Temperature
+          default: 7000
+          description: |
+            `optional` `number`
+
+            Coolest color temperature (highest Kelvin) the dial can reach. The default does not limit anything, the range of the light itself always applies. Only used when Rotate Mode includes "Color Temperature".
+          selector:
+            number:
+              min: 1500
+              max: 7000
+              step: 100
+              unit_of_measurement: "K"
+              mode: slider
         button_2_rotate_mode_helper:
           name: Rotate Mode Helper
           default: []
@@ -1774,6 +1930,69 @@ blueprint:
               min: 1
               max: 10
               step: 1
+              mode: slider
+        button_3_rotate_min_brightness:
+          name: Dial Minimum Brightness
+          default: 0
+          description: |
+            `optional` `number`
+
+            Lowest brightness percentage the dial can dim to. Only used when Rotate Mode includes "Brightness".
+            0 means no minimum (default): the dial dims as before, down to off.
+            Above 0, the dial stops at this value, and turning up from off starts at this value at least.
+            If it is set above the maximum, the maximum is used.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
+        button_3_rotate_max_brightness:
+          name: Dial Maximum Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Highest brightness percentage the dial can brighten to. Only used when Rotate Mode includes "Brightness".
+            100 means no maximum (default): the dial brightens as before.
+            Below 100, the dial stops at this value.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 1
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
+        button_3_rotate_min_color_temp:
+          name: Dial Minimum Color Temperature
+          default: 1500
+          description: |
+            `optional` `number`
+
+            Warmest color temperature (lowest Kelvin) the dial can reach. The default does not limit anything, the range of the light itself always applies. If it is set above the maximum, the maximum is used. Only used when Rotate Mode includes "Color Temperature".
+          selector:
+            number:
+              min: 1500
+              max: 7000
+              step: 100
+              unit_of_measurement: "K"
+              mode: slider
+        button_3_rotate_max_color_temp:
+          name: Dial Maximum Color Temperature
+          default: 7000
+          description: |
+            `optional` `number`
+
+            Coolest color temperature (highest Kelvin) the dial can reach. The default does not limit anything, the range of the light itself always applies. Only used when Rotate Mode includes "Color Temperature".
+          selector:
+            number:
+              min: 1500
+              max: 7000
+              step: 100
+              unit_of_measurement: "K"
               mode: slider
         button_3_rotate_mode_helper:
           name: Rotate Mode Helper
@@ -2396,6 +2615,69 @@ blueprint:
               max: 10
               step: 1
               mode: slider
+        button_4_rotate_min_brightness:
+          name: Dial Minimum Brightness
+          default: 0
+          description: |
+            `optional` `number`
+
+            Lowest brightness percentage the dial can dim to. Only used when Rotate Mode includes "Brightness".
+            0 means no minimum (default): the dial dims as before, down to off.
+            Above 0, the dial stops at this value, and turning up from off starts at this value at least.
+            If it is set above the maximum, the maximum is used.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
+        button_4_rotate_max_brightness:
+          name: Dial Maximum Brightness
+          default: 100
+          description: |
+            `optional` `number`
+
+            Highest brightness percentage the dial can brighten to. Only used when Rotate Mode includes "Brightness".
+            100 means no maximum (default): the dial brightens as before.
+            Below 100, the dial stops at this value.
+            With a limit set, the first light in the target decides when the limit is reached.
+          selector:
+            number:
+              min: 1
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+              mode: slider
+        button_4_rotate_min_color_temp:
+          name: Dial Minimum Color Temperature
+          default: 1500
+          description: |
+            `optional` `number`
+
+            Warmest color temperature (lowest Kelvin) the dial can reach. The default does not limit anything, the range of the light itself always applies. If it is set above the maximum, the maximum is used. Only used when Rotate Mode includes "Color Temperature".
+          selector:
+            number:
+              min: 1500
+              max: 7000
+              step: 100
+              unit_of_measurement: "K"
+              mode: slider
+        button_4_rotate_max_color_temp:
+          name: Dial Maximum Color Temperature
+          default: 7000
+          description: |
+            `optional` `number`
+
+            Coolest color temperature (highest Kelvin) the dial can reach. The default does not limit anything, the range of the light itself always applies. Only used when Rotate Mode includes "Color Temperature".
+          selector:
+            number:
+              min: 1500
+              max: 7000
+              step: 100
+              unit_of_measurement: "K"
+              mode: slider
         button_4_rotate_mode_helper:
           name: Rotate Mode Helper
           default: []
@@ -2925,6 +3207,10 @@ variables:
   button_1_long_release_light_mode: !input button_1_long_release_light_mode
   button_1_double_light_mode: !input button_1_double_light_mode
   button_1_rotate_light_mode: !input button_1_rotate_light_mode
+  button_1_rotate_min_brightness: !input button_1_rotate_min_brightness
+  button_1_rotate_max_brightness: !input button_1_rotate_max_brightness
+  button_1_rotate_min_color_temp: !input button_1_rotate_min_color_temp
+  button_1_rotate_max_color_temp: !input button_1_rotate_max_color_temp
   button_1_media: !input button_1_media
   button_1_media_leader: !input button_1_media_leader
   button_1_volume: !input button_1_media_volume
@@ -3034,6 +3320,10 @@ variables:
   button_2_long_release_light_mode: !input button_2_long_release_light_mode
   button_2_double_light_mode: !input button_2_double_light_mode
   button_2_rotate_light_mode: !input button_2_rotate_light_mode
+  button_2_rotate_min_brightness: !input button_2_rotate_min_brightness
+  button_2_rotate_max_brightness: !input button_2_rotate_max_brightness
+  button_2_rotate_min_color_temp: !input button_2_rotate_min_color_temp
+  button_2_rotate_max_color_temp: !input button_2_rotate_max_color_temp
   button_2_media: !input button_2_media
   button_2_media_leader: !input button_2_media_leader
   button_2_volume: !input button_2_media_volume
@@ -3143,6 +3433,10 @@ variables:
   button_3_long_release_light_mode: !input button_3_long_release_light_mode
   button_3_double_light_mode: !input button_3_double_light_mode
   button_3_rotate_light_mode: !input button_3_rotate_light_mode
+  button_3_rotate_min_brightness: !input button_3_rotate_min_brightness
+  button_3_rotate_max_brightness: !input button_3_rotate_max_brightness
+  button_3_rotate_min_color_temp: !input button_3_rotate_min_color_temp
+  button_3_rotate_max_color_temp: !input button_3_rotate_max_color_temp
   button_3_media: !input button_3_media
   button_3_media_leader: !input button_3_media_leader
   button_3_volume: !input button_3_media_volume
@@ -3252,6 +3546,10 @@ variables:
   button_4_long_release_light_mode: !input button_4_long_release_light_mode
   button_4_double_light_mode: !input button_4_double_light_mode
   button_4_rotate_light_mode: !input button_4_rotate_light_mode
+  button_4_rotate_min_brightness: !input button_4_rotate_min_brightness
+  button_4_rotate_max_brightness: !input button_4_rotate_max_brightness
+  button_4_rotate_min_color_temp: !input button_4_rotate_min_color_temp
+  button_4_rotate_max_color_temp: !input button_4_rotate_max_color_temp
   button_4_media: !input button_4_media
   button_4_media_leader: !input button_4_media_leader
   button_4_volume: !input button_4_media_volume
@@ -3986,11 +4284,36 @@ actions:
               ((button_1_rotate_mode_helper not in [none, '', []] and states(button_1_rotate_mode_helper) in ['brightness', '']) or
               (button_1_rotate_mode_helper in [none, '', []] and 'brightness' in button_1_rotate_light_mode)) }}
             then:
-              - action: light.turn_on
-                target: "{{ button_1_light }}"
-                data:
-                  brightness_step: "-{{ (step_size | int(0) * button_1_step_size / 10) | int }}"
-                  transition: "{{ button_1_transition }}"
+              - choose:
+                  - conditions: "{{ button_1_rotate_min_brightness | int(0) > 0 and button_1_light_entities | length > 0 }}"
+                    sequence:
+                      - variables:
+                          limit_first: "{{ button_1_light_entities[0] }}"
+                          limit_current: "{{ state_attr(limit_first, 'brightness') | int(0) }}"
+                          limit_step: "{{ (step_size | int(0) * button_1_step_size / 10) | int }}"
+                          limit_max: "{{ (button_1_rotate_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+                          limit_min: "{{ ([button_1_rotate_min_brightness | int(0), button_1_rotate_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
+                      - choose:
+                          - conditions: "{{ limit_current - limit_step >= limit_min }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_1_light }}"
+                                data:
+                                  brightness_step: "-{{ limit_step }}"
+                                  transition: "{{ button_1_transition }}"
+                          - conditions: "{{ limit_current > limit_min }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_1_light }}"
+                                data:
+                                  brightness: "{{ limit_min }}"
+                                  transition: "{{ button_1_transition }}"
+                default:
+                  - action: light.turn_on
+                    target: "{{ button_1_light }}"
+                    data:
+                      brightness_step: "-{{ (step_size | int(0) * button_1_step_size / 10) | int }}"
+                      transition: "{{ button_1_transition }}"
           - if: >-
               {{ button_1_has_light and
               ((button_1_rotate_mode_helper not in [none, '', []] and states(button_1_rotate_mode_helper) == 'color_temp') or
@@ -4007,7 +4330,9 @@ actions:
                     {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
                     {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
                     {% set delta = (step_size | int(0) * button_1_color_temp_step_size / 10) | int %}
-                    {{ [[current - delta, min_k] | max, max_k] | min }}
+                    {% set low_k = [min_k, [button_1_rotate_min_color_temp | int(1500), button_1_rotate_max_color_temp | int(7000)] | min] | max %}
+                    {% set high_k = [[max_k, button_1_rotate_max_color_temp | int(7000)] | min, low_k] | max %}
+                    {{ [[current - delta, low_k] | max, high_k] | min }}
           - if: "{{ button_1_has_media and 'volume' in button_1_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -4023,11 +4348,36 @@ actions:
               ((button_1_rotate_mode_helper not in [none, '', []] and states(button_1_rotate_mode_helper) in ['brightness', '']) or
               (button_1_rotate_mode_helper in [none, '', []] and 'brightness' in button_1_rotate_light_mode)) }}
             then:
-              - action: light.turn_on
-                target: "{{ button_1_light }}"
-                data:
-                  brightness_step: "{{ (step_size | int(0) * button_1_step_size / 10) | int }}"
-                  transition: "{{ button_1_transition }}"
+              - choose:
+                  - conditions: "{{ (button_1_rotate_min_brightness | int(0) > 0 or button_1_rotate_max_brightness | int(100) < 100) and button_1_light_entities | length > 0 }}"
+                    sequence:
+                      - variables:
+                          limit_first: "{{ button_1_light_entities[0] }}"
+                          limit_current: "{{ state_attr(limit_first, 'brightness') | int(0) }}"
+                          limit_step: "{{ (step_size | int(0) * button_1_step_size / 10) | int }}"
+                          limit_max: "{{ (button_1_rotate_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+                          limit_min: "{{ ([button_1_rotate_min_brightness | int(0), button_1_rotate_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
+                      - choose:
+                          - conditions: "{{ limit_current >= limit_min and limit_current + limit_step <= limit_max }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_1_light }}"
+                                data:
+                                  brightness_step: "{{ limit_step }}"
+                                  transition: "{{ button_1_transition }}"
+                          - conditions: "{{ limit_current < limit_max }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_1_light }}"
+                                data:
+                                  brightness: "{{ [[limit_current + limit_step, limit_min] | max, limit_max] | min }}"
+                                  transition: "{{ button_1_transition }}"
+                default:
+                  - action: light.turn_on
+                    target: "{{ button_1_light }}"
+                    data:
+                      brightness_step: "{{ (step_size | int(0) * button_1_step_size / 10) | int }}"
+                      transition: "{{ button_1_transition }}"
           - if: >-
               {{ button_1_has_light and
               ((button_1_rotate_mode_helper not in [none, '', []] and states(button_1_rotate_mode_helper) == 'color_temp') or
@@ -4044,7 +4394,9 @@ actions:
                     {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
                     {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
                     {% set delta = (step_size | int(0) * button_1_color_temp_step_size / 10) | int %}
-                    {{ [[current + delta, min_k] | max, max_k] | min }}
+                    {% set low_k = [min_k, [button_1_rotate_min_color_temp | int(1500), button_1_rotate_max_color_temp | int(7000)] | min] | max %}
+                    {% set high_k = [[max_k, button_1_rotate_max_color_temp | int(7000)] | min, low_k] | max %}
+                    {{ [[current + delta, low_k] | max, high_k] | min }}
           - if: "{{ button_1_has_media and 'volume' in button_1_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -4459,11 +4811,36 @@ actions:
               ((button_2_rotate_mode_helper not in [none, '', []] and states(button_2_rotate_mode_helper) in ['brightness', '']) or
               (button_2_rotate_mode_helper in [none, '', []] and 'brightness' in button_2_rotate_light_mode)) }}
             then:
-              - action: light.turn_on
-                target: "{{ button_2_light }}"
-                data:
-                  brightness_step: "-{{ (step_size | int(0) * button_2_step_size / 10) | int }}"
-                  transition: "{{ button_2_transition }}"
+              - choose:
+                  - conditions: "{{ button_2_rotate_min_brightness | int(0) > 0 and button_2_light_entities | length > 0 }}"
+                    sequence:
+                      - variables:
+                          limit_first: "{{ button_2_light_entities[0] }}"
+                          limit_current: "{{ state_attr(limit_first, 'brightness') | int(0) }}"
+                          limit_step: "{{ (step_size | int(0) * button_2_step_size / 10) | int }}"
+                          limit_max: "{{ (button_2_rotate_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+                          limit_min: "{{ ([button_2_rotate_min_brightness | int(0), button_2_rotate_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
+                      - choose:
+                          - conditions: "{{ limit_current - limit_step >= limit_min }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_2_light }}"
+                                data:
+                                  brightness_step: "-{{ limit_step }}"
+                                  transition: "{{ button_2_transition }}"
+                          - conditions: "{{ limit_current > limit_min }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_2_light }}"
+                                data:
+                                  brightness: "{{ limit_min }}"
+                                  transition: "{{ button_2_transition }}"
+                default:
+                  - action: light.turn_on
+                    target: "{{ button_2_light }}"
+                    data:
+                      brightness_step: "-{{ (step_size | int(0) * button_2_step_size / 10) | int }}"
+                      transition: "{{ button_2_transition }}"
           - if: >-
               {{ button_2_has_light and
               ((button_2_rotate_mode_helper not in [none, '', []] and states(button_2_rotate_mode_helper) == 'color_temp') or
@@ -4480,7 +4857,9 @@ actions:
                     {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
                     {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
                     {% set delta = (step_size | int(0) * button_2_color_temp_step_size / 10) | int %}
-                    {{ [[current - delta, min_k] | max, max_k] | min }}
+                    {% set low_k = [min_k, [button_2_rotate_min_color_temp | int(1500), button_2_rotate_max_color_temp | int(7000)] | min] | max %}
+                    {% set high_k = [[max_k, button_2_rotate_max_color_temp | int(7000)] | min, low_k] | max %}
+                    {{ [[current - delta, low_k] | max, high_k] | min }}
           - if: "{{ button_2_has_media and 'volume' in button_2_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -4496,11 +4875,36 @@ actions:
               ((button_2_rotate_mode_helper not in [none, '', []] and states(button_2_rotate_mode_helper) in ['brightness', '']) or
               (button_2_rotate_mode_helper in [none, '', []] and 'brightness' in button_2_rotate_light_mode)) }}
             then:
-              - action: light.turn_on
-                target: "{{ button_2_light }}"
-                data:
-                  brightness_step: "{{ (step_size | int(0) * button_2_step_size / 10) | int }}"
-                  transition: "{{ button_2_transition }}"
+              - choose:
+                  - conditions: "{{ (button_2_rotate_min_brightness | int(0) > 0 or button_2_rotate_max_brightness | int(100) < 100) and button_2_light_entities | length > 0 }}"
+                    sequence:
+                      - variables:
+                          limit_first: "{{ button_2_light_entities[0] }}"
+                          limit_current: "{{ state_attr(limit_first, 'brightness') | int(0) }}"
+                          limit_step: "{{ (step_size | int(0) * button_2_step_size / 10) | int }}"
+                          limit_max: "{{ (button_2_rotate_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+                          limit_min: "{{ ([button_2_rotate_min_brightness | int(0), button_2_rotate_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
+                      - choose:
+                          - conditions: "{{ limit_current >= limit_min and limit_current + limit_step <= limit_max }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_2_light }}"
+                                data:
+                                  brightness_step: "{{ limit_step }}"
+                                  transition: "{{ button_2_transition }}"
+                          - conditions: "{{ limit_current < limit_max }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_2_light }}"
+                                data:
+                                  brightness: "{{ [[limit_current + limit_step, limit_min] | max, limit_max] | min }}"
+                                  transition: "{{ button_2_transition }}"
+                default:
+                  - action: light.turn_on
+                    target: "{{ button_2_light }}"
+                    data:
+                      brightness_step: "{{ (step_size | int(0) * button_2_step_size / 10) | int }}"
+                      transition: "{{ button_2_transition }}"
           - if: >-
               {{ button_2_has_light and
               ((button_2_rotate_mode_helper not in [none, '', []] and states(button_2_rotate_mode_helper) == 'color_temp') or
@@ -4517,7 +4921,9 @@ actions:
                     {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
                     {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
                     {% set delta = (step_size | int(0) * button_2_color_temp_step_size / 10) | int %}
-                    {{ [[current + delta, min_k] | max, max_k] | min }}
+                    {% set low_k = [min_k, [button_2_rotate_min_color_temp | int(1500), button_2_rotate_max_color_temp | int(7000)] | min] | max %}
+                    {% set high_k = [[max_k, button_2_rotate_max_color_temp | int(7000)] | min, low_k] | max %}
+                    {{ [[current + delta, low_k] | max, high_k] | min }}
           - if: "{{ button_2_has_media and 'volume' in button_2_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -4932,11 +5338,36 @@ actions:
               ((button_3_rotate_mode_helper not in [none, '', []] and states(button_3_rotate_mode_helper) in ['brightness', '']) or
               (button_3_rotate_mode_helper in [none, '', []] and 'brightness' in button_3_rotate_light_mode)) }}
             then:
-              - action: light.turn_on
-                target: "{{ button_3_light }}"
-                data:
-                  brightness_step: "-{{ (step_size | int(0) * button_3_step_size / 10) | int }}"
-                  transition: "{{ button_3_transition }}"
+              - choose:
+                  - conditions: "{{ button_3_rotate_min_brightness | int(0) > 0 and button_3_light_entities | length > 0 }}"
+                    sequence:
+                      - variables:
+                          limit_first: "{{ button_3_light_entities[0] }}"
+                          limit_current: "{{ state_attr(limit_first, 'brightness') | int(0) }}"
+                          limit_step: "{{ (step_size | int(0) * button_3_step_size / 10) | int }}"
+                          limit_max: "{{ (button_3_rotate_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+                          limit_min: "{{ ([button_3_rotate_min_brightness | int(0), button_3_rotate_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
+                      - choose:
+                          - conditions: "{{ limit_current - limit_step >= limit_min }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_3_light }}"
+                                data:
+                                  brightness_step: "-{{ limit_step }}"
+                                  transition: "{{ button_3_transition }}"
+                          - conditions: "{{ limit_current > limit_min }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_3_light }}"
+                                data:
+                                  brightness: "{{ limit_min }}"
+                                  transition: "{{ button_3_transition }}"
+                default:
+                  - action: light.turn_on
+                    target: "{{ button_3_light }}"
+                    data:
+                      brightness_step: "-{{ (step_size | int(0) * button_3_step_size / 10) | int }}"
+                      transition: "{{ button_3_transition }}"
           - if: >-
               {{ button_3_has_light and
               ((button_3_rotate_mode_helper not in [none, '', []] and states(button_3_rotate_mode_helper) == 'color_temp') or
@@ -4953,7 +5384,9 @@ actions:
                     {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
                     {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
                     {% set delta = (step_size | int(0) * button_3_color_temp_step_size / 10) | int %}
-                    {{ [[current - delta, min_k] | max, max_k] | min }}
+                    {% set low_k = [min_k, [button_3_rotate_min_color_temp | int(1500), button_3_rotate_max_color_temp | int(7000)] | min] | max %}
+                    {% set high_k = [[max_k, button_3_rotate_max_color_temp | int(7000)] | min, low_k] | max %}
+                    {{ [[current - delta, low_k] | max, high_k] | min }}
           - if: "{{ button_3_has_media and 'volume' in button_3_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -4969,11 +5402,36 @@ actions:
               ((button_3_rotate_mode_helper not in [none, '', []] and states(button_3_rotate_mode_helper) in ['brightness', '']) or
               (button_3_rotate_mode_helper in [none, '', []] and 'brightness' in button_3_rotate_light_mode)) }}
             then:
-              - action: light.turn_on
-                target: "{{ button_3_light }}"
-                data:
-                  brightness_step: "{{ (step_size | int(0) * button_3_step_size / 10) | int }}"
-                  transition: "{{ button_3_transition }}"
+              - choose:
+                  - conditions: "{{ (button_3_rotate_min_brightness | int(0) > 0 or button_3_rotate_max_brightness | int(100) < 100) and button_3_light_entities | length > 0 }}"
+                    sequence:
+                      - variables:
+                          limit_first: "{{ button_3_light_entities[0] }}"
+                          limit_current: "{{ state_attr(limit_first, 'brightness') | int(0) }}"
+                          limit_step: "{{ (step_size | int(0) * button_3_step_size / 10) | int }}"
+                          limit_max: "{{ (button_3_rotate_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+                          limit_min: "{{ ([button_3_rotate_min_brightness | int(0), button_3_rotate_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
+                      - choose:
+                          - conditions: "{{ limit_current >= limit_min and limit_current + limit_step <= limit_max }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_3_light }}"
+                                data:
+                                  brightness_step: "{{ limit_step }}"
+                                  transition: "{{ button_3_transition }}"
+                          - conditions: "{{ limit_current < limit_max }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_3_light }}"
+                                data:
+                                  brightness: "{{ [[limit_current + limit_step, limit_min] | max, limit_max] | min }}"
+                                  transition: "{{ button_3_transition }}"
+                default:
+                  - action: light.turn_on
+                    target: "{{ button_3_light }}"
+                    data:
+                      brightness_step: "{{ (step_size | int(0) * button_3_step_size / 10) | int }}"
+                      transition: "{{ button_3_transition }}"
           - if: >-
               {{ button_3_has_light and
               ((button_3_rotate_mode_helper not in [none, '', []] and states(button_3_rotate_mode_helper) == 'color_temp') or
@@ -4990,7 +5448,9 @@ actions:
                     {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
                     {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
                     {% set delta = (step_size | int(0) * button_3_color_temp_step_size / 10) | int %}
-                    {{ [[current + delta, min_k] | max, max_k] | min }}
+                    {% set low_k = [min_k, [button_3_rotate_min_color_temp | int(1500), button_3_rotate_max_color_temp | int(7000)] | min] | max %}
+                    {% set high_k = [[max_k, button_3_rotate_max_color_temp | int(7000)] | min, low_k] | max %}
+                    {{ [[current + delta, low_k] | max, high_k] | min }}
           - if: "{{ button_3_has_media and 'volume' in button_3_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -5405,11 +5865,36 @@ actions:
               ((button_4_rotate_mode_helper not in [none, '', []] and states(button_4_rotate_mode_helper) in ['brightness', '']) or
               (button_4_rotate_mode_helper in [none, '', []] and 'brightness' in button_4_rotate_light_mode)) }}
             then:
-              - action: light.turn_on
-                target: "{{ button_4_light }}"
-                data:
-                  brightness_step: "-{{ (step_size | int(0) * button_4_step_size / 10) | int }}"
-                  transition: "{{ button_4_transition }}"
+              - choose:
+                  - conditions: "{{ button_4_rotate_min_brightness | int(0) > 0 and button_4_light_entities | length > 0 }}"
+                    sequence:
+                      - variables:
+                          limit_first: "{{ button_4_light_entities[0] }}"
+                          limit_current: "{{ state_attr(limit_first, 'brightness') | int(0) }}"
+                          limit_step: "{{ (step_size | int(0) * button_4_step_size / 10) | int }}"
+                          limit_max: "{{ (button_4_rotate_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+                          limit_min: "{{ ([button_4_rotate_min_brightness | int(0), button_4_rotate_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
+                      - choose:
+                          - conditions: "{{ limit_current - limit_step >= limit_min }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_4_light }}"
+                                data:
+                                  brightness_step: "-{{ limit_step }}"
+                                  transition: "{{ button_4_transition }}"
+                          - conditions: "{{ limit_current > limit_min }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_4_light }}"
+                                data:
+                                  brightness: "{{ limit_min }}"
+                                  transition: "{{ button_4_transition }}"
+                default:
+                  - action: light.turn_on
+                    target: "{{ button_4_light }}"
+                    data:
+                      brightness_step: "-{{ (step_size | int(0) * button_4_step_size / 10) | int }}"
+                      transition: "{{ button_4_transition }}"
           - if: >-
               {{ button_4_has_light and
               ((button_4_rotate_mode_helper not in [none, '', []] and states(button_4_rotate_mode_helper) == 'color_temp') or
@@ -5426,7 +5911,9 @@ actions:
                     {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
                     {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
                     {% set delta = (step_size | int(0) * button_4_color_temp_step_size / 10) | int %}
-                    {{ [[current - delta, min_k] | max, max_k] | min }}
+                    {% set low_k = [min_k, [button_4_rotate_min_color_temp | int(1500), button_4_rotate_max_color_temp | int(7000)] | min] | max %}
+                    {% set high_k = [[max_k, button_4_rotate_max_color_temp | int(7000)] | min, low_k] | max %}
+                    {{ [[current - delta, low_k] | max, high_k] | min }}
           - if: "{{ button_4_has_media and 'volume' in button_4_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
@@ -5442,11 +5929,36 @@ actions:
               ((button_4_rotate_mode_helper not in [none, '', []] and states(button_4_rotate_mode_helper) in ['brightness', '']) or
               (button_4_rotate_mode_helper in [none, '', []] and 'brightness' in button_4_rotate_light_mode)) }}
             then:
-              - action: light.turn_on
-                target: "{{ button_4_light }}"
-                data:
-                  brightness_step: "{{ (step_size | int(0) * button_4_step_size / 10) | int }}"
-                  transition: "{{ button_4_transition }}"
+              - choose:
+                  - conditions: "{{ (button_4_rotate_min_brightness | int(0) > 0 or button_4_rotate_max_brightness | int(100) < 100) and button_4_light_entities | length > 0 }}"
+                    sequence:
+                      - variables:
+                          limit_first: "{{ button_4_light_entities[0] }}"
+                          limit_current: "{{ state_attr(limit_first, 'brightness') | int(0) }}"
+                          limit_step: "{{ (step_size | int(0) * button_4_step_size / 10) | int }}"
+                          limit_max: "{{ (button_4_rotate_max_brightness | int(100) * 255 / 100) | round(0) | int }}"
+                          limit_min: "{{ ([button_4_rotate_min_brightness | int(0), button_4_rotate_max_brightness | int(100)] | min * 255 / 100) | round(0) | int }}"
+                      - choose:
+                          - conditions: "{{ limit_current >= limit_min and limit_current + limit_step <= limit_max }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_4_light }}"
+                                data:
+                                  brightness_step: "{{ limit_step }}"
+                                  transition: "{{ button_4_transition }}"
+                          - conditions: "{{ limit_current < limit_max }}"
+                            sequence:
+                              - action: light.turn_on
+                                target: "{{ button_4_light }}"
+                                data:
+                                  brightness: "{{ [[limit_current + limit_step, limit_min] | max, limit_max] | min }}"
+                                  transition: "{{ button_4_transition }}"
+                default:
+                  - action: light.turn_on
+                    target: "{{ button_4_light }}"
+                    data:
+                      brightness_step: "{{ (step_size | int(0) * button_4_step_size / 10) | int }}"
+                      transition: "{{ button_4_transition }}"
           - if: >-
               {{ button_4_has_light and
               ((button_4_rotate_mode_helper not in [none, '', []] and states(button_4_rotate_mode_helper) == 'color_temp') or
@@ -5463,7 +5975,9 @@ actions:
                     {% set min_k = state_attr(first, 'min_color_temp_kelvin') | int(2000) if first != '' else 2000 %}
                     {% set max_k = state_attr(first, 'max_color_temp_kelvin') | int(6500) if first != '' else 6500 %}
                     {% set delta = (step_size | int(0) * button_4_color_temp_step_size / 10) | int %}
-                    {{ [[current + delta, min_k] | max, max_k] | min }}
+                    {% set low_k = [min_k, [button_4_rotate_min_color_temp | int(1500), button_4_rotate_max_color_temp | int(7000)] | min] | max %}
+                    {% set high_k = [[max_k, button_4_rotate_max_color_temp | int(7000)] | min, low_k] | max %}
+                    {{ [[current + delta, low_k] | max, high_k] | min }}
           - if: "{{ button_4_has_media and 'volume' in button_4_rotate_media_mode }}"
             then:
               - action: media_player.volume_set
