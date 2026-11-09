@@ -2418,10 +2418,8 @@
       button_1_light_adaptive_color_temp: input_number.adaptive_color_temp_bright
       button_1_double_light_mode:
       - toggle_rotate_mode
-      button_1_rotate_mode_helper: input_text.dining_table_dial_mode
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust_brightness: false
-      button_1_light_auto_adjust_color_temp: false
+      button_1_rotate_mode_helper: input_text.dining_table_dial_mode
       button_2_short_release:
       - action: input_select.select_next
         data:
@@ -2457,10 +2455,8 @@
           entity_id: input_select.garden_covers
       button_3_double_light_mode:
       - toggle_rotate_mode
-      button_3_rotate_mode_helper: input_text.dining_table_dial_mode
       button_3_light_schedule: schedule.lights_dimmed
-      button_3_light_auto_adjust_brightness: false
-      button_3_light_auto_adjust_color_temp: false
+      button_3_rotate_mode_helper: input_text.dining_table_dial_mode
 - id: '1736812245757'
   alias: Gameroom Desk Button
   description: ''
@@ -2920,6 +2916,8 @@
       button_4_light_brightness: 1
       button_4_light_color: 2000
       button_2_light_transition: 1
+      button_2_rotate_min_brightness: 1
+      button_4_rotate_min_brightness: 1
 - id: '1736812877909'
   alias: Bedroom Deni Button
   description: ''
@@ -2959,6 +2957,8 @@
       button_4_light_color: 2000
       button_2_light_transition: 1
       button_4_light_transition: 1
+      button_2_rotate_min_brightness: 1
+      button_4_rotate_min_brightness: 1
 - id: '1736813115022'
   alias: Living Room Button
   description: ''
@@ -3657,7 +3657,6 @@
       button_1_off_light_mode:
       - turn_off
       button_1_light_schedule: schedule.lights_bright
-      button_1_light_auto_adjust: false
 - id: '1755899171238'
   alias: Toilet Button
   description: ''
