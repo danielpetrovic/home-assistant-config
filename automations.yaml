@@ -3406,111 +3406,97 @@
     trigger: state
   conditions: []
   actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - motion detected
+  - parallel:
+    - alias: Bed light
       sequence:
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
-            | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
-            | int }}'
-          transition: 30
-        metadata: {}
-        target:
-          entity_id:
-          - light.bedroom_alex_bed_light
       - choose:
-        - conditions:
-          - condition: time
-            after: '10:00:00'
-            before: '22:00:00'
-          - condition: state
-            entity_id: binary_sensor.workday_sensor
-            state:
-            - 'on'
+        - alias: motion detected
+          conditions:
+          - condition: trigger
+            id:
+            - motion detected
           sequence:
           - action: light.turn_on
             data:
-              brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+              brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
                 | int }}'
-              color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+              color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
                 | int }}'
-              transition: 3
+              transition: 30
             metadata: {}
             target:
-              entity_id: light.bedroom_light
-          alias: workday
-        - conditions:
-          - condition: time
-            after: '11:00:00'
-            before: '23:00:00'
-          - condition: state
-            entity_id: binary_sensor.workday_sensor
-            state:
-            - 'off'
+              entity_id:
+              - light.bedroom_alex_bed_light
+        - alias: motion clear
+          conditions:
+          - condition: trigger
+            id:
+            - motion clear
           sequence:
-          - action: light.turn_on
+          - action: light.turn_off
             data:
-              brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
-                | int }}'
-              color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
-                | int }}'
-              transition: 3
+              transition: 30
             metadata: {}
             target:
-              entity_id: light.bedroom_light
-          alias: non-workday
-      alias: motion detected
-    - conditions:
-      - condition: trigger
-        id:
-        - motion clear
+              entity_id:
+              - light.bedroom_alex_bed_light
+    - alias: Ceiling light
       sequence:
-      - action: light.turn_off
-        data:
-          transition: 30
-        metadata: {}
-        target:
-          entity_id:
-          - light.bedroom_alex_bed_light
-      - choose:
-        - conditions:
-          - condition: time
-            after: '10:00:00'
-            before: '22:00:00'
-          - condition: state
-            entity_id: binary_sensor.workday_sensor
-            state:
-            - 'on'
-          sequence:
-          - action: light.turn_off
-            metadata: {}
-            target:
-              entity_id: light.bedroom_light
-            data:
-              transition: 3
-          alias: workday
-        - conditions:
-          - condition: time
-            after: '11:00:00'
-            before: '23:00:00'
-          - condition: state
-            entity_id: binary_sensor.workday_sensor
-            state:
-            - 'off'
-          sequence:
-          - action: light.turn_off
-            metadata: {}
-            target:
-              entity_id: light.bedroom_light
-            data:
-              transition: 3
-          alias: non-workday
-      alias: motion clear
+      - if:
+        - condition: or
+          conditions:
+          - condition: and
+            conditions:
+            - condition: time
+              after: '10:00:00'
+              before: '22:00:00'
+            - condition: state
+              entity_id: binary_sensor.workday_sensor
+              state:
+              - 'on'
+          - condition: and
+            conditions:
+            - condition: time
+              after: '11:00:00'
+              before: '23:00:00'
+            - condition: state
+              entity_id: binary_sensor.workday_sensor
+              state:
+              - 'off'
+        then:
+        - choose:
+          - alias: motion detected
+            conditions:
+            - condition: trigger
+              id:
+              - motion detected
+            sequence:
+            - action: light.turn_on
+              data:
+                brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+                  | int }}'
+                color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+                  | int }}'
+                transition: 3
+              metadata: {}
+              target:
+                entity_id: light.bedroom_light
+          - alias: motion clear, door open
+            conditions:
+            - condition: trigger
+              id:
+              - motion clear
+            - condition: state
+              entity_id: binary_sensor.bedroom_door_contact
+              state:
+              - 'on'
+            sequence:
+            - action: light.turn_off
+              metadata: {}
+              target:
+                entity_id: light.bedroom_light
+              data:
+                transition: 3
   mode: restart
 - id: '1746611520879'
   alias: Bedroom Deni Motion
@@ -3531,111 +3517,97 @@
     trigger: state
   conditions: []
   actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - motion detected
+  - parallel:
+    - alias: Bed light
       sequence:
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
-            | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
-            | int }}'
-          transition: 30
-        metadata: {}
-        target:
-          entity_id:
-          - light.bedroom_deni_bed_light
       - choose:
-        - conditions:
-          - condition: time
-            after: '10:00:00'
-            before: '22:00:00'
-          - condition: state
-            entity_id: binary_sensor.workday_sensor
-            state:
-            - 'on'
+        - alias: motion detected
+          conditions:
+          - condition: trigger
+            id:
+            - motion detected
           sequence:
           - action: light.turn_on
             data:
-              brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+              brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
                 | int }}'
-              color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+              color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
                 | int }}'
-              transition: 3
+              transition: 30
             metadata: {}
             target:
-              entity_id: light.bedroom_light
-          alias: workday
-        - conditions:
-          - condition: time
-            after: '11:00:00'
-            before: '23:00:00'
-          - condition: state
-            entity_id: binary_sensor.workday_sensor
-            state:
-            - 'off'
+              entity_id:
+              - light.bedroom_deni_bed_light
+        - alias: motion clear
+          conditions:
+          - condition: trigger
+            id:
+            - motion clear
           sequence:
-          - action: light.turn_on
+          - action: light.turn_off
             data:
-              brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
-                | int }}'
-              color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
-                | int }}'
-              transition: 3
+              transition: 30
             metadata: {}
             target:
-              entity_id: light.bedroom_light
-          alias: non-workday
-      alias: motion detected
-    - conditions:
-      - condition: trigger
-        id:
-        - motion clear
+              entity_id:
+              - light.bedroom_deni_bed_light
+    - alias: Ceiling light
       sequence:
-      - action: light.turn_off
-        data:
-          transition: 30
-        metadata: {}
-        target:
-          entity_id:
-          - light.bedroom_deni_bed_light
-      - choose:
-        - conditions:
-          - condition: time
-            after: '10:00:00'
-            before: '22:00:00'
-          - condition: state
-            entity_id: binary_sensor.workday_sensor
-            state:
-            - 'on'
-          sequence:
-          - action: light.turn_off
-            metadata: {}
-            target:
-              entity_id: light.bedroom_light
-            data:
-              transition: 3
-          alias: workday
-        - conditions:
-          - condition: time
-            after: '11:00:00'
-            before: '23:00:00'
-          - condition: state
-            entity_id: binary_sensor.workday_sensor
-            state:
-            - 'off'
-          sequence:
-          - action: light.turn_off
-            metadata: {}
-            target:
-              entity_id: light.bedroom_light
-            data:
-              transition: 3
-          alias: non-workday
-      alias: motion clear
+      - if:
+        - condition: or
+          conditions:
+          - condition: and
+            conditions:
+            - condition: time
+              after: '10:00:00'
+              before: '22:00:00'
+            - condition: state
+              entity_id: binary_sensor.workday_sensor
+              state:
+              - 'on'
+          - condition: and
+            conditions:
+            - condition: time
+              after: '11:00:00'
+              before: '23:00:00'
+            - condition: state
+              entity_id: binary_sensor.workday_sensor
+              state:
+              - 'off'
+        then:
+        - choose:
+          - alias: motion detected
+            conditions:
+            - condition: trigger
+              id:
+              - motion detected
+            sequence:
+            - action: light.turn_on
+              data:
+                brightness_pct: '{{ states(''input_number.adaptive_brightness_bright'')
+                  | int }}'
+                color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_bright'')
+                  | int }}'
+                transition: 3
+              metadata: {}
+              target:
+                entity_id: light.bedroom_light
+          - alias: motion clear, door open
+            conditions:
+            - condition: trigger
+              id:
+              - motion clear
+            - condition: state
+              entity_id: binary_sensor.bedroom_door_contact
+              state:
+              - 'on'
+            sequence:
+            - action: light.turn_off
+              metadata: {}
+              target:
+                entity_id: light.bedroom_light
+              data:
+                transition: 3
   mode: restart
 - id: '1753111025679'
   alias: Office Energy
