@@ -7,7 +7,6 @@ music_away:
       entity_id:
       - media_player.bathroom
       - media_player.gameroom
-      - media_player.office
       - media_player.kitchen
       - media_player.gym
       - media_player.bedroom
@@ -19,7 +18,6 @@ music_away:
       entity_id:
       - media_player.bathroom_kef
       - media_player.gameroom_kef
-      - media_player.office_kef
       - media_player.kitchen_kef
       - media_player.gym_kef
       - media_player.bedroom_kef
