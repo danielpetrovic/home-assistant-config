@@ -3,6 +3,27 @@
   "minor_version": 1,
   "key": "lovelace_resources",
   "data": {
-    "items": []
+    "items": [
+      {
+        "id": "2011ff1bd1004fdba3935bfb101991fc",
+        "url": "/homeconnect/homeconnect-hob-card.js?v=0.1.37",
+        "type": "module"
+      },
+      {
+        "id": "74139289f5704b2e9793de7cbb81df4b",
+        "url": "/homeconnect/homeconnect-dishwasher-card.js?v=0.1.37",
+        "type": "module"
+      },
+      {
+        "id": "665ed10852304f14a4db0214c4de8bc3",
+        "url": "/homeconnect/homeconnect-appliance-card.js?v=0.1.37",
+        "type": "module"
+      },
+      {
+        "id": "a43bdaa664dd421a93c9c244bada852b",
+        "url": "/homeconnect/homeconnect-cooling-card.js?v=0.1.37",
+        "type": "module"
+      }
+    ]
   }
 }

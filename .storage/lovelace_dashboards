@@ -7,7 +7,7 @@
       {
         "id": "lovelace",
         "icon": "mdi:view-dashboard",
-        "title": "Overview",
+        "title": "Home",
         "url_path": "lovelace",
         "mode": "storage",
         "require_admin": false,
@@ -21,6 +21,15 @@
         "require_admin": false,
         "mode": "storage",
         "url_path": "dashboard-map"
+      },
+      {
+        "id": "dashboard_tablet",
+        "url_path": "dashboard-tablet",
+        "title": "Tablet",
+        "icon": "mdi:tablet-dashboard",
+        "show_in_sidebar": true,
+        "require_admin": false,
+        "mode": "storage"
       }
     ]
   }

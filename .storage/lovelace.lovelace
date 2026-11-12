@@ -49,7 +49,7 @@
                           "show_name": false,
                           "show_icon": true,
                           "type": "button",
-                          "name": "Eettafel",
+                          "name": "Dining Table",
                           "icon": "mdi:table-furniture",
                           "tap_action": {
                             "action": "navigate",
@@ -66,7 +66,7 @@
                           "show_name": false,
                           "show_icon": true,
                           "type": "button",
-                          "name": "Entree",
+                          "name": "Entrance",
                           "icon": "mdi:coat-rack",
                           "tap_action": {
                             "action": "navigate",
@@ -97,7 +97,7 @@
                           "show_name": false,
                           "show_icon": true,
                           "type": "button",
-                          "name": "Tuin",
+                          "name": "Garden",
                           "icon": "mdi:flower",
                           "tap_action": {
                             "action": "navigate",
@@ -129,7 +129,7 @@
                           "show_name": false,
                           "show_icon": true,
                           "type": "button",
-                          "name": "Woonkamer",
+                          "name": "Living Room",
                           "icon": "mdi:sofa",
                           "tap_action": {
                             "action": "navigate",
@@ -191,7 +191,7 @@
                           "show_name": false,
                           "show_icon": true,
                           "type": "button",
-                          "name": "Badkamer",
+                          "name": "Bathroom",
                           "icon": "mdi:shower-head",
                           "tap_action": {
                             "action": "navigate",
@@ -300,7 +300,7 @@
                           "show_name": false,
                           "show_icon": true,
                           "type": "button",
-                          "name": "Wasruimte",
+                          "name": "Laundry Room",
                           "icon": "mdi:washing-machine",
                           "tap_action": {
                             "action": "navigate",
@@ -922,22 +922,6 @@
                         "state",
                         "source",
                         "audio_codec"
-                      ],
-                      "vertical": false,
-                      "features": [
-                        {
-                          "type": "media-player-volume-buttons"
-                        }
-                      ],
-                      "features_position": "inline"
-                    },
-                    {
-                      "type": "tile",
-                      "entity": "media_player.living_room_surround_kef",
-                      "show_entity_picture": false,
-                      "state_content": [
-                        "state",
-                        "source"
                       ],
                       "vertical": false,
                       "features": [
@@ -2460,7 +2444,7 @@
                     }
                   ],
                   "columns": 2,
-                  "title": "Wasruimte"
+                  "title": "Laundry Room"
                 }
               ]
             }
@@ -5166,48 +5150,16 @@
               "type": "grid",
               "cards": [
                 {
-                  "features": [
-                    {
-                      "type": "trend-graph"
-                    }
-                  ],
-                  "type": "tile",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "entity": "sensor.system_monitor_processor_temperature",
-                  "color": "red",
-                  "name": "Server CPU"
+                  "type": "heading",
+                  "heading": "Server",
+                  "heading_style": "title"
                 },
                 {
-                  "features": [
-                    {
-                      "type": "trend-graph"
-                    }
-                  ],
                   "type": "tile",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "entity": "sensor.rc16_cpu_temperature",
-                  "color": "red",
-                  "name": "Router CPU"
-                },
-                {
-                  "features": [
-                    {
-                      "type": "bar-gauge"
-                    },
-                    {
-                      "type": "trend-graph"
-                    }
-                  ],
-                  "type": "tile",
-                  "features_position": "bottom",
-                  "vertical": false,
                   "entity": "sensor.system_monitor_processor_use",
+                  "name": "CPU use",
                   "color": "orange",
-                  "name": "Server CPU"
-                },
-                {
+                  "vertical": false,
                   "features": [
                     {
                       "type": "bar-gauge"
@@ -5216,14 +5168,118 @@
                       "type": "trend-graph"
                     }
                   ],
+                  "features_position": "bottom"
+                },
+                {
                   "type": "tile",
-                  "features_position": "bottom",
+                  "entity": "sensor.system_monitor_memory_usage",
+                  "name": "RAM",
+                  "color": "green",
                   "vertical": false,
-                  "entity": "sensor.rc16_cpu_utilisation",
+                  "features": [
+                    {
+                      "type": "bar-gauge"
+                    },
+                    {
+                      "type": "trend-graph"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.system_monitor_processor_temperature",
+                  "name": "CPU temperature",
+                  "color": "red",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "trend-graph"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.system_monitor_swap_use_2",
+                  "name": "Swap",
+                  "color": "green",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "bar-gauge"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.system_monitor_memory_pressure_some_300s_average",
+                  "name": "Memory pressure",
                   "color": "orange",
-                  "name": "Router CPU"
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "trend-graph"
+                    }
+                  ],
+                  "features_position": "bottom"
                 },
                 {
+                  "type": "tile",
+                  "entity": "sensor.system_monitor_io_pressure_some_300s_average",
+                  "name": "Disk IO pressure",
+                  "color": "orange",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "trend-graph"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.system_monitor_network_throughput_in_enp1s0",
+                  "name": "Network in",
+                  "color": "blue",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "trend-graph"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.system_monitor_network_throughput_out_enp1s0",
+                  "name": "Network out",
+                  "color": "blue",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "trend-graph"
+                    }
+                  ],
+                  "features_position": "bottom"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Router",
+                  "heading_style": "title"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ucg_rc16_cpu_utilization",
+                  "name": "CPU use",
+                  "color": "orange",
+                  "vertical": false,
                   "features": [
                     {
                       "type": "bar-gauge"
@@ -5232,14 +5288,14 @@
                       "type": "trend-graph"
                     }
                   ],
-                  "type": "tile",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "entity": "sensor.system_monitor_memory_use_percent",
-                  "color": "green",
-                  "name": "Server RAM"
+                  "features_position": "bottom"
                 },
                 {
+                  "type": "tile",
+                  "entity": "sensor.ucg_rc16_memory_utilization",
+                  "name": "RAM",
+                  "color": "green",
+                  "vertical": false,
                   "features": [
                     {
                       "type": "bar-gauge"
@@ -5248,16 +5304,139 @@
                       "type": "trend-graph"
                     }
                   ],
+                  "features_position": "bottom"
+                },
+                {
                   "type": "tile",
-                  "features_position": "bottom",
+                  "entity": "sensor.ucg_rc16_ucg_rc16_cpu_temperature",
+                  "name": "CPU temperature",
+                  "color": "red",
                   "vertical": false,
-                  "entity": "sensor.rc16_memory_utilisation",
-                  "color": "green",
-                  "name": "Router RAM"
+                  "features": [
+                    {
+                      "type": "trend-graph"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ucg_rc16_ucg_rc16_local_temperature",
+                  "name": "Board temperature",
+                  "color": "red",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "trend-graph"
+                    }
+                  ],
+                  "features_position": "bottom"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Storage",
+                  "heading_style": "title"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.system_monitor_disk_usage_media",
+                  "name": "SSD0 usage",
+                  "color": "blue",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "bar-gauge"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.system_monitor_disk_free_media",
+                  "name": "SSD0 free",
+                  "color": "blue",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "trend-graph",
+                      "hours_to_show": 168
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.system_monitor_disk_usage_media_ssd1",
+                  "name": "SSD1 usage",
+                  "color": "blue",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "bar-gauge"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.system_monitor_disk_free_media_ssd1",
+                  "name": "SSD1 free",
+                  "color": "blue",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "trend-graph",
+                      "hours_to_show": 168
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.system_monitor_disk_usage_media_ssd2",
+                  "name": "SSD2 usage",
+                  "color": "blue",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "bar-gauge"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.system_monitor_disk_free_media_ssd2",
+                  "name": "SSD2 free",
+                  "color": "blue",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "trend-graph",
+                      "hours_to_show": 168
+                    }
+                  ],
+                  "features_position": "bottom"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Power",
+                  "heading_style": "title"
                 },
                 {
                   "type": "tile",
                   "entity": "sensor.utility_closet_power",
+                  "name": "Utility closet",
                   "color": "yellow",
                   "vertical": false,
                   "features": [
@@ -5265,7 +5444,60 @@
                       "type": "trend-graph"
                     }
                   ],
-                  "features_position": "inline"
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ups_output_power",
+                  "name": "UPS output",
+                  "color": "yellow",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "trend-graph"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ups_status",
+                  "name": "UPS status",
+                  "color": "green",
+                  "vertical": false
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ups_battery_runtime",
+                  "name": "UPS runtime",
+                  "color": "green",
+                  "vertical": false
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ups_load",
+                  "name": "UPS load",
+                  "color": "orange",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "bar-gauge"
+                    }
+                  ],
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ups_battery_charge",
+                  "name": "UPS battery",
+                  "color": "green",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "bar-gauge"
+                    }
+                  ],
+                  "features_position": "bottom"
                 }
               ]
             },
