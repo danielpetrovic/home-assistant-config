@@ -3103,23 +3103,16 @@
         entity_id: media_player.living_room_tv_cast
         attribute: app_name
         state: NLZIET
+      - condition: state
+        entity_id: media_player.living_room_tv_cast
+        state: playing
       sequence:
-      - action: media_player.unjoin
-        metadata: {}
+      - alias: Mute kitchen
+        action: media_player.volume_mute
         target:
           entity_id: media_player.kitchen
-        data: {}
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 2
-          milliseconds: 0
-      - action: media_player.turn_off
-        metadata: {}
-        target:
-          entity_id: media_player.kitchen
-        data: {}
-        continue_on_error: true
+        data:
+          is_volume_muted: true
       - action: light.turn_on
         data:
           brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
@@ -3138,22 +3131,12 @@
         entity_id: media_player.living_room_osmc
         state: playing
       sequence:
-      - action: media_player.unjoin
-        metadata: {}
+      - alias: Mute kitchen
+        action: media_player.volume_mute
         target:
           entity_id: media_player.kitchen
-        data: {}
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 2
-          milliseconds: 0
-      - action: media_player.turn_off
-        metadata: {}
-        target:
-          entity_id: media_player.kitchen
-        data: {}
-        continue_on_error: true
+        data:
+          is_volume_muted: true
       - action: light.turn_on
         data:
           brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
@@ -3185,11 +3168,8 @@
           minutes: 0
           seconds: 3
           milliseconds: 0
-      - alias: Rejoin kitchen to bedroom
+      - alias: Unmute kitchen
         if:
-        - condition: state
-          entity_id: media_player.bedroom
-          state: playing
         - condition: state
           entity_id: media_player.living_room_osmc
           state:
@@ -3213,13 +3193,11 @@
             attribute: media_title
             state: OSMC HDMI 1
         then:
-        - action: media_player.join
-          metadata: {}
-          data:
-            group_members:
-            - media_player.kitchen
+        - action: media_player.volume_mute
           target:
-            entity_id: media_player.bedroom
+            entity_id: media_player.kitchen
+          data:
+            is_volume_muted: false
     - alias: Playing
       conditions:
       - condition: state
@@ -3230,22 +3208,12 @@
           != ''TV'' or state_attr(''media_player.living_room_tv_cast'', ''media_title'')
           not in [none, '''', ''OSMC HDMI 1''] }}'
       sequence:
-      - action: media_player.unjoin
-        metadata: {}
+      - alias: Mute kitchen
+        action: media_player.volume_mute
         target:
           entity_id: media_player.kitchen
-        data: {}
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 2
-          milliseconds: 0
-      - action: media_player.turn_off
-        metadata: {}
-        target:
-          entity_id: media_player.kitchen
-        data: {}
-        continue_on_error: true
+        data:
+          is_volume_muted: true
       - action: light.turn_on
         data:
           brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
@@ -3276,11 +3244,8 @@
           minutes: 0
           seconds: 3
           milliseconds: 0
-      - alias: Rejoin kitchen to bedroom
+      - alias: Unmute kitchen
         if:
-        - condition: state
-          entity_id: media_player.bedroom
-          state: playing
         - condition: state
           entity_id: media_player.living_room_osmc
           state:
@@ -3304,13 +3269,11 @@
             attribute: media_title
             state: OSMC HDMI 1
         then:
-        - action: media_player.join
-          metadata: {}
-          data:
-            group_members:
-            - media_player.kitchen
+        - action: media_player.volume_mute
           target:
-            entity_id: media_player.bedroom
+            entity_id: media_player.kitchen
+          data:
+            is_volume_muted: false
   mode: restart
 - id: '1745758491686'
   alias: Front Door
@@ -5920,6 +5883,8 @@
     - playing
     to:
     - 'on'
+    - 'off'
+    - unavailable
     for:
       hours: 0
       minutes: 0
@@ -5976,6 +5941,11 @@
           attribute: media_title
           state: OSMC HDMI 1
       sequence:
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 3
+          milliseconds: 0
       - action: media_player.unjoin
         metadata: {}
         target:
