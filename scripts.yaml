@@ -38,7 +38,7 @@ music_night:
       media_type: playlist
       enqueue: replace
       media_id:
-      - Piano
+      - Classical
     target:
       entity_id: media_player.bedroom
   - action: media_player.repeat_set
