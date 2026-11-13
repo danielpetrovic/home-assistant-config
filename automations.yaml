@@ -3088,11 +3088,6 @@
     entity_id: media_player.living_room_tv_cast
     id: tv_title
     attribute: media_title
-  - trigger: state
-    entity_id: media_player.living_room_osmc
-    id: osmc
-    from:
-    to:
   conditions: []
   actions:
   - alias: Living Room TV
@@ -3103,16 +3098,7 @@
         entity_id: media_player.living_room_tv_cast
         attribute: app_name
         state: NLZIET
-      - condition: state
-        entity_id: media_player.living_room_tv_cast
-        state: playing
       sequence:
-      - alias: Mute kitchen
-        action: media_player.volume_mute
-        target:
-          entity_id: media_player.kitchen
-        data:
-          is_volume_muted: true
       - action: light.turn_on
         data:
           brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
@@ -3123,81 +3109,12 @@
         metadata: {}
         target:
           entity_id: light.living_room_tv_light
-    - alias: OSMC
-      conditions:
-      - condition: trigger
-        id: osmc
-      - condition: state
-        entity_id: media_player.living_room_osmc
-        state: playing
-      sequence:
       - alias: Mute kitchen
         action: media_player.volume_mute
         target:
           entity_id: media_player.kitchen
         data:
           is_volume_muted: true
-      - action: light.turn_on
-        data:
-          brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
-            | int }}'
-          color_temp_kelvin: '{{ states(''input_number.adaptive_color_temp_dimmed'')
-            | int }}'
-          transition: 30
-        metadata: {}
-        target:
-          entity_id: light.living_room_tv_light
-    - alias: OSMC not playing
-      conditions:
-      - condition: trigger
-        id: osmc
-      - condition: state
-        entity_id: media_player.living_room_osmc
-        state:
-        - paused
-        - idle
-      sequence:
-      - action: light.turn_off
-        metadata: {}
-        target:
-          entity_id: light.living_room_tv_light
-        data:
-          transition: 30
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 3
-          milliseconds: 0
-      - alias: Unmute kitchen
-        if:
-        - condition: state
-          entity_id: media_player.living_room_osmc
-          state:
-          - idle
-          - paused
-          - 'off'
-          - unavailable
-          - unknown
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            state:
-            - 'off'
-            - idle
-            - paused
-            - unavailable
-            - unknown
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            attribute: media_title
-            state: OSMC HDMI 1
-        then:
-        - action: media_player.volume_mute
-          target:
-            entity_id: media_player.kitchen
-          data:
-            is_volume_muted: false
     - alias: Playing
       conditions:
       - condition: state
@@ -3206,14 +3123,8 @@
       - condition: template
         value_template: '{{ state_attr(''media_player.living_room_tv_cast'', ''app_name'')
           != ''TV'' or state_attr(''media_player.living_room_tv_cast'', ''media_title'')
-          not in [none, '''', ''OSMC HDMI 1''] }}'
+          not in [none, ''''] }}'
       sequence:
-      - alias: Mute kitchen
-        action: media_player.volume_mute
-        target:
-          entity_id: media_player.kitchen
-        data:
-          is_volume_muted: true
       - action: light.turn_on
         data:
           brightness_pct: '{{ states(''input_number.adaptive_brightness_dimmed'')
@@ -3224,6 +3135,12 @@
         metadata: {}
         target:
           entity_id: light.living_room_tv_light
+      - alias: Mute kitchen
+        action: media_player.volume_mute
+        target:
+          entity_id: media_player.kitchen
+        data:
+          is_volume_muted: true
     - alias: Not playing
       conditions:
       - condition: state
@@ -3232,6 +3149,7 @@
         - 'off'
         - idle
         - paused
+        - unknown
       sequence:
       - action: light.turn_off
         metadata: {}
@@ -3242,38 +3160,14 @@
       - delay:
           hours: 0
           minutes: 0
-          seconds: 3
+          seconds: 1
           milliseconds: 0
       - alias: Unmute kitchen
-        if:
-        - condition: state
-          entity_id: media_player.living_room_osmc
-          state:
-          - idle
-          - paused
-          - 'off'
-          - unavailable
-          - unknown
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            state:
-            - 'off'
-            - idle
-            - paused
-            - unavailable
-            - unknown
-          - condition: state
-            entity_id: media_player.living_room_tv_cast
-            attribute: media_title
-            state: OSMC HDMI 1
-        then:
-        - action: media_player.volume_mute
-          target:
-            entity_id: media_player.kitchen
-          data:
-            is_volume_muted: false
+        action: media_player.volume_mute
+        target:
+          entity_id: media_player.kitchen
+        data:
+          is_volume_muted: false
   mode: restart
 - id: '1745758491686'
   alias: Front Door
@@ -3337,17 +3231,6 @@
         metadata: {}
         target:
           entity_id: media_player.living_room_tv
-        data: {}
-    - alias: Living Room OSMC
-      if:
-      - condition: state
-        entity_id: media_player.living_room_osmc
-        state: playing
-      then:
-      - action: media_player.media_pause
-        metadata: {}
-        target:
-          entity_id: media_player.living_room_osmc
         data: {}
   mode: restart
 - id: '1746611445373'
@@ -5921,25 +5804,12 @@
       - condition: time
         after: 07:00:00
       - condition: state
-        entity_id: media_player.living_room_osmc
+        entity_id: media_player.living_room_tv_cast
         state:
-        - idle
         - 'off'
+        - idle
         - unavailable
         - unknown
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: media_player.living_room_tv_cast
-          state:
-          - 'off'
-          - idle
-          - unavailable
-          - unknown
-        - condition: state
-          entity_id: media_player.living_room_tv_cast
-          attribute: media_title
-          state: OSMC HDMI 1
       sequence:
       - delay:
           hours: 0
